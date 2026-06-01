@@ -1,0 +1,15 @@
+{
+  "name": "video-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Modular agent pipeline that turns a raw talking-head recording into a polished, human-feeling edit: cut silences, cut mistakes, add tiered motion-graphic cards, b-roll. Built on HyperFrames.",
+  "scripts": {
+    "transcribe": "node scripts/transcribe-elevenlabs.mjs",
+    "validate-beats": "node scripts/validate-beat-sync.mjs",
+    "preflight": "node scripts/preflight.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,512 @@
+# Edited Transcript Chunks
+
+Duration: 1514.33s
+Words: 6091
+
+## 001 00:00.28-00:12.58 (12.30s)
+
+All right, so if I was starting an AI business from zero today, I wouldn't pitch project work or retainers. I would just sell hours. These are one-on-one with a business owner, let's just say for a hundred bucks, helping them set up their own AI operating system.
+
+## 002 00:12.79-00:28.02 (15.23s)
+
+And honestly, I think that that one offer would dissolve the imposter syndrome that has, like, half of my community frozen right now. So today, I'm gonna give you guys three things: the exact offer I'd lead with if I was starting from zero, what the offer actually looks like so you could literally run it tomorrow morning, and a plan to land your first 10 clients.
+
+## 003 00:28.26-00:38.20 (9.94s)
+
+So let's get into it. All right, so if you have been hanging around the AI space for the past, I don't know, six months to a year, you've probably been told the same thing, which is: start an AI business.
+
+## 004 00:38.38-00:47.54 (9.16s)
+
+You should be pitching audits that turn into projects in then, like, $5,000 a month or $10,000-a-month retainers. And these are directionally right.
+
+## 005 00:47.58-01:05.36 (17.78s)
+
+Like, obviously, I agree with that. You know, having a few clients on large retainers is the end goal. That's where you want to go. But all of those plays, I think, are kind of higher up on this ladder that I'm gonna talk about today, and almost nobody's talking about rung zero of that ladder, like, what that actually looks like, which is why I think that so many
+
+## 006 01:05.40-01:15.52 (10.12s)
+
+people just kind of sit there a bit frozen because they can't picture themselves doing what's on rung three or four yet. So I wanna fix that today by telling you guys, don't start by selling projects or retainers.
+
+## 007 01:15.60-01:27.91 (12.31s)
+
+Just start by selling hours. So let me tell you what I mean by that. Specifically, selling hours, helping business owners, setting up their own AI operating system, or helping them get comfortable with something like Cloud Code, and just doing that one piece at a time.
+
+## 008 01:27.92-01:41.03 (13.11s)
+
+And if you've never heard of an AI operating system, just stick with me. I've got you guys covered. And if you don't know who I am, my name's Nate. I built an AI agency to over $100,000 a month, and then I exited it, and now I run a free school community of over 375,000 people who are learning AI.
+
+## 009 01:41.50-01:51.82 (10.32s)
+
+So the reason I tell you that is because I kind of get to see this market from two sides. I see what business owners are actually asking for, and I also can see exactly where the people are trying to sell them and where they're getting stuck.
+
+## 010 01:52.10-02:06.20 (14.10s)
+
+All right, so I want you to think about your business model like a ladder. Rung 0 at the bottom is selling hours, so consulting work. Maybe this could be $100 to $500 a session, one-on-one, kind of just like helping a business owner, like I said earlier, with their Cloud Code setup.
+
+## 011 02:06.40-02:15.98 (9.58s)
+
+So from there, rung 1 would be, like, an audit, maybe 500 to 2,500 bucks for paid scoping where you go in for, like, an hour or two or maybe even multiple hours, and you map their workflows.
+
+## 012 02:16.28-02:32.60 (16.32s)
+
+You find what is automatable. You put together a proposal for the first real build. Rung 2 is your first project. That is, you know, obviously maybe 2,500 to 10 grand for one focused scope of work where you ship a single workflow end-to-end, and you let the numbers there prove the ROI.
+
+## 013 02:33.07-02:44.88 (11.81s)
+
+And then, rung 3, which is where you wanna be, is retainers. These can be maybe 3 to $10,000 a month ongoing, and that's a really cool opportunity, because you could just work with a few clients and have them on some pretty large retainers and make a lot of income.
+
+## 014 02:45.14-02:53.72 (8.58s)
+
+Now, the last two rungs are where almost everyone in the agency space, I'd say, is trying to start, and eventually, yeah, that's where you end up, but you... It's really hard to just start there, you know?
+
+## 015 02:54.00-03:04.78 (10.78s)
+
+You've kind of gotta crawl before you walk, meaning you have to earn each rung by standing on the one below it. And the reason why I think that a lot of people are freezing is because they're entering into this AI space.
+
+## 016 03:05.18-03:17.18 (12.00s)
+
+They've maybe built some really cool stuff, but they've never worked with a client before, and they try to jump to rung 2 or rung 3 without having proof or relationships, and they still have that sense of imposter syndrome internally.
+
+## 017 03:17.66-03:35.64 (17.98s)
+
+So sell hours. That's rung 0. That's where you start. And I've got three reasons that I wanna tell you guys about why I believe in this. All right, so the first reason is that consulting or teaching hours are basically a mini sales call and kind of like a mini audit, because the hardest part of any sale is, you know, especially if you're new to
+
+## 018 03:35.68-03:48.40 (12.72s)
+
+sales and you don't come from a sales background, is building trust over a call, you know, or a couple calls. But by the time that you've spent 60 minutes inside of someone's business, it could still be on a call, but helping them set up their own AI OS.
+
+## 019 03:48.58-03:56.60 (8.02s)
+
+They're not a cold lead anymore, you know? It feels way more like a working relationship, because your guys' relationship kicked off from a place of collaboration, you know?
+
+## 020 03:56.72-04:14.56 (17.84s)
+
+You guys were literally working together, figuring out things together rather than sort of this weird dance of a negotiation, right? Like, who might throw out a number first? And how do we, like, you know, almost like you feel like you're playing mind games on each other trying to bring prices down or up, and when you're doing that, they're just not ready to drop five grand on a project,
+
+## 021 04:14.78-04:29.08 (14.30s)
+
+right? Like, they're not ready to commit to a monthly retainer, um, but they are going to be more willing to commit to, like, a couple hundred bucks to spend an hour with someone who can show them what AI can actually do in their business, help them avoid the troubleshooting headaches, and answer questions that they have in real-time.
+
+## 022 04:29.34-04:41.88 (12.54s)
+
+So the proof of requirement on your side is much smaller, because you don't need a portfolio or a bunch of testimonials to sell a one-hour session. So the next conversation isn't, you know, "Will you pay for this project for $5,000?" It's basically, "Okay, great.
+
+## 023 04:42.12-05:00.04 (17.92s)
+
+We've set all this up. We've worked together a little bit. Now what's next?" Okay, so reason number two is that you're basically getting paid to scope. You know, a lot of agencies will charge for these discovery calls or for these scoping sessions, but this hour or the couple hours that you're sitting on there, learning about their business and their context and their workflows,
+
+## 024 05:00.08-05:10.41 (10.33s)
+
+is basically a discovery call, but you're actually getting paid for it. So instead of a one-hour Zoom where they describe their business to you, you nod and you take notes, you're actually, like, inside and you're helping them build stuff out already.
+
+## 025 05:10.68-05:22.70 (12.02s)
+
+You're seeing things like where their data lives. You're seeing things like what their team complains about, what's automatable, what's political, and what their kind of, like, main priorities are. And it's funny 'cause those are exactly the things that you're looking for when you're running a discovery call.
+
+## 026 05:22.98-05:30.86 (7.88s)
+
+And then reason number three is the longer that you work with them, the harder it gets for them to switch away from you, because let's say you've done two or three sessions with someone.
+
+## 027 05:31.34-05:39.84 (8.50s)
+
+You know their business better than any other AI consultant that they could hire, because now you know the team. You know you spent a few hours with them. You know the data sources. You know the workflows.
+
+## 028 05:40.10-05:52.51 (12.41s)
+
+You've helped them configure this sort of AI operating system that they already have set up. So if they did wanna, for some reason, work with someone else, it would have, you know, just that pain of switching vendors, because they would have to re-explain all of that and get familiarized with someone else.
+
+## 029 05:52.94-06:02.84 (9.90s)
+
+And most business owners just don't wanna do that, so you become the obvious choice for the next engagement, and trust me, once they start building stuff and seeing the power, they're going to wanna do more, and you're the next choice.
+
+## 030 06:02.88-06:11.44 (8.56s)
+
+Like, you're the first person that pops into their brain. And this part's really important because I lived this, and I actually did...... offer consulting calls in the early days of me starting up my agency.
+
+## 031 06:11.80-06:20.25 (8.45s)
+
+You know, people could just book in, I'd help them out for an hour and some of these people I'd never met before, actually went on to become some of our longest running clients, which was obviously awesome.
+
+## 032 06:20.29-06:31.55 (11.26s)
+
+But the problem there was that I wasn't really thinking about it in that way at the time and I really wished that I was, you know. I was sort of treating those consulting calls as just another way to make some side income, honestly.
+
+## 033 06:31.59-06:42.31 (10.72s)
+
+And I was thinking about it just as, like, practice in getting more data. I was thinking about it like tech support, really, like troubleshooting. You know, people would hop on, I'd help them fix the thing, I'd get paid, and then the engagement would be over.
+
+## 034 06:42.71-06:52.31 (9.60s)
+
+And I just kind of had it, like, siloed in my head as, like, you know, consulting calls over here and my real, like, my real project agency work over there, two separate, like, totally separate things.
+
+## 035 06:52.37-07:04.23 (11.86s)
+
+But there, it really is one where, like, the first piece feeds directly into the next. The first one is the step in the relationship that turns that, you know, consulting call into a project, which gets turned into a retainer.
+
+## 036 07:04.27-07:17.23 (12.96s)
+
+So, anyways, I'm just trying to say, if I had the mindset of going in like that, of educating them, building alongside them, and earning the right to the next conversation, then I think it would've been way more lucrative because I probably would've gotten so much more business out of those consulting calls.
+
+## 037 07:17.29-07:31.35 (14.06s)
+
+I had run a lot of those, but even though a few of them turned into long-term clients, most of them didn't. And it's probably because I just wasn't looking at it the right way. So, think about it like this, the hour is not tech support, it is the first deposit into that long-term partnership that you're trying to build.
+
+## 038 07:31.59-07:42.19 (10.60s)
+
+Okay, now, I wanna give you guys some macro proof for why this offer works right now in 2026 more than it ever has, and then we're going to get into exactly what happens inside that hour so you know exactly what to do.
+
+## 039 07:42.53-07:55.89 (13.36s)
+
+Because, honestly, if you don't run the hour the right way, then none of this stuff is going to matter. So, I've mentioned this study a few times, it's really interesting, but IBM ran their 2026 CEO study on 2,000 CEOs at major companies, and two stats from it kind of tell you everything.
+
+## 040 07:56.31-08:07.05 (10.74s)
+
+So, the first one is that only 25% of employees are using AI regularly and the second one, which kinda goes right with it, is that 85% of CEOs say that their employees have the skills to use AI.
+
+## 041 08:07.55-08:20.13 (12.58s)
+
+So, there's a 61-point gap between the people who could be using it and the people who actually are, and every CEO is basically just staring at that gap and they're asking themselves, "How do we close it?" And it's not just the operators, the employees.
+
+## 042 08:20.43-08:31.15 (10.72s)
+
+The same study basically says that managers and leaders who aren't AI fluent are not going to be leaders much longer. Like, if you can't lead an AI native team, you can't lead in 2026 and beyond.
+
+## 043 08:31.57-08:41.59 (10.02s)
+
+So, now, you've got CEOs staring at a workforce that isn't using AI and you have a layer of managers on top who are about to be replaced if they don't catch up.
+
+## 044 08:41.73-08:58.37 (16.64s)
+
+So, this is kind of a panic moment at every level of the org chart and the answer is not a $30,000 strategy deck from a big, a big firm like McKinsey, the answer is one company at a time, automating one workflow at a time and upskilling essentially one manager and one employee at a time.
+
+## 045 08:58.73-09:11.67 (12.94s)
+
+And that is what you are here to do with selling your hours to start. So, let me kind of just, like, reframe this for you. The hour isn't, "I'm gonna come in and teach you guys ChatGBT." Like, people had actually printed with that business model.
+
+## 046 09:11.73-09:20.51 (8.78s)
+
+I know some people that have done huge workshops just teaching ChatGBT and it worked really well, but I think that the market's evolving a little bit more now and I think that's a bit too small.
+
+## 047 09:20.53-09:34.17 (13.64s)
+
+So, now, your hour is so much more than that. It's setting up the AI operating system. Now, I should probably pause here real quick because I keep saying this whole AI operating system thing and I haven't even told you guys what that actually is yet, so if you've never heard of it, you might be confused.
+
+## 048 09:34.23-09:44.87 (10.64s)
+
+I'm not gonna teach the entire framework right now in this video, but here's a short version of it. So, an AI operating system is basically a system that you operate in, right? Like, think Mac, you operate in your MacBook, or Windows, whatever it is.
+
+## 049 09:45.07-09:52.91 (7.84s)
+
+And it captures your business data, it captures your subject matter expertise, it runs your workflows, it helps you operate day-to-day, kind of, like, just all in one place.
+
+## 050 09:53.36-10:02.95 (9.59s)
+
+And that whole point is that your business stops being bottlenecked by you because you now have this system that has all your data and your context and you can build automations and agents inside of that AI operating system.
+
+## 051 10:03.45-10:13.29 (9.84s)
+
+And you can build that in Cloud Code or Codex or whatever it is, but I have mine right now that I typically am using in Cloud Code. And obviously, you don't need to be a developer or an engineer to build one of these or to use one of these.
+
+## 052 10:13.67-10:22.05 (8.38s)
+
+So, I just launched a completely free two-hour course inside of my free school community that walks you through the exact framework and just exactly how I built mine and how you can build yours.
+
+## 053 10:22.37-10:38.43 (16.06s)
+
+I even gave you a free GitHub repo to get started with, so the link for that is down in the description below. The move here is go take that course, learn the framework yourself, and then once you have your own AI operating system, just turn around and use that exact same framework that I'm teaching you guys with your clients and just teach them that.
+
+## 054 10:38.44-10:48.61 (10.17s)
+
+And that way, instead of staring at a blank screen wondering what you even teach in the hour, you literally have a playbook already. So, now that that's out of the way, let me give you basically the exact pitch that I would lead with.
+
+## 055 10:48.93-11:06.39 (17.46s)
+
+I would say something like, "What I wanna do here is I wanna help you set up your AI operating system. We're gonna connect to your business data, your information, everything that's important about the way that you think day-to-day, and we're going to extract your subject matter expertise into this AI system so that your business isn't bottlenecked by you anymore and you can focus on strategy.
+
+## 056 11:06.55-11:21.43 (14.88s)
+
+You can start working on your business rather than in it. This is going to give you more room to grow and it reduces your key man risk if you ever wanna sell and that's what I think we should set up for you." We're offering an operating system, we're not offering an AI tutorial, so the reframe right there is everything.
+
+## 057 11:21.50-11:32.61 (11.11s)
+
+I think that the part that I really want you guys to, like, stick in your head is that the business owner is the only person who can actually build the right system. Like, you're gonna help them, but you couldn't build it for them because they have their own subject matter expertise.
+
+## 058 11:33.07-11:41.09 (8.02s)
+
+They know the workflows and the customers and their IP better than anyone else does, so your job is to make their existing expertise dangerous with the tool.
+
+## 059 11:41.13-11:50.03 (8.90s)
+
+You're basically selling them leverage. So, the hour that you're gonna be with them is basically transferring tool fluency to where their domain fluency already lives.
+
+## 060 11:50.07-11:59.65 (9.58s)
+
+So, if you walk into the session with that framing, every consultant suddenly has a product to sell. All of you guys that wanna, you know, call yourself an AI consultant, you now have something tangible to give them.
+
+## 061 12:00.01-12:11.48 (11.47s)
+
+And then practically, here's kind of how the flow looks like inside of that actual session. So, you're going to start to gather their background data, right? You're gonna walk them through the difference between, you know, using Cloud in the desktop app versus......
+
+## 062 12:11.49-12:20.43 (8.94s)
+
+Claude and something like the VS Code extension and explain w- what all that means, if they've never used something like that. You make them tool fluent at a high level so that they feel less overwhelmed.
+
+## 063 12:20.64-12:30.06 (9.42s)
+
+Because as you start extracting their context and their knowledge into a project folder, they're probably gonna feel a little bit overwhelmed, and so you are there to help them out. You're gonna need to connect their data sources.
+
+## 064 12:30.10-12:46.50 (16.40s)
+
+They might be curious about like, oh, what's MCP or what's an API? And you're just, you wanna be able to explain that in a very simple way. And then after you're doing all this like onboarding and setup, it'll break at a natural point, you know, somewhere after about an hour, and then you're gonna schedule your next session so you guys can keep the momentum and keep building this system.
+
+## 065 12:46.72-12:58.98 (12.26s)
+
+Now most people might think that the hour is about showing off AI knowledge, but it's not. It's really about, like I said, managing overwhelm, because every business owner is probably gonna walk in and be super, super excited, but also completely overwhelmed at the same time, right?
+
+## 066 12:59.02-13:04.54 (5.52s)
+
+Like I think we've all been there. So your job is to keep that overwhelm low enough that they wanna book in another session with you,
+
+## 067 13:05.46-13:05.65 (0.19s)
+
+and
+
+## 068 13:06.48-13:14.92 (8.44s)
+
+you have to make sure that you're not making them feel behind or feel stupid. So slow it down when you sense them losing the thread and keep them engaged. You know, constantly asking them, "Does this all make sense?
+
+## 069 13:14.96-13:26.24 (11.28s)
+
+Do you have any questions?" You know, "You can always ask me any questions, as many as you want. I'm here to be a resource for you." 'Cause if you lose them and they feel overwhelmed, then they're probably not gonna book in that second or third sessions, and then definitely not gonna wanna book in a project.
+
+## 070 13:26.60-13:36.10 (9.50s)
+
+So if you respect their pace and you treat them with patience, they're gonna wanna keep working with you. And now, now some of you might be thinking, but Nate, what if they ask me something that I actually don't know the answer to?
+
+## 071 13:36.12-13:45.52 (9.40s)
+
+And that's a great question, and it might happen, and that's fine. You know, you don't just, you basically would just say, "Honestly, I don't know. Like, let's figure it out together." And I don't think that that's actually a weakness.
+
+## 072 13:45.60-13:52.52 (6.92s)
+
+That's actually just part of the job, you know? I think that it gives you an opportunity to show that you're confident in your abilities and that you can take that extra step.
+
+## 073 13:53.40-14:02.84 (9.44s)
+
+You know, I remember a few times on my first couple consulting calls where people would ask me about certain types of like maybe a database structure that I hadn't worked with before, and I would tell them, "You know, honestly, I don't know.
+
+## 074 14:02.88-14:15.84 (12.96s)
+
+I've never had a use case where I had to deal with that, but what I'll do after this session is I'll do some research, I'll test it out, and the next time we meet, I'll make sure that I understand if this is something that you actually need in the system or if we can take a different approach."
+
+## 075 14:26.34-14:39.50 (13.16s)
+
+And yeah, they're really gonna respect that because you're not supposed to be Google, right? Like you don't need to know everything on demand, but you're just supposed to be their problem solver, and you're supposed to be their barrier between really complex stuff and what they wanna do.
+
+## 076 14:39.52-14:51.56 (12.04s)
+
+And so the fact that it's gonna take more than just one hour for the business owner to set up their AI OS is obviously great, but it's great for you and great for them, because they get to spread out the cost, you get to spread out the work, you get to deepen the relationship every single session.
+
+## 077 14:51.62-15:01.28 (9.66s)
+
+And I wanna hammer this home as well. Right now, especially when you're starting out, it's not about the cash. Like trust me, the cash will come, but right now you're prioritizing for reps and for experience.
+
+## 078 15:01.62-15:09.78 (8.16s)
+
+You need confidence. You need to have more conversations with the business owners. You need to get good at explaining things. So you go above and beyond on every single one of these hours.
+
+## 079 15:09.86-15:18.38 (8.52s)
+
+You over deliver. You stay on an extra 10 minutes if you need to. You send a follow-up email afterwards with two or three things that they could try that week. And maybe that means you don't start off the bat charging 250 an hour.
+
+## 080 15:18.44-15:29.16 (10.72s)
+
+Maybe you just start at 50 an hour or, you know, 99. Because once again, you're not optimizing for cash today, you're optimizing for the cash six months from now, and all of that has to start with reps and experience upfront.
+
+## 081 15:31.56-15:38.48 (6.92s)
+
+Where do you find these people in the first place, right? Because nobody is going to sell anything if they can't even get a single conversation booked.
+
+## 082 15:38.86-15:51.60 (12.74s)
+
+So this is a layered plan, seven steps, each one kind of builds off the next. Step one, before you ever pitch a business owner, just teach your friends, like seriously, just your buddies, people that you are very comfortable with, people in your network who don't even own a business.
+
+## 083 15:51.80-16:00.80 (9.00s)
+
+Text three of them right now and say, "Hey, I've been getting really into this AI stuff. Can I come over and show you how Cloud Code works or help you set up these AI tools for whatever you're into?" And that's it.
+
+## 084 16:01.08-16:10.70 (9.62s)
+
+Just no pitch, obviously no payment. You're just teaching your friends something real, and that's gonna be like real raw practice, which is gonna be huge because you're in a low stakes environment, you're
+
+## 085 16:11.60-16:23.94 (12.34s)
+
+with people you're already comfortable around, and you're literally just showing someone a tool that you're passionate about. And after you've got through that a few times, you're gonna realize like, wow, I explained this horribly and all three of them asked me the same questions about this.
+
+## 086 16:24.00-16:37.40 (13.40s)
+
+So I know now next time I teach someone this stuff, what I probably need to do a little bit better. Because if you went from never teaching someone to trying to teach a business owner when the pressure's like, the pressure's on for real, you're probably gonna mess up and you're gonna feel very intimidated.
+
+## 087 16:37.42-16:52.20 (14.78s)
+
+And so now you can hop into an actual sort of like a high pressure situation with a real business owner feeling a lot more confident. So then step two is to text the business owners in your network that you know or ask people if they know any business owners or people who may be interested in learning more about AI.
+
+## 088 16:54.96-17:02.80 (7.84s)
+
+So I would basically send a text that kind of reads like this. I'd say, "Hey, I've been getting really good at this AI stuff and it's been giving me, you know, super human productivity.
+
+## 089 17:03.12-17:10.40 (7.28s)
+
+So would you be open to letting me come over for an hour and walk you through setting up your own AI operating system? You know, completely on me, I just wanna get the reps in."
+
+## 090 17:11.26-17:24.87 (13.61s)
+
+Then step three, after you do a few of those sessions, every one of them gets the same question at the end, which is, "Hey, if you've got any friends or business owner buddies who also wanna learn this kind of stuff, let them know that I would love to help them out." So now you're kind of even expanding more on your own warm network.
+
+## 091 17:33.26-17:45.46 (12.20s)
+
+And step four, you can also join communities. There's so many different like AI or business focused communities. Mine has over, you know, 370,000 people right now, and that means that there are a lot of support issues being posted every day.
+
+## 092 17:45.76-17:55.08 (9.32s)
+
+So you can help people out, you can offer to jump on a call. Just, you know, some of these people will also pay you or maybe wanna collaborate with you. Some might introduce you into someone, some of them might introduce you to other people.
+
+## 093 17:55.44-18:03.32 (7.88s)
+
+And I've literally watched so many people in my community just partner up or land clients or even get full-time jobs just because they were being active and helpful in......
+
+## 094 18:03.34-18:20.92 (17.58s)
+
+whatever communities. Step five is to build in public. Once you start doing these education sessions and you're building these workflows and setting up things, just post them. Like, it doesn't have to be like you're an influencer or you're posting your face or whatever, but post a case study on LinkedIn or write an article about this and just put them somewhere, um, on your personal website.
+
+## 095 18:20.96-18:30.86 (9.90s)
+
+Like, make a portfolio. Just have some sort of virtual resume somewhere so that later when people look you up or, you know, when you're reaching out to people, you can send them something to give you a little bit more, you know, trust.
+
+## 096 18:31.10-18:38.98 (7.88s)
+
+Step six, once you've got a handful of people who have booked in some sessions with you for consulting hours, you can just start winning more business with them, like I talked about earlier.
+
+## 097 18:39.02-18:56.14 (17.12s)
+
+And the part that I wanted to stress here is don't be pushy and don't pressure them. Just keep delivering, keep being helpful, and at some point, the conversation just naturally becomes like, "Hey, you know, we can build this out together, so here's what I charge for that." And at that point, it feels so much less like you're pitching them, just more like you're recommending something to someone who already has some trust in you.
+
+## 098 18:56.18-19:09.32 (13.14s)
+
+So then step seven, and only once you've got your proof, then you can start, like, walking into local businesses. You can go to local tech meetups. You could go to local marketing events. You could walk into actual local businesses as well, telling people that you want to help, and that is the ladder.
+
+## 099 19:09.36-19:22.28 (12.92s)
+
+Every single one of those steps is something that you could literally start doing this week and once you run a few of these kind of, like, consulting sessions, something kind of awesome happens, which is the hour doesn't pay for just, you know, the 250 or however much you marked it up as.
+
+## 100 19:22.66-19:31.60 (8.94s)
+
+It pays for something a lot more valuable, which obviously is basically just getting your foot in the door for real conversations. So let me give you guys a quick example.
+
+## 101 19:31.86-19:39.96 (8.10s)
+
+I was running some consulting calls with this client, and we were basically, like, just building out an automation together because he kind of wanted to learn and, and I was helping him out with that.
+
+## 102 19:40.36-19:55.44 (15.08s)
+
+So he would literally just screen share. We would talk about the automation. We'd build it together. And as I, as, you know, and as he was showing me what he was doing and I was helping him build it, I would explain what are the different nodes and how to think about prompting and we would, you know, how to think about evals and AI models and stuff, and we were working on this together.
+
+## 103 19:55.63-20:07.96 (12.33s)
+
+And during the third call, I remember he paused and he goes, "Wow, this is actually gonna take a lot longer than I thought, isn't it?" And I was like, "Yeah, I mean, it's a, it's a pretty big lift, but just probably a few weeks of focused work, but it's gonna add a lot of value." And right after I said that, he was like, "You know what?
+
+## 104 20:08.06-20:22.58 (14.52s)
+
+Are you available for project work? Like, could I just have you build this for me instead?" And so, like, in that case, I didn't have to pitch him on anything. You know, all I did was I was just showing up and I was helping him and I was making sure he wasn't overwhelmed, and once he had that trust in me and he kind of knew that I wasn't an expert, right?
+
+## 105 20:22.70-20:39.40 (16.70s)
+
+But I knew more than he did, and that's what he wanted and that's all he needed to basically pitch me. But of course, not everyone's gonna come out and say, "Hey, can I just pay you to do this for me?" You can still drive that conversation yourself once you've actually seen enough about their operations to have some ideas of workflows that would actually provide value.
+
+## 106 20:39.46-20:49.64 (10.18s)
+
+You know, you don't just want to throw out random agents and workflows. You want to say, "Hey, I realized you have this problem and I know a good workflow that we could build together that would actually solve that problem exactly.
+
+## 107 20:49.74-21:07.22 (17.48s)
+
+So if you don't mind, I'd love to, you know, in our next session, just dive into that one a little bit more and talk a little bit more about it, and then I can come back with a full proposal on how I think we should build it and why I think it's gonna impact your business so much." Because I want to be honest with you guys, obviously you're not gonna build, like, a multimillion dollar business if you're just trading hours for money.
+
+## 108 21:07.30-21:15.76 (8.46s)
+
+I mean, the math doesn't work. It's really hard to scale. You just need a bigger and bigger team if you're gonna do that. So like I said, selling those hours is the on-ramp. You have to earn your way up the ladder.
+
+## 109 21:16.32-21:26.84 (10.52s)
+
+Audit, the consulting hours is rung zero, and then you've got audit, project, retainer. So there is something else I want you guys to keep in mind, which is basically, like, what do you really want to do and what do you enjoy doing?
+
+## 110 21:26.90-21:40.00 (13.10s)
+
+Because if the idea of texting three friends or random business owners sounds scary, or the idea of hopping on, like, a consulting call and teaching someone how to do something is also scary, then maybe being a business owner, like, isn't what you actually want.
+
+## 111 21:40.10-21:49.42 (9.32s)
+
+And that's completely fine because there are other paths. Like, I do think that it's really good to get out of your comfort zone and push yourself a little bit, but there still are other paths, and it's important to at least acknowledge that.
+
+## 112 21:51.12-22:01.78 (10.66s)
+
+Because you could also partner up with someone who loves that, like, sales part, you know? And you could just be the AI builder or the AI educator. I've seen tons of these sorts of partnerships form just by getting involved in communities.
+
+## 113 22:02.04-22:16.34 (14.30s)
+
+You could also land a job somewhere as, like, an internal AI consultant inside a company, or maybe you already work at a company. You could start educating people on your team and educating managers and stuff like that, leading these internal AI workshops and in that way, get noticed and maybe get a promotion.
+
+## 114 22:16.90-22:26.28 (9.38s)
+
+There was this IBM study that I mentioned earlier, but this one was a different one from IBM, and it basically said that 57% of chief AI officers right now were actually promoted from inside the company.
+
+## 115 22:26.64-22:35.82 (9.18s)
+
+So the path doesn't always have to be entrepreneurship and you always have to think about, like, how do I make a safe pivot, right? Like, I'm not saying that you should just quit your day job and go start selling these hours.
+
+## 116 22:35.86-22:48.76 (12.90s)
+
+Like, be safe about what you're doing here. And the final thing that I wanted to talk about is what happens if you're doing these consulting sessions and you're struggling to sort of, like, make that pivot into, like, the next step, the audit or the project?
+
+## 117 22:49.02-23:05.62 (16.60s)
+
+Don't push. Just say something like, "You know what? I hear you. You know, I'm just a text away. Whenever you need this, I'd love to come back and help you out." And then just leave it clean. You know, you know, there was no pressure there, there was no bad taste in their mouth, and this is really the mindset shift you have to have because some business owners are just not ready yet, and it's not your fault.
+
+## 118 23:05.94-23:15.24 (9.30s)
+
+If they haven't felt that ROI, if they haven't fully believed in AI yet, then it's really hard to convince them, especially if you don't have, like, really, really strong, specific, targeted case studies.
+
+## 119 23:15.62-23:30.35 (14.73s)
+
+You know, you're not gonna convince an unconvinced buyer to suddenly just be bought in, so that's a much tougher ask than people realize. And the other thing is, if you're talking to someone that's not very excited about this stuff and you have to, like, you know, really pull them in, that's probably not even a partnership that you want to be in.
+
+## 120 23:30.46-23:48.32 (17.86s)
+
+You want to work with someone who's excited about it and is also willing to meet you halfway. So just do the whole, "Yeah, no worries, no pressure, but I'm your guy whenever you need me." All right, so to bring this whole thing home, I made this video for really one core reason, and I started to go off on these tangents here, but it was basically about the imposter syndrome
+
+## 121 23:48.52-24:02.52 (14.00s)
+
+because that's, like, one of the main patterns and issues I see in these communities. You know, really smart people, really capable people just sitting on the sidelines or struggling because they feel like frauds when they try to pitch these projects and they don't know how to price them and all this kind of stuff.
+
+## 122 24:02.74-24:15.98 (13.24s)
+
+So what I want you to take away from this is that imposter syndrome really isn't a confidence problem. It's more of a, a rungs problem, you know? If you feel like a fraud, it's probably because you're trying to sell something that you've just never done before, which, you know, you're probably going to feel like a fraud.
+
+## 123 24:16.18-24:29.54 (13.36s)
+
+But if you just kind of step down the rungs a little bit and you start with rung zero and you build some confidence there and you, you're comfortable and you're navigating in an environment that you feel a little bit more comfortable in, then you're going to be able to slowly dissolve that imposter syndrome.
+
+## 124 24:29.56-24:47.48 (17.92s)
+
+And I will say the other brutal truth is that it doesn't fully ever go away. Like, I still have imposter syndrome almost every single day, so I don't know. Hopefully that makes you guys feel a little bit more comfortable, and that's why I really think it's important to optimize for reps and experience because even if you don't directly feel it or notice it, if you're talking to a business owner and you've had 20 hours of consulting calls, you know, under
+
+## 125 24:47.52-25:01.56 (14.04s)
+
+your belt already, they will notice that. Like, they will be able to tell even if you can't tell. So just remember, everything that I walked you guys through assumes the fact that you've already built your own AI operating system, because if you haven't, then how do you expect to teach someone else to do it?
+
+## 126 25:01.70-25:13.76 (12.06s)
+
+So that free course that I dropped in my freeschool community is linked down in the description. But that's gonna do it for today, so if you guys enjoyed the video or you learned something new, then please give it a like. It helps me out a ton, and as always, I appreciate you guys making it to the end of the video and I'll see you on the next one.
+
+## 127 25:13.80-25:14.13 (0.33s)
+
+Thanks, guys

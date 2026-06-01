@@ -1,0 +1,30 @@
+# secrets
+.env
+*.env.local
+
+# deps
+node_modules/
+
+# render + media outputs (regenerate from source)
+renders/
+**/renders/
+raw-media/*
+!raw-media/.gitkeep
+
+# large source/intermediate media — never commit multi-GB files
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.m4a
+*.aac
+# ...but DO keep the small reference transcripts/EDLs that drive the pipeline
+!reference/**/*.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
