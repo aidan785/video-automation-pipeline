@@ -54,6 +54,10 @@ Every card is a **standalone HyperFrames sub-composition** — a self-contained 
 
 A card is "done" when it lints clean, previews correctly in the Studio, and has a rendered preview MP4 + poster.
 
+### Standalone vs mounted form
+
+Cards are authored as **standalone compositions** — the `data-composition-id` div sits directly in `<body>` and the card includes its own `<script src=".../gsap.min.js">`, so it previews/renders on its own. When **Agent 3 mounts** a card into a real video it wraps the card in a `<template>` and references it with `data-composition-src` (the HyperFrames sub-composition form); the parent provides GSAP and `data-duration`. The wrap is a mechanical transform Agent 3 performs at assembly time — library cards stay in standalone form.
+
 ## Tiers & purposes (the taxonomy Agent 3 queries by)
 
 - **tier1 — takeover** purposes: `thesis`, `stat`, `section`, `quote`, `overview`
