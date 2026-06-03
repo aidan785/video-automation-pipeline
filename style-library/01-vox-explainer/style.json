@@ -267,9 +267,8 @@
       "preview": { "mp4": "preview/vox-explainer.t1.section.highlight.mp4", "poster": "preview/vox-explainer.t1.section.highlight.png" }
     },
     {
-      "id": "vox-explainer.t1.stat",
-      "tier": "tier1",
-      "purpose": "stat",
+      "id": "vox-explainer.t1.stat.circle",
+      "tier": "tier1", "purpose": "stat", "treatment": "circle",
       "file": "cards/tier1/t1-stat.html",
       "slots": [
         { "name": "kicker", "type": "text", "maxChars": 24 },
@@ -278,7 +277,572 @@
         { "name": "source", "type": "text", "maxChars": 40 }
       ],
       "duration": { "min": 5, "max": 8 },
-      "preview": { "mp4": "preview/vox-explainer.t1.stat.mp4", "poster": "preview/vox-explainer.t1.stat.png" }
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.circle.mp4", "poster": "preview/vox-explainer.t1.stat.circle.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.giant-left",
+      "tier": "tier1", "purpose": "stat", "treatment": "giant-left",
+      "file": "cards/tier1/t1-stat-left.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 4, "note": "the big numeral, bleeds off-edge" },
+        { "name": "unit", "type": "text", "maxChars": 12, "note": "small trailing unit, yellow slab under it" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.giant-left.mp4", "poster": "preview/vox-explainer.t1.stat.giant-left.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.bar",
+      "tier": "tier1", "purpose": "stat", "treatment": "bar",
+      "file": "cards/tier1/t1-stat-bar.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "label riding the fill head" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "fill", "attr": "data-fill", "on": ".track", "type": "number", "range": [0, 1], "default": 0.73, "note": "bar fill fraction" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.bar.mp4", "poster": "preview/vox-explainer.t1.stat.bar.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.fraction",
+      "tier": "tier1", "purpose": "stat", "treatment": "fraction",
+      "file": "cards/tier1/t1-stat-frac.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "num", "type": "text", "maxChars": 4, "note": "numerator (ink)" },
+        { "name": "den", "type": "text", "maxChars": 4, "note": "denominator (outline ghost)" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.fraction.mp4", "poster": "preview/vox-explainer.t1.stat.fraction.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.odometer",
+      "tier": "tier1", "purpose": "stat", "treatment": "odometer",
+      "file": "cards/tier1/t1-stat-odo.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 22 },
+        { "name": "stat", "type": "text", "maxChars": 8, "note": "number string in the split-flap cells" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.odometer.mp4", "poster": "preview/vox-explainer.t1.stat.odometer.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.over-photo",
+      "tier": "tier1", "purpose": "stat", "treatment": "over-photo",
+      "file": "cards/tier1/t1-stat-photo.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 22 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = yellow marker word" },
+        { "name": "photo", "type": "image", "note": "full-bleed background; halftone placeholder" },
+        { "name": "source", "type": "text", "maxChars": 30 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.over-photo.mp4", "poster": "preview/vox-explainer.t1.stat.over-photo.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.ledger",
+      "tier": "tier1", "purpose": "stat", "treatment": "ledger",
+      "file": "cards/tier1/t1-stat-ledger.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 22, "note": "ledger title" },
+        { "name": "row1l", "type": "text", "maxChars": 22 }, { "name": "row1v", "type": "text", "maxChars": 10 },
+        { "name": "row2l", "type": "text", "maxChars": 22 }, { "name": "row2v", "type": "text", "maxChars": 10 },
+        { "name": "heroLabel", "type": "text", "maxChars": 22 },
+        { "name": "stat", "type": "text", "maxChars": 8, "note": "hero / total value" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 6, "max": 9 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.ledger.mp4", "poster": "preview/vox-explainer.t1.stat.ledger.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.dot-grid",
+      "tier": "tier1", "purpose": "stat", "treatment": "dot-grid",
+      "file": "cards/tier1/t1-stat-dots.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 4, "note": "big number beside the waffle grid" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "fill", "attr": "data-fill", "on": "#dots", "type": "number", "range": [0, 100], "default": 73, "note": "dots filled yellow out of 100" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.dot-grid.mp4", "poster": "preview/vox-explainer.t1.stat.dot-grid.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.arc-gauge",
+      "tier": "tier1", "purpose": "stat", "treatment": "arc-gauge",
+      "file": "cards/tier1/t1-stat-arc.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "center number" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "pct", "attr": "data-pct", "on": "svg", "type": "number", "range": [0, 100], "default": 73, "note": "arc sweep percent" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.arc-gauge.mp4", "poster": "preview/vox-explainer.t1.stat.arc-gauge.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.versus",
+      "tier": "tier1", "purpose": "stat", "treatment": "versus",
+      "file": "cards/tier1/t1-stat-vs.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 30 },
+        { "name": "aVal", "type": "text", "maxChars": 6 }, { "name": "aLabel", "type": "text", "maxChars": 20 },
+        { "name": "bVal", "type": "text", "maxChars": 6 }, { "name": "bLabel", "type": "text", "maxChars": 20 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.versus.mp4", "poster": "preview/vox-explainer.t1.stat.versus.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.callout",
+      "tier": "tier1", "purpose": "stat", "treatment": "callout",
+      "file": "cards/tier1/t1-stat-callout.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 4 },
+        { "name": "unit", "type": "text", "maxChars": 12, "note": "small trailing unit, yellow underline" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = italic-black emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.callout.mp4", "poster": "preview/vox-explainer.t1.stat.callout.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.stacked-bars",
+      "tier": "tier1", "purpose": "stat", "treatment": "stacked-bars",
+      "file": "cards/tier1/t1-stat-ranking.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "rowL1", "type": "text", "maxChars": 18 }, { "name": "rowV1", "type": "text", "maxChars": 6 },
+        { "name": "rowL2", "type": "text", "maxChars": 18 }, { "name": "rowV2", "type": "text", "maxChars": 6 },
+        { "name": "rowL3", "type": "text", "maxChars": 18 }, { "name": "rowV3", "type": "text", "maxChars": 6 },
+        { "name": "rowL4", "type": "text", "maxChars": 18 }, { "name": "rowV4", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 6, "max": 9 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.stacked-bars.mp4", "poster": "preview/vox-explainer.t1.stat.stacked-bars.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.column-chart",
+      "tier": "tier1", "purpose": "stat", "treatment": "column-chart",
+      "file": "cards/tier1/t1-stat-columns.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "c1", "type": "text", "maxChars": 8 }, { "name": "c2", "type": "text", "maxChars": 8 },
+        { "name": "c3", "type": "text", "maxChars": 8 }, { "name": "c4", "type": "text", "maxChars": 8 },
+        { "name": "c5", "type": "text", "maxChars": 8 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "hero value above tall column" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 6, "max": 9 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.column-chart.mp4", "poster": "preview/vox-explainer.t1.stat.column-chart.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.semi-gauge",
+      "tier": "tier1", "purpose": "stat", "treatment": "semi-gauge",
+      "file": "cards/tier1/t1-stat-semi.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "minLabel", "type": "text", "maxChars": 8 }, { "name": "maxLabel", "type": "text", "maxChars": 8 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "pct", "attr": "data-pct", "on": "svg", "type": "number", "range": [0, 100], "default": 73, "note": "half-gauge sweep percent" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.semi-gauge.mp4", "poster": "preview/vox-explainer.t1.stat.semi-gauge.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.pie-slice",
+      "tier": "tier1", "purpose": "stat", "treatment": "pie-slice",
+      "file": "cards/tier1/t1-stat-pie.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "pct", "attr": "data-pct", "on": "svg", "type": "number", "range": [0, 100], "default": 73, "note": "pie slice percent" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.pie-slice.mp4", "poster": "preview/vox-explainer.t1.stat.pie-slice.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.circle-pack",
+      "tier": "tier1", "purpose": "stat", "treatment": "circle-pack",
+      "file": "cards/tier1/t1-stat-pack.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "bigLabel", "type": "text", "maxChars": 18 }, { "name": "smallLabel", "type": "text", "maxChars": 18 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "the multiplier" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.circle-pack.mp4", "poster": "preview/vox-explainer.t1.stat.circle-pack.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.stamp",
+      "tier": "tier1", "purpose": "stat", "treatment": "stamp",
+      "file": "cards/tier1/t1-stat-stamp.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stampWord", "type": "text", "maxChars": 12, "note": "red stamp word, e.g. VERIFIED" },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.stamp.mp4", "poster": "preview/vox-explainer.t1.stat.stamp.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.receipt",
+      "tier": "tier1", "purpose": "stat", "treatment": "receipt",
+      "file": "cards/tier1/t1-stat-receipt.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "kicker-store", "type": "text", "maxChars": 18, "note": "receipt header" },
+        { "name": "item1l", "type": "text", "maxChars": 20 }, { "name": "item1v", "type": "text", "maxChars": 8 },
+        { "name": "item2l", "type": "text", "maxChars": 20 }, { "name": "item2v", "type": "text", "maxChars": 8 },
+        { "name": "stat", "type": "text", "maxChars": 8, "note": "the TOTAL" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 6, "max": 9 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.receipt.mp4", "poster": "preview/vox-explainer.t1.stat.receipt.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.price-tag",
+      "tier": "tier1", "purpose": "stat", "treatment": "price-tag",
+      "file": "cards/tier1/t1-stat-pricetag.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "the price" },
+        { "name": "unit", "type": "text", "maxChars": 8, "note": "e.g. /MO" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.price-tag.mp4", "poster": "preview/vox-explainer.t1.stat.price-tag.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.postage",
+      "tier": "tier1", "purpose": "stat", "treatment": "postage",
+      "file": "cards/tier1/t1-stat-postage.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "denomination" },
+        { "name": "country", "type": "text", "maxChars": 16 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.postage.mp4", "poster": "preview/vox-explainer.t1.stat.postage.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.calendar",
+      "tier": "tier1", "purpose": "stat", "treatment": "calendar",
+      "file": "cards/tier1/t1-stat-calendar.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "kicker-month", "type": "text", "maxChars": 12, "note": "red header band" },
+        { "name": "stat", "type": "text", "maxChars": 4, "note": "the day/figure" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.calendar.mp4", "poster": "preview/vox-explainer.t1.stat.calendar.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.quote",
+      "tier": "tier1", "purpose": "stat", "treatment": "quote",
+      "file": "cards/tier1/t1-stat-quote.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 40, "note": "attribution" },
+        { "name": "stat", "type": "text", "maxChars": 10 },
+        { "name": "label", "type": "richtext", "maxChars": 64, "note": "the quote line, <em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.quote.mp4", "poster": "preview/vox-explainer.t1.stat.quote.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.footnote",
+      "tier": "tier1", "purpose": "stat", "treatment": "footnote",
+      "file": "cards/tier1/t1-stat-footnote.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "footnote", "type": "text", "maxChars": 90, "note": "fine-print caveat" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.footnote.mp4", "poster": "preview/vox-explainer.t1.stat.footnote.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.bracket",
+      "tier": "tier1", "purpose": "stat", "treatment": "bracket",
+      "file": "cards/tier1/t1-stat-bracket.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.bracket.mp4", "poster": "preview/vox-explainer.t1.stat.bracket.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.multiplier",
+      "tier": "tier1", "purpose": "stat", "treatment": "multiplier",
+      "file": "cards/tier1/t1-stat-multiplier.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 4, "note": "the multiplier number" },
+        { "name": "baselineLabel", "type": "text", "maxChars": 28 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.multiplier.mp4", "poster": "preview/vox-explainer.t1.stat.multiplier.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.trend-delta",
+      "tier": "tier1", "purpose": "stat", "treatment": "trend-delta",
+      "file": "cards/tier1/t1-stat-trend.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "sign", "type": "text", "maxChars": 1, "note": "+ or −" },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "baseline", "type": "text", "maxChars": 30, "note": "e.g. up from 41% last year" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.trend-delta.mp4", "poster": "preview/vox-explainer.t1.stat.trend-delta.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.torn",
+      "tier": "tier1", "purpose": "stat", "treatment": "torn",
+      "file": "cards/tier1/t1-stat-torn.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.torn.mp4", "poster": "preview/vox-explainer.t1.stat.torn.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.corner-bleed",
+      "tier": "tier1", "purpose": "stat", "treatment": "corner-bleed",
+      "file": "cards/tier1/t1-stat-corner.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.corner-bleed.mp4", "poster": "preview/vox-explainer.t1.stat.corner-bleed.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.ticker-tape",
+      "tier": "tier1", "purpose": "stat", "treatment": "ticker-tape",
+      "file": "cards/tier1/t1-stat-tape.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "highlighted figure on the tape" },
+        { "name": "tape", "type": "text", "maxChars": 120, "note": "context items, ' · ' separated" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.ticker-tape.mp4", "poster": "preview/vox-explainer.t1.stat.ticker-tape.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.map",
+      "tier": "tier1", "purpose": "stat", "treatment": "map",
+      "file": "cards/tier1/t1-stat-map.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 8 },
+        { "name": "place", "type": "text", "maxChars": 16, "note": "marker label" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.map.mp4", "poster": "preview/vox-explainer.t1.stat.map.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.spotlight",
+      "tier": "tier1", "purpose": "stat", "treatment": "spotlight",
+      "file": "cards/tier1/t1-stat-spotlight.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 30 },
+        { "name": "stat", "type": "text", "maxChars": 8 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = yellow marker" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.spotlight.mp4", "poster": "preview/vox-explainer.t1.stat.spotlight.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.linear-meter",
+      "tier": "tier1", "purpose": "stat", "treatment": "linear-meter",
+      "file": "cards/tier1/t1-stat-meter.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "minLabel", "type": "text", "maxChars": 8 }, { "name": "maxLabel", "type": "text", "maxChars": 8 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "pct", "attr": "data-pct", "on": ".track", "type": "number", "range": [0, 100], "default": 73, "note": "notch position + fill percent" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.linear-meter.mp4", "poster": "preview/vox-explainer.t1.stat.linear-meter.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.heat-strip",
+      "tier": "tier1", "purpose": "stat", "treatment": "heat-strip",
+      "file": "cards/tier1/t1-stat-heat.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "lowLabel", "type": "text", "maxChars": 10 }, { "name": "highLabel", "type": "text", "maxChars": 10 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "level", "attr": "data-level", "on": "#cells", "type": "number", "range": [1, 7], "default": 5, "note": "hero severity cell" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.heat-strip.mp4", "poster": "preview/vox-explainer.t1.stat.heat-strip.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.progress-steps",
+      "tier": "tier1", "purpose": "stat", "treatment": "progress-steps",
+      "file": "cards/tier1/t1-stat-steps.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "e.g. 7/10" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "fill", "attr": "data-fill", "on": "#segments", "type": "number", "range": [0, 10], "default": 7, "note": "filled segments of 10" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.progress-steps.mp4", "poster": "preview/vox-explainer.t1.stat.progress-steps.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.isotype",
+      "tier": "tier1", "purpose": "stat", "treatment": "isotype",
+      "file": "cards/tier1/t1-stat-isotype.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 8, "note": "e.g. 7 in 10" },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "fill", "attr": "data-fill", "on": "#figures", "type": "number", "range": [0, 10], "default": 7, "note": "filled figures of 10" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.isotype.mp4", "poster": "preview/vox-explainer.t1.stat.isotype.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.timeline-point",
+      "tier": "tier1", "purpose": "stat", "treatment": "timeline-point",
+      "file": "cards/tier1/t1-stat-axis.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "axisStart", "type": "text", "maxChars": 8 }, { "name": "axisEnd", "type": "text", "maxChars": 8 },
+        { "name": "pointLabel", "type": "text", "maxChars": 12 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "knobs": [ { "name": "pos", "attr": "data-pos", "on": ".axis", "type": "number", "range": [0, 1], "default": 0.62, "note": "point position along axis" } ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.timeline-point.mp4", "poster": "preview/vox-explainer.t1.stat.timeline-point.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.rank-banner",
+      "tier": "tier1", "purpose": "stat", "treatment": "rank-banner",
+      "file": "cards/tier1/t1-stat-ribbon.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6, "note": "e.g. #1 or 1st" },
+        { "name": "bannerLabel", "type": "text", "maxChars": 24 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.rank-banner.mp4", "poster": "preview/vox-explainer.t1.stat.rank-banner.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.annotated",
+      "tier": "tier1", "purpose": "stat", "treatment": "annotated",
+      "file": "cards/tier1/t1-stat-annotated.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "note1", "type": "text", "maxChars": 22 },
+        { "name": "note2", "type": "text", "maxChars": 22 },
+        { "name": "note3", "type": "text", "maxChars": 22 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.annotated.mp4", "poster": "preview/vox-explainer.t1.stat.annotated.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.engraving",
+      "tier": "tier1", "purpose": "stat", "treatment": "engraving",
+      "file": "cards/tier1/t1-stat-engraving.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 8 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> = yellow marker" },
+        { "name": "engraving", "type": "image", "note": "duotone engraving cutout; halftone placeholder" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 6, "max": 9 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.engraving.mp4", "poster": "preview/vox-explainer.t1.stat.engraving.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.window",
+      "tier": "tier1", "purpose": "stat", "treatment": "window",
+      "file": "cards/tier1/t1-stat-window.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.window.mp4", "poster": "preview/vox-explainer.t1.stat.window.png" }
+    },
+    {
+      "id": "vox-explainer.t1.stat.magnifier",
+      "tier": "tier1", "purpose": "stat", "treatment": "magnifier",
+      "file": "cards/tier1/t1-stat-magnifier.html",
+      "slots": [
+        { "name": "kicker", "type": "text", "maxChars": 24 },
+        { "name": "stat", "type": "text", "maxChars": 6 },
+        { "name": "label", "type": "richtext", "maxChars": 56, "note": "<em> emphasis" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 5, "max": 8 },
+      "preview": { "mp4": "preview/vox-explainer.t1.stat.magnifier.mp4", "poster": "preview/vox-explainer.t1.stat.magnifier.png" }
     },
     {
       "id": "vox-explainer.t1.overview",
