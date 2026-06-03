@@ -845,9 +845,8 @@
       "preview": { "mp4": "preview/vox-explainer.t1.stat.magnifier.mp4", "poster": "preview/vox-explainer.t1.stat.magnifier.png" }
     },
     {
-      "id": "vox-explainer.t1.overview",
-      "tier": "tier1",
-      "purpose": "overview",
+      "id": "vox-explainer.t1.overview.timeline-3up",
+      "tier": "tier1", "purpose": "overview", "treatment": "timeline-3up",
       "file": "cards/tier1/t1-timeline.html",
       "slots": [
         { "name": "title", "type": "text", "maxChars": 22 },
@@ -860,7 +859,295 @@
         { "name": "yr3", "type": "text", "maxChars": 4 }, { "name": "date3", "type": "text", "maxChars": 16 }
       ],
       "duration": { "min": 7, "max": 12 },
-      "preview": { "mp4": "preview/vox-explainer.t1.overview.mp4", "poster": "preview/vox-explainer.t1.overview.png" }
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.timeline-3up.mp4", "poster": "preview/vox-explainer.t1.overview.timeline-3up.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.numbered-list",
+      "tier": "tier1", "purpose": "overview", "treatment": "numbered-list",
+      "file": "cards/tier1/t1-overview-numlist.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "intro", "type": "text", "maxChars": 80 },
+        { "name": "topic1", "type": "text", "maxChars": 26 }, { "name": "sub1", "type": "text", "maxChars": 48 },
+        { "name": "topic2", "type": "text", "maxChars": 26 }, { "name": "sub2", "type": "text", "maxChars": 48 },
+        { "name": "topic3", "type": "text", "maxChars": 26 }, { "name": "sub3", "type": "text", "maxChars": 48 },
+        { "name": "topic4", "type": "text", "maxChars": 26 }, { "name": "sub4", "type": "text", "maxChars": 48 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.numbered-list.mp4", "poster": "preview/vox-explainer.t1.overview.numbered-list.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.checklist",
+      "tier": "tier1", "purpose": "overview", "treatment": "checklist",
+      "file": "cards/tier1/t1-overview-checklist.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "item1", "type": "text", "maxChars": 48 }, { "name": "item2", "type": "text", "maxChars": 48 },
+        { "name": "item3", "type": "text", "maxChars": 48 }, { "name": "item4", "type": "text", "maxChars": 48 },
+        { "name": "item5", "type": "text", "maxChars": 48 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.checklist.mp4", "poster": "preview/vox-explainer.t1.overview.checklist.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.toc",
+      "tier": "tier1", "purpose": "overview", "treatment": "toc",
+      "file": "cards/tier1/t1-overview-toc.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 26 },
+        { "name": "item1", "type": "text", "maxChars": 28 }, { "name": "page1", "type": "text", "maxChars": 6 },
+        { "name": "item2", "type": "text", "maxChars": 28 }, { "name": "page2", "type": "text", "maxChars": 6 },
+        { "name": "item3", "type": "text", "maxChars": 28 }, { "name": "page3", "type": "text", "maxChars": 6 },
+        { "name": "item4", "type": "text", "maxChars": 28 }, { "name": "page4", "type": "text", "maxChars": 6 },
+        { "name": "item5", "type": "text", "maxChars": 28 }, { "name": "page5", "type": "text", "maxChars": 6 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.toc.mp4", "poster": "preview/vox-explainer.t1.overview.toc.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.agenda-bars",
+      "tier": "tier1", "purpose": "overview", "treatment": "agenda-bars",
+      "file": "cards/tier1/t1-overview-agenda.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "item1", "type": "text", "maxChars": 32 }, { "name": "item2", "type": "text", "maxChars": 32 },
+        { "name": "item3", "type": "text", "maxChars": 32 }, { "name": "item4", "type": "text", "maxChars": 32 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.agenda-bars.mp4", "poster": "preview/vox-explainer.t1.overview.agenda-bars.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.big-type",
+      "tier": "tier1", "purpose": "overview", "treatment": "big-type",
+      "file": "cards/tier1/t1-overview-bigtype.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 18, "note": "kicker" },
+        { "name": "line1", "type": "text", "maxChars": 16 }, { "name": "line2", "type": "text", "maxChars": 16 },
+        { "name": "line3", "type": "text", "maxChars": 16 }, { "name": "line4", "type": "text", "maxChars": 16 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.big-type.mp4", "poster": "preview/vox-explainer.t1.overview.big-type.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.quad",
+      "tier": "tier1", "purpose": "overview", "treatment": "quad",
+      "file": "cards/tier1/t1-overview-quad.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "q1", "type": "text", "maxChars": 20 }, { "name": "qs1", "type": "text", "maxChars": 44 },
+        { "name": "q2", "type": "text", "maxChars": 20 }, { "name": "qs2", "type": "text", "maxChars": 44 },
+        { "name": "q3", "type": "text", "maxChars": 20 }, { "name": "qs3", "type": "text", "maxChars": 44 },
+        { "name": "q4", "type": "text", "maxChars": 20 }, { "name": "qs4", "type": "text", "maxChars": 44 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.quad.mp4", "poster": "preview/vox-explainer.t1.overview.quad.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.grid6",
+      "tier": "tier1", "purpose": "overview", "treatment": "grid6",
+      "file": "cards/tier1/t1-overview-grid6.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "g1", "type": "text", "maxChars": 22 }, { "name": "g2", "type": "text", "maxChars": 22 },
+        { "name": "g3", "type": "text", "maxChars": 22 }, { "name": "g4", "type": "text", "maxChars": 22 },
+        { "name": "g5", "type": "text", "maxChars": 22 }, { "name": "g6", "type": "text", "maxChars": 22 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.grid6.mp4", "poster": "preview/vox-explainer.t1.overview.grid6.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.card-deck",
+      "tier": "tier1", "purpose": "overview", "treatment": "card-deck",
+      "file": "cards/tier1/t1-overview-deck.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "intro", "type": "text", "maxChars": 70 },
+        { "name": "card1", "type": "text", "maxChars": 22 }, { "name": "card2", "type": "text", "maxChars": 22 },
+        { "name": "card3", "type": "text", "maxChars": 22 }, { "name": "card4", "type": "text", "maxChars": 22 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.card-deck.mp4", "poster": "preview/vox-explainer.t1.overview.card-deck.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.filmstrip",
+      "tier": "tier1", "purpose": "overview", "treatment": "filmstrip",
+      "file": "cards/tier1/t1-overview-filmstrip.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "img1", "type": "image" }, { "name": "cap1", "type": "text", "maxChars": 18 },
+        { "name": "img2", "type": "image" }, { "name": "cap2", "type": "text", "maxChars": 18 },
+        { "name": "img3", "type": "image" }, { "name": "cap3", "type": "text", "maxChars": 18 },
+        { "name": "img4", "type": "image" }, { "name": "cap4", "type": "text", "maxChars": 18 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.filmstrip.mp4", "poster": "preview/vox-explainer.t1.overview.filmstrip.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.index-cards",
+      "tier": "tier1", "purpose": "overview", "treatment": "index-cards",
+      "file": "cards/tier1/t1-overview-indexset.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "tab1", "type": "text", "maxChars": 12 }, { "name": "card1", "type": "text", "maxChars": 22 },
+        { "name": "tab2", "type": "text", "maxChars": 12 }, { "name": "card2", "type": "text", "maxChars": 22 },
+        { "name": "tab3", "type": "text", "maxChars": 12 }, { "name": "card3", "type": "text", "maxChars": 22 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.index-cards.mp4", "poster": "preview/vox-explainer.t1.overview.index-cards.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.vertical-timeline",
+      "tier": "tier1", "purpose": "overview", "treatment": "vertical-timeline",
+      "file": "cards/tier1/t1-overview-vtimeline.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "yr1", "type": "text", "maxChars": 6 }, { "name": "ev1", "type": "text", "maxChars": 36 },
+        { "name": "yr2", "type": "text", "maxChars": 6 }, { "name": "ev2", "type": "text", "maxChars": 36 },
+        { "name": "yr3", "type": "text", "maxChars": 6 }, { "name": "ev3", "type": "text", "maxChars": 36 },
+        { "name": "yr4", "type": "text", "maxChars": 6 }, { "name": "ev4", "type": "text", "maxChars": 36 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.vertical-timeline.mp4", "poster": "preview/vox-explainer.t1.overview.vertical-timeline.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.roadmap",
+      "tier": "tier1", "purpose": "overview", "treatment": "roadmap",
+      "file": "cards/tier1/t1-overview-roadmap.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "intro", "type": "text", "maxChars": 70 },
+        { "name": "stop1", "type": "text", "maxChars": 16 }, { "name": "stop2", "type": "text", "maxChars": 16 },
+        { "name": "stop3", "type": "text", "maxChars": 16 }, { "name": "stop4", "type": "text", "maxChars": 16 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.roadmap.mp4", "poster": "preview/vox-explainer.t1.overview.roadmap.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.stepper",
+      "tier": "tier1", "purpose": "overview", "treatment": "stepper",
+      "file": "cards/tier1/t1-overview-stepper.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "intro", "type": "text", "maxChars": 70 },
+        { "name": "step1", "type": "text", "maxChars": 20 }, { "name": "step2", "type": "text", "maxChars": 20 },
+        { "name": "step3", "type": "text", "maxChars": 20 }, { "name": "step4", "type": "text", "maxChars": 20 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.stepper.mp4", "poster": "preview/vox-explainer.t1.overview.stepper.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.phases",
+      "tier": "tier1", "purpose": "overview", "treatment": "phases",
+      "file": "cards/tier1/t1-overview-phases.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "phase1", "type": "text", "maxChars": 22 }, { "name": "psub1", "type": "text", "maxChars": 60 },
+        { "name": "phase2", "type": "text", "maxChars": 22 }, { "name": "psub2", "type": "text", "maxChars": 60 },
+        { "name": "phase3", "type": "text", "maxChars": 22 }, { "name": "psub3", "type": "text", "maxChars": 60 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.phases.mp4", "poster": "preview/vox-explainer.t1.overview.phases.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.board",
+      "tier": "tier1", "purpose": "overview", "treatment": "board",
+      "file": "cards/tier1/t1-overview-board.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "row1", "type": "text", "maxChars": 30 }, { "name": "time1", "type": "text", "maxChars": 8 },
+        { "name": "row2", "type": "text", "maxChars": 30 }, { "name": "time2", "type": "text", "maxChars": 8 },
+        { "name": "row3", "type": "text", "maxChars": 30 }, { "name": "time3", "type": "text", "maxChars": 8 },
+        { "name": "row4", "type": "text", "maxChars": 30 }, { "name": "time4", "type": "text", "maxChars": 8 },
+        { "name": "row5", "type": "text", "maxChars": 30 }, { "name": "time5", "type": "text", "maxChars": 8 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.board.mp4", "poster": "preview/vox-explainer.t1.overview.board.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.compare",
+      "tier": "tier1", "purpose": "overview", "treatment": "compare",
+      "file": "cards/tier1/t1-overview-compare.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "leftTitle", "type": "text", "maxChars": 18 },
+        { "name": "l1", "type": "text", "maxChars": 30 }, { "name": "l2", "type": "text", "maxChars": 30 }, { "name": "l3", "type": "text", "maxChars": 30 },
+        { "name": "rightTitle", "type": "text", "maxChars": 18 },
+        { "name": "r1", "type": "text", "maxChars": 30 }, { "name": "r2", "type": "text", "maxChars": 30 }, { "name": "r3", "type": "text", "maxChars": 30 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.compare.mp4", "poster": "preview/vox-explainer.t1.overview.compare.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.matrix",
+      "tier": "tier1", "purpose": "overview", "treatment": "matrix",
+      "file": "cards/tier1/t1-overview-matrix.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "colA", "type": "text", "maxChars": 14 }, { "name": "colB", "type": "text", "maxChars": 14 },
+        { "name": "row1", "type": "text", "maxChars": 22 }, { "name": "row2", "type": "text", "maxChars": 22 }, { "name": "row3", "type": "text", "maxChars": 22 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.matrix.mp4", "poster": "preview/vox-explainer.t1.overview.matrix.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.map-legend",
+      "tier": "tier1", "purpose": "overview", "treatment": "map-legend",
+      "file": "cards/tier1/t1-overview-maplegend.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "leg1", "type": "text", "maxChars": 44 }, { "name": "leg2", "type": "text", "maxChars": 44 },
+        { "name": "leg3", "type": "text", "maxChars": 44 }, { "name": "leg4", "type": "text", "maxChars": 44 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.map-legend.mp4", "poster": "preview/vox-explainer.t1.overview.map-legend.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.outline",
+      "tier": "tier1", "purpose": "overview", "treatment": "outline",
+      "file": "cards/tier1/t1-overview-outline.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 24 },
+        { "name": "b1", "type": "text", "maxChars": 30 }, { "name": "sub1", "type": "text", "maxChars": 44 },
+        { "name": "b2", "type": "text", "maxChars": 30 }, { "name": "sub2", "type": "text", "maxChars": 44 },
+        { "name": "b3", "type": "text", "maxChars": 30 }, { "name": "sub3", "type": "text", "maxChars": 44 },
+        { "name": "note", "type": "text", "maxChars": 16, "note": "handwritten margin note" },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.outline.mp4", "poster": "preview/vox-explainer.t1.overview.outline.png" }
+    },
+    {
+      "id": "vox-explainer.t1.overview.dossier",
+      "tier": "tier1", "purpose": "overview", "treatment": "dossier",
+      "file": "cards/tier1/t1-overview-dossier.html",
+      "slots": [
+        { "name": "title", "type": "text", "maxChars": 18 },
+        { "name": "tab1", "type": "text", "maxChars": 10 }, { "name": "file1", "type": "text", "maxChars": 44 },
+        { "name": "tab2", "type": "text", "maxChars": 10 }, { "name": "file2", "type": "text", "maxChars": 44 },
+        { "name": "tab3", "type": "text", "maxChars": 10 }, { "name": "file3", "type": "text", "maxChars": 44 },
+        { "name": "tab4", "type": "text", "maxChars": 10 }, { "name": "file4", "type": "text", "maxChars": 44 },
+        { "name": "source", "type": "text", "maxChars": 40 }
+      ],
+      "duration": { "min": 7, "max": 11 },
+      "preview": { "mp4": "preview/vox-explainer.t1.overview.dossier.mp4", "poster": "preview/vox-explainer.t1.overview.dossier.png" }
     },
     {
       "id": "vox-explainer.t2.lower-third",
