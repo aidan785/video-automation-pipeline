@@ -2,8 +2,8 @@
 <!--
   VOX EXPLAINER · tier1 · section · CIRCLE
   Yellow circle eye-magnet behind a thin+black-italic Fraunces headline, archive
-  cutout scrap, handwritten margin note.
-  Slots: kicker, headline (<em> for italic-black emphasis), scrap (image), note, source.
+  cutout scrap.
+  Slots: kicker, headline (<em> for italic-black emphasis), scrap (image), source.
 -->
 <html>
   <head>
@@ -63,12 +63,7 @@
         font-family: var(--font-label); font-weight: var(--wt-bold);
         font-size: var(--size-tiny); letter-spacing: var(--track-wide);
         color: var(--muted); background: var(--yellow); padding: 2px 10px;
-      }
-      #t1-sec-circle .note {
-        position: absolute; left: 170px; top: 712px; z-index: 4;
-        font-family: var(--font-hand); font-size: 52px; color: var(--red); transform: rotate(-4deg);
-      }
-      #t1-sec-circle .source {
+      }      #t1-sec-circle .source {
         position: absolute; left: 150px; bottom: 96px; z-index: 3;
         font-family: var(--font-label); font-weight: var(--wt-bold);
         font-size: var(--size-tiny); letter-spacing: var(--track-wide);
@@ -84,7 +79,6 @@
         <div class="scrap" data-slot="scrap"></div>
         <div class="kicker" data-slot="kicker">CHAPTER 01</div>
         <div class="headline" data-slot="headline">How the internet <em>rewired</em> attention</div>
-        <div class="note" data-slot="note">the real story</div>
         <div class="source" data-slot="source">SOURCE · INTERNAL RESEARCH 2026</div>
       </div>
       <div class="vignette"></div>
@@ -102,7 +96,6 @@
         .from("#t1-sec-circle .circle", { autoAlpha: 0, scale: 0, transformOrigin: "50% 50%", duration: 0.45, ease: "back.out(2.2)" }, 0.3)
         .from("#t1-sec-circle .kicker", { autoAlpha: 0, x: -30, duration: 0.3, ease: "steps(4)" }, 0.45)
         .from("#t1-sec-circle .headline", { autoAlpha: 0, yPercent: 12, clipPath: "inset(0 0 100% 0)", duration: 0.5, ease: "power3.out" }, 0.55)
-        .from("#t1-sec-circle .note", { autoAlpha: 0, scale: 0.6, rotate: -18, duration: 0.35, ease: "back.out(2.6)" }, 1.0)
         .from("#t1-sec-circle .source", { autoAlpha: 0, duration: 0.3 }, 1.2);
       window.__timelines["t1-sec-circle"] = tl;
     </script>

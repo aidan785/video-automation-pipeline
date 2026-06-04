@@ -2,9 +2,9 @@
 <!--
   VOX EXPLAINER · tier1 · overview · OUTLINE / NOTES
   Lecture-notes paper: ruled lines, a heading, 3 top-level square-bullet points
-  each with one indented sub-point. One or two Caveat handwritten margin notes.
+  each with one indented sub-point.
   Bullets reveal top-to-bottom staggered.
-  Slots: title, b1, sub1, b2, sub2, b3, sub3, note, source.
+  Slots: title, b1, sub1, b2, sub2, b3, sub3, source.
 -->
 <html>
   <head>
@@ -39,13 +39,6 @@
           rgba(23,19,14,0.12) 74px
         );
       }
-
-      /* red margin rule on the left */
-      #t1-ov-outline .margin-rule {
-        position: absolute; left: 220px; top: 0; bottom: 0;
-        width: 3px; background: var(--red); opacity: 0.55; z-index: 2;
-      }
-
       /* three-hole punch — optional visual detail, non-animated */
       #t1-ov-outline .holes {
         position: absolute; left: 44px; top: 0; bottom: 0;
@@ -102,17 +95,6 @@
         font-size: 36px; line-height: 1.3; color: var(--muted);
         font-style: italic;
       }
-
-      /* handwritten margin note — Caveat, rotated, outside margin rule */
-      #t1-ov-outline .margin-note {
-        position: absolute; left: 24px; z-index: 4;
-        font-family: var(--font-hand); font-weight: var(--wt-bold);
-        font-size: 34px; color: var(--red); line-height: 1.2;
-        transform: rotate(-4deg); width: 170px; word-break: break-word;
-        text-align: center;
-      }
-      #t1-ov-outline .margin-note-1 { top: 380px; }
-
       /* source */
       #t1-ov-outline .source {
         position: absolute; left: 280px; bottom: 46px; z-index: 6;
@@ -125,7 +107,6 @@
   <body>
     <div id="t1-ov-outline" data-composition-id="t1-ov-outline" data-start="0" data-width="1920" data-height="1080">
       <div class="ruled"></div>
-      <div class="margin-rule"></div>
       <div class="holes">
         <div class="hole"></div>
         <div class="hole"></div>
@@ -166,8 +147,6 @@
         </div>
       </div>
 
-      <!-- handwritten margin note -->
-      <div class="margin-note margin-note-1" data-slot="note">see also pg. 12</div>
 
       <div class="source" data-slot="source">SOURCE · REFERENCE 2026</div>
       <div class="vignette"></div>
@@ -183,8 +162,6 @@
                 { backgroundPosition: "145px 120px", duration: 0.5, ease: "steps(4)", repeat: 11, yoyo: true }, 0);
 
       // margin rule draws down
-      tl.from("#t1-ov-outline .margin-rule",
-              { scaleY: 0, transformOrigin: "top center", duration: 0.35, ease: "power2.inOut" }, 0.1);
 
       // title snaps in
       tl.from("#t1-ov-outline .marker-title",
@@ -206,10 +183,6 @@
       tl.from("#t1-ov-outline .sub3-row",
               { autoAlpha: 0, x: -18, duration: 0.28, ease: "power2.out" }, 1.30);
 
-      // margin note scribbles in with a slight scale wobble
-      tl.from("#t1-ov-outline .margin-note-1",
-              { autoAlpha: 0, scale: 0.7, transformOrigin: "center center",
-                duration: 0.35, ease: "back.out(2.4)" }, 1.5);
 
       tl.from("#t1-ov-outline .source", { autoAlpha: 0, duration: 0.3 }, 1.75);
 

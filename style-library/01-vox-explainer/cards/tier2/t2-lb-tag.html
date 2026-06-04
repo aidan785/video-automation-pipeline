@@ -3,8 +3,8 @@
   VOX EXPLAINER · tier2 · label-tag  (overlay: luggage/price-tag callout)
   TRANSPARENT. A paper-colored rectangle with a notched top-left corner and
   a punch-hole circle, plus a short ink string line. Term printed on tag in
-  ink; detail beneath; note Caveat near. Tag swings in with rotation settle.
-  Slots: term (~22 chars), detail (~70 chars), note (~16 chars, Caveat).
+  ink; detail beneath. Tag swings in with rotation settle.
+  Slots: term (~22 chars), detail (~70 chars).
 -->
 <html>
   <head>
@@ -79,15 +79,7 @@
         font-size: var(--size-body); line-height: 1.4; color: var(--ink);
         background: rgba(239,233,220,0.92); padding: 10px 16px;
         display: inline-block; max-width: 560px;
-      }
-
-      /* Caveat note — upper-right, clearly above the tag body */
-      #t2-lb-tag .note {
-        position: absolute; left: 400px; top: -52px;
-        font-family: var(--font-hand); font-size: 42px; color: var(--red);
-        transform: rotate(6deg); white-space: nowrap;
-      }
-    </style>
+      }    </style>
   </head>
   <body>
     <div id="t2-lb-tag" data-composition-id="t2-lb-tag" data-start="0" data-width="1920" data-height="1080">
@@ -99,7 +91,6 @@
           <div class="term" data-slot="term">sunk cost fallacy</div>
         </div>
         <div class="detail" data-slot="detail">Past investment shouldn't dictate future decisions.</div>
-        <div class="note" data-slot="note">already spent!</div>
       </div>
     </div>
 
@@ -130,12 +121,6 @@
             autoAlpha: 0, y: 14,
             duration: 0.28, ease: "steps(4)"
           }, 0.62)
-        /* Note pops in beside the tag */
-        .from("#t2-lb-tag .note", {
-            autoAlpha: 0, scale: 0.5, rotate: 22,
-            duration: 0.28, ease: "back.out(2.6)",
-            transformOrigin: "left center"
-          }, 0.76)
         .set({}, {}, 7);
 
       window.__timelines["t2-lb-tag"] = tl;

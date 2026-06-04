@@ -2,8 +2,8 @@
 <!--
   VOX EXPLAINER · tier2 · label-footnote  (overlay: footnote anchor motif)
   TRANSPARENT. Lower-left anchored. Yellow asterisk dagger, ink rule line
-  above the term, Archivo footnote body below. Caveat note to the side.
-  Slots: term (~22 chars), detail (~70 chars), note (~16 chars, Caveat).
+  above the term, Archivo footnote body below.
+  Slots: term (~22 chars), detail (~70 chars).
 -->
 <html>
   <head>
@@ -64,15 +64,7 @@
         font-size: var(--size-body); line-height: 1.4; color: var(--ink);
         background: rgba(239,233,220,0.92); padding: 10px 16px;
         display: inline-block; max-width: 620px;
-      }
-
-      /* Caveat note — sits above the rule, clear of the term */
-      #t2-lb-foot .note {
-        position: absolute; left: 460px; top: -52px;
-        font-family: var(--font-hand); font-size: 40px; color: var(--red);
-        transform: rotate(4deg); white-space: nowrap;
-      }
-    </style>
+      }    </style>
   </head>
   <body>
     <div id="t2-lb-foot" data-composition-id="t2-lb-foot" data-start="0" data-width="1920" data-height="1080">
@@ -83,7 +75,6 @@
           <div class="term" data-slot="term">anchoring effect</div>
         </div>
         <div class="detail" data-slot="detail">The first number you hear skews every estimate that follows.</div>
-        <div class="note" data-slot="note">see also §4</div>
       </div>
     </div>
 
@@ -114,12 +105,6 @@
             autoAlpha: 0, y: 14,
             duration: 0.30, ease: "steps(4)"
           }, 0.56)
-        /* Caveat note rotates in with back.out */
-        .from("#t2-lb-foot .note", {
-            autoAlpha: 0, scale: 0.5, rotate: 18,
-            duration: 0.28, ease: "back.out(2.4)",
-            transformOrigin: "left center"
-          }, 0.70)
         .set({}, {}, 7);
 
       window.__timelines["t2-lb-foot"] = tl;

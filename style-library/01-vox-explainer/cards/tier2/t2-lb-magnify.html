@@ -4,9 +4,9 @@
   TRANSPARENT OVERLAY. A circular ink-ring lens with a rounded-rect handle
   (rotated, at lower-right of the circle — NOT an arrow). The `term` appears
   enlarged "through" the lens (inside the circle, ink Fraunces). `detail`
-  beneath the lens; `note` Caveat above. Lens scales in from small with
+  beneath the lens. Lens scales in from small with
   back.out; term sharpens inside.
-  Slots: term (~22 chars), detail (~70 chars), note (~16 chars).
+  Slots: term (~22 chars), detail (~70 chars).
 -->
 <html>
   <head>
@@ -24,18 +24,6 @@
       #t2-lb-mag .wrap {
         position: absolute; left: 150px; top: 310px; width: 760px;
       }
-
-      /* ── NOTE (Caveat, above lens) ───────────────────────────────────── */
-      #t2-lb-mag .note {
-        font-family: var(--font-hand);
-        font-size: 40px;
-        color: var(--red);
-        transform: rotate(-4deg);
-        display: inline-block;
-        margin-bottom: 14px;
-        transform-origin: left bottom;
-      }
-
       /* ── LENS ASSEMBLY ────────────────────────────────────────────────
          Lens = circle (ink ring) + handle (rounded rect, rotated) stacked
          in a relative container so the whole thing scales as a unit.       */
@@ -62,8 +50,8 @@
         display: flex; align-items: center; justify-content: center;
         /* slight yellow highlight rim for the "lens" effect */
         box-shadow:
-          0 0 0 3px rgba(255, 224, 26, 0.55),
-          inset 0 2px 18px rgba(255, 224, 26, 0.20);
+          0 0 0 3px rgba(55, 189, 248, 0.55),
+          inset 0 2px 18px rgba(55, 189, 248, 0.20);
       }
 
       /* Term text — enlarged, inside the lens */
@@ -114,7 +102,6 @@
          data-height="1080">
 
       <div class="wrap">
-        <div class="note" data-slot="note">zoom in here</div>
 
         <div class="lens-assy">
           <div class="lens-ring">
@@ -133,12 +120,8 @@
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
 
-      /* 1 — note swings in */
-      tl.from("#t2-lb-mag .note", {
-        autoAlpha: 0, scale: 0.5, rotate: -16,
-        transformOrigin: "left bottom",
-        duration: 0.30, ease: "back.out(2.4)"
-      }, 0.0)
+
+      tl
 
       /* 2 — whole lens assembly scales in from small (back.out like zooming) */
       .from("#t2-lb-mag .lens-assy", {

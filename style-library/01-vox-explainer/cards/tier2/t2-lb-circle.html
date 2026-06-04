@@ -2,8 +2,8 @@
 <!--
   VOX EXPLAINER · tier2 · label-circle (overlay: term with hand-drawn yellow ring)
   TRANSPARENT. A term sits left-of-center; a slightly irregular yellow ellipse ring
-  "draws on" around it (SVG stroke-dashoffset). Margin-note voice.
-  Slots: term, detail, note.
+  "draws on" around it (SVG stroke-dashoffset).
+  Slots: term, detail.
 -->
 <html>
   <head>
@@ -55,18 +55,11 @@
         font-family: var(--font-label); font-weight: var(--wt-reg);
         font-size: var(--size-body); line-height: 1.4; color: var(--ink);
         background: rgba(239,233,220,0.92); padding: 10px 16px; display: inline-block;
-      }
-      #t2-lb-circ .note {
-        position: absolute; left: 0; top: -96px;
-        font-family: var(--font-hand); font-size: 46px; color: var(--red);
-        transform: rotate(-5deg);
-      }
-    </style>
+      }    </style>
   </head>
   <body>
     <div id="t2-lb-circ" data-composition-id="t2-lb-circ" data-start="0" data-width="1920" data-height="1080">
       <div class="wrap">
-        <div class="note" data-slot="note">classic move</div>
         <div class="term-row">
           <div class="term" data-slot="term">confirmation bias</div>
           <!--
@@ -113,12 +106,6 @@
         .from("#t2-lb-circ .detail", {
           autoAlpha: 0, y: 14, duration: 0.30, ease: "steps(4)"
         }, 0.68)
-      /* 4. note pops */
-        .from("#t2-lb-circ .note", {
-          autoAlpha: 0, scale: 0.5, rotate: -20,
-          transformOrigin: "left bottom",
-          duration: 0.30, ease: "back.out(2.6)"
-        }, 0.82)
         .set({}, {}, 7);
 
       window.__timelines["t2-lb-circ"] = tl;

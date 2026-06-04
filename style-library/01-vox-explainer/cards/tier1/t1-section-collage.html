@@ -3,7 +3,7 @@
   VOX EXPLAINER · tier1 · section · COLLAGE
   Title surrounded by scattered floating cutouts, circles, scribbles on crumpled
   paper. The busy hero collage. Pieces pop in choppily from all directions.
-  Slots: kicker, line1, line2 (marker word), wordmark, scrap1/2/3 (images), note.
+  Slots: kicker, line1, line2 (marker word), wordmark, scrap1/2/3 (images).
 -->
 <html>
   <head>
@@ -53,12 +53,7 @@
         text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
       }
       #t1-sec-collage .l1 { display: block; font-weight: var(--wt-black); font-size: 128px; line-height: 0.96; letter-spacing: var(--track-tight); }
-      #t1-sec-collage .l2 { display: inline-block; margin-top: 10px; font-weight: var(--wt-black); font-style: italic; font-size: 128px; line-height: 1.0; letter-spacing: var(--track-tight); background: var(--yellow); padding: 0 22px; transform: skewX(var(--marker-skew)); }
-      #t1-sec-collage .note {
-        position: absolute; right: 250px; top: 430px; z-index: 5;
-        font-family: var(--font-hand); font-size: 56px; color: var(--red); transform: rotate(7deg);
-      }
-    </style>
+      #t1-sec-collage .l2 { display: inline-block; margin-top: 10px; font-weight: var(--wt-black); font-style: italic; font-size: 128px; line-height: 1.0; letter-spacing: var(--track-tight); background: var(--yellow); padding: 0 22px; transform: skewX(var(--marker-skew)); }    </style>
   </head>
   <body>
     <div id="t1-sec-collage" data-composition-id="t1-sec-collage" data-start="0" data-width="1920" data-height="1080">
@@ -73,7 +68,6 @@
         <span class="l1" data-slot="line1">Create better</span>
         <span class="l2" data-slot="line2">motion graphics</span>
       </div>
-      <div class="note" data-slot="note">like this</div>
       <div class="vignette"></div>
       <div class="grain"></div>
     </div>
@@ -92,7 +86,6 @@
         .from("#t1-sec-collage .l1", { autoAlpha: 0, y: 26, duration: 0.4, ease: "power3.out" }, 0.68)
         .from("#t1-sec-collage .l2", { autoAlpha: 0, scaleX: 0, transformOrigin: "left center", duration: 0.36, ease: "power3.out" }, 0.82)
         .from("#t1-sec-collage .wordmark", { autoAlpha: 0, scale: 0.5, rotate: -20, duration: 0.34, ease: "back.out(2.4)" }, 0.9)
-        .from("#t1-sec-collage .note", { autoAlpha: 0, scale: 0.5, rotate: 24, duration: 0.32, ease: "back.out(2.6)" }, 1.1)
         .set({}, {}, 6.2);
       window.__timelines["t1-sec-collage"] = tl;
     </script>

@@ -2,7 +2,7 @@
 <!--
   VOX EXPLAINER · tier1 · section · MARKERBOX
   Title words on stacked yellow highlighter marker boxes, skewed and hand-pasted.
-  Slots: kicker, line1, line2, line3 (line3 optional), note.
+  Slots: kicker, line1, line2, line3 (line3 optional).
 -->
 <html>
   <head>
@@ -43,12 +43,7 @@
       }
       #t1-sec-marker .l1 { transform: skewX(-1.6deg) rotate(-0.6deg); }
       #t1-sec-marker .l2 { transform: skewX(1.2deg) rotate(0.5deg); background: var(--ink); color: var(--paper); }
-      #t1-sec-marker .l3 { transform: skewX(-0.8deg) rotate(-0.3deg); }
-      #t1-sec-marker .note {
-        position: absolute; left: 1280px; top: 250px; z-index: 4;
-        font-family: var(--font-hand); font-size: 60px; color: var(--red); transform: rotate(6deg);
-      }
-      #t1-sec-marker .badge {
+      #t1-sec-marker .l3 { transform: skewX(-0.8deg) rotate(-0.3deg); }      #t1-sec-marker .badge {
         position: absolute; right: 150px; bottom: 130px; width: 150px; height: 150px;
         background: var(--red); color: var(--paper); border-radius: 50%;
         display: flex; align-items: center; justify-content: center; text-align: center;
@@ -66,7 +61,6 @@
         <div class="line l2" data-slot="line2">like</div>
         <div class="line l3" data-slot="line3">the pros</div>
       </div>
-      <div class="note" data-slot="note">part one</div>
       <div class="badge" data-slot="badge">EP<br/>01</div>
       <div class="vignette"></div>
       <div class="grain"></div>
@@ -83,7 +77,6 @@
         .from("#t1-sec-marker .l2", { autoAlpha: 0, scaleX: 0, transformOrigin: "left center", duration: 0.36, ease: "power3.out" }, 0.58)
         .from("#t1-sec-marker .l3", { autoAlpha: 0, scaleX: 0, transformOrigin: "left center", duration: 0.36, ease: "power3.out" }, 0.76)
         .from("#t1-sec-marker .badge", { autoAlpha: 0, scale: 0, rotate: -60, transformOrigin: "50% 50%", duration: 0.4, ease: "back.out(2.4)" }, 0.9)
-        .from("#t1-sec-marker .note", { autoAlpha: 0, scale: 0.5, rotate: 24, duration: 0.34, ease: "back.out(2.6)" }, 1.1)
         .set({}, {}, 6);
       window.__timelines["t1-sec-marker"] = tl;
     </script>

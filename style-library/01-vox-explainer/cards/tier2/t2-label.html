@@ -2,8 +2,8 @@
 <!--
   VOX EXPLAINER · tier2 · label  (overlay: annotated callout + hand-drawn arrow)
   TRANSPARENT. A highlighted term sits left-of-center; a hand-drawn arrow points
-  right toward the subject the speaker is referencing. Margin-note voice.
-  Slots: term (the highlighted word/phrase), detail (one supporting line), note (handwritten).
+  right toward the subject the speaker is referencing.
+  Slots: term (the highlighted word/phrase), detail (one supporting line).
 -->
 <html>
   <head>
@@ -27,18 +27,11 @@
         font-family: var(--font-label); font-weight: var(--wt-reg);
         font-size: var(--size-body); line-height: 1.4; color: var(--ink);
         background: rgba(239,233,220,0.92); padding: 10px 16px; display: inline-block;
-      }
-      #t2-label .note {
-        position: absolute; left: 470px; top: -40px;
-        font-family: var(--font-hand); font-size: 46px; color: var(--red);
-        transform: rotate(-6deg);
-      }
-    </style>
+      }    </style>
   </head>
   <body>
     <div id="t2-label" data-composition-id="t2-label" data-start="0" data-width="1920" data-height="1080">
       <div class="wrap">
-        <div class="note" data-slot="note">look here</div>
         <div class="term" data-slot="term">depth of focus</div>
         <div class="detail" data-slot="detail">The eye is pulled exactly where the story wants it.</div>
       </div>
@@ -50,7 +43,6 @@
       const tl = gsap.timeline({ paused: true });
       tl.from("#t2-label .term", { autoAlpha: 0, scaleX: 0, transformOrigin: "left center", duration: 0.34, ease: "power3.out" }, 0.0)
         .from("#t2-label .detail", { autoAlpha: 0, y: 16, duration: 0.32, ease: "steps(4)" }, 0.3)
-        .from("#t2-label .note", { autoAlpha: 0, scale: 0.5, rotate: -22, duration: 0.32, ease: "back.out(2.6)" }, 0.45)
         .set({}, {}, 7);
 
       window.__timelines["t2-label"] = tl;

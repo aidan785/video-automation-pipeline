@@ -3,7 +3,7 @@
   VOX EXPLAINER · tier2 · label-bracket (overlay: term framed by heavy ink brackets)
   TRANSPARENT. Two thick editorial square brackets flank the term like a dictionary
   entry. Brackets snap in from outside; term wipes in between them.
-  Slots: term, detail, note.
+  Slots: term, detail.
 -->
 <html>
   <head>
@@ -16,14 +16,6 @@
         background: transparent; font-family: var(--font-display);
       }
       #t2-lb-brkt .wrap { position: absolute; left: 150px; top: 355px; width: 820px; }
-
-      /* note above */
-      #t2-lb-brkt .note {
-        position: absolute; left: 0; top: -46px;
-        font-family: var(--font-hand); font-size: 44px; color: var(--red);
-        transform: rotate(-4deg); white-space: nowrap;
-      }
-
       /* bracket row */
       #t2-lb-brkt .bracket-row {
         display: flex; align-items: center; gap: 0;
@@ -73,7 +65,6 @@
   <body>
     <div id="t2-lb-brkt" data-composition-id="t2-lb-brkt" data-start="0" data-width="1920" data-height="1080">
       <div class="wrap">
-        <div class="note" data-slot="note">by definition</div>
         <div class="bracket-row">
           <div class="brk brk-left"></div>
           <div class="term" data-slot="term">regulatory capture</div>
@@ -101,12 +92,6 @@
           autoAlpha: 0, scaleX: 0, transformOrigin: "left center",
           duration: 0.36, ease: "back.out(1.4)"
         }, 0.22)
-      /* Note pops in above */
-        .from("#t2-lb-brkt .note", {
-          autoAlpha: 0, scale: 0.55, rotate: -18,
-          transformOrigin: "left bottom",
-          duration: 0.30, ease: "back.out(2.8)"
-        }, 0.42)
       /* Detail steps in beneath */
         .from("#t2-lb-brkt .detail", {
           autoAlpha: 0, y: 14, duration: 0.30, ease: "steps(4)"

@@ -3,8 +3,8 @@
   VOX EXPLAINER · tier2 · label-caption  (overlay: lower caption bar)
   TRANSPARENT. A cream/paper bar anchored at the bottom of the frame.
   Yellow left-edge tick. Term bold in ink + detail continuing in Archivo
-  on the same bar. Note Caveat above the bar, left-anchored.
-  Slots: term (~22 chars), detail (~70 chars), note (~16 chars, Caveat).
+  on the same bar.
+  Slots: term (~22 chars), detail (~70 chars).
 -->
 <html>
   <head>
@@ -26,14 +26,6 @@
         width: 1480px;
         transform-origin: left center;
       }
-
-      /* Caveat note floating above the bar */
-      #t2-lb-cap .note {
-        font-family: var(--font-hand); font-size: 42px; color: var(--red);
-        transform: rotate(-3deg); display: inline-block;
-        margin-left: 80px; margin-bottom: 10px;
-      }
-
       /* The bar itself */
       #t2-lb-cap .bar {
         position: relative;
@@ -87,7 +79,6 @@
   <body>
     <div id="t2-lb-cap" data-composition-id="t2-lb-cap" data-start="0" data-width="1920" data-height="1080">
       <div class="bar-wrap">
-        <div class="note" data-slot="note">worth repeating</div>
         <div class="bar">
           <div class="tick"></div>
           <div class="term" data-slot="term">Overton window</div>
@@ -130,12 +121,6 @@
             autoAlpha: 0, x: 20,
             duration: 0.30, ease: "steps(5)"
           }, 0.58)
-        /* Note floats in above */
-        .from("#t2-lb-cap .note", {
-            autoAlpha: 0, scale: 0.55, rotate: -16,
-            duration: 0.28, ease: "back.out(2.4)",
-            transformOrigin: "left bottom"
-          }, 0.70)
         .set({}, {}, 7);
 
       window.__timelines["t2-lb-cap"] = tl;

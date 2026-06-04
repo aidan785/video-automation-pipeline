@@ -3,8 +3,8 @@
   VOX EXPLAINER · tier2 · label-underline (overlay: term with growing red underline)
   TRANSPARENT. Minimal — the term sits bare in big Fraunces. A thick red underline
   grows left-to-right (scaleX from left origin) beneath the word. That growing line
-  IS the hero motion. Detail Archivo below; Caveat note above-right.
-  Slots: term, detail, note.
+  IS the hero motion. Detail Archivo below;
+  Slots: term, detail.
 -->
 <html>
   <head>
@@ -17,14 +17,6 @@
         background: transparent; font-family: var(--font-display);
       }
       #t2-lb-ul .wrap { position: absolute; left: 150px; top: 355px; width: 760px; }
-
-      /* note above-right of the term */
-      #t2-lb-ul .note {
-        position: absolute; left: 420px; top: -46px;
-        font-family: var(--font-hand); font-size: 46px; color: var(--red);
-        transform: rotate(-5deg); white-space: nowrap;
-      }
-
       /* term with paper plate — hugs content, underline sits below the plate */
       #t2-lb-ul .term {
         display: inline-block;
@@ -67,7 +59,6 @@
   <body>
     <div id="t2-lb-ul" data-composition-id="t2-lb-ul" data-start="0" data-width="1920" data-height="1080">
       <div class="wrap">
-        <div class="note" data-slot="note">pay attention</div>
         <div class="term" data-slot="term">moral hazard</div>
         <div class="underline-wrap">
           <div class="underline"></div>
@@ -91,12 +82,6 @@
           scaleX: 1, transformOrigin: "left center",
           duration: 0.46, ease: "steps(5)"
         }, 0.30)
-      /* Note pops in above-right */
-        .from("#t2-lb-ul .note", {
-          autoAlpha: 0, scale: 0.5, rotate: -18,
-          transformOrigin: "left bottom",
-          duration: 0.28, ease: "back.out(2.6)"
-        }, 0.52)
       /* Detail steps in beneath */
         .from("#t2-lb-ul .detail", {
           autoAlpha: 0, y: 14, duration: 0.30, ease: "steps(4)"

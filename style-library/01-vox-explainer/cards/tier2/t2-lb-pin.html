@@ -2,8 +2,8 @@
 <!--
   VOX EXPLAINER · tier2 · label-pin  (overlay: map-pin diamond callout)
   TRANSPARENT. A yellow rotated-square diamond pin anchors the annotation.
-  The term sits beside it in ink Fraunces; detail beneath; note Caveat above.
-  Slots: term (~22 chars), detail (~70 chars), note (~16 chars, Caveat).
+  The term sits beside it in ink Fraunces; detail beneath.
+  Slots: term (~22 chars), detail (~70 chars).
 -->
 <html>
   <head>
@@ -20,14 +20,6 @@
       #t2-lb-pin .wrap {
         position: absolute; left: 150px; top: 360px; width: 780px;
       }
-
-      /* Handwritten note above */
-      #t2-lb-pin .note {
-        font-family: var(--font-hand); font-size: 44px; color: var(--red);
-        transform: rotate(-5deg); display: inline-block; margin-bottom: 10px;
-        margin-left: 72px;
-      }
-
       /* Pin row: diamond + term side by side */
       #t2-lb-pin .pin-row {
         display: flex; align-items: center; gap: 22px;
@@ -65,7 +57,6 @@
   <body>
     <div id="t2-lb-pin" data-composition-id="t2-lb-pin" data-start="0" data-width="1920" data-height="1080">
       <div class="wrap">
-        <div class="note" data-slot="note">mark this one</div>
         <div class="pin-row">
           <div class="diamond"></div>
           <div class="term" data-slot="term">confirmation bias</div>
@@ -96,12 +87,6 @@
             autoAlpha: 0, y: 14,
             duration: 0.30, ease: "steps(4)"
           }, 0.48)
-        /* Note pops in with overshoot rotate */
-        .from("#t2-lb-pin .note", {
-            autoAlpha: 0, scale: 0.55, rotate: -20,
-            duration: 0.30, ease: "back.out(2.6)",
-            transformOrigin: "left bottom"
-          }, 0.62)
         .set({}, {}, 7);
 
       window.__timelines["t2-lb-pin"] = tl;

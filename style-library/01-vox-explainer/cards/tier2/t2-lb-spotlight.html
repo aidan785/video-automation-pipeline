@@ -4,8 +4,8 @@
   SEMI-TRANSPARENT OVERLAY. A soft radial-gradient darkening covers the frame,
   transparent at the focal point (left-center) and darkening toward edges — max
   ~0.45 alpha. The `term` sits on a small cream chip inside the lit zone;
-  `note` Caveat above; `detail` Archivo beneath.
-  Slots: term (~22 chars), detail (~70 chars), note (~16 chars handwritten).
+  `detail` Archivo beneath.
+  Slots: term (~22 chars), detail (~70 chars).
 -->
 <html>
   <head>
@@ -39,18 +39,6 @@
       #t2-lb-spot .wrap {
         position: absolute; left: 150px; top: 370px; width: 720px;
       }
-
-      /* note — Caveat handwritten, above the term */
-      #t2-lb-spot .note {
-        font-family: var(--font-hand);
-        font-size: 42px;
-        color: var(--red);
-        transform: rotate(-5deg);
-        display: inline-block;
-        margin-bottom: 8px;
-        transform-origin: left bottom;
-      }
-
       /* term — ink Fraunces on a small cream chip so it reads over the dark */
       #t2-lb-spot .term {
         font-family: var(--font-display);
@@ -90,7 +78,6 @@
       <div class="vignette"></div>
 
       <div class="wrap">
-        <div class="note" data-slot="note">pay attention</div>
         <div class="term" data-slot="term">compounding risk</div>
         <div class="detail" data-slot="detail">Small errors stack silently until the system tips — and by then it's too late to reverse course.</div>
       </div>
@@ -107,12 +94,6 @@
         autoAlpha: 0, duration: 0.55, ease: "power2.out"
       }, 0.0)
 
-      /* 2 — note swings in from upper-left */
-      .from("#t2-lb-spot .note", {
-        autoAlpha: 0, scale: 0.6, rotate: -18,
-        transformOrigin: "left bottom",
-        duration: 0.30, ease: "back.out(2.4)"
-      }, 0.38)
 
       /* 3 — term chips in with scaleX wipe */
       .from("#t2-lb-spot .term", {
