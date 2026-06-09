@@ -68,17 +68,32 @@ that will return a good asset. Write the approved plan:
 Set `assetId` to an existing `asset-library/registry.json` id to reuse a cached asset, or
 leave `null` to fetch one in step 3.
 
-### 3. Source / fetch assets — **next phase (provider adapters)**
+### 3. Source / fetch assets — **built**
 
-For each moment with `assetId: null`, query the providers and download the best match into
-`asset-library/` (writing its sidecar + caching for reuse), then set `assetId`. Prefer the
-local DB first, then providers, cheapest/cleanest-license first. (Adapters live under
-`scripts/asset-library/providers/`, one interface: `search(query,opts)` → results, `fetch(result)`
-→ `{file, sidecar}`. Built incrementally — see **Providers**.)
+For each moment with `assetId: null`, fetch the best match into `asset-library/` (writing a
+sidecar + caching for reuse), then set `assetId` to the printed id. Reuse a cached asset by
+matching the moment's query against `registry.json` first; otherwise fetch:
 
-Logos resolve instantly and keylessly (Clearbit `logo.clearbit.com/<domain>`, Simple Icons).
-Screenshots come from local **Playwright** over the `query` URL. Stock clips/photos come from
-Pexels/Pixabay/Unsplash/Openverse/Wikimedia by keyword.
+```bash
+node scripts/asset-library/fetch-asset.mjs "<query>" --type <logo|icon|screenshot|stock-photo|image|stock-video> [opts]
+#   --provider <name>   force one provider (else the type's preference order)
+#   --list              search only, print candidates, download nothing (good for review)
+#   --orientation landscape|portrait|square   ·   --width N --height N (screenshots)
+# examples:
+node scripts/asset-library/fetch-asset.mjs "Notion" --type logo
+node scripts/asset-library/fetch-asset.mjs "https://en.wikipedia.org/wiki/OpenAI" --type screenshot
+node scripts/asset-library/fetch-asset.mjs "robot factory arm" --type stock-video
+```
+
+Routing by type tries keyed stock first (Pexels/Pixabay/Unsplash — they no-op silently if the key
+is absent), then keyless CC sources (Openverse/Wikimedia); logos use Simple Icons (Clearbit fallback);
+screenshots use local Playwright (system-Chrome fallback). Each fetch writes a sidecar with `license`
++ `attribution` and rebuilds the registry. Adapters live in `scripts/asset-library/providers/`, one
+interface: `meta` + `search(query,opts) → results`. Add a provider by dropping in a new adapter +
+a line in `fetch-asset.mjs`'s `ROUTES`.
+
+Screenshot tip: pick a public, content-rich URL. Auth-gated JS SPAs (e.g. chatgpt.com) capture only
+their loading screen — screenshot the marketing site or a Wikipedia/docs page about the tool instead.
 
 ### 4. Assemble — **next phase**
 
@@ -127,5 +142,5 @@ one written automatically. The agent matches a moment's `query`/concept to asset
   the *actual* thing being discussed are higher value than generic stock.
 - Cutaways must not orphan the speaker's audio — narration always continues underneath.
 - Overlays must never cover the face; keep them to a corner / lower region.
-- **Status:** detection + the asset database are built and tested. The provider adapters (step 3) and
-  the cutaway/overlay assembler (step 4) are the next build phase.
+- **Status:** detection, the asset database, and the provider sourcing layer (step 3, all providers
+  tested live) are built. The cutaway/overlay assembler (step 4) is the next build phase.
