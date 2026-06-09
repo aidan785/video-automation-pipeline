@@ -95,13 +95,25 @@ a line in `fetch-asset.mjs`'s `ROUTES`.
 Screenshot tip: pick a public, content-rich URL. Auth-gated JS SPAs (e.g. chatgpt.com) capture only
 their loading screen — screenshot the marketing site or a Wikipedia/docs page about the tool instead.
 
-### 4. Assemble — **next phase**
+### 4. Assemble — **built**
 
-Comp each asset over the input video in HyperFrames: a **cutaway** is a full-frame `<video>`/
-`<img>` layer on a track above the talking head for its span (narration `<audio>` keeps playing);
-an **overlay** is an inset/partial layer that doesn't cover the face. Follow the Render Contract
-in CLAUDE.md (`<video>` muted, no `clip` class on video/audio, wrap-and-animate the wrapper, etc.).
-Then lint + render.
+```bash
+node .claude/skills/insert-broll/scripts/build-broll.mjs \
+  sourced-plan.json --out video-projects/<slug>/index.html
+```
+
+Copies each used asset into `<project>/assets/broll/` and builds ONE `index.html`: the clean video
+mounts as `<video muted>` (track 0) + sibling `<audio>` (track 1, narration keeps playing), then a
+layer per moment driven by one master GSAP timeline. A **cutaway** is a full-frame `<video>`/`<img>`
+over the talking head (stills get a slow deterministic Ken Burns); an **overlay** is a framed inset
+card on the right or a corner logo chip, kept clear of a centered/left face. Then lint + render
+(cached 0.4.32 CLI binary — see CLAUDE.md / the `agent3-render-pipeline` memory).
+
+Assembler rules (lint-enforced): only real `<video>` elements are timed media (`data-start/duration/
+track-index` + id, muted, no `clip` class); image/logo/card layers are a timed `<div class="clip">`
+wrapping a plain `<img>`; overlay-video uses a NON-timed wrapper around a timed `<video>` (never nest
+two `data-start` elements). Each timed element gets its own track so nothing overlaps. Layers start
+`opacity:0` and the master fades them in/out.
 
 ## Providers (the free sourcing layer)
 
@@ -142,5 +154,7 @@ one written automatically. The agent matches a moment's `query`/concept to asset
   the *actual* thing being discussed are higher value than generic stock.
 - Cutaways must not orphan the speaker's audio — narration always continues underneath.
 - Overlays must never cover the face; keep them to a corner / lower region.
-- **Status:** detection, the asset database, and the provider sourcing layer (step 3, all providers
-  tested live) are built. The cutaway/overlay assembler (step 4) is the next build phase.
+- **Status:** all four steps are built and validated — detection, asset database, provider sourcing
+  (all providers tested live), and the cutaway/overlay assembler (lint-clean; cutaway image/video +
+  overlay logo/screenshot all verified rendering on a real video). Next: validate the full agent on a
+  fresh end-to-end video, then the master `/goal edit this video` workflow chaining all four agents.
