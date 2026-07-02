@@ -1,0 +1,182 @@
+<!doctype html>
+<!--
+  AIS LIVE · tier1 · quote · MEMBER
+  A member-win pull-quote in blue smart-quotes, revealed word-by-word, with a
+  mono attribution beneath.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#000;color:var(--text);font-family:var(--font-body);}
+      .stage{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      .camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      .bg{position:absolute;inset:0;overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:var(--grid-lines);will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:var(--beam);filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;background:var(--vignette);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;background-image:var(--tex-grain);}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(var(--blue-rgb),.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;}
+
+      /* ---------- scene / content ---------- */
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:34px;padding:var(--pad-y) var(--pad-x);text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:var(--size-label);letter-spacing:var(--track-eyebrow);
+        text-transform:uppercase;color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:var(--glow-eyebrow);}
+      .eyebrow::before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor;box-shadow:0 0 12px currentColor;}
+      .eyebrow.coral{color:var(--coral);text-shadow:var(--glow-eyebrow-coral);}
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:var(--size-display);
+        line-height:1.16;letter-spacing:var(--track-tight);max-width:1600px;}
+      .ln.hero{font-size:var(--size-hero);}
+      /* background-clip:text only paints inside each word's box; italic-900 glyphs
+         overhang a tight box and render transparent (looks cut). Generous padding
+         grows the paint box + supplies the inter-word gap. */
+      .ln .wd{display:inline-block;padding:.08em .13em .24em;will-change:transform,opacity;
+        background:var(--grad-chrome);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-chrome);}
+      .ln .wd.ac{background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-blue);}
+      .ln .wd.aco{background:var(--grad-coral);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-coral);}
+
+      .sub{font-family:var(--font-body);font-weight:var(--wt-light);font-style:italic;font-size:var(--size-sub);
+        line-height:1.25;color:var(--text-dim);max-width:1440px;will-change:transform,opacity;}
+
+      /* persistent corner mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);letter-spacing:var(--track-tight);
+        line-height:.9;font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:var(--white);}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(var(--blue-rgb),.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(var(--red-rgb),.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+      .quoteln{font-size:var(--size-quote);line-height:1.28;max-width:1500px;position:relative;}
+      .quoteln::before{content:"\201C";color:var(--blue);margin-right:.04em;}
+      .quoteln::after{content:"\201D";color:var(--blue);margin-left:.04em;}
+      .attrib{font-style:normal;font-family:var(--font-mono);font-weight:var(--wt-med);font-size:var(--size-tiny);letter-spacing:.06em;color:var(--text-faint);}
+    </style>
+  </head>
+  <body>
+    <div id="ais-live.t1.quote.member" class="stage" data-composition-id="ais-live.t1.quote.member" data-start="0" data-width="1920" data-height="1080">
+      <div class="camera">
+
+      <div class="bg">
+        <div class="depth grid-ceiling"></div>
+        <div class="depth grid-floor"></div>
+        <div class="beam"></div>
+        <div class="glow blue"></div>
+        <div class="glow coral"></div>
+        <div class="vignette"></div>
+        <div class="grain"></div>
+      </div>
+      <div class="whip"></div>
+      <div class="backdrop-mark"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+        <div class="inner">
+        <div class="eyebrow" data-slot="eyebrow">MEMBER WIN</div>
+        <div class="ln quoteln" data-split data-slot="quote">In six weeks I landed two contracts worth nearly $20,000.</div>
+        <div class="sub attrib" data-slot="attrib">Amy Simpson</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DUR = 7;
+      const tl = gsap.timeline({ paused: true });
+
+      /* split any [data-slot] headline into chrome/accent word spans so the
+         word-by-word reveal works. <em> = blue accent, <em class="co"> = coral. */
+      function splitWords(el){
+        const frag = document.createDocumentFragment();
+        el.childNodes.forEach(node => {
+          const em = node.nodeType === 1 && node.tagName === "EM";
+          const coral = em && node.classList.contains("co");
+          (node.textContent || "").trim().split(/\s+/).forEach(w => {
+            if (!w) return;
+            const s = document.createElement("span");
+            s.className = "wd" + (em ? (coral ? " ac aco" : " ac") : "");
+            s.textContent = w;
+            frag.appendChild(s);
+          });
+        });
+        el.textContent = "";
+        el.appendChild(frag);
+      }
+      document.querySelectorAll(".ln[data-split]").forEach(splitWords);
+
+      /* reveal / transition helpers (all fromTo — nothing left invisible) */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.55,ease:"expo.out",stagger:.075,transformOrigin:"50% 100%"},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%"},at); }
+      function flip3d(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,rotationY:78,z:-140,transformOrigin:"50% 50%"},
+        {autoAlpha:1,rotationY:0,z:0,duration:.72,ease:"power3.out",stagger:step||.1},at); }
+      function glowIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"back.out(1.4)",stagger:step||.12},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function drift(sel, at){ tl.to(sel,{y:"-=14",duration:2.4,yoyo:true,repeat:1,ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function streak(at){
+        tl.fromTo(".whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to(".whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+      function countUp(sel, at, target, d, suffix){
+        var o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+        tl.to(o,{v:target,duration:d,ease:"power2.out",onUpdate:function(){
+          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+      }
+
+      /* AMBIENT — camera never sleeps; finite, deterministic, scaled to DUR */
+      tl.to(".camera", { scale:1.03, y:-14, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=330px", duration:DUR, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=330px", duration:DUR, ease:"none" }, 0);
+      tl.to(".beam", { rotation:8, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam", { opacity:.4, duration:DUR/6, yoyo:true, repeat:5, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",  { x:44, y:-24, duration:DUR, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral", { x:-36, y:22, duration:DUR, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:DUR/6, yoyo:true, repeat:5, ease:"sine.inOut" }, 0);
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:Math.max(1, Math.round(DUR/0.8)-1), ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:Math.max(1, Math.round(DUR/1.6)-1), ease:"none" }, 0);
+      streak(0.05);
+
+      /* ---- scene ---- */
+      drop(".eyebrow", 0.15);
+      words(".quoteln .wd", 0.30);
+      drop(".attrib", 1.05);
+      tl.set({}, {}, DUR);
+      window.__timelines["ais-live.t1.quote.member"] = tl;
+    </script>
+  </body>
+</html>

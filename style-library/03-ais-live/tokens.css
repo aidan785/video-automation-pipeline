@@ -1,0 +1,125 @@
+/* ============================================================================
+   AIS LIVE — style tokens
+   Single source of palette / type / motion / texture for every card in this
+   style. Cards reference these vars and never hardcode colors, fonts, easings,
+   glows, or textures. Tweak here, all cards update. See DESIGN.md for the why.
+
+   Aesthetic: the AIS LIVE "command-deck". Onyx canvas with a receding
+   perspective-grid tunnel (floor + ceiling), a conic light beam, blue + coral
+   glow wells, breathing vignette + film grain, and a persistent AIS/LIVE corner
+   mark with a pulsing red live-dot. Headlines are italic-900 chrome-gradient
+   type revealed word-by-word with a motion-blur whip firing on every cut. This
+   is an EVENT broadcast look — high energy, depth, kinetic — the live-stage
+   counterpart to Kallaway's calm glass and Vox's paper.
+   ============================================================================ */
+
+/* Type. The HyperFrames compiler embeds supported fonts by name at render time;
+   this @import is what makes standalone / browser preview show the right faces. */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@500;700;800&display=swap");
+
+:root {
+  /* --- palette (mirror style.json + DESIGN.md). AIS LIVE event brand. ------ */
+  --onyx:       #07121C;   /* command-deck canvas — deep blue-black */
+  --onyx-deep:  #040A11;   /* deeper well for vignette edges */
+  --white:      #FFFFFF;
+
+  --text:       #FFFFFF;                       /* primary text on dark */
+  --text-dim:   rgba(209, 220, 232, 0.85);     /* italic sub / supporting copy */
+  --text-faint: rgba(180, 214, 238, 0.72);     /* attributions, fine print */
+
+  --blue:       #37BDF8;   /* AIS hero blue — accent headlines, eyebrows, stats */
+  --coral:      #FF8A5C;   /* warm secondary accent — "Earn Day", punchlines */
+  --red-live:   #FF3B30;   /* the LIVE dot only (broadcast tally) */
+
+  /* rgb triplets for building rgba() glows without re-typing hex */
+  --blue-rgb:   55, 189, 248;
+  --coral-rgb:  255, 138, 92;
+  --red-rgb:    255, 59, 48;
+
+  /* semantic aliases the blueprint contract expects */
+  --bg:     var(--onyx);
+  --fg:     var(--text);
+  --accent: var(--blue);
+  --muted:  var(--text-dim);
+
+  /* --- typography ---------------------------------------------------------- */
+  /* Montserrat italic-900 = the voice (headlines, big numbers, the AIS/LIVE
+     mark): athletic, broadcast. Inter = body / italic sub / captions, recedes.
+     JetBrains Mono = eyebrows, kickers, units, timestamps — the "interface /
+     broadcast lower-third" voice. No serif anywhere. */
+  --font-display: "Montserrat", system-ui, -apple-system, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  /* contract aliases */
+  --font-label:   var(--font-mono);
+
+  --wt-light:  300;
+  --wt-reg:    400;
+  --wt-med:    500;
+  --wt-bold:   700;
+  --wt-black:  900;
+
+  /* video sizes for 1920x1080 (big — readable in 1.5s) */
+  --size-mega:     320px;   /* hero stat number */
+  --size-hero:     176px;   /* hero 2-word punch headline */
+  --size-display:  122px;   /* standard takeover headline */
+  --size-quote:    78px;    /* pull-quote */
+  --size-track:    60px;    /* takeaway list line */
+  --size-agenda:   50px;    /* agenda row label */
+  --size-sub:      41px;    /* italic supporting line */
+  --size-label:    27px;    /* eyebrow / kicker / unit */
+  --size-tiny:     24px;    /* attribution, timestamps, fine print */
+
+  --track-tight:   -0.03em; /* italic display tracking */
+  --track-num:     -0.04em; /* big number tracking */
+  --track-wide:    0.30em;  /* uppercase mono label tracking */
+  --track-eyebrow: 0.34em;  /* eyebrow tracking */
+
+  /* --- gradients — the "chrome" + accent text fills (background-clip:text) --- */
+  --grad-chrome:  linear-gradient(180deg, #ffffff 0%, #d4dee8 50%, #9fb3c4 100%);
+  --grad-blue:    linear-gradient(180deg, #b3ecff 0%, #37bdf8 56%, #1487c9 100%);
+  --grad-coral:   linear-gradient(180deg, #ffdcc0 0%, #ff8a5c 56%, #e5673a 100%);
+
+  /* --- glow — soft halos, never a hard ring ------------------------------- */
+  --glow-chrome:  0 0 34px rgba(255, 255, 255, 0.22);
+  --glow-blue:    0 0 48px rgba(var(--blue-rgb), 0.62);
+  --glow-coral:   0 0 48px rgba(var(--coral-rgb), 0.58);
+  --glow-num:     0 0 90px rgba(var(--blue-rgb), 0.60);
+  --glow-eyebrow: 0 0 16px rgba(var(--blue-rgb), 0.45);
+  --glow-eyebrow-coral: 0 0 16px rgba(var(--coral-rgb), 0.45);
+
+  /* --- shape --------------------------------------------------------------- */
+  --radius:      20px;      /* speaker cards, photo tiles */
+  --pad-y:       96px;      /* scene safe-area top/bottom */
+  --pad-x:       120px;     /* scene safe-area sides */
+  --card-shadow: 0 34px 80px rgba(0, 0, 0, 0.50);
+
+  /* --- motion — snappy, kinetic, broadcast. The signature. ---------------- */
+  /* Word reveals blur+rise with expo.out; numbers pop with back.out; cards
+     3D-flip; cuts fire a motion-blur whip + light streak. The camera never
+     sleeps (slow continuous dolly + breathing vignette). Never static holds. */
+  --ease-word:   expo.out;         /* word-by-word headline reveal */
+  --ease-pop:    back.out(1.6);    /* stat number / spring pops */
+  --ease-flip:   power3.out;       /* 3D speaker-card flip, slide-ins */
+  --ease-whip:   power2.in;        /* motion-blur exit */
+  --ease-drift:  sine.inOut;       /* ambient breathing / parallax drift */
+  --dur-in:   0.55s;
+  --dur-out:  0.33s;
+
+  /* --- textures (deterministic) ------------------------------------------- */
+  /* Perspective-grid lines — blue on transparent, tiled; used on the floor and
+     ceiling planes (rotated in the card) to build the tunnel. */
+  --grid-lines:
+    repeating-linear-gradient(0deg,  rgba(var(--blue-rgb), 0.16) 0 1px, transparent 1px 66px),
+    repeating-linear-gradient(90deg, rgba(var(--blue-rgb), 0.09) 0 1px, transparent 1px 66px);
+
+  /* Conic light beam raking down from the top center. */
+  --beam: conic-gradient(from 180deg at 50% 0%,
+            transparent 0deg, rgba(var(--blue-rgb), 0.14) 22deg, transparent 44deg);
+
+  /* Breathing vignette — pulls the eye to center, deepens the canvas edges. */
+  --vignette: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.62) 96%);
+
+  /* Fine film grain over everything — keeps the dark from banding. */
+  --tex-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}

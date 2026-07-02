@@ -1,0 +1,294 @@
+{
+  "$schema": "../registry.schema.json",
+  "id": "ais-live",
+  "name": "AIS LIVE",
+  "number": "03",
+  "status": "draft",
+  "inspiration": "The AIS LIVE event 'command-deck' broadcast look, distilled from the Doors-Open Loop (video-projects/ais-live-loops). Onyx canvas with a receding perspective-grid tunnel (floor + ceiling), a conic light beam, blue + coral glow wells, breathing vignette + film grain, and a persistent AIS/LIVE corner mark with a pulsing red live-dot. Chrome-gradient italic-900 headlines revealed word-by-word; a motion-blur whip + light streak fire on every cut. Reference frames in references/.",
+  "summary": "High-energy live-event / broadcast motion graphics. Use for AIS LIVE (and event-style) content — welcomes, hype taglines, big count-up stats, member-win quotes, speaker line-ups, sponsor slates, agendas. The kinetic, depth-driven stage counterpart to Kallaway's calm glass and Vox's paper.",
+  "palette": {
+    "bg": "#07121C",
+    "fg": "#FFFFFF",
+    "accent": "#37BDF8",
+    "accent2": "#FF8A5C",
+    "alert": "#FF3B30",
+    "notes": "Onyx canvas (#07121C / deep #040A11), white text, AIS blue hero (chrome/blue gradient headlines + big numbers), coral secondary accent ('Earn Day', punchlines), red used ONLY for the LIVE dot. The AIS/LIVE mark stays SOLID; only headlines get the chrome gradient. Mirrored in tokens.css."
+  },
+  "fonts": {
+    "display": "Montserrat",
+    "body": "Inter",
+    "mono": "JetBrains Mono",
+    "notes": "Montserrat italic-900 is the headline / big-number / mark voice; Inter (300-500, italic sub) is body/captions; JetBrains Mono is eyebrows/kickers/units/timestamps. No serif."
+  },
+  "motion": "Snappy + kinetic + broadcast. Headlines reveal word-by-word (blur+rise, expo.out); stat numbers pop (back.out) and count up; speaker cards 3D-flip and drift; agenda/track rows slide in from the left; the mark blooms with a blur+brightness pop. The camera never sleeps — a slow continuous dolly, grid scroll, beam rock, glow drift, and breathing vignette run under every card, with a pulsing live-dot. Deterministic (no random / no Date.now).",
+  "transitions": "A motion-blur whip + light streak fires on every cut (never a hard cut). Exits whip up + blur, or dolly-through-type on punchlines. Entrances blur-in.",
+  "cards": [
+    {
+      "id": "ais-live.t1.thesis.chrome",
+      "tier": "tier1",
+      "purpose": "thesis",
+      "treatment": "chrome",
+      "file": "cards/tier1/t1-thesis-chrome.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "headline",
+          "type": "richtext",
+          "maxChars": 70
+        },
+        {
+          "name": "sub",
+          "type": "text",
+          "maxChars": 90
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 7
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.thesis.chrome.mp4",
+        "poster": "preview/ais-live.t1.thesis.chrome.png"
+      }
+    },
+    {
+      "id": "ais-live.t1.thesis.hero",
+      "tier": "tier1",
+      "purpose": "thesis",
+      "treatment": "hero",
+      "file": "cards/tier1/t1-thesis-hero.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "headline",
+          "type": "richtext",
+          "maxChars": 34
+        }
+      ],
+      "duration": {
+        "min": 4,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.thesis.hero.mp4",
+        "poster": "preview/ais-live.t1.thesis.hero.png"
+      }
+    },
+    {
+      "id": "ais-live.t1.stat.countup",
+      "tier": "tier1",
+      "purpose": "stat",
+      "treatment": "countup",
+      "file": "cards/tier1/t1-stat-countup.html",
+      "slots": [
+        {
+          "name": "kicker",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "stat",
+          "type": "text",
+          "maxChars": 8
+        },
+        {
+          "name": "unit",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "sub",
+          "type": "text",
+          "maxChars": 60
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 7
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.stat.countup.mp4",
+        "poster": "preview/ais-live.t1.stat.countup.png"
+      }
+    },
+    {
+      "id": "ais-live.t1.quote.member",
+      "tier": "tier1",
+      "purpose": "quote",
+      "treatment": "member",
+      "file": "cards/tier1/t1-quote-member.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "quote",
+          "type": "text",
+          "maxChars": 140
+        },
+        {
+          "name": "attrib",
+          "type": "text",
+          "maxChars": 40
+        }
+      ],
+      "duration": {
+        "min": 6,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.quote.member.mp4",
+        "poster": "preview/ais-live.t1.quote.member.png"
+      }
+    },
+    {
+      "id": "ais-live.t1.section.markflash",
+      "tier": "tier1",
+      "purpose": "section",
+      "treatment": "markflash",
+      "file": "cards/tier1/t1-section-markflash.html",
+      "slots": [
+        {
+          "name": "sub",
+          "type": "text",
+          "maxChars": 40
+        }
+      ],
+      "duration": {
+        "min": 4,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.section.markflash.mp4",
+        "poster": "preview/ais-live.t1.section.markflash.png"
+      }
+    },
+    {
+      "id": "ais-live.t1.overview.agenda",
+      "tier": "tier1",
+      "purpose": "overview",
+      "treatment": "agenda",
+      "file": "cards/tier1/t1-overview-agenda.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "rows",
+          "type": "list",
+          "maxItems": 4,
+          "maxChars": 44
+        },
+        {
+          "name": "caption",
+          "type": "text",
+          "maxChars": 40
+        }
+      ],
+      "duration": {
+        "min": 6,
+        "max": 9
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.overview.agenda.mp4",
+        "poster": "preview/ais-live.t1.overview.agenda.png"
+      }
+    },
+    {
+      "id": "ais-live.t1.overview.tracks",
+      "tier": "tier1",
+      "purpose": "overview",
+      "treatment": "tracks",
+      "file": "cards/tier1/t1-overview-tracks.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "rows",
+          "type": "list",
+          "maxItems": 4,
+          "maxChars": 44
+        }
+      ],
+      "duration": {
+        "min": 6,
+        "max": 9
+      },
+      "preview": {
+        "mp4": "preview/ais-live.t1.overview.tracks.mp4",
+        "poster": "preview/ais-live.t1.overview.tracks.png"
+      }
+    },
+    {
+      "id": "ais-live.custom.speakers",
+      "tier": "custom",
+      "purpose": "speakers",
+      "treatment": "grid",
+      "file": "cards/custom/custom-speakers.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "speakers",
+          "type": "imagegrid",
+          "maxItems": 4,
+          "note": "swap each .spkcard img src for a 4:5 headshot"
+        }
+      ],
+      "duration": {
+        "min": 6,
+        "max": 9
+      },
+      "preview": {
+        "mp4": "preview/ais-live.custom.speakers.mp4",
+        "poster": "preview/ais-live.custom.speakers.png"
+      }
+    },
+    {
+      "id": "ais-live.custom.sponsor",
+      "tier": "custom",
+      "purpose": "sponsor",
+      "treatment": "logos",
+      "file": "cards/custom/custom-sponsor.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "logos",
+          "type": "imagerow",
+          "maxItems": 3,
+          "note": "swap each .logobox img src for a white-on-transparent logo; set the .logorole tier label"
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 7
+      },
+      "preview": {
+        "mp4": "preview/ais-live.custom.sponsor.mp4",
+        "poster": "preview/ais-live.custom.sponsor.png"
+      }
+    }
+  ]
+}
