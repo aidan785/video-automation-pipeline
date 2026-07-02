@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Day 1 Opening Sizzle (#2) — scaffold</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,800;1,900&family=Inter:ital,wght@0,300;0,400;0,700;1,300&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --onyx:#07121c; --blue:#37bdf8; --blue-glow:rgba(55,189,248,.55);
+    --teal:#2dd4bf; --orange:#ff9025; --red:#ff3b30;
+    --fd:"Montserrat",sans-serif; --fb:"Inter",sans-serif; --fm:"Roboto Mono",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+    color:#fff;font-family:var(--fb);isolation:isolate;}
+
+  #bg{position:absolute;inset:0;}
+  #bg .grid{position:absolute;inset:-48px;
+    background-image:linear-gradient(rgba(55,189,248,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(55,189,248,.06) 1px,transparent 1px);background-size:26px 26px;}
+  #bg .glow{position:absolute;top:-200px;left:50%;width:860px;height:860px;margin-left:-430px;
+    border-radius:50%;background:var(--blue);filter:blur(160px);opacity:.20;}
+  #bg .glow2{position:absolute;bottom:-260px;left:-140px;width:660px;height:660px;
+    border-radius:50%;background:var(--teal);filter:blur(180px);opacity:.10;}
+  #bg .vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 42%,rgba(0,0,0,.62) 95%);}
+  #bg .grain{position:absolute;inset:0;opacity:.045;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  #markbug{position:absolute;right:64px;bottom:52px;font-family:var(--fd);font-style:italic;font-weight:900;
+    font-size:38px;letter-spacing:-.03em;display:inline-flex;align-items:baseline;opacity:.9;z-index:6;}
+  #markbug .ais{color:#fff;} #markbug .gap{width:.18em;}
+  #markbug .live{color:var(--blue);position:relative;text-shadow:0 0 24px var(--blue-glow);}
+  #markbug .dot{position:absolute;top:.12em;right:-.5em;width:.16em;height:.16em;border-radius:50%;
+    background:var(--red);box-shadow:0 0 10px var(--red);}
+
+  .scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;padding:120px 140px;gap:30px;}
+  .eyebrow{font-family:var(--fm);font-weight:700;font-size:23px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--blue);display:inline-flex;align-items:center;gap:12px;}
+  .eyebrow::before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor;box-shadow:0 0 10px currentColor;}
+  .ln{font-family:var(--fd);font-style:italic;font-weight:900;line-height:.94;letter-spacing:-.038em;
+    color:#fff;max-width:1640px;clip-path:inset(0 0 0 0);overflow:hidden;}
+  .ln .ac{color:var(--blue);} .ln .aco{color:var(--orange);}
+  .ln.h0{font-size:160px;} .ln.h1{font-size:128px;} .ln.h2{font-size:96px;}
+  .sub{font-family:var(--fb);font-weight:300;font-style:italic;font-size:38px;color:rgba(209,220,232,.85);max-width:1280px;}
+  .r{opacity:0;}
+
+  /* Nate talking-head centerpiece slot */
+  .slot{position:relative;border:2px dashed rgba(55,189,248,.5);border-radius:22px;background:
+    repeating-linear-gradient(135deg,rgba(55,189,248,.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden;}
+  .slot .film{font-size:44px;filter:grayscale(1) opacity(.7);}
+  .slot .badge{font-family:var(--fm);font-weight:700;font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);}
+  .slot .desc{font-family:var(--fb);font-weight:300;font-style:italic;font-size:23px;color:rgba(209,220,232,.72);max-width:78%;text-align:center;}
+  .slot.hero{width:1180px;height:620px;}
+  /* lower-third name card (reusable speaker template) */
+  .lt{position:absolute;left:44px;bottom:40px;background:rgba(6,12,20,.72);backdrop-filter:blur(8px);
+    border:1px solid rgba(55,189,248,.3);border-left:4px solid var(--blue);border-radius:12px;padding:16px 26px;text-align:left;}
+  .lt .n{font-family:var(--fd);font-style:italic;font-weight:900;font-size:44px;letter-spacing:-.02em;}
+  .lt .role{font-family:var(--fm);font-weight:700;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-top:4px;}
+
+  /* speaker montage row */
+  .strip{display:flex;gap:26px;justify-content:center;}
+  .spk{width:330px;height:440px;position:relative;border-radius:16px;overflow:hidden;
+    border:2px dashed rgba(55,189,248,.5);
+    background:repeating-linear-gradient(135deg,rgba(55,189,248,.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
+    display:flex;align-items:center;justify-content:center;}
+  .spk .film{font-size:30px;filter:grayscale(1) opacity(.6);}
+  .spk .nm{position:absolute;left:0;right:0;bottom:0;padding:16px;text-align:left;
+    background:linear-gradient(0deg,rgba(4,10,16,.94),transparent);}
+  .spk .nm b{font-family:var(--fd);font-style:italic;font-weight:900;font-size:30px;display:block;}
+  .spk .nm span{font-family:var(--fm);font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);}
+
+  /* b-roll montage tiles */
+  .broll{display:flex;gap:22px;justify-content:center;}
+  .btile{width:400px;height:300px;position:relative;border-radius:14px;overflow:hidden;
+    border:2px dashed rgba(45,212,191,.5);
+    background:repeating-linear-gradient(135deg,rgba(45,212,191,.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
+    display:flex;align-items:center;justify-content:center;}
+  .btile .lab{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;text-align:left;
+    font-family:var(--fm);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:#fff;
+    background:linear-gradient(0deg,rgba(4,10,16,.92),transparent);}
+  .btile .lab b{color:var(--teal);}
+
+  /* big promise */
+  .promise{font-family:var(--fd);font-style:italic;font-weight:900;font-size:150px;line-height:.9;letter-spacing:-.04em;display:flex;gap:.35em;justify-content:center;flex-wrap:wrap;}
+  .promise span{display:inline-block;}
+  .promise .w1{color:#fff;} .promise .w2{color:var(--blue);} .promise .w3{color:var(--orange);}
+
+  /* finale mark */
+  .bigmark{font-family:var(--fd);font-style:italic;font-weight:900;font-size:280px;letter-spacing:-.04em;
+    display:inline-flex;align-items:baseline;line-height:.85;}
+  .bigmark .ais{color:#fff;} .bigmark .gap{width:.16em;}
+  .bigmark .live{color:var(--blue);position:relative;text-shadow:0 0 70px var(--blue-glow);}
+  .bigmark .dot{position:absolute;top:.14em;right:-.42em;width:.14em;height:.14em;border-radius:50%;background:var(--red);box-shadow:0 0 24px var(--red);}
+  .datebar{font-family:var(--fm);font-weight:700;font-size:34px;letter-spacing:.24em;text-transform:uppercase;color:#fff;}
+  .datebar b{color:var(--blue);}
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="ais-live-day1-sizzle" data-start="0" data-width="1920" data-height="1080">
+
+  <div id="bg" class="clip" data-start="0" data-duration="72" data-track-index="0">
+    <div class="grid"></div><div class="glow"></div><div class="glow2"></div><div class="vig"></div><div class="grain"></div>
+  </div>
+  <div id="markbug" class="clip" data-start="8" data-duration="48" data-track-index="1">
+    <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+  </div>
+
+  <!-- S1 · COLD OPEN (0-9) -->
+  <section id="s1" class="scene clip" data-start="0" data-duration="9" data-track-index="10">
+    <div class="eyebrow r" id="s1eye">AIS LIVE · July 11–12</div>
+    <div class="ln h1" id="s1a">You've been building <span class="ac">alone.</span></div>
+    <div class="ln h0" id="s1b">Not this <span class="ac">weekend.</span></div>
+  </section>
+
+  <!-- S2 · NATE TO CAMERA (9-19) -->
+  <section id="s2" class="scene clip" data-start="9" data-duration="10" data-track-index="11">
+    <div class="slot hero r" id="s2slot">
+      <div class="film">🎬</div><div class="badge">Talking head · Nate (centerpiece)</div>
+      <div class="desc">under-10s direct-to-camera line — the emotional anchor of the open</div>
+      <div class="lt r" id="s2lt"><div class="n">Nate Herk</div><div class="role">AIS LIVE · Host</div></div>
+    </div>
+  </section>
+
+  <!-- S3 · THE SPEAKERS (19-31) -->
+  <section id="s3" class="scene clip" data-start="19" data-duration="12" data-track-index="12">
+    <div class="eyebrow r" id="s3eye">The lineup · 14 speakers</div>
+    <div class="strip">
+      <div class="spk r" id="s3a"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
+      <div class="spk r" id="s3b"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
+      <div class="spk r" id="s3c"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
+      <div class="spk r" id="s3d"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
+    </div>
+    <div class="sub r" id="s3sub">name-card lower-third = reusable template, one per speaker</div>
+  </section>
+
+  <!-- S4 · REAL BUILDS / COMMUNITY (31-44) -->
+  <section id="s4" class="scene clip" data-start="31" data-duration="13" data-track-index="13">
+    <div class="eyebrow r" id="s4eye" style="color:var(--teal)">Real builds · real people</div>
+    <div class="broll">
+      <div class="btile r" id="s4a"><div class="lab"><b>B-ROLL</b> live builds</div></div>
+      <div class="btile r" id="s4b"><div class="lab"><b>B-ROLL</b> the room</div></div>
+      <div class="btile r" id="s4c"><div class="lab"><b>B-ROLL</b> community wins</div></div>
+    </div>
+    <div class="sub r" id="s4sub">shot list: builds shipping, hands on keyboards, faces reacting, the crowd</div>
+  </section>
+
+  <!-- S5 · THE PROMISE (44-56) -->
+  <section id="s5" class="scene clip" data-start="44" data-duration="12" data-track-index="14">
+    <div class="eyebrow r" id="s5eye">Two days</div>
+    <div class="promise"><span class="w1 r" id="p1">Build.</span><span class="w2 r" id="p2">Ship.</span><span class="w3 r" id="p3">Get paid.</span></div>
+  </section>
+
+  <!-- S6 · TITLE FINALE (56-72) -->
+  <section id="s6" class="scene clip" data-start="56" data-duration="16" data-track-index="15">
+    <div class="bigmark r" id="s6mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span></div>
+    <div class="datebar r" id="s6date">July 11–12 · <b>Build Day → Earn Day</b></div>
+    <div class="sub r" id="s6sub">Doors open 8:30am. This is where builders become earners.</div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  const tl = gsap.timeline({paused:true});
+  const D = 72;
+  function rev(sel,t,from,d,e){
+    tl.fromTo(sel, Object.assign({autoAlpha:0}, from||{}),
+      {autoAlpha:1,x:0,y:0,scale:1, duration:d||.55, ease:e||"power2.out"}, t);
+  }
+  function wipe(sel,t,d,e){ tl.fromTo(sel,{clipPath:"inset(0 100% 0 0)"},{clipPath:"inset(0 0% 0 0)",duration:d||.62,ease:e||"power3.out"}, t); }
+  function out(sel,t){ tl.to(sel,{autoAlpha:0,duration:.35,ease:"power2.in"}, t); }
+
+  tl.to("#markbug .dot",{scale:1.15,duration:.8,yoyo:true,repeat:Math.round(D/0.8)-1,ease:"sine.inOut",transformOrigin:"50% 50%"},0);
+  tl.to("#bg .grid",{backgroundPosition:"26px 26px",duration:D,ease:"none"},0);
+
+  // S1 cold open
+  rev("#s1eye",0.3,{y:-12}); wipe("#s1a",0.7); wipe("#s1b",1.7,.7); out("#s1",8.4);
+  // S2 nate
+  rev("#s2slot",9.3,{scale:.95,y:24},.55,"back.out(1.3)");
+  rev("#s2lt",10.6,{x:-30}); out("#s2",18.4);
+  // S3 speakers
+  rev("#s3eye",19.2,{y:-12});
+  rev("#s3a",19.6,{y:30,scale:.93},.48,"back.out(1.3)");
+  rev("#s3b",19.9,{y:30,scale:.93},.48,"back.out(1.3)");
+  rev("#s3c",20.2,{y:30,scale:.93},.48,"back.out(1.3)");
+  rev("#s3d",20.5,{y:30,scale:.93},.48,"back.out(1.3)");
+  rev("#s3sub",21.4,{y:12}); out("#s3",30.4);
+  // S4 broll
+  rev("#s4eye",31.2,{y:-12});
+  rev("#s4a",31.6,{y:26,scale:.94},.48,"back.out(1.3)");
+  rev("#s4b",31.9,{y:26,scale:.94},.48,"back.out(1.3)");
+  rev("#s4c",32.2,{y:26,scale:.94},.48,"back.out(1.3)");
+  rev("#s4sub",33.1,{y:12}); out("#s4",43.4);
+  // S5 promise (word by word)
+  rev("#s5eye",44.2,{y:-12});
+  rev("#p1",44.7,{y:30,scale:.7},.45,"back.out(2)");
+  rev("#p2",45.25,{y:30,scale:.7},.45,"back.out(2)");
+  rev("#p3",45.85,{y:30,scale:.7},.5,"back.out(2.2)");
+  out("#s5",55.4);
+  // S6 finale
+  rev("#s6mark",56.4,{scale:.78},.7,"back.out(1.4)");
+  rev("#s6date",57.6,{y:18});
+  rev("#s6sub",58.4,{y:14});
+
+  tl.set({}, {}, D);
+  window.__timelines = window.__timelines || {};
+  window.__timelines["ais-live-day1-sizzle"] = tl;
+})();
+</script>
+</body>
+</html>
