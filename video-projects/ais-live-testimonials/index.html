@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — testimonials — testi-building</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c; --blue: #37bdf8; --coral: #ff8a5c; --yellow: #f5d82a; --red-live: #ff3b30;
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--onyx); isolation: isolate; }
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- background ---------- */
+      .grid { position: absolute; inset: -48px;
+        background-image:
+          linear-gradient(rgba(55,189,248,0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55,189,248,0.06) 1px, transparent 1px);
+        background-size: 24px 24px; }
+      .glow { position: absolute; top: -180px; left: 50%; width: 820px; height: 820px; margin-left: -410px;
+        border-radius: 50%; background: #37bdf8; filter: blur(155px); opacity: 0.16; }
+      .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 44%, rgba(0,0,0,0.58) 96%); }
+
+      /* ---------- persistent chrome ---------- */
+      .chrome { position: absolute; inset: 0; }
+      .eyebrow-fixed { position: absolute; top: 62px; left: 112px; font-family: var(--font-mono); font-weight: 700;
+        font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(209,220,232,0.62);
+        display: inline-flex; align-items: center; gap: 13px; }
+      .eyebrow-fixed::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: #37bdf8; box-shadow: 0 0 10px #37bdf8; }
+      .markbug { position: absolute; top: 52px; right: 108px; }
+      .botbar { position: absolute; bottom: 56px; left: 112px; right: 108px; display: flex; justify-content: flex-end; align-items: center; }
+      .tagchip { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase;
+        color: rgba(209,220,232,0.7); border: 1px solid rgba(255,255,255,0.16); border-radius: 6px; padding: 8px 14px; }
+      .phchip { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase;
+        color: rgba(255,138,92,0.92); border: 1px dashed rgba(255,138,92,0.42); border-radius: 6px; padding: 8px 14px; }
+
+      /* ---------- panels ---------- */
+      .panel { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+      .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 34px; padding: 200px 240px; }
+      .i-kicker { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: #37bdf8;
+        display: inline-flex; align-items: center; gap: 13px; }
+      .i-kicker::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: #37bdf8; box-shadow: 0 0 10px #37bdf8; }
+      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 0.95;
+        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.05em 0.18em; }
+      .i-line em, .o-line em { font-style: italic; color: #37bdf8; }
+      .i-sub, .o-sub { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 40px; line-height: 1.22;
+        letter-spacing: -0.01em; color: rgba(209,220,232,0.82); max-width: 1180px; }
+      .o-cta { font-family: var(--font-mono); font-weight: 700; font-size: 22px; letter-spacing: 0.26em; text-transform: uppercase;
+        color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; padding: 14px 26px; }
+
+      /* ---------- member slide ---------- */
+      .mslide { display: flex; align-items: center; gap: 78px; padding: 178px 112px 156px; }
+      .vid { position: relative; width: 900px; height: 506px; flex: 0 0 auto; border-radius: 26px; overflow: hidden;
+        background: linear-gradient(158deg, #0c1724, #0a131c);
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 34px 90px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 70px -14px var(--a); }
+      .vgrid { position: absolute; inset: 0;
+        background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+        background-size: 44px 44px; }
+      .scan { position: absolute; left: 0; right: 0; top: 0; height: 150px; opacity: 0; mix-blend-mode: screen;
+        background: linear-gradient(180deg, transparent, var(--a), transparent); }
+      .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+      .play { position: relative; width: 118px; height: 118px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.55);
+        display: flex; align-items: center; justify-content: center; }
+      .play::after { content: ""; width: 0; height: 0; border-left: 34px solid #fff; border-top: 21px solid transparent; border-bottom: 21px solid transparent; margin-left: 9px; }
+      .pulse { position: absolute; inset: -3px; border-radius: 50%; border: 2px solid var(--a); opacity: 0.5; }
+      .phlabel { font-family: var(--font-mono); font-weight: 700; font-size: 22px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.82); }
+      .phsub { font-family: var(--font-mono); font-weight: 600; font-size: 15px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+
+      /* real footage layer — positioned over the .vid box, animated via wrapper */
+      .realvid { position: absolute; border-radius: 26px; overflow: hidden; z-index: 3;
+        opacity: 0; visibility: hidden;
+        border: 1px solid rgba(255,255,255,0.10);
+        box-shadow: 0 34px 90px rgba(0,0,0,0.5), 0 0 70px -14px var(--a); }
+      .realvid video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+      .mtext { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+      .tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
+        font-weight: 700; font-size: 19px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--a); }
+      .tag::before { content: ""; width: 28px; height: 2px; background: var(--a); }
+      .name { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 86px; line-height: 0.96; letter-spacing: -0.03em; color: #fff; }
+      .role { font-family: var(--font-mono); font-weight: 600; font-size: 19px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(209,220,232,0.72); }
+      .quote { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 42px; line-height: 1.2; letter-spacing: -0.015em; color: #fff; max-width: 720px; }
+      .qm { color: var(--a); font-weight: 900; margin-right: 2px; }
+      .built { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
+        font-weight: 700; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
+        border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 11px 20px; }
+      .built::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--a); box-shadow: 0 0 10px var(--a); }
+      .metricwrap { display: flex; align-items: baseline; gap: 20px; }
+      .metric { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 116px; line-height: 0.9; letter-spacing: -0.04em; color: var(--a); text-shadow: 0 0 60px rgba(255,255,255,0.12); }
+      .msub { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(209,220,232,0.74); }
+      .nameline { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+      .name-sm { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 42px; letter-spacing: -0.02em; color: #fff; }
+      .counter { margin-top: 6px; font-family: var(--font-mono); font-weight: 700; font-size: 18px; letter-spacing: 0.3em; color: rgba(209,220,232,0.55); }
+
+      /* ---------- AIS LIVE mark (solid, brand §3.2) ---------- */
+      .mark { font-family: var(--font-display); font-style: italic; font-weight: 900; letter-spacing: -0.03em; line-height: 0.9;
+        font-size: 52px; display: inline-flex; align-items: baseline; position: relative; }
+      .mark .ais { color: #fff; }
+      .mark .gap { display: inline-block; width: 0.08em; }
+      .live { position: relative; color: var(--blue); text-shadow: 0 0 60px rgba(55,189,248,0.55); padding-right: 0.28em; }
+      .dot { position: absolute; top: 0.08em; left: 100%; margin-left: 0.06em; width: 0.16em; height: 0.16em; border-radius: 50%;
+        background: var(--red-live); box-shadow: 0 0 0.7em #ff3b30, 0 0 0.25em #ff3b30; }
+      .ring { position: absolute; top: 0.08em; left: 100%; margin-left: 0.06em; width: 0.16em; height: 0.16em; border-radius: 50%;
+        background: rgba(255,59,48,0.55); opacity: 0; transform-origin: 50% 50%; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="cmp-testi-building" data-start="0" data-duration="63.92" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="63.92" data-track-index="0">
+        <div class="grid"></div>
+        <div class="glow"></div>
+        <div class="vignette"></div>
+      </div>
+      <div id="scene" class="clip" data-start="0" data-duration="63.92" data-track-index="1">
+        <div class="chrome">
+          <div class="eyebrow-fixed">Real Members · Real Builds</div>
+          <div class="markbug"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+          <div class="botbar"><span class="tagchip">AIS LIVE · July 11–12, 2026</span></div>
+        </div>
+
+        <div id="intro" class="panel center">
+          <div class="i-kicker">Community Testimonials</div>
+          <div class="i-line">What They <em>Built</em></div>
+          <div class="i-sub">AIS members on what shifted the moment they stopped watching and started shipping.</div>
+        </div>
+
+      <div id="m0" class="panel mslide" style="--a:#37bdf8">
+        <div class="vid">
+          <div class="vgrid"></div>
+          <div class="scan"></div>
+          
+        </div>
+        <div class="mtext">
+          <div class="tag">Building</div>
+          <div class="name">Frank Priboy</div>
+          <div class="role">AIS+ Member</div>
+          <div class="quote"><span class="qm">&ldquo;</span>I have yet to find something I can't build.&rdquo;</div>
+          <div class="built">Built — AI consultancy</div>
+          <div class="counter">01 / 05</div>
+        </div>
+      </div>
+      <div id="m1" class="panel mslide" style="--a:#ff8a5c">
+        <div class="vid">
+          <div class="vgrid"></div>
+          <div class="scan"></div>
+          
+        </div>
+        <div class="mtext">
+          <div class="tag">Building</div>
+          <div class="name">Amy Simpson</div>
+          <div class="role">AIS+ Member</div>
+          <div class="quote"><span class="qm">&ldquo;</span>I swore I'd never design a website. Now it comes naturally to me.&rdquo;</div>
+          <div class="built">Built — Websites & code</div>
+          <div class="counter">02 / 05</div>
+        </div>
+      </div>
+      <div id="m2" class="panel mslide" style="--a:#f5d82a">
+        <div class="vid">
+          <div class="vgrid"></div>
+          <div class="scan"></div>
+          
+        </div>
+        <div class="mtext">
+          <div class="tag">Building</div>
+          <div class="name">Balaji Iyer</div>
+          <div class="role">AIS+ Member</div>
+          <div class="quote"><span class="qm">&ldquo;</span>I spun up a workflow I never thought I would build.&rdquo;</div>
+          <div class="built">Built — Self-hosted n8n system</div>
+          <div class="counter">03 / 05</div>
+        </div>
+      </div>
+      <div id="m3" class="panel mslide" style="--a:#37bdf8">
+        <div class="vid">
+          <div class="vgrid"></div>
+          <div class="scan"></div>
+          
+        </div>
+        <div class="mtext">
+          <div class="tag">Building</div>
+          <div class="name">Miguel Zamarripa</div>
+          <div class="role">AIS+ Member</div>
+          <div class="quote"><span class="qm">&ldquo;</span>I deliver real projects now, not just nice demos.&rdquo;</div>
+          <div class="built">Built — Real client projects</div>
+          <div class="counter">04 / 05</div>
+        </div>
+      </div>
+      <div id="m4" class="panel mslide" style="--a:#ff8a5c">
+        <div class="vid">
+          <div class="vgrid"></div>
+          <div class="scan"></div>
+          
+        </div>
+        <div class="mtext">
+          <div class="tag">Building</div>
+          <div class="name">Griffin Maklansky</div>
+          <div class="role">AIS+ Member</div>
+          <div class="quote"><span class="qm">&ldquo;</span>A month and a half from laid off to hired.&rdquo;</div>
+          <div class="built">Built — First app + a job</div>
+          <div class="counter">05 / 05</div>
+        </div>
+      </div>
+
+        <div id="outro" class="panel center">
+          <div class="o-line">You're <em>Next</em>.</div>
+          <div class="o-sub">Real projects start inside AIS+.</div>
+          <div class="o-cta">AIS LIVE · July 11–12, 2026</div>
+        </div>
+      </div>
+      <div id="rv-m0" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video id="vid-m0" src="assets/builder/frank-priboy.mp4" muted playsinline data-has-audio="false" data-start="6.4" data-duration="15.32" data-track-index="10"></video>
+      </div>
+      <audio id="aud-m0" src="assets/builder/frank-priboy.mp4" data-start="6.4" data-duration="14.72" data-track-index="20" data-volume="1"></audio>
+      <div id="rv-m1" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
+        <video id="vid-m1" src="assets/builder/amy-simpson.mp4" muted playsinline data-has-audio="false" data-start="21.12" data-duration="11.70" data-track-index="11"></video>
+      </div>
+      <audio id="aud-m1" src="assets/builder/amy-simpson.mp4" data-start="21.12" data-duration="11.10" data-track-index="21" data-volume="1"></audio>
+      <div id="rv-m2" class="realvid" style="--a:#f5d82a; left:112px; top:298px; width:900px; height:506px;">
+        <video id="vid-m2" src="assets/builder/balaji-iyer.mp4" muted playsinline data-has-audio="false" data-start="32.22" data-duration="10.84" data-track-index="12"></video>
+      </div>
+      <audio id="aud-m2" src="assets/builder/balaji-iyer.mp4" data-start="32.22" data-duration="10.24" data-track-index="22" data-volume="1"></audio>
+      <div id="rv-m3" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video id="vid-m3" src="assets/builder/miguel-zamarripa.mp4" muted playsinline data-has-audio="false" data-start="42.46" data-duration="9.56" data-track-index="13"></video>
+      </div>
+      <audio id="aud-m3" src="assets/builder/miguel-zamarripa.mp4" data-start="42.46" data-duration="8.96" data-track-index="23" data-volume="1"></audio>
+      <div id="rv-m4" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
+        <video id="vid-m4" src="assets/builder/griffin-maklansky.mp4" muted playsinline data-has-audio="false" data-start="51.42" data-duration="5.10" data-track-index="14"></video>
+      </div>
+      <audio id="aud-m4" src="assets/builder/griffin-maklansky.mp4" data-start="51.42" data-duration="4.50" data-track-index="24" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 63.92;
+      const tl = gsap.timeline({ paused: true });
+
+      /* AMBIENT — phase-locked to the 1.6s brand beat */
+      tl.to(".dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 79, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+      tl.fromTo(".ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
+        { autoAlpha: 0.5, scale: 1, duration: 0.001 },
+        { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
+        { autoAlpha: 0, scale: 1, duration: 0.6 }
+      ], repeat: 39, ease: "none" }, 0);
+      tl.to(".glow", { x: 40, y: -22, duration: 31.96, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
+
+      /* INTRO */
+      tl.set("#intro", { autoAlpha: 1 }, 0);
+      tl.set("#intro .i-kicker", { autoAlpha: 0, y: -14 }, 0);
+      tl.to ("#intro .i-kicker", { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.2);
+      tl.set("#intro .i-line", { clipPath: "inset(0 100% 0 0)" }, 0);
+      tl.to ("#intro .i-line", { clipPath: "inset(0 0% 0 0)", duration: 0.72, ease: "power3.out" }, 0.4);
+      tl.set("#intro .i-sub", { autoAlpha: 0, y: 16 }, 0);
+      tl.to ("#intro .i-sub", { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.9);
+
+      /* MEMBER 1 @ 6.4s (14.72s) — crossfade from #intro */
+      tl.to ("#intro", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 6.4);
+      tl.set("#m0", { autoAlpha: 1 }, 6.4);
+      tl.set("#m0 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 6.4);
+      tl.to ("#m0 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 6.45);
+      tl.set("#m0 .mtext > *", { autoAlpha: 0, x: 36 }, 6.4);
+      tl.to ("#m0 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 6.70);
+      tl.set("#rv-m0", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m0", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 6.45);
+      tl.to ("#rv-m0", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 21.12);
+
+      /* MEMBER 2 @ 21.12s (11.1s) — crossfade from #m0 */
+      tl.to ("#m0", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 21.12);
+      tl.set("#m1", { autoAlpha: 1 }, 21.12);
+      tl.set("#m1 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 21.12);
+      tl.to ("#m1 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 21.17);
+      tl.set("#m1 .mtext > *", { autoAlpha: 0, x: 36 }, 21.12);
+      tl.to ("#m1 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 21.42);
+      tl.set("#rv-m1", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m1", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 21.17);
+      tl.to ("#rv-m1", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 32.22);
+
+      /* MEMBER 3 @ 32.22s (10.24s) — crossfade from #m1 */
+      tl.to ("#m1", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 32.22);
+      tl.set("#m2", { autoAlpha: 1 }, 32.22);
+      tl.set("#m2 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 32.22);
+      tl.to ("#m2 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 32.27);
+      tl.set("#m2 .mtext > *", { autoAlpha: 0, x: 36 }, 32.22);
+      tl.to ("#m2 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 32.52);
+      tl.set("#rv-m2", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m2", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 32.27);
+      tl.to ("#rv-m2", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 42.46);
+
+      /* MEMBER 4 @ 42.46s (8.96s) — crossfade from #m2 */
+      tl.to ("#m2", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 42.46);
+      tl.set("#m3", { autoAlpha: 1 }, 42.46);
+      tl.set("#m3 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 42.46);
+      tl.to ("#m3 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 42.51);
+      tl.set("#m3 .mtext > *", { autoAlpha: 0, x: 36 }, 42.46);
+      tl.to ("#m3 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 42.76);
+      tl.set("#rv-m3", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m3", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 42.51);
+      tl.to ("#rv-m3", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 51.42);
+
+      /* MEMBER 5 @ 51.42s (4.5s) — crossfade from #m3 */
+      tl.to ("#m3", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 51.42);
+      tl.set("#m4", { autoAlpha: 1 }, 51.42);
+      tl.set("#m4 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 51.42);
+      tl.to ("#m4 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 51.47);
+      tl.set("#m4 .mtext > *", { autoAlpha: 0, x: 36 }, 51.42);
+      tl.to ("#m4 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 51.72);
+      tl.set("#rv-m4", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m4", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 51.47);
+      tl.to ("#rv-m4", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 55.92);
+
+      /* OUTRO @ 55.92s */
+      tl.to ("#m4", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 55.92);
+      tl.set("#outro", { autoAlpha: 1 }, 55.92);
+      tl.set("#outro .o-line", { clipPath: "inset(0 100% 0 0)" }, 55.92);
+      tl.to ("#outro .o-line", { clipPath: "inset(0 0% 0 0)", duration: 0.72, ease: "power3.out" }, 56.12);
+      tl.set("#outro .o-sub", { autoAlpha: 0, y: 16 }, 55.92);
+      tl.to ("#outro .o-sub", { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 56.62);
+      tl.set("#outro .o-cta", { autoAlpha: 0, scale: 0.9 }, 55.92);
+      tl.to ("#outro .o-cta", { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(1.4)" }, 56.87);
+
+      tl.set({}, {}, D); // Law #11 — fill the slot
+      window.__timelines["cmp-testi-building"] = tl;
+    </script>
+  </body>
+</html>

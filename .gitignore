@@ -23,6 +23,13 @@ raw-media/*
 # ...but DO keep the small reference transcripts/EDLs that drive the pipeline
 !reference/**/*.json
 
+# HyperFrames studio caches + QA/verification artifacts (regenerable)
+**/.thumbnails/
+**/.waveform-cache/
+**/snapshots/
+**/assets/**/frames/
+**/assets/**/verify/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db
