@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AIS Live — Brand & Partnership Sheet (Live Dot)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<template id="__bundler_thumbnail" data-bg-color="#07121c">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#07121c"/>
+    <text x="600" y="440" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="900" font-style="italic" font-size="220" letter-spacing="-10">
+      <tspan fill="#ffffff">AIS</tspan><tspan fill="#37bdf8">LIVE</tspan>
+    </text>
+    <text x="600" y="530" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="28" letter-spacing="8" fill="#37bdf8">BRAND ∙ PARTNERSHIP SHEET</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --onyx: #07121c;
+    --charcoal: #0a0e14;
+    --black: #000;
+    --blue: #37bdf8;
+    --yellow: #f5d82a;
+    --coral: #FF8A5C;
+    --cream: #f0eee9;
+    --paper: #ffffff;
+    --ink: #2a251f;
+    --ink-soft: rgba(60,50,40,0.72);
+    --rule: rgba(60,50,40,0.18);
+  }
+
+  /* ── Print sizing: US Letter, 0.5" margins inside; we draw page chrome ourselves ── */
+  html, body { margin: 0; padding: 0; background: #2a251f; font-family: 'Inter', sans-serif; color: var(--ink); }
+  * { box-sizing: border-box; }
+
+  /* Each .sheet renders as one US-letter page (8.5 × 11 in) */
+  .sheet {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 0.4in auto;
+    background: var(--cream);
+    position: relative;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  }
+  .sheet.dark { background: var(--onyx); color: #fff; }
+  .sheet.charcoal { background: var(--charcoal); color: #fff; }
+  .sheet:last-child { page-break-after: auto; }
+
+  /* Inner padding — leaves room for header/footer chrome */
+  .pad { padding: 0.6in 0.6in 0.5in; }
+  .pad-tight { padding: 0.5in 0.6in 0.5in; }
+
+  /* Page chrome — top eyebrow rule + bottom footer */
+  .chrome-top {
+    position: absolute; top: 0.35in; left: 0.6in; right: 0.6in;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase; font-weight: 700;
+    color: rgba(60,50,40,0.55);
+    padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+  }
+  .dark .chrome-top, .charcoal .chrome-top { color: rgba(209,220,232,0.55); border-bottom-color: rgba(255,255,255,0.1); }
+  .chrome-top .mark-mini { display: inline-flex; align-items: baseline; font-family: 'Montserrat', sans-serif; font-style: italic; font-weight: 900; font-size: 11px; letter-spacing: -0.02em; color: var(--ink); }
+  .dark .chrome-top .mark-mini, .charcoal .chrome-top .mark-mini { color: #fff; }
+  .chrome-top .mark-mini b { color: var(--blue); font-weight: 900; margin-left: 3px; }
+
+  .chrome-bot {
+    position: absolute; bottom: 0.35in; left: 0.6in; right: 0.6in;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase; font-weight: 700;
+    color: rgba(60,50,40,0.45);
+    padding-top: 8px; border-top: 1px solid var(--rule);
+  }
+  .dark .chrome-bot, .charcoal .chrome-bot { color: rgba(209,220,232,0.45); border-top-color: rgba(255,255,255,0.1); }
+
+  /* Type */
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; font-weight: 700; color: var(--blue); display: inline-flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content:''; width:6px;height:6px;border-radius:3px;background:currentColor;}
+
+  h1.page-title { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; letter-spacing: -0.035em; line-height: 0.92; margin: 14px 0 0; color: var(--ink); }
+  .dark h1.page-title, .charcoal h1.page-title { color: #fff; }
+  h1.page-title em { font-style: italic; color: var(--blue); }
+
+  h2.sec-title { font-family: 'Montserrat', sans-serif; font-size: 30px; font-weight: 900; letter-spacing: -0.035em; line-height: 1; margin: 18px 0 6px; color: var(--ink); }
+  .dark h2.sec-title, .charcoal h2.sec-title { color: #fff; }
+  h2.sec-title em { font-style: italic; color: var(--blue); }
+
+  .deck { font-family: 'Inter', sans-serif; font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); max-width: 6in; }
+  .dark .deck, .charcoal .deck { color: rgba(209,220,232,0.78); }
+  .deck b { color: var(--ink); font-weight: 700; }
+  .dark .deck b, .charcoal .deck b { color: #fff; }
+
+  /* Spec table */
+  .spec { display: grid; grid-template-columns: 1.2in 1fr; gap: 4px 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; line-height: 1.55; padding: 14px 16px; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; }
+  .dark .spec, .charcoal .spec { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); color: #d1dce8; }
+  .spec .k { color: rgba(60,50,40,0.55); letter-spacing: 0.18em; text-transform: uppercase; font-size: 8.5px; padding-top: 2px; }
+  .dark .spec .k, .charcoal .spec .k { color: rgba(209,220,232,0.5); }
+  .spec .v { color: var(--ink); }
+  .dark .spec .v, .charcoal .spec .v { color: #fff; }
+  .spec .v b { color: #000; font-weight: 700; }
+  .dark .spec .v b, .charcoal .spec .v b { color: #fff; }
+
+  .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: 6px; border: 1px solid rgba(0,0,0,0.08); }
+
+  /* Print rules */
+  @page { size: letter; margin: 0; }
+
+  /* Force backgrounds + colors to render in print on every browser */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @media print {
+    html, body { background: #fff; }
+    .sheet { margin: 0; box-shadow: none; page-break-after: always; }
+    .sheet:last-child { page-break-after: auto; }
+    .no-print { display: none !important; }
+
+    /* Chrome's PDF rasterizer renders filter: blur() as opaque rectangles.
+       Kill all blurs + backdrop-filters in print so the dark grounds stay flat
+       and the floating "transparent blocks" disappear. */
+    * {
+      filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      text-shadow: none !important;
+    }
+
+    /* Hide decorative radial-glow blobs in print — without their blur they
+       render as hard-edged colored discs in PDF. */
+    [data-print-hide] { display: none !important; }
+
+    /* Hide command-deck grid overlays — Chrome's PDF rasterizer turns the
+       1px-line repeating gradients into visible bars/boxes. */
+    [data-cmdbg] { display: none !important; }
+
+    /* Box shadows print as hard rectangles in PDF — flatten them. */
+    .sheet * { box-shadow: none !important; }
+  }
+
+  /* On-screen: little "PDF this page" hint */
+  .print-hint {
+    position: fixed; bottom: 16px; right: 16px; z-index: 1000;
+    background: var(--onyx); color: var(--cream);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+    padding: 12px 14px; border-radius: 4px; border: 1px solid var(--blue);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    cursor: pointer;
+  }
+  .print-hint:hover { background: var(--blue); color: var(--onyx); }
+  .print-hint .kbd { display: inline-block; padding: 2px 6px; border: 1px solid currentColor; border-radius: 2px; font-size: 9px; margin-left: 6px; opacity: 0.8; }
+
+  /* Live / on-air pulsating dot */
+  @keyframes live-pulse {
+    0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(255,59,48,0.7), 0 0 8px rgba(255,59,48,0.8); }
+    50%      { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255,59,48,0),   0 0 12px rgba(255,59,48,1); }
+  }
+  .live-dot { animation: live-pulse 1.6s ease-in-out infinite; }
+  @media print { .live-dot { animation: none !important; } }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<button class="print-hint no-print" onclick="window.print()">Save as PDF <span class="kbd">⌘P</span></button>
+<div id="root"></div>
+
+<script type="text/babel" src="brand-sheet-livedot.jsx"></script>
+</body>
+</html>

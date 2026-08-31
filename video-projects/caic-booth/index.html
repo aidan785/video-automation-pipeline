@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>CAIC — Booth Video (motion graphics)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="assets/caic/seal.js"></script>
+    <style>
+      :root {
+        /* CAIC design system tokens (caic-design-system/tokens) */
+        --bg: #07121c;
+        --panel: #0d2031;
+        --bg-raised: rgba(13, 32, 49, 0.6);
+        --fg: #ffffff;
+        --fg-muted: #d1dce8;
+        --fg-quiet: rgba(209, 220, 232, 0.62);
+        --accent: #37bdf8;
+        --accent-10: rgba(55, 189, 248, 0.1);
+        --accent-15: rgba(55, 189, 248, 0.15);
+        --accent-30: rgba(55, 189, 248, 0.3);
+        --accent-deep: #19506c;
+        --border-soft: rgba(55, 189, 248, 0.3);
+        --font-sans: "Montserrat", sans-serif;
+        --font-mono: "Roboto Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); isolation: isolate; }
+      #root > .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- the command deck (background world) ---------- */
+      .bg { z-index: 0; }
+      .bg .radial { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% -10%, var(--accent-deep) 0%, var(--bg) 58%, var(--bg) 100%); }
+      .bg .grid {
+        position: absolute; inset: 0;
+        background-image:
+          linear-gradient(rgba(55, 189, 248, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55, 189, 248, 0.08) 1px, transparent 1px);
+        background-size: 48px 48px;
+        -webkit-mask-image: radial-gradient(ellipse at 32% 42%, black 0%, transparent 72%);
+                mask-image: radial-gradient(ellipse at 32% 42%, black 0%, transparent 72%);
+      }
+      .bg .edge-glow { position: absolute; inset: 0; box-shadow: inset 0 0 110px 0 var(--accent-10); border: 1px solid var(--accent-10); }
+
+      /* ---------- Nate — zoomed, pinned right, feathered left edge ---------- */
+      .video-slot { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 1; overflow: hidden; pointer-events: none;
+        -webkit-mask-image: linear-gradient(90deg, transparent 170px, black 660px);
+                mask-image: linear-gradient(90deg, transparent 170px, black 660px);
+      }
+      /* outer places the frame; video sizing/offset baked from Aidan's Studio placement (no animated zoom) */
+      .video-pos { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+        transform: translate(157px, -63px) scale(1.3); transform-origin: 0 0; }
+      .video-push { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 902px 356px; }
+      .video-push video { display: block; width: 1417px; height: 1417px; object-fit: cover; transform: translate(99px, 44px); }
+
+      /* seats the left column: navy scrim over the video's left region */
+      .scrim { z-index: 2; background: linear-gradient(90deg, rgba(7, 18, 28, 0.97) 0%, rgba(7, 18, 28, 0.82) 28%, rgba(7, 18, 28, 0.35) 48%, transparent 66%); }
+
+      .vignette { z-index: 4; background: radial-gradient(ellipse at 55% 45%, transparent 55%, rgba(2, 8, 14, 0.5) 100%); }
+
+      /* ---------- left column beats ---------- */
+      .beat { z-index: 3; }
+      .beat .col { position: absolute; left: 120px; top: 0; width: 720px; height: 1080px;
+        display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+
+      .eyebrow { font-family: var(--font-mono); font-size: 27px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
+      .eyebrow .chars { display: inline; white-space: nowrap; }
+      .eyebrow .ch { display: inline-block; }
+
+      .headline { font-family: var(--font-sans); font-weight: 500; font-size: 74px; line-height: 1.16; letter-spacing: -0.01em; color: var(--fg); margin-top: 28px; }
+      .headline em { font-style: italic; font-weight: 700; color: var(--accent); text-shadow: 0 0 50px rgba(55, 189, 248, 0.5); }
+
+      .caption { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--fg-muted); margin-top: 34px; }
+
+      /* mono checklist / numbered module rows */
+      .rows { display: flex; flex-direction: column; gap: 22px; margin-top: 38px; }
+      .row { display: flex; align-items: center; gap: 22px;
+        padding: 26px 30px; width: 700px;
+        background: var(--bg-raised); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border: 2px solid var(--border-soft); border-radius: 16px; }
+      .row .tick { flex-shrink: 0; width: 36px; height: 36px; color: var(--accent); }
+      .row .num { flex-shrink: 0; font-family: var(--font-mono); font-size: 30px; font-weight: 500; color: rgba(209, 220, 232, 0.55); }
+      .row .txt { font-family: var(--font-mono); font-size: 28px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-muted); }
+      .row .txt strong { color: var(--fg); font-weight: 700; }
+
+      /* knowing vs proving cards */
+      .duel { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
+      .duel-card { width: 700px; padding: 32px 36px; border-radius: 20px;
+        background: var(--bg-raised); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border: 2px solid rgba(255, 255, 255, 0.18); }
+      .duel-card .label { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-quiet); }
+      .duel-card .line { font-family: var(--font-sans); font-weight: 500; font-size: 40px; color: var(--fg-muted); margin-top: 12px; }
+      .duel-card.win { border: 2px solid var(--accent); box-shadow: 0 0 40px -10px var(--accent-30); }
+      .duel-card.win .label { color: var(--accent); }
+      .duel-card.win .line { color: var(--fg); }
+
+      /* program reveal */
+      .designation { font-family: var(--font-mono); font-size: 29px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-top: 30px; white-space: nowrap; }
+      .wordmark { font-family: var(--font-sans); font-style: italic; font-weight: 700; font-size: 190px; line-height: 1; letter-spacing: -0.02em; color: var(--fg); text-shadow: 0 0 80px rgba(55, 189, 248, 0.5); margin-top: 10px; margin-left: -6px; padding-right: 40px; }
+      .attribution { font-family: var(--font-mono); font-size: 21px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-muted); margin-top: 26px; }
+
+      /* stats */
+      .stat-value { font-family: var(--font-sans); font-weight: 700; font-size: 210px; line-height: 0.95; letter-spacing: -0.02em; color: var(--fg); text-shadow: 0 0 30px rgba(55, 189, 248, 0.6); }
+      .stat-label { font-family: var(--font-mono); font-size: 27px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-top: 16px; }
+      .stat-sub { display: flex; align-items: baseline; gap: 26px; margin-top: 52px; }
+      .stat-sub .v { font-family: var(--font-sans); font-weight: 700; font-size: 96px; letter-spacing: -0.01em; color: var(--fg); text-shadow: 0 0 30px rgba(55, 189, 248, 0.4); }
+      .stat-sub .l { font-family: var(--font-mono); font-size: 25px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-muted); }
+
+      /* CTA pill */
+      .cta-pill { display: inline-block; padding: 36px 68px;
+        background: linear-gradient(180deg, var(--accent-15) 0%, rgba(13, 32, 49, 0.8) 100%);
+        border: 2px solid var(--accent); border-radius: 9999px;
+        box-shadow: 0 0 20px rgba(55, 189, 248, 0.3);
+        font-family: var(--font-sans); font-size: 38px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fg); }
+
+      /* closing seal */
+      .seal-wrap { position: relative; width: 380px; height: 380px; }
+      .seal-halo { position: absolute; inset: -60px; border-radius: 50%; background: radial-gradient(circle, rgba(55, 189, 248, 0.22) 0%, transparent 65%); }
+      .close-headline { font-family: var(--font-sans); font-weight: 500; font-size: 62px; line-height: 1.2; color: var(--fg); margin-top: 48px; }
+      .close-headline em { font-style: italic; font-weight: 700; color: var(--accent); text-shadow: 0 0 50px rgba(55, 189, 248, 0.5); }
+      .close-caption { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--fg-muted); margin-top: 30px; }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-45uc" id="root" data-composition-id="caic-booth" data-start="0" data-width="1920" data-height="1080">
+      <!-- background world -->
+      <div data-hf-id="hf-42hh" class="clip bg" id="bg-deck" data-start="0" data-duration="56.6" data-track-index="2">
+        <div data-hf-id="hf-n489" class="radial"></div>
+        <div data-hf-id="hf-kxq8" class="grid"></div>
+        <div data-hf-id="hf-21ej" class="edge-glow"></div>
+      </div>
+
+      <!-- Nate: zoomed 1.3x, pinned right, feathered into the deck (wrappers are non-timed containers) -->
+      <div data-hf-id="hf-coqq" class="video-slot">
+        <div data-hf-id="hf-7mbc" class="video-pos">
+          <div data-hf-id="hf-ijed" class="video-push" id="vidPush">
+            <video data-hf-id="hf-ujqq" id="nate-video" src="assets/clip.mp4" data-start="0" data-duration="56.6" data-track-index="0" muted></video>
+          </div>
+        </div>
+      </div>
+      <audio data-hf-id="hf-wz93" id="nate-audio" src="assets/clip.mp4" data-start="0" data-duration="56.6" data-track-index="1"></audio>
+
+      <div data-hf-id="hf-cdg6" class="clip scrim" id="left-scrim" data-start="0" data-duration="56.6" data-track-index="3"></div>
+
+      <!-- B1 · hook -->
+      <div data-hf-id="hf-cp1m" class="clip beat" id="b1" data-anchor="every company wants an AI person" data-start="0.3" data-duration="5.9" data-track-index="4">
+        <div data-hf-id="hf-7s1i" class="col">
+          <div data-hf-id="hf-l4ie" class="eyebrow" id="b1-eyebrow">THE PROBLEM</div>
+          <div data-hf-id="hf-rvo8" class="headline" id="b1-headline">Every Company<br data-hf-id="hf-x5px">Wants an <em data-hf-id="hf-xrfi">AI&#160;Person</em></div>
+          <div data-hf-id="hf-5ub4" class="caption" id="b1-caption">Finding one is the hard part</div>
+        </div>
+      </div>
+
+      <!-- B2 · you already qualify -->
+      <div data-hf-id="hf-om61" class="clip beat" id="b2" data-anchor="watched the tutorials" data-start="6.4" data-duration="5.1" data-track-index="4">
+        <div data-hf-id="hf-vmze" class="col">
+          <div data-hf-id="hf-alyw" class="eyebrow" id="b2-eyebrow">YOU ALREADY</div>
+          <div data-hf-id="hf-hnc7" class="rows">
+            <div data-hf-id="hf-kc13" class="row b2-row"><svg data-hf-id="hf-zzet" class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-pcwq" d="M20 6L9 17l-5-5" /></svg><div data-hf-id="hf-sxg5" class="txt">Watched the <strong data-hf-id="hf-guql">tutorials</strong></div></div>
+            <div data-hf-id="hf-we4n" class="row b2-row"><svg data-hf-id="hf-0i8p" class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-95fi" d="M20 6L9 17l-5-5" /></svg><div data-hf-id="hf-qu08" class="txt">Know the <strong data-hf-id="hf-27v9">tools</strong></div></div>
+            <div data-hf-id="hf-vztm" class="row b2-row"><svg data-hf-id="hf-1p5s" class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-9jqj" d="M20 6L9 17l-5-5" /></svg><div data-hf-id="hf-taj4" class="txt">Can do the <strong data-hf-id="hf-u633">work</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B3 · knowing vs proving -->
+      <div data-hf-id="hf-7hur" class="clip beat" id="b3" data-anchor="but knowing about AI" data-start="11.6" data-duration="8.0" data-track-index="4">
+        <div data-hf-id="hf-w1af" class="col">
+          <div data-hf-id="hf-od6e" class="duel">
+            <div data-hf-id="hf-75k6" class="duel-card" id="b3-know"><div data-hf-id="hf-ndsr" class="label">Knowing AI</div><div data-hf-id="hf-2lbk" class="line">You can do the work</div></div>
+            <div data-hf-id="hf-egs9" class="duel-card win" id="b3-prove"><div data-hf-id="hf-l7b0" class="label">Proving It</div><div data-hf-id="hf-vq2a" class="line">Companies pay for proof</div></div>
+          </div>
+          <div data-hf-id="hf-ipeo" class="caption" id="b3-caption">Two completely different things</div>
+        </div>
+      </div>
+
+      <!-- B4 · the reveal -->
+      <div data-hf-id="hf-nnre" class="clip beat" id="b4" data-anchor="Certified AI Consultant" data-start="19.8" data-duration="5.8" data-track-index="4">
+        <div data-hf-id="hf-wflg" class="col">
+          <div data-hf-id="hf-3bdz" class="eyebrow" id="b4-eyebrow">OUR UPCOMING PROGRAM</div>
+          <div data-hf-id="hf-fi3r" class="designation" id="b4-designation">Certified AI Consultant</div>
+          <div data-hf-id="hf-zzcr" class="wordmark" id="b4-wordmark">CAIC</div>
+          <div data-hf-id="hf-53kv" class="attribution" id="b4-attribution">An AIS Certified Credential</div>
+        </div>
+      </div>
+
+      <!-- B5 · graded consulting work -->
+      <div data-hf-id="hf-meiw" class="clip beat" id="b5" data-anchor="graded consulting work" data-start="25.8" data-duration="7.2" data-track-index="4">
+        <div data-hf-id="hf-wtwh" class="col">
+          <div data-hf-id="hf-1ldu" class="eyebrow" id="b5-eyebrow">GRADED CONSULTING WORK</div>
+          <div data-hf-id="hf-y39j" class="rows">
+            <div data-hf-id="hf-xbx0" class="row b5-row"><div data-hf-id="hf-rokj" class="num">01</div><div data-hf-id="hf-gjak" class="txt">Find the real <strong data-hf-id="hf-l5gp">problem</strong></div></div>
+            <div data-hf-id="hf-bt7w" class="row b5-row"><div data-hf-id="hf-ra9i" class="num">02</div><div data-hf-id="hf-7w58" class="txt">Architect the <strong data-hf-id="hf-0th9">fix</strong></div></div>
+            <div data-hf-id="hf-amat" class="row b5-row"><div data-hf-id="hf-qvyh" class="num">03</div><div data-hf-id="hf-t8u9" class="txt">Prove the <strong data-hf-id="hf-r8bo">ROI</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B6 · deliverables -->
+      <div data-hf-id="hf-tbex" class="clip beat" id="b6" data-anchor="walk out of this program" data-start="33.15" data-duration="4.95" data-track-index="4">
+        <div data-hf-id="hf-x87i" class="col">
+          <div data-hf-id="hf-t9tr" class="eyebrow" id="b6-eyebrow">YOU WALK OUT WITH</div>
+          <div data-hf-id="hf-xoyi" class="rows">
+            <div data-hf-id="hf-hn7n" class="row b6-row"><svg data-hf-id="hf-1aur" class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-9y1k" d="M20 6L9 17l-5-5" /></svg><div data-hf-id="hf-ylmr" class="txt">A <strong data-hf-id="hf-bgci">portfolio</strong></div></div>
+            <div data-hf-id="hf-8pj7" class="row b6-row"><svg data-hf-id="hf-zbbm" class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-75wd" d="M20 6L9 17l-5-5" /></svg><div data-hf-id="hf-rcff" class="txt">The <strong data-hf-id="hf-foon">credential</strong></div></div>
+            <div data-hf-id="hf-8b86" class="row b6-row"><svg data-hf-id="hf-yx0l" class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-hf-id="hf-7k7e" d="M20 6L9 17l-5-5" /></svg><div data-hf-id="hf-8da6" class="txt">A letter of <strong data-hf-id="hf-gl71">recommendation</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B7 · cohort 001 -->
+      <div data-hf-id="hf-0tox" class="clip beat" id="b7" data-anchor="first CAIC cohort" data-start="38.3" data-duration="5.7" data-track-index="4">
+        <div data-hf-id="hf-xmij" class="col">
+          <div data-hf-id="hf-eyxq" class="eyebrow" id="b7-eyebrow">COHORT 001</div>
+          <div data-hf-id="hf-a2ic" id="b7-seats" style="margin-top: 44px;">
+            <div data-hf-id="hf-rhcz" class="stat-value">50</div>
+            <div data-hf-id="hf-hqcn" class="stat-label">Seats only</div>
+          </div>
+          <div data-hf-id="hf-j2y5" class="stat-sub" id="b7-date">
+            <div data-hf-id="hf-3oqe" class="v">AUG 18</div>
+            <div data-hf-id="hf-5z4v" class="l">Kickoff</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B8 · CTA -->
+      <div data-hf-id="hf-0ivf" class="clip beat" id="b8" data-anchor="join the wait list" data-start="44.2" data-duration="3.9" data-track-index="4">
+        <div data-hf-id="hf-y0tk" class="col">
+          <div data-hf-id="hf-evii" class="cta-pill" id="b8-pill">Join the Wait List</div>
+          <div data-hf-id="hf-q6eo" class="caption" id="b8-caption">Tap the button below</div>
+        </div>
+      </div>
+
+      <!-- B9 · close: the seal -->
+      <div data-hf-id="hf-ou20" class="clip beat" id="b9" data-anchor="this is the program that I wish I had" data-start="48.3" data-duration="8.3" data-track-index="4">
+        <div data-hf-id="hf-yf4l" class="col">
+          <div data-hf-id="hf-tljp" class="seal-wrap" id="b9-seal">
+            <div data-hf-id="hf-hx2u" class="seal-halo" id="b9-halo"></div>
+            <div data-hf-id="hf-agwo" id="sealBox" style="position: absolute; inset: 0;"></div>
+          </div>
+          <div data-hf-id="hf-o01x" class="close-headline" id="b9-headline">The Program I Wish I <em data-hf-id="hf-pmg0">Had</em></div>
+          <div data-hf-id="hf-yt1w" class="close-caption" id="b9-caption">Cohort 001 · August 18</div>
+        </div>
+      </div>
+
+      <div data-hf-id="hf-wl50" class="clip vignette" id="frame-vignette" data-start="0" data-duration="56.6" data-track-index="5"></div>
+    </div>
+
+    <script>
+      // build the locked seal (deterministic, runtime)
+      document.getElementById("sealBox").innerHTML = window.AISseal.build({
+        top: "CERTIFIED · PROFESSIONAL · CREDENTIAL",
+        bottom: "CERTIFIED AI CONSULTANT",
+        abbr: "CAIC",
+      });
+
+      // split eyebrows into chars for the mono type-on (~24 chars/sec)
+      // chars live inside ONE wrapper span so the flex gap only separates dot + text
+      document.querySelectorAll(".eyebrow").forEach((el) => {
+        const text = el.textContent;
+        el.textContent = "";
+        const wrap = document.createElement("span");
+        wrap.className = "chars";
+        for (const c of text) {
+          const s = document.createElement("span");
+          s.className = "ch";
+          s.innerHTML = c === " " ? "&nbsp;" : c;
+          wrap.appendChild(s);
+        }
+        el.appendChild(wrap);
+      });
+
+      (() => {
+        const DUR = 56.6;
+        const tl = gsap.timeline({ paused: true });
+
+        // ---- the brand move: blur-and-rise (opacity 0, y+28, blur 10 -> rest, ~1.1s, strong ease-out)
+        const rise = (target, at, d = 1.1) => {
+          tl.fromTo(target,
+            { autoAlpha: 0, y: 28, filter: "blur(10px)" },
+            { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: d, ease: "power3.out" }, at);
+        };
+        // soft settle-out at a beat's tail
+        const fall = (target, at) => {
+          tl.to(target, { autoAlpha: 0, y: -18, filter: "blur(8px)", duration: 0.45, ease: "power2.in" }, at);
+        };
+        // mono type-on for eyebrows: steady 24 chars/sec
+        const typeOn = (sel, at) => {
+          const chars = document.querySelectorAll(sel + " .ch");
+          tl.fromTo(chars, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02, stagger: 1 / 24, ease: "none" }, at);
+        };
+
+        // ---- B1 · hook (anchor "every company" 0.32 / "finding" 2.88)
+        typeOn("#b1-eyebrow", 0.3);
+        rise("#b1-headline", 0.55);
+        rise("#b1-caption", 2.6, 0.9);
+        fall("#b1 .col", 5.7);
+
+        // ---- B2 · checklist (anchors "tutorials" 7.06 / "tools" 8.10 / "work" 9.28)
+        typeOn("#b2-eyebrow", 6.4);
+        rise(".b2-row:nth-child(1)", 6.7, 0.9);
+        rise(".b2-row:nth-child(2)", 7.8, 0.9);
+        rise(".b2-row:nth-child(3)", 9.0, 0.9);
+        fall("#b2 .col", 11.0);
+
+        // ---- B3 · knowing vs proving (anchors "knowing" 11.84 / "prove" 13.78 / "two" 18.30)
+        rise("#b3-know", 11.65, 1.0);
+        rise("#b3-prove", 13.5, 1.0);
+        rise("#b3-caption", 18.0, 0.8);
+        fall("#b3 .col", 19.15);
+
+        // ---- B4 · the reveal (anchors "upcoming" 20.28 / "Certified" 21.16 / "CAIC" 22.72)
+        typeOn("#b4-eyebrow", 19.85);
+        rise("#b4-designation", 20.95);
+        rise("#b4-wordmark", 22.4, 1.3);
+        rise("#b4-attribution", 23.7, 0.9);
+        fall("#b4 .col", 25.15);
+
+        // ---- B5 · graded work (anchors "graded" 26.20 / "find" 27.38 / "architect" 28.44 / "prove" 29.96)
+        typeOn("#b5-eyebrow", 25.85);
+        rise(".b5-row:nth-child(1)", 27.1, 0.9);
+        rise(".b5-row:nth-child(2)", 28.2, 0.9);
+        rise(".b5-row:nth-child(3)", 29.7, 0.9);
+        fall("#b5 .col", 32.5);
+
+        // ---- B6 · deliverables (anchors "portfolio" 34.40 / "credential" 35.28 / "personal" 36.28)
+        typeOn("#b6-eyebrow", 33.2);
+        rise(".b6-row:nth-child(1)", 34.05, 0.9);
+        rise(".b6-row:nth-child(2)", 34.95, 0.9);
+        rise(".b6-row:nth-child(3)", 35.95, 0.9);
+        fall("#b6 .col", 37.65);
+
+        // ---- B7 · cohort stats (anchors "capped at 50" 40.96 / "August" 43.04)
+        typeOn("#b7-eyebrow", 38.35);
+        rise("#b7-seats", 40.7, 1.1);
+        rise("#b7-date", 42.7, 0.9);
+        fall("#b7 .col", 43.55);
+
+        // ---- B8 · CTA (anchors "join the wait list" 45.60 / "button" 46.88)
+        rise("#b8-pill", 45.25, 1.0);
+        // glow breath on the pill — finite, subtle
+        tl.to("#b8-pill", { boxShadow: "0 0 34px rgba(55,189,248,0.55)", duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: 1 }, 46.3);
+        rise("#b8-caption", 46.5, 0.8);
+        fall("#b8 .col", 47.65);
+
+        // ---- B9 · close (anchor "wish I had" 49.12; hold to end)
+        tl.fromTo("#b9-seal",
+          { autoAlpha: 0, scale: 0.9, filter: "blur(12px)" },
+          { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 1.6, ease: "power3.out" }, 48.5);
+        rise("#b9-headline", 49.0, 1.2);
+        rise("#b9-caption", 51.4, 0.9);
+        // light behaves like breath — slow halo pulse through the hold
+        tl.fromTo("#b9-halo", { opacity: 0.55 }, { opacity: 1, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 50.0); // ends 55.2 < 56.6 — must not stretch the comp
+
+        // Law #11 anchor — timeline must fill its slot
+        tl.to({}, { duration: DUR }, 0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["caic-booth"] = tl;
+      })();
+    </script>
+  </body>
+</html>

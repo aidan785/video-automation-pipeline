@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p34 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 20px; padding: 20px 28px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 22px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 23px; color: var(--text-dim); margin-top: 6px; }
+  .qrow .tx .sub b { color: var(--text); }
+
+  .kc { padding: 26px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc.dead { border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 16px rgba(var(--alert-rgb), .22), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 8px; }
+  .kc.dead .lab { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 23px; color: var(--text-dim); margin-top: 8px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.bad { border-color: rgba(var(--alert-rgb), .6); box-shadow: 0 0 18px rgba(var(--alert-rgb), .24), inset 0 1px 0 var(--glass-hi); }
+  .mpill.bad .mn { color: var(--alert); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* ---------- B1 cold open ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; line-height: 1.12; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+
+  /* ---------- B2 chaos montage (over, FULL+shift) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 170px; display: flex; flex-direction: column; gap: 14px; }
+  #b2 .stack > div { align-self: flex-start; max-width: 790px; }
+  #b2 .chipx { font-size: 28px; padding: 14px 26px; }
+  #b2 .chipx b { color: var(--white); }
+  #b2 .warnx b { color: var(--alert); }
+  #b2 .punchx { font-size: 31px; line-height: 1.35; }
+
+  /* ---------- B3 the mapping loop (under, PIP) ---------- */
+  #b3 .head { position: absolute; left: 110px; top: 56px; }
+  #b3 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 54px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b3 .list { position: absolute; left: 110px; top: 210px; width: 1070px; display: flex; flex-direction: column; gap: 12px; }
+  #b3 .qrow { width: 1010px; padding: 15px 26px; }
+  #b3 .qrow .tx { font-size: 30px; }
+  #b3 .qrow .tx .sub { font-size: 21px; margin-top: 4px; }
+  #b3 .close { position: absolute; left: 110px; top: 900px; }
+  #b3 .close .punchx { font-size: 30px; }
+
+  /* ---------- B4 you won't find them all (over, FULL+shift) ---------- */
+  #b4 .stack { position: absolute; left: 80px; top: 230px; display: flex; flex-direction: column; gap: 18px; }
+  #b4 .stack > div { align-self: flex-start; max-width: 800px; }
+  #b4 .chipx b { color: var(--white); }
+  #b4 .warnx b { color: var(--alert); }
+
+  /* ---------- B5 trigger rule takeover ---------- */
+  #b5 { display: grid; place-items: center; text-align: center; }
+  #b5 .kicker { margin-bottom: 44px; }
+  #b5 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 84px; line-height: 1.14; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+
+  /* ---------- B6 two kinds of triggers (over, FULL+shift) ---------- */
+  #b6 .stack { position: absolute; left: 80px; top: 180px; display: flex; flex-direction: column; gap: 16px; }
+  #b6 .stack > div { align-self: flex-start; max-width: 800px; }
+  #b6 .chipx b { color: var(--white); }
+
+  /* ---------- B7 dependencies (over, FULL+shift) ---------- */
+  #b7 .stack { position: absolute; left: 80px; top: 230px; display: flex; flex-direction: column; gap: 16px; }
+  #b7 .stack > div { align-self: flex-start; max-width: 780px; }
+  #b7 .chipx b { color: var(--white); }
+  #b7 .punchx { font-size: 31px; }
+
+  /* ---------- B8 the roast (under, PIP) ---------- */
+  #b8 .head { position: absolute; left: 110px; top: 70px; }
+  #b8 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 54px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b8 .stack { position: absolute; left: 110px; top: 230px; width: 1060px; display: flex; flex-direction: column; gap: 16px; }
+  #b8 .stack > div { align-self: flex-start; max-width: 1020px; }
+  #b8 .chipx b { color: var(--white); }
+  #b8 .warnx b { color: var(--alert); }
+  #b8 .punchx { font-size: 30px; }
+
+  /* ---------- B9 the silhouette (over, FULL+shift) ---------- */
+  #b9 .stack { position: absolute; left: 80px; top: 220px; display: flex; flex-direction: column; gap: 18px; }
+  #b9 .stack > div { align-self: flex-start; max-width: 800px; }
+  #b9 .chipx b { color: var(--white); }
+  #b9 .punchx { font-size: 31px; line-height: 1.35; }
+
+  /* ---------- B10 milestones by function (under, PIP) ---------- */
+  #b10 .head { position: absolute; left: 110px; top: 64px; }
+  #b10 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 54px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b10 .rail { position: absolute; left: 110px; top: 240px; display: flex; align-items: center; }
+  #b10 .rail .mpill { font-size: 28px; padding: 16px 26px; }
+  #b10 .rail .mconn { width: 54px; }
+  #b10 .stack { position: absolute; left: 110px; top: 386px; width: 1060px; display: flex; flex-direction: column; gap: 18px; }
+  #b10 .stack > div { align-self: flex-start; max-width: 1020px; }
+  #b10 .warnx b { color: var(--alert); }
+  #b10 .qrow { max-width: 1010px; }
+  #b10 .punchx { font-size: 30px; }
+
+  /* ---------- B11 stakeholders (over, FULL+shift) ---------- */
+  #b11 .stack { position: absolute; left: 80px; top: 200px; display: flex; flex-direction: column; gap: 16px; }
+  #b11 .stack > div { align-self: flex-start; max-width: 800px; }
+  #b11 .chipx b { color: var(--white); }
+  #b11 .punchx { font-size: 31px; }
+  #b11 .quote { max-width: 780px; }
+
+  /* ---------- B12 outro ---------- */
+  #b12 { display: grid; place-items: center; text-align: center; }
+  #b12 .nx .kick { margin-bottom: 20px; }
+  #b12 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 96px; color: var(--white); text-shadow: var(--textglow); }
+  #b12 .tease { margin-top: 56px; display: flex; justify-content: center; }
+  #b12 .quote { max-width: 1100px; }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-831p" id="p34" data-composition-id="p34" data-start="0" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-n0in" id="bg" class="clip" data-start="0" data-duration="435" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (track 4) ============ -->
+
+  <!-- B1 cold open takeover (0-8.4) -->
+  <div data-hf-id="hf-xg0j" id="b1" class="under clip" data-start="0" data-duration="8.4" data-track-index="4">
+    <div data-hf-id="hf-lm34" class="inner">
+      <div data-hf-id="hf-90z2" class="kick">Pillar Three · Scenario Mapping &amp; Milestones</div>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-zs8m" class="word w1">It</span> <span data-hf-id="hf-slsq" class="word w2">wasn't</span> <span data-hf-id="hf-4tu0" class="word w3">the</span> <span data-hf-id="hf-ofzi" class="word w4">technology.</span><br data-hf-id="hf-x5px"><span data-hf-id="hf-6n76" class="word w5">It</span> <span data-hf-id="hf-8a9d" class="word w6">was</span> <span data-hf-id="hf-72ys" class="word w7">the</span> <span data-hf-id="hf-6s0s" class="word w8 grad">humans</span><span data-hf-id="hf-ka0n" class="word w9">.</span></div>
+    </div>
+  </div>
+
+  <!-- B3 the mapping loop (56.4-125.3, PIP) -->
+  <div data-hf-id="hf-2mn5" id="b3" class="under clip" data-start="56.4" data-duration="68.9" data-track-index="4">
+    <div data-hf-id="hf-z992" class="head">
+      <div data-hf-id="hf-ayu9" class="kick">The method, step by step</div>
+      <div data-hf-id="hf-kcn4" class="t">The Scenario-Mapping <span data-hf-id="hf-85jj" class="grad">Loop</span></div>
+    </div>
+    <div data-hf-id="hf-33o8" class="list">
+      <div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-he23" class="tx">Same picture on screen<span data-hf-id="hf-xxip" class="sub">A diagram, a doc, doesn't matter. <b data-hf-id="hf-gxqo">Different pictures find different holes.</b></span></div></div>
+      <div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-diie" class="tx">Walk the process in order<span data-hf-id="hf-gu45" class="sub">At every decision point, the question that does 90% of the work: <b data-hf-id="hf-izza">what happens if?</b></span></div></div>
+      <div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-tgzg" class="tx">Ask about their experience<span data-hf-id="hf-awji" class="sub">Worst things seen? Rudest people? <b data-hf-id="hf-7zzs">Strangest input ever received?</b></span></div></div>
+      <div data-hf-id="hf-dy1b" class="qrow r4"><div data-hf-id="hf-6a5m" class="n">04</div><div data-hf-id="hf-d6tg" class="tx">Write it down, read it back, get the yes<span data-hf-id="hf-s0qh" class="sub"><b data-hf-id="hf-puqa">"Am I understanding you right?"</b></span></div></div>
+      <div data-hf-id="hf-9zxa" class="qrow r5"><div data-hf-id="hf-5vul" class="n">05</div><div data-hf-id="hf-9s1u" class="tx">Poke every decision point again<span data-hf-id="hf-1uvh" class="sub"><b data-hf-id="hf-c78t">The branches hide behind it.</b></span></div></div>
+    </div>
+    <div data-hf-id="hf-ysec" class="close"><div data-hf-id="hf-g6su" class="punchx p1">Listen, repeat, poke. The audit muscle, pointed at how work breaks.</div></div>
+  </div>
+
+  <!-- B5 trigger rule takeover (154.0-167.9) -->
+  <div data-hf-id="hf-xjgg" id="b5" class="under clip" data-start="154" data-duration="13.9" data-track-index="4">
+    <div data-hf-id="hf-bug8" class="inner">
+      <div data-hf-id="hf-dh2u" class="kicker kick">The rule that predicts the pain</div>
+      <div data-hf-id="hf-ippd" class="l1"><span data-hf-id="hf-44zx" class="word w1">Unpredictability</span> <span data-hf-id="hf-qxcx" class="word w2">comes</span><br data-hf-id="hf-rsrt"><span data-hf-id="hf-qcg1" class="word w3">from</span> <span data-hf-id="hf-k6at" class="word w4">the</span> <span data-hf-id="hf-x9d3" class="word w5 grad">trigger</span></div>
+    </div>
+  </div>
+
+  <!-- B8 the roast (235.4-287.8, PIP) -->
+  <div data-hf-id="hf-167b" id="b8" class="under clip" data-start="235.4" data-duration="52.4" data-track-index="4">
+    <div data-hf-id="hf-gwvu" class="head">
+      <div data-hf-id="hf-njjb" class="kick">Let the machines hunt</div>
+      <div data-hf-id="hf-50r3" class="t">The <span data-hf-id="hf-c4j2" class="grad">Roast</span> (or the Council)</div>
+    </div>
+    <div data-hf-id="hf-d1zs" class="stack">
+      <div data-hf-id="hf-sp7j" class="chipx c1">Claude spins up a cast of hostile users: <b data-hf-id="hf-fe1d">"trick it, prompt-inject it, break it, get weird"</b></div>
+      <div data-hf-id="hf-s6aa" class="punchx p1">Then sit back and read the damage report</div>
+      <div data-hf-id="hf-lwco" class="chipx c2">Agent teams surface edge cases you'd never role-play. <b data-hf-id="hf-l9th">They don't get tired or polite.</b></div>
+      <div data-hf-id="hf-pvfq" class="warnx w1">"100% of edge cases found" is not a stop condition. <b data-hf-id="hf-elby">That number doesn't exist.</b></div>
+      <div data-hf-id="hf-wp2g" class="punchx p2">So build defensively: the default answer is a safe escalation to a human</div>
+      <div data-hf-id="hf-x8mi" class="chipx c3">A false alarm costs a minute. <b data-hf-id="hf-hxay">A miss costs trust.</b></div>
+    </div>
+  </div>
+
+  <!-- B10 milestones by function (324.3-380.2, PIP) -->
+  <div data-hf-id="hf-ke9s" id="b10" class="under clip" data-start="324.3" data-duration="55.9" data-track-index="4">
+    <div data-hf-id="hf-hb6v" class="head">
+      <div data-hf-id="hf-jvie" class="kick">The $12,000 lesson</div>
+      <div data-hf-id="hf-9zq4" class="t">Milestones by <span data-hf-id="hf-sjs5" class="grad">Function</span></div>
+    </div>
+    <div data-hf-id="hf-qzq8" class="rail">
+      <div data-hf-id="hf-s0wt" class="mpill bad m1"><span data-hf-id="hf-g0je" class="mn">M1</span>Agent wired to the backend</div>
+      <div data-hf-id="hf-5oki" class="mconn mc1"></div>
+      <div data-hf-id="hf-0axt" class="mpill bad m2"><span data-hf-id="hf-geuf" class="mn">M2</span>Finished version, through QA</div>
+    </div>
+    <div data-hf-id="hf-g2wg" class="stack">
+      <div data-hf-id="hf-984y" class="warnx w1">See the flaw? <b data-hf-id="hf-3cqq">All the QA lived at the end.</b> Every problem surfaced at once.</div>
+      <div data-hf-id="hf-kkt3" class="qrow q1"><div data-hf-id="hf-rp2f" class="n">✓</div><div data-hf-id="hf-pxfc" class="tx">Nail one function before the next opens<span data-hf-id="hf-3i89" class="sub">Every onboarding scenario: filled, tested, <b data-hf-id="hf-736t">closed</b>. Then matchmaking. Then support.</span></div></div>
+      <div data-hf-id="hf-0yjx" class="punchx p1">Problems arrive in small, named batches instead of one avalanche</div>
+    </div>
+  </div>
+
+  <!-- B12 outro (416.5-435) -->
+  <div data-hf-id="hf-zplj" id="b12" class="under clip" data-start="416.5" data-duration="18.5" data-track-index="4">
+    <div data-hf-id="hf-anj5" class="inner">
+      <div data-hf-id="hf-erpu" class="nx">
+        <div data-hf-id="hf-p5g1" class="kick">Up next · Reliability, the last of this pillar</div>
+        <div data-hf-id="hf-h3qy" class="t">Demo-Ready vs <span data-hf-id="hf-sfau" class="grad">Production</span>-Ready</div>
+      </div>
+      <div data-hf-id="hf-sooa" class="tease"><div data-hf-id="hf-sbrk" class="quote q1">"What does your agent do when the database goes down <b data-hf-id="hf-5xv1">at nine p.m. on a Friday?</b>"</div></div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-lhb7" id="p34-video" src="assets/clean.mp4" muted data-start="0" data-duration="430.14" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-0spz" id="p34-audio" src="assets/audio.m4a" data-start="0" data-duration="430.14" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <!-- B2 chaos montage (over FULL+shift, 8.6-50.5) -->
+  <div data-hf-id="hf-xjxq" id="b2" class="over clip" data-start="8.6" data-duration="41.9" data-track-index="6">
+    <div data-hf-id="hf-evzd" class="stack">
+      <div data-hf-id="hf-ykl4" class="kick k1">The chaos montage · humans doing human things</div>
+      <div data-hf-id="hf-epul" class="chipx c1">Answered two questions, vanished three weeks: <b data-hf-id="hf-n6g2">"can I book a table Friday?"</b></div>
+      <div data-hf-id="hf-ghod" class="chipx c2"><b data-hf-id="hf-9cwe">"Hey, it's me"</b> from a number the system had never seen</div>
+      <div data-hf-id="hf-vgp6" class="chipx c3">Booked, canceled, booked, canceled. <b data-hf-id="hf-1qdn">Six times in a row.</b></div>
+      <div data-hf-id="hf-z1tt" class="chipx c4">A steady trickle of no-shows, <b data-hf-id="hf-ysre">tracked by hand every day</b></div>
+      <div data-hf-id="hf-fy3q" class="warnx w1">Every one forced new logic. <b data-hf-id="hf-gwcp">None was in the original design.</b></div>
+      <div data-hf-id="hf-qy4y" class="punchx p1">The real difficulty: mapping every scenario so all the pieces fit together</div>
+    </div>
+  </div>
+
+  <!-- B4 you won't find them all (over FULL+shift, 126.4-153.4) -->
+  <div data-hf-id="hf-pq0a" id="b4" class="over clip" data-start="126.4" data-duration="27" data-track-index="6">
+    <div data-hf-id="hf-faae" class="stack">
+      <div data-hf-id="hf-mctm" class="kick k1">Go in knowing this</div>
+      <div data-hf-id="hf-9gnx" class="warnx w1">You will not find all the edge cases. <b data-hf-id="hf-czcr">That's just the reality.</b></div>
+      <div data-hf-id="hf-d5bt" class="chipx c1">Don't worry: <b data-hf-id="hf-d522">more edge cases get found at evals</b></div>
+      <div data-hf-id="hf-qt8f" class="chipx c2">The cafe: <b data-hf-id="hf-d3bk">~50-60%</b> designed up front · <b data-hf-id="hf-iy6q">+10%</b> testing · <b data-hf-id="hf-gxcm">+10%</b> the founders</div>
+    </div>
+  </div>
+
+  <!-- B6 two kinds of triggers (over FULL+shift, 168.9-217.8) -->
+  <div data-hf-id="hf-pw6n" id="b6" class="over clip" data-start="168.9" data-duration="48.9" data-track-index="6">
+    <div data-hf-id="hf-e3db" class="stack">
+      <div data-hf-id="hf-ax79" class="kick k1">Two kinds of builds</div>
+      <div data-hf-id="hf-wo68" class="kc hot t1">
+        <div data-hf-id="hf-iyfw" class="lab">Trigger = another system</div>
+        <div data-hf-id="hf-kjd3" class="val">Scopeable chaos</div>
+        <div data-hf-id="hf-uzb6" class="det">An email arrives: blank subject, weird domain, oversized body. <b data-hf-id="hf-k2vs">You can sit down and list most of it.</b></div>
+      </div>
+      <div data-hf-id="hf-k4ee" class="kc dead t2">
+        <div data-hf-id="hf-jcie" class="lab">Trigger = a human with a keyboard</div>
+        <div data-hf-id="hf-2jlh" class="val">Maximum chaos</div>
+        <div data-hf-id="hf-jodg" class="det">Open-ended texts from the general public, around the clock. <b data-hf-id="hf-mjm9">Expect far more mapping time.</b></div>
+      </div>
+      <div data-hf-id="hf-cg9q" class="chipx c1">The cafe had no expert to interview. <b data-hf-id="hf-3cj7">We role-played imaginary members.</b></div>
+    </div>
+  </div>
+
+  <!-- B7 dependencies (over FULL+shift, 218.2-235.0) -->
+  <div data-hf-id="hf-uge5" id="b7" class="over clip" data-start="218.2" data-duration="16.8" data-track-index="6">
+    <div data-hf-id="hf-ehoc" class="stack">
+      <div data-hf-id="hf-fp91" class="kick k1">The edge cases beginners miss · your dependencies</div>
+      <div data-hf-id="hf-llym" class="chipx c1">What happens if the <b data-hf-id="hf-b7ov">model provider is down</b>?</div>
+      <div data-hf-id="hf-xnu6" class="chipx c2">If the <b data-hf-id="hf-dd12">database times out</b>? If you hit a <b data-hf-id="hf-eifo">rate limit</b> at your busiest hour?</div>
+      <div data-hf-id="hf-bz9f" class="punchx p1">The predictable kind. They go on the map.</div>
+    </div>
+  </div>
+
+  <!-- B9 the silhouette (over FULL+shift, 289.2-323.6) -->
+  <div data-hf-id="hf-8agt" id="b9" class="over clip" data-start="289.2" data-duration="34.4" data-track-index="6">
+    <div data-hf-id="hf-dar9" class="stack">
+      <div data-hf-id="hf-gi43" class="kick k1">When do you stop mapping?</div>
+      <div data-hf-id="hf-20ot" class="chipx c1">It's like a silhouette: <b data-hf-id="hf-ufed">you see the outline early</b>, and keep filling the inside</div>
+      <div data-hf-id="hf-cra4" class="chipx c2">"I can't think of more" isn't "there are no more". <b data-hf-id="hf-t4pm">But you can see the picture well enough to build.</b></div>
+      <div data-hf-id="hf-wkms" class="punchx p1">There is no perfect version one. Plan A exists to generate the information for plan B.</div>
+    </div>
+  </div>
+
+  <!-- B11 stakeholders (over FULL+shift, 381.6-415.4) -->
+  <div data-hf-id="hf-zxy2" id="b11" class="over clip" data-start="381.6" data-duration="33.8" data-track-index="6">
+    <div data-hf-id="hf-dp2a" class="stack">
+      <div data-hf-id="hf-fegy" class="kick k1">The people your build lands on</div>
+      <div data-hf-id="hf-5rmu" class="quote q1">"We're not bringing these people in to fire you. <b data-hf-id="hf-oiy9">We're bringing them in to take the repetitive things off your plate.</b>"</div>
+      <div data-hf-id="hf-h5w5" class="chipx c1">Without that blessing, said in the decision maker's own voice, <b data-hf-id="hf-mi1y">you feel the resistance everywhere</b></div>
+      <div data-hf-id="hf-z6as" class="chipx c2">Employed track: leadership buy-in is <b data-hf-id="hf-fedh">the standard vs shelfware</b></div>
+      <div data-hf-id="hf-lerz" class="punchx p1">Get the sponsor. Get the sentence said out loud.</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-zjp7" id="vig" class="clip" data-start="0" data-duration="435" data-track-index="10"></div>
+  <div data-hf-id="hf-9td3" id="grain" class="clip" data-start="0" data-duration="435" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 435;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* shot plan:
+     0-8.4 takeover (B1) -> 8.0 fromOFF straight into SHIFT + scrim in (B2 chaos)
+     -> PIP 55.9 + shadeOut 56.15 (B3 loop) -> FULL 125.3 -> shift 126.3 (B4)
+     -> OFF 153.4 + shadeOut 154.0 (B5 trigger takeover) -> 167.8 fromOFF FULL -> shift 168.8 (B6, B7)
+     -> PIP 235.0 + shadeOut 235.25 (B8 roast) -> FULL 288.0 -> shift 289.1 (B9 silhouette)
+     -> PIP 323.9 + shadeOut 324.15 (B10 milestones) -> FULL 380.2 -> shift 381.5 (B11 stakeholders)
+     -> OFF 415.5 + shadeOut 416.1 (B12 outro) */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(8.0, { x: 380, y: 0, scale: 1 });
+  tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, 8.0);
+  toPIP(55.9);
+  toFULL(125.3);
+  toOFF(153.4);
+  fromOFF(167.8, { x: 0, y: 0, scale: 1 });
+  toPIP(235.0);
+  toFULL(288.0);
+  toPIP(323.9);
+  toFULL(380.2);
+  toOFF(415.5);
+
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  shadeOut(56.15);   // B2 -> B3 (toPIP starts 55.9 first; scrim trails the move)
+  clearLeft(126.3);  shadeOut(154.0);  // B4 (video drops OFF at 153.4 first; scrim after)
+  clearLeft(168.8);  // B6 + B7 share one shift window
+  shadeOut(235.25);  // B7 -> B8 (toPIP starts 235.0 first; scrim trails)
+  clearLeft(289.1);  shadeOut(324.15); // B9 (toPIP starts 323.9 first; scrim trails)
+  clearLeft(381.5);  shadeOut(416.1);  // B11 (video drops OFF at 415.5 first; scrim after)
+
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 107, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 85, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 107, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open — who broke the agent 0.3-4.4 · not the technology 4.5-8.4 */
+  inUp(0.3, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.12 }, 2.2);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 7.4);
+
+  /* B2 chaos — vanished 8.4-16.3 · new phone 16.9-20.3 · canceled x6 20.6-24.4 · no-shows 24.6-32.4 · new logic 32.7-37.0 · thesis 37.2-49.8 */
+  inUp(8.8, '#b2 .k1', 0.6, 18);
+  inLeft(9.2, '#b2 .c1', 0.7);
+  inLeft(16.9, '#b2 .c2', 0.7);
+  inLeft(20.6, '#b2 .c3', 0.7);
+  inLeft(24.6, '#b2 .c4', 0.7);
+  inLeft(32.6, '#b2 .w1', 0.7);
+  spring(41.2, '#b2 .p1', 0.7);
+  outBlur(49.9, '#b2 .stack', 0.45);
+
+  /* B3 loop — here's how I map 56.3-65.6 · same screen 66.1-75.8 · walk 76.0-92.3 · experience 92.7-105.0 · write/yes 100.1-112.4 · poke 107.6-112.4 · LRP 114.3-125.3 */
+  inUp(56.7, '#b3 .head', 0.7, 26);
+  inLeft(66.0, '#b3 .r1', 0.7);
+  inLeft(76.0, '#b3 .r2', 0.7);
+  inLeft(92.5, '#b3 .r3', 0.7);
+  inLeft(102.9, '#b3 .r4', 0.7);
+  inLeft(107.6, '#b3 .r5', 0.7);
+  spring(114.2, '#b3 .p1', 0.7);
+  outBlur(124.8, '#b3 .list', 0.45);
+  outBlur(124.82, '#b3 .close', 0.45);
+  outBlur(124.85, '#b3 .head', 0.45);
+
+  /* B4 — go in knowing 125.6-128.4 · won't find all 128.5-136.5 · evals 136.6-139.9 · percentages 139.9-153.6 */
+  inUp(126.5, '#b4 .k1', 0.6, 18);
+  inLeft(128.4, '#b4 .w1', 0.7);
+  inLeft(136.5, '#b4 .c1', 0.7);
+  inLeft(140.6, '#b4 .c2', 0.7);
+  outBlur(152.9, '#b4 .stack', 0.45);
+
+  /* B5 trigger takeover — rule our team landed on 153.8-157.5 · unpredictability/trigger 158.0-160.8 */
+  inUp(154.3, '#b5 .kicker', 0.6, 20);
+  tl.fromTo('#b5 .l1 .word', { y: 40, opacity: 0, scale: 0.92, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out', stagger: 0.1 }, 157.6);
+  outBlur(167.2, '#b5 .inner', 0.6, -70);
+
+  /* B6 triggers — inbox example 168.3-186.4 · cafe opposite 186.4-192.9 · no expert 193.1-204.1 · person vs system 204.3-217.9 */
+  inUp(169.0, '#b6 .k1', 0.6, 18);
+  spring(174.4, '#b6 .t1', 0.7);
+  spring(186.3, '#b6 .t2', 0.7);
+  inLeft(199.5, '#b6 .c1', 0.7);
+  outBlur(217.4, '#b6 .stack', 0.45);
+
+  /* B7 dependencies — one more kind 218.1-222.6 · provider down 222.8 · db/rate 224.8-228.2 · predictable kind 228.7-235.1 */
+  inUp(218.4, '#b7 .k1', 0.6, 18);
+  inLeft(222.7, '#b7 .c1', 0.7);
+  inLeft(224.7, '#b7 .c2', 0.7);
+  spring(228.7, '#b7 .p1', 0.7);
+  outBlur(234.5, '#b7 .stack', 0.45);
+
+  /* B8 roast — these days 235.4-240.5 · spin up 240.9-248.1 · prompt inject 248.5-254.2 · damage report 252.5-254.2 · not tired 254.5-259.4 · 100% 259.7-267.2 · defensively 267.4-272.3 · escalation 272.9-278.2 · false alarm 282.8-288.0 */
+  inUp(235.7, '#b8 .head', 0.7, 26);
+  inLeft(240.8, '#b8 .c1', 0.7);
+  spring(252.4, '#b8 .p1', 0.7);
+  inLeft(254.4, '#b8 .c2', 0.7);
+  inLeft(259.6, '#b8 .w1', 0.7);
+  spring(267.4, '#b8 .p2', 0.7);
+  inLeft(282.6, '#b8 .c3', 0.7);
+  outBlur(287.4, '#b8 .stack', 0.45);
+  outBlur(287.45, '#b8 .head', 0.45);
+
+  /* B9 silhouette — no objective rule 288.3-293.0 · silhouette 293.3-300.6 · can't think of more 300.6-309.9 · no perfect V1 317.2-323.8 */
+  inUp(289.3, '#b9 .k1', 0.6, 18);
+  inLeft(293.2, '#b9 .c1', 0.7);
+  inLeft(300.5, '#b9 .c2', 0.7);
+  spring(317.1, '#b9 .p1', 0.7);
+  outBlur(323.1, '#b9 .stack', 0.45);
+
+  /* B10 milestones — $12k lesson 324.1-332.1 · split by function 332.3-337.7 · M1 337.9-346.2 · M2 346.8-351.9 · flaw 352.1-355.5 · avalanche feel 355.9-362.4 · fixes 362.6-375.3 · named batches 375.7-380.2 */
+  inUp(324.5, '#b10 .head', 0.7, 26);
+  spring(337.9, '#b10 .m1', 0.55);
+  tl.fromTo('#b10 .mc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.out' }, 346.4);
+  spring(346.7, '#b10 .m2', 0.55);
+  inLeft(352.1, '#b10 .w1', 0.7);
+  inLeft(364.7, '#b10 .q1', 0.7);
+  spring(375.6, '#b10 .p1', 0.7);
+  outBlur(379.7, '#b10 .stack', 0.45);
+  outBlur(379.72, '#b10 .rail', 0.45);
+  outBlur(379.75, '#b10 .head', 0.45);
+
+  /* B11 stakeholders — people you'll contact 380.4-385.7 · the sentence 386.0-406.5 · resistance 392.6-406.5 · employed 406.8-413.2 · sponsor 413.5-416.0 */
+  inUp(381.7, '#b11 .k1', 0.6, 18);
+  spring(388.6, '#b11 .q1', 0.7);
+  inLeft(396.6, '#b11 .c1', 0.7);
+  inLeft(406.7, '#b11 .c2', 0.7);
+  spring(413.4, '#b11 .p1', 0.7);
+  outBlur(415.0, '#b11 .stack', 0.45);
+
+  /* B12 outro — next lesson 416.2-421.2 · survivable 421.7-426.0 · nightmare question 426.2-429.9 · hold to 435 */
+  inUp(416.8, '#b12 .nx .kick', 0.6, 20);
+  tl.fromTo('#b12 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 417.5);
+  spring(425.9, '#b12 .q1', 0.7);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p34'] = tl;
+})();
+</script>
+</body>
+</html>

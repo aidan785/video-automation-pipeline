@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — up next — d2-03-hyperagent-workshop</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root { --onyx:#07121c; --blue:#37bdf8; --red-live:#ff3b30;
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace; }
+      * { margin:0; padding:0; box-sizing:border-box; }
+      html, body { width:1920px; height:1080px; overflow:hidden; background:#000; color:#fff; font-family:var(--font-body); }
+      #root { position:relative; width:1920px; height:1080px; overflow:hidden; background:var(--onyx); isolation:isolate; }
+      #root .clip { position:absolute; inset:0; width:1920px; height:1080px; pointer-events:none; }
+      .grid { position:absolute; inset:-48px;
+        background-image:
+          linear-gradient(rgba(55,189,248,0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55,189,248,0.065) 1px, transparent 1px);
+        background-size:24px 24px; }
+      .glow { position:absolute; top:-160px; left:50%; width:760px; height:760px; margin-left:-380px;
+        border-radius:50%; background:#ff8a5c; filter:blur(150px); opacity:0.18; }
+      .vignette { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 95%); }
+      .wrap { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+        gap:34px; padding:120px 140px; text-align:center; }
+      .eyebrow { font-family:var(--font-mono); font-weight:700; font-size:26px; letter-spacing:0.34em;
+        text-transform:uppercase; color:#ff8a5c; display:inline-flex; align-items:center; gap:13px; }
+      .eyebrow::before { content:""; width:10px; height:10px; border-radius:2px; background:currentColor; box-shadow:0 0 10px currentColor; }
+      .title { font-family:var(--font-display); font-style:italic; font-weight:900; font-size:100px;
+        line-height:0.96; letter-spacing:-0.035em; color:#fff; max-width:1580px; clip-path:inset(0 0 0 0); }
+      .title em { font-style:italic; color:#ff8a5c; }
+      .speakers { font-family:var(--font-display); font-weight:800; font-size:44px;
+        letter-spacing:-0.02em; color:#fff; max-width:1500px; line-height:1.1; }
+      .when { font-family:var(--font-mono); font-weight:700; font-size:27px; letter-spacing:0.3em;
+        text-transform:uppercase; color:#ff8a5c; }
+      .markwrap { display:inline-flex; margin-top:8px; }
+      .mark { font-family:var(--font-display); font-style:italic; font-weight:900; letter-spacing:-0.03em;
+        line-height:0.9; font-size:64px; display:inline-flex; align-items:baseline; position:relative; }
+      .mark .ais { color:#fff; }
+      .mark .gap { display:inline-block; width:0.08em; }
+      .live { position:relative; color:var(--blue); text-shadow:0 0 60px rgba(55,189,248,0.55); padding-right:0.28em; }
+      .dot { position:absolute; top:0.08em; left:100%; margin-left:0.06em; width:0.16em; height:0.16em; border-radius:50%;
+        background:var(--red-live); box-shadow:0 0 0.7em #ff3b30, 0 0 0.25em #ff3b30; }
+      .ring { position:absolute; top:0.08em; left:100%; margin-left:0.06em; width:0.16em; height:0.16em; border-radius:50%;
+        background:rgba(255,59,48,0.55); opacity:0; transform-origin:50% 50%; pointer-events:none; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="cmp-d2-03-hyperagent-workshop" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="8" data-track-index="0">
+        <div class="grid"></div>
+        <div class="glow"></div>
+        <div class="vignette"></div>
+      </div>
+      <div id="scene" class="clip" data-start="0" data-duration="8" data-track-index="1">
+        <div class="wrap">
+          <div class="eyebrow">Up Next</div>
+          <div class="title">Build an <em>Always-On Fleet</em> of Agents</div>
+          <div class="speakers">Alex McDonnell · HyperAgent</div>
+          <div class="when">DAY 2 · 10:00 AM CT</div>
+          <div class="markwrap"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 8;
+      const tl = gsap.timeline({ paused: true });
+
+      /* AMBIENT — phase-locked to 1.6s (brand §10), seamless at the beat */
+      tl.to(".dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 9, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+      tl.fromTo(".ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
+        { autoAlpha: 0.5, scale: 1, duration: 0.001 },
+        { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
+        { autoAlpha: 0, scale: 1, duration: 0.6 }
+      ], repeat: 4, ease: "none" }, 0);
+      tl.to(".glow", { x: 40, y: -22, duration: 4, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
+
+      /* ENTRANCE — settles to the rest pose, then holds */
+      tl.from(".eyebrow", { autoAlpha: 0, y: -12, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.from(".title", { clipPath: "inset(0 100% 0 0)", duration: 0.62, ease: "power3.out" }, 0.32);
+      tl.from(".speakers", { autoAlpha: 0, y: 16, duration: 0.5, ease: "power2.out" }, 0.82);
+      tl.from(".when", { autoAlpha: 0, y: 10, duration: 0.45, ease: "power2.out" }, 0.98);
+      tl.from(".markwrap", { autoAlpha: 0, scale: 0.92, y: 8, duration: 0.5, ease: "back.out(1.4)", transformOrigin: "50% 50%" }, 1.12);
+
+      tl.set({}, {}, D); // Law #11 — fill the slot
+      window.__timelines["cmp-d2-03-hyperagent-workshop"] = tl;
+    </script>
+  </body>
+</html>

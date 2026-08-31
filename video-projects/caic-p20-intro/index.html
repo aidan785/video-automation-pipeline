@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p20 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  /* ---------- persistent background ---------- */
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  /* ---------- video ---------- */
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  /* screen-fixed left scrim (z between video and over-plane). It SLIDES in from
+     off-screen left in sync with the video shift (never fades in place). */
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .blue   { color: var(--accent);  text-shadow: var(--textglow-accent); }
+  /* NO will-change on gradient text; descender padding keeps paint box intact */
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.done { color: var(--text-dim); }
+  .mpill.done .mn { color: rgba(var(--accent-rgb), .7); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* ---------- B1 cold open (takeover) ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 124px; line-height: 1.06; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  #b1 .l2 { margin-top: 30px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 42px; color: var(--text); }
+
+  /* ---------- B2 three stacked mistakes (under, PIP) ---------- */
+  #b2 .head { position: absolute; left: 110px; top: 96px; }
+  #b2 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 72px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b2 .list { position: absolute; left: 110px; top: 292px; width: 1070px; display: flex; flex-direction: column; gap: 22px; }
+  #b2 .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 25px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b2 .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--alert); border: 1.5px solid rgba(var(--alert-rgb), .55); box-shadow: 0 0 14px rgba(var(--alert-rgb), .25); }
+  #b2 .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 38px; color: var(--white); }
+  #b2 .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 26px; color: var(--text-dim); margin-top: 8px; }
+  #b2 .qrow .tx .sub b { color: var(--text); }
+  #b2 .sum { position: absolute; left: 110px; top: 852px; }
+
+  /* ---------- B3 diagnosis -> prescription (over, FULL+shift) ---------- */
+  #b3 .stack { position: absolute; left: 80px; top: 300px; display: flex; flex-direction: column; gap: 18px; }
+  #b3 .stack > div { align-self: flex-start; max-width: 760px; }
+  #b3 .chipx b { color: var(--white); }
+
+  /* ---------- B4 SOW vs charter (under, PIP) ---------- */
+  #b4 .head { position: absolute; left: 110px; top: 110px; }
+  #b4 .cards { position: absolute; left: 110px; top: 210px; width: 1070px; display: flex; flex-direction: column; gap: 24px; }
+  #b4 .kc { padding: 30px 36px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b4 .kc .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 12px; }
+  #b4 .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 40px; color: var(--white); }
+  #b4 .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 27px; color: var(--text-dim); margin-top: 12px; }
+  #b4 .kc .det b { color: var(--text); }
+  #b4 .sum { position: absolute; left: 110px; top: 760px; }
+
+  /* ---------- B5 trust problem (under, PIP) ---------- */
+  #b5 .head { position: absolute; left: 110px; top: 96px; }
+  #b5 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 70px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b5 .quote { position: absolute; left: 110px; top: 292px; max-width: 980px; padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 30px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b5 .ties { position: absolute; left: 110px; top: 430px; width: 1070px; display: flex; flex-direction: column; gap: 24px; }
+  #b5 .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 26px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b5 .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b5 .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 38px; color: var(--white); }
+  #b5 .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 26px; color: var(--text-dim); margin-top: 8px; }
+  #b5 .qrow .tx .sub b { color: var(--text); }
+  #b5 .sum { position: absolute; left: 110px; top: 872px; }
+
+  /* ---------- B6 four-step rail (under, GFX takeover) ---------- */
+  #b6 { display: grid; place-items: center; }
+  #b6 .kicker { position: absolute; left: 50%; top: 300px; transform: translateX(-50%); }
+  #b6 .rail { display: flex; align-items: center; justify-content: center; }
+  #b6 .title { position: absolute; left: 50%; top: 380px; transform: translateX(-50%); font-family: var(--font-display); font-weight: var(--wt-black); font-size: 84px; color: var(--white); text-shadow: var(--textglow); white-space: nowrap; }
+
+  /* ---------- B7 four steps detail (under, PIP) ---------- */
+  #b7 .head { position: absolute; left: 110px; top: 100px; }
+  #b7 .steps { position: absolute; left: 110px; top: 180px; width: 1070px; display: flex; flex-direction: column; gap: 20px; }
+  #b7 .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 22px 30px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b7 .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b7 .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 38px; color: var(--white); }
+  #b7 .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 25px; color: var(--text-dim); margin-top: 8px; }
+  #b7 .qrow .tx .sub b { color: var(--text); }
+  #b7 .warn { position: absolute; left: 110px; top: 880px; }
+  #b7 .warnx b { color: var(--alert); }
+
+  /* ---------- B8 Brightwater carryover (under, PIP) ---------- */
+  #b8 .head { position: absolute; left: 110px; top: 130px; }
+  #b8 .card { position: absolute; left: 110px; top: 220px; width: 1000px; padding: 30px 36px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b8 .card .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 12px; }
+  #b8 .card .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 42px; color: var(--white); }
+  #b8 .card .val .tag { display: inline-block; margin-left: 18px; padding: 8px 20px; border-radius: 999px; font-size: 24px; font-family: var(--font-mono); color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); vertical-align: middle; }
+  #b8 .flow { position: absolute; left: 110px; top: 440px; display: flex; align-items: center; gap: 14px; }
+  #b8 .fnode { padding: 18px 26px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  #b8 .fnode.ai { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); color: var(--white); }
+  #b8 .farr { font-size: 30px; color: var(--accent); text-shadow: var(--textglow-accent); }
+
+  /* ---------- B9 story teases (over, FULL+shift) ---------- */
+  #b9 .stack { position: absolute; left: 80px; top: 360px; display: flex; flex-direction: column; gap: 18px; }
+  #b9 .stack > div { align-self: flex-start; max-width: 740px; }
+  #b9 .chipx b { color: var(--white); }
+
+  /* ---------- B10 paid audit (over, FULL+shift) ---------- */
+  #b10 .stack { position: absolute; left: 80px; top: 320px; display: flex; flex-direction: column; gap: 18px; }
+  #b10 .stack > div { align-self: flex-start; max-width: 760px; }
+  #b10 .stat { padding: 22px 36px; border-radius: var(--radius-sm); font-family: var(--font-display); font-weight: var(--wt-black); font-size: 46px; color: var(--white); text-shadow: var(--textglow); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b10 .stat b { color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b10 .chipx b { color: var(--white); }
+
+  /* ---------- B11 outro ---------- */
+  #b11 { display: grid; place-items: center; text-align: center; }
+  #b11 .rail { display: flex; align-items: center; justify-content: center; }
+  #b11 .nx { margin-top: 70px; }
+  #b11 .nx .kick { margin-bottom: 20px; }
+  #b11 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; color: var(--white); text-shadow: var(--textglow); }
+</style>
+</head>
+<body>
+
+<div id="p20" data-composition-id="p20" data-start="0" data-width="1920" data-height="1080">
+
+  <div id="bg" class="clip" data-start="0" data-duration="305" data-track-index="2">
+    <div class="base"></div><div class="dots"></div><div class="bloom"></div><div class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE ============ -->
+
+  <!-- B1 cold open takeover (0-13.6) -->
+  <div id="b1" class="under clip" data-start="0" data-duration="13.6" data-track-index="4">
+    <div class="inner">
+      <div class="kick">Pillar Two · Engagement Design</div>
+      <div class="l1"><span class="word w1">We</span> <span class="word w2">Built</span> <span class="word w3">It.</span>
+        <span class="word w4">They</span> <span class="word w5 grad">Paid.</span></div>
+      <div class="l2"><span class="word w6">Then:</span> <span class="word w7">no</span> <span class="word w8 blue">second</span> <span class="word w9 blue">project.</span></div>
+    </div>
+  </div>
+
+  <!-- B2 three stacked mistakes (14.5-64.5, PIP) -->
+  <div id="b2" class="under clip" data-start="14.5" data-duration="50" data-track-index="4">
+    <div class="head">
+      <div class="kick">Why clients didn't come back</div>
+      <div class="t">Three Stacked Mistakes</div>
+    </div>
+    <div class="list">
+      <div class="qrow m1"><div class="n">01</div><div class="tx">Taking tickets<span class="sub">Just doing what the client wanted. Never aimed at a <b>real constraint</b>.</span></div></div>
+      <div class="qrow m2"><div class="n">02</div><div class="tx">Under-scoping<span class="sub s2sub">Projects <b>ballooned</b> past their timelines.</span></div></div>
+      <div class="qrow m3"><div class="n">03</div><div class="tx">No metric up front<span class="sub s3sub">Couldn't prove <b>done</b>. Couldn't prove <b>success</b>.</span></div></div>
+    </div>
+    <div class="sum punchx">Each failure only shows up after you fix the one before it.</div>
+  </div>
+
+  <!-- B4 SOW vs charter (91.6-111.6, PIP) -->
+  <div id="b4" class="under clip" data-start="91.6" data-duration="20" data-track-index="4">
+    <div class="head"><div class="kick">The output of this pillar</div></div>
+    <div class="cards">
+      <div class="kc ka">
+        <div class="lab">Agency track</div>
+        <div class="val">A signed statement of work</div>
+        <div class="det">Both sides sign. It fixes <b>the outcome, the scope, the price, the terms</b>.</div>
+      </div>
+      <div class="kc kb">
+        <div class="lab">Employed track</div>
+        <div class="val">An internal charter</div>
+        <div class="det">Leadership signs off <b>before you build</b>.</div>
+      </div>
+    </div>
+    <div class="sum chipx">Different audience. <b>Identical discipline.</b></div>
+  </div>
+
+  <!-- B5 trust problem (111.9-170.7, PIP) -->
+  <div id="b5" class="under clip" data-start="111.9" data-duration="58.8" data-track-index="4">
+    <div class="head">
+      <div class="kick">Why this pillar is worth so much right now</div>
+      <div class="t">The Market Has a Trust Problem</div>
+    </div>
+    <div class="quote q1">"How do I know you're better than these ten other people, who all have a similar portfolio?"</div>
+    <div class="ties">
+      <div class="qrow t1"><div class="n">01</div><div class="tx">A named process<span class="sub">"This person has done this enough to <b>standardize it</b>. They'll get the job done."</span></div></div>
+      <div class="qrow t2"><div class="n">02</div><div class="tx">Visibly living on your own tools<span class="sub">Share your screen. Show the agents <b>you actually run every day</b>.</span></div></div>
+    </div>
+    <div class="sum punchx">The same two moves win the conference room.</div>
+  </div>
+
+  <!-- B6 four-step rail takeover (171.2-177.5) -->
+  <div id="b6" class="under clip" data-start="171.2" data-duration="6.3" data-track-index="4">
+    <div class="kicker kick">The framework goes on screen with the client</div>
+    <div class="title">Engagement <span class="grad">Design</span></div>
+    <div class="rail">
+      <div class="mpill p1"><span class="mn">01</span>Outcome</div>
+      <div class="mconn c1"></div>
+      <div class="mpill p2"><span class="mn">02</span>Scope</div>
+      <div class="mconn c2"></div>
+      <div class="mpill p3"><span class="mn">03</span>Price</div>
+      <div class="mconn c3"></div>
+      <div class="mpill p4"><span class="mn">04</span>Terms</div>
+    </div>
+  </div>
+
+  <!-- B7 four steps detail (177.7-236.9, PIP) -->
+  <div id="b7" class="under clip" data-start="177.7" data-duration="59.2" data-track-index="4">
+    <div class="head"><div class="kick">Engagement design · the four steps</div></div>
+    <div class="steps">
+      <div class="qrow r1"><div class="n">01</div><div class="tx">Outcome<span class="sub sub1">The result they're buying, in their numbers. <b>No-shows: 18% to under 8%</b>, not "a reminder system".</span></div></div>
+      <div class="qrow r2"><div class="n">02</div><div class="tx">Scope<span class="sub sub2">A clear line drawn <b>before the work starts</b>, with a done test on everything inside.</span></div></div>
+      <div class="qrow r3"><div class="n">03</div><div class="tx">Price<span class="sub sub3">Charge for <b>the value the outcome creates</b>, not the hours you spend.</span></div></div>
+      <div class="qrow r4"><div class="n">04</div><div class="tx">Terms<span class="sub sub4">How and when you get paid, and <b>what happens when scope starts to creep</b>.</span></div></div>
+    </div>
+    <div class="warn"><div class="warnx">Even with a great audit, projects <b>die here</b> on vague scope or bad pricing.</div></div>
+  </div>
+
+  <!-- B8 Brightwater carryover (237.5-251.9, PIP) -->
+  <div id="b8" class="under clip" data-start="237.5" data-duration="14.4" data-track-index="4">
+    <div class="head"><div class="kick">Same example business, next four lessons</div></div>
+    <div class="card">
+      <div class="lab">Brightwater Dental · from the Pillar 1 audit</div>
+      <div class="val">Appointment reminders<span class="tag">DO NOW</span></div>
+    </div>
+    <div class="flow">
+      <div class="fnode ai f1">Name its outcome</div>
+      <div class="farr a1">→</div>
+      <div class="fnode f2">Draw its scope</div>
+      <div class="farr a2">→</div>
+      <div class="fnode f3">Price it</div>
+      <div class="farr a3">→</div>
+      <div class="fnode f4">Get it on paper</div>
+    </div>
+  </div>
+
+  <!-- B11 outro (297.5-305) -->
+  <div id="b11" class="under clip" data-start="297.5" data-duration="7.5" data-track-index="4">
+    <div class="inner">
+      <div class="rail">
+        <div class="mpill lit o1"><span class="mn">01</span>Outcome</div>
+        <div class="mconn oc1"></div>
+        <div class="mpill o2"><span class="mn">02</span>Scope</div>
+        <div class="mconn oc2"></div>
+        <div class="mpill o3"><span class="mn">03</span>Price</div>
+        <div class="mconn oc3"></div>
+        <div class="mpill o4"><span class="mn">04</span>Terms</div>
+      </div>
+      <div class="nx">
+        <div class="kick">Up next</div>
+        <div class="t">Step One: <span class="grad">Outcome</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div id="vidwrap">
+    <div id="vidframe">
+      <video id="p20-video" src="assets/clean.mp4" muted data-start="0" data-duration="301.05" data-track-index="0"></video>
+      <div id="vidrim"></div>
+    </div>
+  </div>
+  <div id="vidshade"></div>
+  <audio id="p20-audio" src="assets/audio.m4a" data-start="0" data-duration="301.05" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE ============ -->
+
+  <!-- B3 diagnosis -> prescription (over FULL+shift, 66.4-90.2) -->
+  <div id="b3" class="over clip" data-start="66.4" data-duration="23.8" data-track-index="6">
+    <div class="stack">
+      <div class="chipx g1">The audit: a ranked list they trust · <b>do now · do later · leave it</b></div>
+      <div class="punchx g2">This pillar writes the prescription</div>
+      <div class="chipx g3">A clear <b>outcome</b></div>
+      <div class="chipx g4">A scope with a <b>held line</b></div>
+      <div class="chipx g5">A price tied to <b>value</b></div>
+    </div>
+  </div>
+
+  <!-- B9 story teases (over FULL+shift, 252.3-272.4) -->
+  <div id="b9" class="over clip" data-start="252.3" data-duration="20.1" data-track-index="6">
+    <div class="stack">
+      <div class="chipx c1">Three builds. Every one worked. <b>Value never landed.</b></div>
+      <div class="chipx c2">The deal with math so clean there was <b>no pushback</b></div>
+      <div class="chipx c3">Pricing: from <b>guessing with confidence</b> to a method</div>
+    </div>
+  </div>
+
+  <!-- B10 paid audit (over FULL+shift, 276.0-291.6) -->
+  <div id="b10" class="over clip" data-start="276" data-duration="15.6" data-track-index="6">
+    <div class="stack">
+      <div class="punchx a1">The strongest front-end offer: the audit itself</div>
+      <div class="stat a2">2-hour audit · <b>$1,000+</b></div>
+      <div class="chipx a3">They get: <b>a valuable deliverable</b></div>
+      <div class="chipx a4">You get: <b>trust built + scoping half done</b></div>
+    </div>
+  </div>
+
+  <div id="vig" class="clip" data-start="0" data-duration="305" data-track-index="10"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="305" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 305;
+  const tl = gsap.timeline({ paused: true });
+  /* PIP: square-ish crop (sides pulled in 420px pre-scale) at a bigger scale.
+     Crop animates on #vidframe (the wrapper), never on the <video>. */
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* ---- shot plan ----
+     0-13.6 takeover (B1) -> video enters FULL 12.7
+     16.8 PIP (B2 mistakes)
+     64.6 FULL + left-clear 66.3 (B3) -> unclear 90.3 -> 91.5 PIP (B4, B5)
+     171.0 OFF (B6 rail takeover) -> 177.7 fromOFF to PIP (B7 steps, B8 brightwater)
+     251.9 FULL arriving pre-shifted (B9 stories) -> home 272.0
+     275.8 left-clear (B10 paid audit) -> home 291.0
+     297.3 out -> B11 outro takeover */
+  tl.set(wrap, { opacity: 0, scale: 1.06, x: -57, y: -32, filter: 'blur(22px)' }, 0);
+  tl.to(wrap, { opacity: 1, scale: 1, x: 0, y: 0, duration: 1.0, ease: 'power3.out' }, 12.7);
+  tl.to(wrap, { filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 12.9);
+  toPIP(16.8);
+  toFULL(64.6);
+  toPIP(91.5);
+  toOFF(171.0);
+  fromOFF(177.7, { x: PIP.x, y: PIP.y, scale: PIP.scale }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  tl.to(wrap, { opacity: 0, filter: 'blur(20px)', scale: 1.04, duration: 1.0, ease: 'power2.in' }, 297.3);
+
+  /* FULL-shot left-clear: video drifts right while the screen-fixed scrim SLIDES in
+     with it (leads 0.1s, travels ~3x so its black zone stays over the cut edge). */
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  /* arrive straight into a shifted FULL from PIP (scrim slides in with the move) */
+  const toFULLR = (t) => { move(t, { x: SHIFT_X, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+                           tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t); };
+  clearLeft(66.3);  unclearLeft(90.3);   // B3 diagnosis -> prescription
+  toFULLR(251.9);   unclearLeft(272.0);  // B9 story teases (arrives pre-shifted from PIP)
+  clearLeft(275.8); unclearLeft(291.0);  // B10 paid audit
+
+  /* ambient (finite repeats sized to DUR) */
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 75, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 60, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 75, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open (0-13.6) — "losing clients" 1.5 · "seemed fine" 7.5 · "second project" 12.5 */
+  inUp(0.4, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.13 }, 0.7);
+  tl.fromTo('#b1 .l2 .word', { y: 26, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.13 }, 3.6);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 1.0, ease: 'power2.in' }, 12.6);
+
+  /* B2 mistakes (14.5-64.5) — "three mistakes stacked" 17.5 · tickets 21.0 · under-scoping 34.2 · metric 41.5 · prove done 47.2 · each failure 54.9 */
+  inUp(15.7, '#b2 .head .kick', 0.6, 20);
+  inUp(17.4, '#b2 .head .t', 0.8, 30);
+  inLeft(20.4, '#b2 .m1', 0.8);
+  inLeft(33.9, '#b2 .m2', 0.8);
+  inLeft(40.2, '#b2 .m3', 0.8);
+  tl.fromTo('#b2 .m3 .n', { boxShadow: '0 0 14px rgba(255,59,48,0.25)' },
+    { boxShadow: '0 0 30px rgba(255,59,48,0.55)', duration: 0.7, ease: 'sine.inOut', repeat: 3, yoyo: true }, 47.2);
+  spring(54.9, '#b2 .sum', 0.7);
+  outBlur(63.7, '#b2 .list', 0.55);
+  outBlur(63.75, '#b2 .sum', 0.5);
+  outBlur(63.8, '#b2 .head', 0.5);
+
+  /* B3 diagnosis -> prescription (over FULL) — ranked list 69.3 · prescription 77.8 · outcome 86.3 · held line 87.6 · value 89.0 */
+  inLeft(68.9, '#b3 .g1', 0.7);
+  spring(76.9, '#b3 .g2', 0.7);
+  inLeft(85.9, '#b3 .g3', 0.6);
+  inLeft(87.2, '#b3 .g4', 0.6);
+  inLeft(88.5, '#b3 .g5', 0.6);
+  outBlur(89.9, '#b3 .stack', 0.45);
+
+  /* B4 SOW vs charter (91.6-111.6) — SOW 94.6 · charter 103.3 · identical 111.2 */
+  inUp(92.6, '#b4 .head', 0.6, 20);
+  inUp(94.3, '#b4 .ka', 0.8, 36);
+  inUp(103.1, '#b4 .kb', 0.8, 36);
+  spring(108.5, '#b4 .sum', 0.7);
+  outBlur(111.0, '#b4 .cards', 0.5);
+  outBlur(111.05, '#b4 .sum', 0.5);
+  outBlur(111.1, '#b4 .head', 0.5);
+
+  /* B5 trust (111.9-170.7) — trust problem 119.3 · ten other people 126.5 · named process 133.5 · own tools 148.9 · green light 166.5 */
+  inUp(113.0, '#b5 .head .kick', 0.6, 20);
+  inUp(118.9, '#b5 .head .t', 0.8, 30);
+  spring(124.0, '#b5 .q1', 0.7);
+  inLeft(133.3, '#b5 .t1', 0.8);
+  inLeft(148.7, '#b5 .t2', 0.8);
+  spring(165.9, '#b5 .sum', 0.7);
+  outBlur(170.1, '#b5 .quote', 0.5);
+  outBlur(170.15, '#b5 .ties', 0.5);
+  outBlur(170.2, '#b5 .sum', 0.5);
+  outBlur(170.25, '#b5 .head', 0.5);
+
+  /* B6 rail takeover (171.2-177.5) — four main steps 172.5 · on screen 175.5 */
+  inUp(171.7, '#b6 .kicker', 0.6, 20);
+  tl.fromTo('#b6 .title', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power4.out' }, 171.9);
+  spring(172.6, '#b6 .p1', 0.5);
+  tl.fromTo('#b6 .c1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 172.95);
+  spring(173.15, '#b6 .p2', 0.5);
+  tl.fromTo('#b6 .c2', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 173.5);
+  spring(173.7, '#b6 .p3', 0.5);
+  tl.fromTo('#b6 .c3', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 174.05);
+  spring(174.25, '#b6 .p4', 0.5);
+  outBlur(176.8, '#b6 .rail', 0.6, -50);
+  outBlur(176.85, '#b6 .title', 0.5, -40);
+  tl.to('#b6 .kicker', { opacity: 0, duration: 0.4 }, 176.8);
+
+  /* B7 steps detail (177.7-236.9) — step one 178.5 · example 188.4 · scope 194.4 · price 206.2 · terms 223.1 · die here 233.5 */
+  inUp(178.7, '#b7 .head', 0.6, 20);
+  inLeft(179.4, '#b7 .r1', 0.8);
+  inLeft(194.2, '#b7 .r2', 0.8);
+  inLeft(206.1, '#b7 .r3', 0.8);
+  inLeft(222.9, '#b7 .r4', 0.8);
+  inLeft(233.3, '#b7 .warn', 0.7);
+  outBlur(236.3, '#b7 .steps', 0.5);
+  outBlur(236.35, '#b7 .warn', 0.5);
+  outBlur(236.4, '#b7 .head', 0.5);
+
+  /* B8 brightwater (237.5-251.9) — pillar one 238.3 · do now 242.5 · four lessons flow 246.5+ */
+  inUp(238.4, '#b8 .head', 0.6, 20);
+  inUp(240.9, '#b8 .card', 0.8, 32);
+  spring(246.3, '#b8 .f1', 0.5);
+  inUp(247.2, '#b8 .a1', 0.3, 8);
+  spring(247.5, '#b8 .f2', 0.5);
+  inUp(248.4, '#b8 .a2', 0.3, 8);
+  spring(248.7, '#b8 .f3', 0.5);
+  inUp(249.6, '#b8 .a3', 0.3, 8);
+  spring(249.9, '#b8 .f4', 0.5);
+  outBlur(251.3, '#b8 .card', 0.5);
+  outBlur(251.35, '#b8 .flow', 0.5);
+  outBlur(251.4, '#b8 .head', 0.5);
+
+  /* B9 story teases (over FULL, 252.3-272.4) — three builds 254.5 · math 261.8 · pricing 265.5 */
+  inLeft(254.2, '#b9 .c1', 0.7);
+  inLeft(261.6, '#b9 .c2', 0.7);
+  inLeft(265.4, '#b9 .c3', 0.7);
+  outBlur(271.6, '#b9 .stack', 0.45);
+
+  /* B10 paid audit (over FULL, 276.0-291.6) — strongest offer 277.3 · $1000 281.5 · deliverable 285.5 · trust 288.3 */
+  spring(276.9, '#b10 .a1', 0.7);
+  inLeft(281.0, '#b10 .a2', 0.7);
+  inLeft(285.1, '#b10 .a3', 0.7);
+  inLeft(288.1, '#b10 .a4', 0.7);
+  outBlur(290.6, '#b10 .stack', 0.45);
+
+  /* B11 outro (297.5-305) — "the outcome" 300.4 · VO ends 301.05 */
+  spring(298.2, '#b11 .o1', 0.5);
+  tl.fromTo('#b11 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 298.55);
+  spring(298.75, '#b11 .o2', 0.5);
+  tl.fromTo('#b11 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 299.05);
+  spring(299.25, '#b11 .o3', 0.5);
+  tl.fromTo('#b11 .oc3', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 299.55);
+  spring(299.75, '#b11 .o4', 0.5);
+  tl.fromTo('#b11 .o1', { boxShadow: '0 0 22px rgba(55,189,248,0.55), 0 0 56px rgba(55,189,248,0.3), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 40px rgba(55,189,248,0.7), 0 0 110px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 300.5);
+  inUp(300.1, '#b11 .nx .kick', 0.6, 20);
+  tl.fromTo('#b11 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 300.4);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p20'] = tl;
+})();
+</script>
+</body>
+</html>

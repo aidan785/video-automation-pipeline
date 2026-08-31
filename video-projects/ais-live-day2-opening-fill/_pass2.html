@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — Block 5: Day 2 Opening — pass 2/6 chunk (11.8 min)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --red-live:#ff3b30; /* coral = ambient bg glow only */
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;z-index:30;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:34px;padding:96px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:0 0 16px rgba(55,189,248,.45);}
+      /* no ::before marker chip, no coral variant — live-asset directives */
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:122px;line-height:1.16;
+        letter-spacing:-.03em;max-width:1600px;}
+      .ln.hero{font-size:176px;}
+      /* generous padding so italic-900 ascenders/descenders never clip out of the
+         background-clip:text box; side padding supplies the inter-word gap.
+         NO will-change on gradient text: promoting a background-clip:text span to
+         its own compositing layer under the animated #camera transform makes
+         Chromium rasterize it with a truncated text mask — descenders (y/p/g)
+         get chopped flat (verified via the _cliptest render matrix 2026-07-08;
+         the delivered Block 4 render shows the bug on "up."). Painting into the
+         parent layer keeps the full glyph mask at zero per-frame raster cost. */
+      .ln .wd{display:inline-block;padding:.12em .15em .32em;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .ln.quoteln{font-size:78px;line-height:1.28;max-width:1500px;}
+      .quoteln{position:relative;}
+      .quoteln::before{content:"\201C";color:var(--blue);margin-right:.04em;}
+      .quoteln::after{content:"\201D";color:var(--blue);margin-left:.04em;}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:41px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+      .attrib{font-style:normal;font-family:var(--font-mono);font-weight:500;font-size:27px;letter-spacing:.06em;color:rgba(180,214,238,.82);}
+
+      /* AIS+ product mark — ALL WHITE incl. the +, never tinted (directives) */
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:900;color:#fff;letter-spacing:-.02em;}
+      .plus .p{color:#fff;}
+
+      /* stat */
+      .statwrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
+      .kicker{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.30em;text-transform:uppercase;color:#fff;}
+      .num{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:320px;line-height:1.0;
+        letter-spacing:-.04em;padding:.08em .14em .26em; /* no will-change: see .ln .wd */
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 90px rgba(55,189,248,.6);}
+      .unit{font-family:var(--font-mono);font-weight:700;font-size:28px;letter-spacing:.30em;text-transform:uppercase;color:var(--blue);}
+
+      /* step numeral (get-set-up) */
+      .stepnum{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:230px;line-height:1.0;
+        letter-spacing:-.04em;padding:.08em .14em .2em; /* no will-change: see .ln .wd */
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 80px rgba(55,189,248,.55);}
+
+      /* checklist rows */
+      .checklist{display:flex;flex-direction:column;gap:26px;width:max-content;max-width:1560px;}
+      .ckrow{display:flex;align-items:center;gap:30px;text-align:left;will-change:transform,opacity;}
+      .tick{width:34px;height:34px;flex:0 0 34px;border:3px solid var(--blue);border-radius:9px;position:relative;
+        box-shadow:0 0 18px rgba(55,189,248,.35);}
+      .tick::after{content:"";position:absolute;inset:7px;background:var(--blue);border-radius:4px;
+        box-shadow:0 0 12px rgba(55,189,248,.7);}
+      .cktxt{font-family:var(--font-body);font-weight:700;font-size:52px;color:#fff;}
+
+      /* ---------- member win card: summary left, post screenshot right ---------- */
+      .winwrap{position:absolute;inset:0;display:flex;align-items:center;gap:70px;padding:80px 110px 90px 150px;}
+      .wintext{flex:0 0 760px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;}
+      .winhead{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:76px;line-height:1.12;
+        letter-spacing:-.03em;margin-left:-.15em;max-width:780px;margin-top:26px;}
+      .winhead .wd{display:inline-block;padding:.12em .15em .32em; /* no will-change: see .ln .wd */
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .winhead .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .winsub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:31px;line-height:1.35;
+        color:rgba(209,220,232,.85);margin-top:16px;max-width:720px;will-change:transform,opacity;}
+      .winname{font-family:var(--font-mono);font-weight:500;font-size:24px;letter-spacing:.2em;text-transform:uppercase;
+        color:var(--blue);margin-top:30px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+      .winshot{flex:1;display:flex;align-items:center;justify-content:center;max-height:840px;
+        will-change:transform,opacity;transform-style:preserve-3d;}
+      .winshot img{max-width:100%;max-height:840px;object-fit:contain;border-radius:20px;
+        border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 60px rgba(55,189,248,.10);}
+
+      /* sponsor logos (white on transparent) */
+      .logorow{display:flex;gap:110px;justify-content:center;align-items:flex-start;}
+      .logo{display:flex;flex-direction:column;align-items:center;gap:44px;will-change:transform,opacity;}
+      .logobox{height:180px;display:flex;align-items:center;justify-content:center;}
+      .logo img{width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 36px rgba(55,189,248,.28));}
+      .logorole{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);}
+
+      /* agenda */
+      .agenda{display:flex;flex-direction:column;gap:14px;width:max-content;max-width:1680px;will-change:transform;}
+      .agrow{display:flex;align-items:baseline;gap:26px;font-family:var(--font-body);font-weight:700;font-size:38px;color:#fff;text-align:left;will-change:transform,opacity;}
+      .agt{font-family:var(--font-mono);font-weight:700;font-size:22px;color:var(--blue);min-width:130px;letter-spacing:.04em;}
+
+      /* mounted finished pieces — full-frame, above the camera scenes */
+      .mount{position:absolute;inset:0;background:#000;will-change:transform,opacity,filter;z-index:20;}
+      .mfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+      /* ---------- Day 1 recap clip card (community-testimonial format) ----------
+         card section + media wrapper both sit at STAGE ROOT (no camera drift) so
+         the framework-managed video stays registered with the card chrome */
+      .rcscene{z-index:8;} /* above the camera scenes, below mounts (20) / whip (30) */
+      .rcwrap{position:absolute;inset:0;display:flex;align-items:center;gap:70px;padding:80px 100px 90px 120px;}
+      .rspace{width:900px;height:506px;flex:0 0 auto;} /* layout ghost — media rides #rcN */
+      .rclip{position:absolute;left:120px;top:282px;width:900px;height:506px;border-radius:26px;overflow:hidden;
+        background:linear-gradient(158deg,#0c1724,#0a131c);border:1px solid rgba(255,255,255,.10);
+        box-shadow:0 34px 90px rgba(0,0,0,.5), 0 0 70px -14px var(--blue);
+        will-change:transform,opacity,filter;transform-style:preserve-3d;z-index:9;}
+      .rfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+      .rtext{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:18px;}
+      .rtag{font-family:var(--font-mono);font-weight:700;font-size:20px;letter-spacing:.3em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+      .rname{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:74px;line-height:.96;
+        letter-spacing:-.03em;color:#fff;will-change:transform,opacity;} /* solid white — no gradient clip risk */
+      .rrole{font-family:var(--font-mono);font-weight:600;font-size:19px;letter-spacing:.12em;text-transform:uppercase;
+        color:rgba(209,220,232,.72);will-change:transform,opacity;}
+      .rquote{font-family:var(--font-display);font-style:italic;font-weight:600;font-size:38px;line-height:1.22;
+        letter-spacing:-.015em;color:#fff;max-width:640px;margin-top:8px;will-change:transform,opacity;}
+      .rquote .qm{color:var(--blue);font-weight:900;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="cmp-day2-opening-fill" data-start="0" data-duration="708.667" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="708.667" data-track-index="0">
+        <div class="depth grid-ceiling"></div>
+        <div class="depth grid-floor"></div>
+        <div class="beam"></div>
+        <div class="glow blue"></div>
+        <div class="glow coral"></div>
+        <div class="vignette"></div>
+        <div class="grain"></div>
+      </div>
+      <div class="whip clip" id="whip" data-start="0" data-duration="708.667" data-track-index="1"></div>
+      <div id="markbug" class="clip" data-start="0" data-duration="708.667" data-track-index="2">
+        <div class="backdrop-mark"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+      </div>
+
+      <div id="camera">
+      <section id="sc0" class="scene clip" data-start="0" data-duration="6.4" data-track-index="12">
+        <div class="inner">
+        <div class="eyebrow">AIS LIVE · DAY 2</div><div class="ln hero"><span class="wd ">Welcome</span><span class="wd ac">back.</span></div>
+        </div>
+      </section>
+      <section id="sc1" class="scene clip" data-start="6" data-duration="9.4" data-track-index="13">
+        <div class="inner">
+        <div class="eyebrow">SUNDAY · JULY 12</div><div class="ln"><span class="wd ">It's</span><span class="wd ac">Earn</span><span class="wd ac">Day.</span></div><div class="sub">Market. Sales. Pricing. Delivery.</div>
+        </div>
+      </section>
+      <section id="sc2" class="scene clip" data-start="15" data-duration="5.4" data-track-index="14">
+        <div class="inner">
+        <div class="eyebrow">YESTERDAY</div><div class="ln hero"><span class="wd ">Day</span><span class="wd ">1</span><span class="wd ">is</span><span class="wd ac">in</span><span class="wd ac">the</span><span class="wd ac">books.</span></div>
+        </div>
+      </section>
+      <section id="sc3" class="scene clip" data-start="20" data-duration="36.4" data-track-index="15">
+        <div class="inner">
+        <div class="eyebrow">YESTERDAY AT AIS LIVE</div><div class="agenda"><div class="agrow"><span class="agt">10:15 AM</span><span class="agl">Welcome to AIS LIVE</span></div><div class="agrow"><span class="agt">10:30 AM</span><span class="agl">Anatomy of Three Real Deals</span></div><div class="agrow"><span class="agt">11:40 AM</span><span class="agl">The New Standard: A Fleet of Always-On Agents</span></div><div class="agrow"><span class="agt">12:20 PM</span><span class="agl">Evals, Live</span></div><div class="agrow"><span class="agt">12:45 PM</span><span class="agl">Workshop Block 1 (Foundation + Advanced)</span></div><div class="agrow"><span class="agt">2:35 PM</span><span class="agl">Run an Entire AI Agency Using Claude Code</span></div><div class="agrow"><span class="agt">3:10 PM</span><span class="agl">Workshop Block 2 (Foundation + Advanced)</span></div><div class="agrow"><span class="agt">4:20 PM</span><span class="agl">Workshop 3: Enterprise AI Services</span></div><div class="agrow"><span class="agt">5:05 PM</span><span class="agl">Get AIS Certified</span></div><div class="agrow"><span class="agt">5:20 PM</span><span class="agl">Day 1 Closing Remarks</span></div></div><div class="sub">Day 1 · Build Day · All times Central</div>
+        </div>
+      </section>
+      <section id="sc4" class="scene clip" data-start="56" data-duration="8.4" data-track-index="16">
+        <div class="inner">
+        <div class="eyebrow">WHY WE'RE HERE</div><div class="ln quoteln"><span class="wd ">I</span><span class="wd ">found</span><span class="wd ">my</span><span class="wd ">home.</span><span class="wd ">I</span><span class="wd ">found</span><span class="wd ">my</span><span class="wd ">tribe.</span></div><div class="sub attrib">Tonia Hardeman</div>
+        </div>
+      </section>
+      <section id="sc5" class="scene clip" data-start="64" data-duration="8.4" data-track-index="17">
+        <div class="inner">
+        
+        <div class="statwrap">
+          <div class="kicker">SHIPPED BY THE COMMUNITY</div>
+          <div class="num">0K+</div>
+          <div class="unit">AUTOMATIONS SHIPPED</div>
+        </div><div class="sub">Real workflows. Real businesses.</div>
+        </div>
+      </section>
+      <section id="sc6" class="scene clip" data-start="72" data-duration="8.4" data-track-index="18">
+        <div class="inner">
+        <div class="eyebrow">CAREER SHIFT</div><div class="ln quoteln"><span class="wd ">I</span><span class="wd ">actually</span><span class="wd ">got</span><span class="wd ">my</span><span class="wd ">dream</span><span class="wd ">role:</span><span class="wd ">head</span><span class="wd ">of</span><span class="wd ">AI.</span></div><div class="sub attrib">Pedro Gomez</div>
+        </div>
+      </section>
+      <section id="sc7" class="scene clip" data-start="80" data-duration="8.4" data-track-index="19">
+        <div class="inner">
+        <div class="eyebrow">DAY 1 RECAP</div><div class="ln"><span class="wd ">Straight</span><span class="wd ">from</span><span class="wd ac">the</span><span class="wd ac">speakers.</span></div><div class="sub">In their own words, from the Day 1 stage.</div>
+        </div>
+      </section>
+      <section id="sc12" class="scene clip" data-start="196.9" data-duration="5.4" data-track-index="24">
+        <div class="inner">
+        <div class="eyebrow">THE PLAN</div><div class="ln hero"><span class="wd ">Today</span><span class="wd ">we</span><span class="wd ">turn</span><span class="wd ">this</span><span class="wd ac">into</span><span class="wd ac">money.</span></div>
+        </div>
+      </section>
+      <section id="sc13" class="scene clip" data-start="201.9" data-duration="10.4" data-track-index="25">
+        <div class="inner">
+        <div class="eyebrow">9:45 AM · MAIN STAGE</div><div class="ln"><span class="wd ">Nate</span><span class="wd ">takes</span><span class="wd ">the</span><span class="wd ">stage</span><span class="wd ac">at</span><span class="wd ac">9:45.</span></div><div class="sub">Day 2 Open: Turn This Into Money</div>
+        </div>
+      </section>
+      <section id="sc14" class="scene clip" data-start="211.9" data-duration="32.4" data-track-index="26">
+        <div class="inner">
+        <div class="eyebrow">TODAY AT AIS LIVE · 1/2</div><div class="agenda"><div class="agrow"><span class="agt">8:30 AM</span><span class="agl">Virtual Doors Open + Expo</span></div><div class="agrow"><span class="agt">9:00 AM</span><span class="agl">Morning Expo + Networking</span></div><div class="agrow"><span class="agt">9:45 AM</span><span class="agl">Day 2 Open: Turn This Into Money</span></div><div class="agrow"><span class="agt">10:00 AM</span><span class="agl">HyperAgent Workshop: Build an Agent Fleet</span></div><div class="agrow"><span class="agt">11:10 AM</span><span class="agl">The Tool War Panel</span></div><div class="agrow"><span class="agt">11:50 AM</span><span class="agl">Where Your First 10 Clients Are Hiding</span></div><div class="agrow"><span class="agt">12:30 PM</span><span class="agl">The Sales Arc, LIVE</span></div><div class="agrow"><span class="agt">1:35 PM</span><span class="agl">Lunch + Discovery Call Practice</span></div><div class="agrow"><span class="agt">1:35 PM</span><span class="agl">VIP Working Sessions (5 Rooms)</span></div><div class="agrow"><span class="agt">2:10 PM</span><span class="agl">Sales Call Recap + Intro to Pricing</span></div></div><div class="sub">Day 2 · Earn Day · All times Central</div>
+        </div>
+      </section>
+      <section id="sc15" class="scene clip" data-start="243.9" data-duration="32.4" data-track-index="27">
+        <div class="inner">
+        <div class="eyebrow">TODAY AT AIS LIVE · 2/2</div><div class="agenda"><div class="agrow"><span class="agt">2:25 PM</span><span class="agl">Ditching Hourly: The Pricing Mindset</span></div><div class="agrow"><span class="agt">3:10 PM</span><span class="agl">What Companies Are Actually Buying in AI</span></div><div class="agrow"><span class="agt">3:55 PM</span><span class="agl">Live Debrief: What Buyers Want</span></div><div class="agrow"><span class="agt">4:05 PM</span><span class="agl">The Client Didn't Ask for AI</span></div><div class="agrow"><span class="agt">4:05 PM</span><span class="agl">VIP Pricing War Room</span></div><div class="agrow"><span class="agt">4:35 PM</span><span class="agl">Live Debrief: Pricing Reflections</span></div><div class="agrow"><span class="agt">4:45 PM</span><span class="agl">What Actually Matters in AI Right Now</span></div><div class="agrow"><span class="agt">5:15 PM</span><span class="agl">Closing Keynote: Build to Sell</span></div><div class="agrow"><span class="agt">5:45 PM</span><span class="agl">Nate's Close + <span class="plus">AIS<span class="p">+</span></span> Pitch</span></div><div class="agrow"><span class="agt">6:10 PM</span><span class="agl">VIP After-Party with Nate</span></div></div><div class="sub">Day 2 · Earn Day · All times Central</div>
+        </div>
+      </section>
+      <section id="sc16" class="scene clip" data-start="275.9" data-duration="10.4" data-track-index="28">
+        <div class="inner">
+        <div class="eyebrow">10:00 AM · SPONSORED WORKSHOP</div><div class="ln"><span class="wd ">Then:</span><span class="wd ">the</span><span class="wd ">HyperAgent</span><span class="wd ac">workshop.</span></div><div class="sub">Build an agent fleet, live on the main stage.</div>
+        </div>
+      </section>
+      <section id="sc17" class="scene clip" data-start="285.9" data-duration="7.4" data-track-index="29">
+        <div class="inner">
+        <div class="eyebrow">WHILE YOU WAIT · GET SET UP</div><div class="ln hero"><span class="wd ">First</span><span class="wd ">things</span><span class="wd ac">first.</span></div><div class="sub">Get set up in three quick moves.</div>
+        </div>
+      </section>
+      <section id="sc18" class="scene clip" data-start="292.9" data-duration="6.4" data-track-index="30">
+        <div class="inner">
+        <div class="eyebrow">STEP 01 OF 03</div><div class="stepnum">01</div><div class="ln"><span class="wd ">Build</span><span class="wd ">your</span><span class="wd ac">agenda.</span></div>
+        </div>
+      </section>
+      <section id="sc19" class="scene clip" data-start="298.9" data-duration="10.4" data-track-index="31">
+        <div class="inner">
+        <div class="eyebrow">STEP 01 · YOUR AGENDA</div><div class="checklist"><div class="ckrow"><span class="tick"></span><span class="cktxt">Open the Agenda tab</span></div><div class="ckrow"><span class="tick"></span><span class="cktxt">Star the sessions you don't want to miss</span></div><div class="ckrow"><span class="tick"></span><span class="cktxt">Pick your workshop track</span></div></div><div class="sub">Foundation or Advanced. Choose the room that matches where you are.</div>
+        </div>
+      </section>
+      <section id="sc20" class="scene clip" data-start="308.9" data-duration="6.4" data-track-index="32">
+        <div class="inner">
+        <div class="eyebrow">STEP 02 OF 03</div><div class="stepnum">02</div><div class="ln"><span class="wd ">Visit</span><span class="wd ">the</span><span class="wd ac">booths.</span></div>
+        </div>
+      </section>
+      <section id="sc21" class="scene clip" data-start="314.9" data-duration="10.4" data-track-index="33">
+        <div class="inner">
+        <div class="eyebrow">STEP 02 · THE EXPO IS OPEN</div><div class="logorow"><div class="logo"><div class="logobox"><img src="assets/sponsors/hyperagent-white-big.png" alt="" style="height:110px" /></div><div class="logorole">PRESENTING SPONSOR</div></div><div class="logo"><div class="logobox"><img src="assets/sponsors/glaido-white.png" alt="" style="height:130px" /></div><div class="logorole">SPONSOR</div></div></div><div class="sub">Stop by the sponsor booths. Live demos all weekend.</div>
+        </div>
+      </section>
+      <section id="sc22" class="scene clip" data-start="324.9" data-duration="6.4" data-track-index="34">
+        <div class="inner">
+        <div class="eyebrow">STEP 03 OF 03</div><div class="stepnum">03</div><div class="ln"><span class="wd ">Meet</span><span class="wd ">people</span><span class="wd ">in</span><span class="wd ac">Networking.</span></div>
+        </div>
+      </section>
+      <section id="sc23" class="scene clip" data-start="330.9" data-duration="10.4" data-track-index="35">
+        <div class="inner">
+        <div class="eyebrow">STEP 03 · SAY HI</div><div class="checklist"><div class="ckrow"><span class="tick"></span><span class="cktxt">Complete your profile</span></div><div class="ckrow"><span class="tick"></span><span class="cktxt">Jump into the Networking room</span></div><div class="ckrow"><span class="tick"></span><span class="cktxt">Introduce yourself to three people</span></div></div><div class="sub">You'll be earning alongside these people all day.</div>
+        </div>
+      </section>
+      <section id="sc24" class="scene clip" data-start="340.9" data-duration="8.4" data-track-index="36">
+        <div class="inner">
+        <div class="eyebrow"><span class="plus">AIS<span class="p">+</span></span> MEMBERS</div><div class="ln"><span class="wd ">Don't</span><span class="wd ">do</span><span class="wd ">this</span><span class="wd ac">alone.</span></div><div class="sub">One minute on what <span class="plus">AIS<span class="p">+</span></span> unlocks.</div>
+        </div>
+      </section>
+      <section id="sc26" class="scene clip" data-start="415.3" data-duration="9.4" data-track-index="38">
+        <div class="inner">
+        <div class="eyebrow">AIS CERTIFICATION</div><div class="ln"><span class="wd ">Get</span><span class="wd ">AIS</span><span class="wd ac">Certified.</span></div><div class="sub">The AIS Certification Programme, launched yesterday on the main stage.</div>
+        </div>
+      </section>
+      <section id="sc27" class="scene clip" data-start="424.3" data-duration="9.4" data-track-index="39">
+        <div class="inner">
+        <div class="eyebrow">LAUNCHED DAY 1 · 5:05 PM</div><div class="ln"><span class="wd ">Certification</span><span class="wd ">is</span><span class="wd ac">live.</span></div><div class="sub">Launched at AIS LIVE. Ask the <span class="plus">AIS<span class="p">+</span></span> team.</div>
+        </div>
+      </section>
+      <section id="sc28" class="scene clip" data-start="433.3" data-duration="6.4" data-track-index="40">
+        <div class="inner">
+        <div class="eyebrow">THANK YOU</div><div class="ln hero"><span class="wd ">The</span><span class="wd ">sponsors</span><span class="wd ac">behind</span><span class="wd ac">AIS</span><span class="wd ac">LIVE.</span></div>
+        </div>
+      </section>
+      <section id="sc29" class="scene clip" data-start="439.3" data-duration="60.4" data-track-index="41">
+        <div class="inner">
+        <div class="eyebrow">OUR SPONSORS</div><div class="logorow"><div class="logo"><div class="logobox"><img src="assets/sponsors/hyperagent-white-big.png" alt="" style="height:130px" /></div><div class="logorole">PRESENTING SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section id="sc30" class="scene clip" data-start="499.3" data-duration="12.4" data-track-index="42">
+        <div class="inner">
+        <div class="eyebrow">OUR SPONSORS</div><div class="logorow"><div class="logo"><div class="logobox"><img src="assets/sponsors/glaido-white.png" alt="" style="height:150px" /></div><div class="logorole">SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section id="sc31" class="scene clip" data-start="511.3" data-duration="8.4" data-track-index="43">
+        <div class="inner">
+        <div class="eyebrow">THE COMMUNITY</div><div class="ln"><span class="wd ">They're</span><span class="wd ">getting</span><span class="wd ac">paid.</span></div><div class="sub">Real members. Real revenue.</div>
+        </div>
+      </section>
+      <section id="sc33" class="scene clip" data-start="589.6" data-duration="8.4" data-track-index="45">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="eyebrow">MEMBER WIN · FROM THE COMMUNITY</div>
+            <div class="winhead"><span class="wd ">£1K</span><span class="wd ">to</span><span class="wd ac">£30K</span><span class="wd ac">projects.</span></div>
+            <div class="winsub">From selling £1,000 workflows a year ago to closing AI agent projects at £25-30K.</div>
+            <div class="winname">Joe Scott</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/joe-scott.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc34" class="scene clip" data-start="597.6" data-duration="8.4" data-track-index="46">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="eyebrow">MEMBER WIN · FROM THE COMMUNITY</div>
+            <div class="winhead"><span class="wd ">$25K</span><span class="wd ac">this</span><span class="wd ac">month.</span></div>
+            <div class="winsub">What started as a side hustle now invoices $25K a month, with $9K more in the pipeline.</div>
+            <div class="winname">Sef El</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/sef-el.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc35" class="scene clip" data-start="605.6" data-duration="8.4" data-track-index="47">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="eyebrow">MEMBER WIN · FROM THE COMMUNITY</div>
+            <div class="winhead"><span class="wd ">$10K</span><span class="wd ">in</span><span class="wd ac">one</span><span class="wd ac">year.</span></div>
+            <div class="winsub">A side hustle while still in university. 80% of it came through <span class="plus">AIS<span class="p">+</span></span> connections.</div>
+            <div class="winname">Abdurrahman Ibrahim</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/abdurrahman-ibrahim.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc36" class="scene clip" data-start="613.6" data-duration="8.4" data-track-index="48">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="eyebrow">MEMBER WIN · FROM THE COMMUNITY</div>
+            <div class="winhead"><span class="wd ">First</span><span class="wd ">client,</span><span class="wd ac">$5K.</span></div>
+            <div class="winsub">Closed at 18 years old.</div>
+            <div class="winname">Noel Payano</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/noel-payano.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc37" class="scene clip" data-start="621.6" data-duration="9.4" data-track-index="49">
+        <div class="inner">
+        <div class="eyebrow">NETWORKING IS OPEN</div><div class="ln"><span class="wd ">Say</span><span class="wd ">hi</span><span class="wd ">to</span><span class="wd ac">three</span><span class="wd ac">people.</span></div><div class="sub">You'll be earning alongside them all day.</div>
+        </div>
+      </section>
+      <section id="sc38" class="scene clip" data-start="630.6" data-duration="8.4" data-track-index="50">
+        <div class="inner">
+        <div class="eyebrow">MEMBER WIN</div><div class="ln quoteln"><span class="wd ">Six</span><span class="wd ">months</span><span class="wd ">of</span><span class="wd ">engineering</span><span class="wd ">work,</span><span class="wd ">compressed</span><span class="wd ">into</span><span class="wd ">one</span><span class="wd ">afternoon.</span></div><div class="sub attrib">Duy Nguyen</div>
+        </div>
+      </section>
+      <section id="sc39" class="scene clip" data-start="638.6" data-duration="9.4" data-track-index="51">
+        <div class="inner">
+        <div class="eyebrow">AIS LIVE · 2026</div><div class="ln"><span class="wd ">Two</span><span class="wd ">days.</span><span class="wd ac">One</span><span class="wd ac">community.</span></div><div class="sub">Built together. Paid together.</div>
+        </div>
+      </section>
+      <section id="sc40" class="scene clip" data-start="647.6" data-duration="9.4" data-track-index="52">
+        <div class="inner">
+        <div class="eyebrow">9:45 AM · MAIN STAGE</div><div class="ln"><span class="wd ">We're</span><span class="wd ">live</span><span class="wd ac">at</span><span class="wd ac">9:45.</span></div><div class="sub">Nate opens Day 2 on the main stage.</div>
+        </div>
+      </section>
+      <section id="sc41" class="scene clip" data-start="656.6" data-duration="9.4" data-track-index="53">
+        <div class="inner">
+        <div class="eyebrow">10:00 AM · SPONSORED WORKSHOP</div><div class="ln"><span class="wd ">HyperAgent</span><span class="wd ">workshop</span><span class="wd ac">at</span><span class="wd ac">10:00.</span></div><div class="sub">Build an agent fleet, live.</div>
+        </div>
+      </section>
+      <section id="sc42" class="scene clip" data-start="665.6" data-duration="8.4" data-track-index="54">
+        <div class="inner">
+        <div class="eyebrow">MEMBER WIN</div><div class="ln quoteln"><span class="wd ">Every</span><span class="wd ">client</span><span class="wd ">came</span><span class="wd ">to</span><span class="wd ">me.</span><span class="wd ">I</span><span class="wd ">never</span><span class="wd ">sent</span><span class="wd ">a</span><span class="wd ">single</span><span class="wd ">cold</span><span class="wd ">DM.</span></div><div class="sub attrib">Abdurrahman Ibrahim</div>
+        </div>
+      </section>
+      <section id="sc43" class="scene clip" data-start="673.6" data-duration="8.4" data-track-index="55">
+        <div class="inner">
+        
+        <div class="statwrap">
+          <div class="kicker">YESTERDAY AT AIS LIVE</div>
+          <div class="num">0+</div>
+          <div class="unit">BUILDERS IN THE ROOM</div>
+        </div><div class="sub">Day 1, together. Day 2 starts now.</div>
+        </div>
+      </section>
+      <section id="sc44" class="scene clip" data-start="681.6" data-duration="9.4" data-track-index="56">
+        <div class="inner">
+        <div class="eyebrow">SETTLE IN</div><div class="ln"><span class="wd ">Grab</span><span class="wd ">a</span><span class="wd ">coffee.</span><span class="wd ac">We</span><span class="wd ac">start</span><span class="wd ac">at</span><span class="wd ac">9:45.</span></div><div class="sub">The morning expo and networking are open until then.</div>
+        </div>
+      </section>
+      <section id="sc45" class="scene clip" data-start="690.6" data-duration="8.4" data-track-index="57">
+        <div class="inner">
+        <div class="eyebrow">FROM LAID OFF TO HIRED</div><div class="ln quoteln"><span class="wd ">In</span><span class="wd ">a</span><span class="wd ">month</span><span class="wd ">and</span><span class="wd ">a</span><span class="wd ">half,</span><span class="wd ">I</span><span class="wd ">went</span><span class="wd ">from</span><span class="wd ">being</span><span class="wd ">laid</span><span class="wd ">off</span><span class="wd ">to</span><span class="wd ">having</span><span class="wd ">a</span><span class="wd ">job.</span></div><div class="sub attrib">Griffin Maklansky</div>
+        </div>
+      </section>
+      <section id="sc46" class="scene clip" data-start="698.6" data-duration="10.067" data-track-index="58">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">AIS LIVE · Day 2 · Earn Day</div>
+        </div>
+      </section>
+      </div>
+      <section id="sc8" class="scene clip rcscene" data-start="88" data-duration="21.5" data-track-index="20">
+        <div class="inner">
+        <div class="rcwrap">
+          <div class="rspace"></div>
+          <div class="rtext">
+            <div class="rtag">DAY 1 · LOW-CODE TO FULL-CODE</div>
+            <div class="rname">Dave Ebbelaar</div>
+            <div class="rrole">AI ENGINEER · DATALUMINA</div>
+            <div class="rquote"><span class="qm">“</span>What you can do right now with AI is insane.<span class="qm">”</span></div>
+          </div>
+        </div>
+        </div>
+      </section>
+      <div id="rc0" class="rclip">
+        <img id="rc0-poster" class="rfill" src="assets/recap/recap-dave-13-years-poster.jpg" alt="" />
+        <video id="rc0-v" class="rfill" muted playsinline data-has-audio="false" src="assets/recap/recap-dave-13-years.mp4" data-start="88.9" data-duration="19.3" data-track-index="501"></video>
+        <img id="rc0-last" class="rfill" src="assets/recap/recap-dave-13-years-lastframe.jpg" alt="" />
+      </div>
+      <section id="sc9" class="scene clip rcscene" data-start="109.1" data-duration="28.8" data-track-index="21">
+        <div class="inner">
+        <div class="rcwrap">
+          <div class="rspace"></div>
+          <div class="rtext">
+            <div class="rtag">DAY 1 · YOUR FIRST AI CONTENT ENGINE</div>
+            <div class="rname">Sabrina Ramonov</div>
+            <div class="rrole">FOUNDER · BLOTATO</div>
+            <div class="rquote"><span class="qm">“</span>HyperFrames is the iPhone. Skip Remotion.<span class="qm">”</span></div>
+          </div>
+        </div>
+        </div>
+      </section>
+      <div id="rc1" class="rclip">
+        <img id="rc1-poster" class="rfill" src="assets/recap/recap-sabrina-hyperframes-poster.jpg" alt="" />
+        <video id="rc1-v" class="rfill" muted playsinline data-has-audio="false" src="assets/recap/recap-sabrina-hyperframes.mp4" data-start="110" data-duration="26.6" data-track-index="502"></video>
+        <img id="rc1-last" class="rfill" src="assets/recap/recap-sabrina-hyperframes-lastframe.jpg" alt="" />
+      </div>
+      <section id="sc10" class="scene clip rcscene" data-start="137.5" data-duration="20.5" data-track-index="22">
+        <div class="inner">
+        <div class="rcwrap">
+          <div class="rspace"></div>
+          <div class="rtext">
+            <div class="rtag">DAY 1 · VIP: SCOPE TO SHIP</div>
+            <div class="rname">Mustafa Tawfiq</div>
+            <div class="rrole">AIS LIVE EVENT TEAM</div>
+            <div class="rquote"><span class="qm">“</span>Both of you have to know when it ends.<span class="qm">”</span></div>
+          </div>
+        </div>
+        </div>
+      </section>
+      <div id="rc2" class="rclip">
+        <img id="rc2-poster" class="rfill" src="assets/recap/recap-mustafa-done-poster.jpg" alt="" />
+        <video id="rc2-v" class="rfill" muted playsinline data-has-audio="false" src="assets/recap/recap-mustafa-done.mp4" data-start="138.4" data-duration="18.3" data-track-index="503"></video>
+        <img id="rc2-last" class="rfill" src="assets/recap/recap-mustafa-done-lastframe.jpg" alt="" />
+      </div>
+      <section id="sc11" class="scene clip rcscene" data-start="157.6" data-duration="39.7" data-track-index="23">
+        <div class="inner">
+        <div class="rcwrap">
+          <div class="rspace"></div>
+          <div class="rtext">
+            <div class="rtag">DAY 1 · VIP: SCOPE TO SHIP</div>
+            <div class="rname">Kodi Zene</div>
+            <div class="rrole">AIS LIVE EVENT TEAM</div>
+            <div class="rquote"><span class="qm">“</span>Price the value it brings, not your time.<span class="qm">”</span></div>
+          </div>
+        </div>
+        </div>
+      </section>
+      <div id="rc3" class="rclip">
+        <img id="rc3-poster" class="rfill" src="assets/recap/recap-kodi-value-lens-poster.jpg" alt="" />
+        <video id="rc3-v" class="rfill" muted playsinline data-has-audio="false" src="assets/recap/recap-kodi-value-lens.mp4" data-start="158.5" data-duration="37.5" data-track-index="504"></video>
+        <img id="rc3-last" class="rfill" src="assets/recap/recap-kodi-value-lens-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt4" class="mount">
+        <img id="mnt4-poster" class="mfill" src="assets/video/ais-plus-membership-poster.jpg" alt="" />
+        <video id="mnt4-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/ais-plus-membership.mp4" data-start="348.9" data-duration="66" data-track-index="505"></video>
+        <img id="mnt4-last" class="mfill" src="assets/video/ais-plus-membership-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt5" class="mount">
+        <img id="mnt5-poster" class="mfill" src="assets/video/testi-earning-poster.jpg" alt="" />
+        <video id="mnt5-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-earning.mp4" data-start="519.3" data-duration="69.9" data-track-index="506"></video>
+        <img id="mnt5-last" class="mfill" src="assets/video/testi-earning-lastframe.jpg" alt="" />
+      </div>
+      <audio id="rc0-a" src="assets/recap/recap-dave-13-years.mp4" data-start="88.9" data-duration="19.3" data-track-index="561" data-volume="1"></audio>
+      <audio id="rc1-a" src="assets/recap/recap-sabrina-hyperframes.mp4" data-start="110" data-duration="26.6" data-track-index="562" data-volume="1"></audio>
+      <audio id="rc2-a" src="assets/recap/recap-mustafa-done.mp4" data-start="138.4" data-duration="18.3" data-track-index="563" data-volume="1"></audio>
+      <audio id="rc3-a" src="assets/recap/recap-kodi-value-lens.mp4" data-start="158.5" data-duration="37.5" data-track-index="564" data-volume="1"></audio>
+      <audio id="mnt4-a" src="assets/video/ais-plus-membership.mp4" data-start="348.9" data-duration="66" data-track-index="565" data-volume="1"></audio>
+      <audio id="mnt5-a" src="assets/video/testi-earning.mp4" data-start="519.3" data-duration="69.9" data-track-index="566" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 708.667;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers (all fromTo so nothing is left invisible) ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      // transform+opacity only — NO filter on text (a filter region clips italic edges + glow).
+      // force3D:false on anything touching gradient text: a 3D-promoted
+      // background-clip:text layer rasterizes with a truncated mask (descenders
+      // chop) — same bug as will-change, but triggered during the tween itself,
+      // which is what Studio playback shows even when the render is clean.
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%",force3D:false},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%",force3D:false},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function glowIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"power2.out",stagger:step||.12,transformOrigin:"50% 50%"},at); }
+      function shotIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,x:70,rotationY:-14,filter:"blur(8px)"},
+        {autoAlpha:1,x:0,rotationY:0,filter:"blur(0px)",duration:.65,ease:"power3.out"},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      // gentle float during long signage holds — lists only, never headline type
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.8,ease:"power2.in"},at); }
+      function mountIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:1.045,filter:"blur(14px)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px)",duration:.5,ease:"power2.out",transformOrigin:"50% 50%"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+      function countUp(sel, at, target, dur, suffix){
+        var o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+        tl.to(o,{v:target,duration:dur,ease:"power2.out",onUpdate:function(){
+          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+      }
+
+      /* ---- AMBIENT — camera never sleeps; short fixed cycles, even segment counts
+             so yoyo motion starts AND ends at rest (loop-clean); dot/ring tile
+             because D is a multiple of their 1.6s cycle ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/24, yoyo:true, repeat:23, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/28, yoyo:true, repeat:27, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/118, yoyo:true, repeat:117, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/24, yoyo:true, repeat:23, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral",{ x:-36, y:22, duration:D/24, yoyo:true, repeat:23, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/84, yoyo:true, repeat:83, ease:"sine.inOut" }, 0);
+      // live-dot pulse — the only ambient motion on the SOLID mark (brand)
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:885, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:442, ease:"none" }, 0);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (6s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.24);
+      whipOut("#sc0 .inner", 5.7);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 6);
+
+      // sc1 · tagline  (9s)
+      streak(6);
+      drop("#sc1 .eyebrow", 6.12);
+      words("#sc1 .ln .wd", 6.24);
+      drop("#sc1 .sub", 6.82);
+      whipOut("#sc1 .inner", 14.7);
+      tl.set("#sc1 .inner", { autoAlpha: 0 }, 15);
+
+      // sc2 · hero  (5s)
+      streak(15);
+      drop("#sc2 .eyebrow", 15.12);
+      words("#sc2 .ln .wd", 15.24);
+      whipOut("#sc2 .inner", 19.7);
+      tl.set("#sc2 .inner", { autoAlpha: 0 }, 20);
+
+      // sc3 · agenda  (36s)
+      streak(20);
+      drop("#sc3 .eyebrow", 20.12);
+      slideX("#sc3 .agrow", 20.3, 0.07);
+      drop("#sc3 .sub", 20.82);
+      drift("#sc3 .agenda", 22, 6.88);
+      whipOut("#sc3 .inner", 55.7);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 56);
+
+      // sc4 · quote  (8s)
+      streak(56);
+      drop("#sc4 .eyebrow", 56.12);
+      words("#sc4 .quoteln .wd", 56.26);
+      drop("#sc4 .attrib", 56.95);
+      whipOut("#sc4 .inner", 63.7);
+      tl.set("#sc4 .inner", { autoAlpha: 0 }, 64);
+
+      // sc5 · stat  (8s)
+      streak(64);
+      drop("#sc5 .kicker", 64.28);
+      pop("#sc5 .num", 64.42);
+      countUp("#sc5 .num", 64.48, 100, 1.0, "K+");
+      drop("#sc5 .unit", 64.78);
+      drop("#sc5 .sub", 64.82);
+      whipOut("#sc5 .inner", 71.7);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 72);
+
+      // sc6 · quote  (8s)
+      streak(72);
+      drop("#sc6 .eyebrow", 72.12);
+      words("#sc6 .quoteln .wd", 72.26);
+      drop("#sc6 .attrib", 72.95);
+      whipOut("#sc6 .inner", 79.7);
+      tl.set("#sc6 .inner", { autoAlpha: 0 }, 80);
+
+      // sc7 · tagline  (8s)
+      streak(80);
+      drop("#sc7 .eyebrow", 80.12);
+      words("#sc7 .ln .wd", 80.24);
+      drop("#sc7 .sub", 80.82);
+      whipOut("#sc7 .inner", 87.7);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 88);
+
+      // sc8 · recap recap-dave-13-years  (21.1s, voice audio)
+      streak(88);
+      tl.set("#rc0", { autoAlpha: 0 }, 0);
+      tl.set("#rc0-last", { autoAlpha: 0 }, 0);
+      drop("#sc8 .rtag", 88.12);
+      shotIn("#rc0", 88.22);
+      drop("#sc8 .rname", 88.42);
+      drop("#sc8 .rrole", 88.58);
+      drop("#sc8 .rquote", 88.74);
+      tl.set("#rc0-poster", { autoAlpha: 0 }, 89.1);
+      tl.set("#rc0-last", { autoAlpha: 1 }, 108.16);
+      whipOut("#sc8 .inner", 108.8);
+      whipOut("#rc0", 108.8);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 109.1);
+      tl.set("#rc0", { autoAlpha: 0 }, 109.1);
+
+      // sc9 · recap recap-sabrina-hyperframes  (28.4s, voice audio)
+      streak(109.1);
+      tl.set("#rc1", { autoAlpha: 0 }, 0);
+      tl.set("#rc1-last", { autoAlpha: 0 }, 0);
+      drop("#sc9 .rtag", 109.22);
+      shotIn("#rc1", 109.32);
+      drop("#sc9 .rname", 109.52);
+      drop("#sc9 .rrole", 109.68);
+      drop("#sc9 .rquote", 109.84);
+      tl.set("#rc1-poster", { autoAlpha: 0 }, 110.2);
+      tl.set("#rc1-last", { autoAlpha: 1 }, 136.56);
+      whipOut("#sc9 .inner", 137.2);
+      whipOut("#rc1", 137.2);
+      tl.set("#sc9 .inner", { autoAlpha: 0 }, 137.5);
+      tl.set("#rc1", { autoAlpha: 0 }, 137.5);
+
+      // sc10 · recap recap-mustafa-done  (20.1s, voice audio)
+      streak(137.5);
+      tl.set("#rc2", { autoAlpha: 0 }, 0);
+      tl.set("#rc2-last", { autoAlpha: 0 }, 0);
+      drop("#sc10 .rtag", 137.62);
+      shotIn("#rc2", 137.72);
+      drop("#sc10 .rname", 137.92);
+      drop("#sc10 .rrole", 138.08);
+      drop("#sc10 .rquote", 138.24);
+      tl.set("#rc2-poster", { autoAlpha: 0 }, 138.6);
+      tl.set("#rc2-last", { autoAlpha: 1 }, 156.66);
+      whipOut("#sc10 .inner", 157.3);
+      whipOut("#rc2", 157.3);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 157.6);
+      tl.set("#rc2", { autoAlpha: 0 }, 157.6);
+
+      // sc11 · recap recap-kodi-value-lens  (39.3s, voice audio)
+      streak(157.6);
+      tl.set("#rc3", { autoAlpha: 0 }, 0);
+      tl.set("#rc3-last", { autoAlpha: 0 }, 0);
+      drop("#sc11 .rtag", 157.72);
+      shotIn("#rc3", 157.82);
+      drop("#sc11 .rname", 158.02);
+      drop("#sc11 .rrole", 158.18);
+      drop("#sc11 .rquote", 158.34);
+      tl.set("#rc3-poster", { autoAlpha: 0 }, 158.7);
+      tl.set("#rc3-last", { autoAlpha: 1 }, 195.96);
+      whipOut("#sc11 .inner", 196.6);
+      whipOut("#rc3", 196.6);
+      tl.set("#sc11 .inner", { autoAlpha: 0 }, 196.9);
+      tl.set("#rc3", { autoAlpha: 0 }, 196.9);
+
+      // sc12 · hero  (5s)
+      streak(196.9);
+      drop("#sc12 .eyebrow", 197.02);
+      words("#sc12 .ln .wd", 197.14);
+      whipOut("#sc12 .inner", 201.6);
+      tl.set("#sc12 .inner", { autoAlpha: 0 }, 201.9);
+
+      // sc13 · tagline  (10s)
+      streak(201.9);
+      drop("#sc13 .eyebrow", 202.02);
+      words("#sc13 .ln .wd", 202.14);
+      drop("#sc13 .sub", 202.72);
+      whipOut("#sc13 .inner", 211.6);
+      tl.set("#sc13 .inner", { autoAlpha: 0 }, 211.9);
+
+      // sc14 · agenda  (32s)
+      streak(211.9);
+      drop("#sc14 .eyebrow", 212.02);
+      slideX("#sc14 .agrow", 212.2, 0.07);
+      drop("#sc14 .sub", 212.72);
+      drift("#sc14 .agenda", 213.9, 6.04);
+      whipOut("#sc14 .inner", 243.6);
+      tl.set("#sc14 .inner", { autoAlpha: 0 }, 243.9);
+
+      // sc15 · agenda  (32s)
+      streak(243.9);
+      drop("#sc15 .eyebrow", 244.02);
+      slideX("#sc15 .agrow", 244.2, 0.07);
+      drop("#sc15 .sub", 244.72);
+      drift("#sc15 .agenda", 245.9, 6.04);
+      whipOut("#sc15 .inner", 275.6);
+      tl.set("#sc15 .inner", { autoAlpha: 0 }, 275.9);
+
+      // sc16 · tagline  (10s)
+      streak(275.9);
+      drop("#sc16 .eyebrow", 276.02);
+      words("#sc16 .ln .wd", 276.14);
+      drop("#sc16 .sub", 276.72);
+      whipOut("#sc16 .inner", 285.6);
+      tl.set("#sc16 .inner", { autoAlpha: 0 }, 285.9);
+
+      // sc17 · hero  (7s)
+      streak(285.9);
+      drop("#sc17 .eyebrow", 286.02);
+      words("#sc17 .ln .wd", 286.14);
+      drop("#sc17 .sub", 286.72);
+      whipOut("#sc17 .inner", 292.6);
+      tl.set("#sc17 .inner", { autoAlpha: 0 }, 292.9);
+
+      // sc18 · step  (6s)
+      streak(292.9);
+      drop("#sc18 .eyebrow", 293.02);
+      pop("#sc18 .stepnum", 293.1);
+      words("#sc18 .ln .wd", 293.3);
+      whipOut("#sc18 .inner", 298.6);
+      tl.set("#sc18 .inner", { autoAlpha: 0 }, 298.9);
+
+      // sc19 · rows  (10s)
+      streak(298.9);
+      drop("#sc19 .eyebrow", 299.02);
+      slideX("#sc19 .ckrow", 299.2, 0.14);
+      drop("#sc19 .sub", 299.72);
+      whipOut("#sc19 .inner", 308.6);
+      tl.set("#sc19 .inner", { autoAlpha: 0 }, 308.9);
+
+      // sc20 · step  (6s)
+      streak(308.9);
+      drop("#sc20 .eyebrow", 309.02);
+      pop("#sc20 .stepnum", 309.1);
+      words("#sc20 .ln .wd", 309.3);
+      whipOut("#sc20 .inner", 314.6);
+      tl.set("#sc20 .inner", { autoAlpha: 0 }, 314.9);
+
+      // sc21 · sponsor  (10s)
+      streak(314.9);
+      drop("#sc21 .eyebrow", 315.02);
+      glowIn("#sc21 .logo", 315.24, 0.14);
+      drop("#sc21 .sub", 315.72);
+      whipOut("#sc21 .inner", 324.6);
+      tl.set("#sc21 .inner", { autoAlpha: 0 }, 324.9);
+
+      // sc22 · step  (6s)
+      streak(324.9);
+      drop("#sc22 .eyebrow", 325.02);
+      pop("#sc22 .stepnum", 325.1);
+      words("#sc22 .ln .wd", 325.3);
+      whipOut("#sc22 .inner", 330.6);
+      tl.set("#sc22 .inner", { autoAlpha: 0 }, 330.9);
+
+      // sc23 · rows  (10s)
+      streak(330.9);
+      drop("#sc23 .eyebrow", 331.02);
+      slideX("#sc23 .ckrow", 331.2, 0.14);
+      drop("#sc23 .sub", 331.72);
+      whipOut("#sc23 .inner", 340.6);
+      tl.set("#sc23 .inner", { autoAlpha: 0 }, 340.9);
+
+      // sc24 · tagline  (8s)
+      streak(340.9);
+      drop("#sc24 .eyebrow", 341.02);
+      words("#sc24 .ln .wd", 341.14);
+      drop("#sc24 .sub", 341.72);
+      whipOut("#sc24 .inner", 348.6);
+      tl.set("#sc24 .inner", { autoAlpha: 0 }, 348.9);
+
+      // sc25 · mount ais-plus-membership  (66.4s, voice audio)
+      streak(348.9);
+      tl.set("#mnt4", { autoAlpha: 0 }, 0);
+      tl.set("#mnt4-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt4", 348.9);
+      tl.set("#mnt4-poster", { autoAlpha: 0 }, 349.1);
+      tl.set("#mnt4-last", { autoAlpha: 1 }, 414.86);
+      whipOut("#mnt4", 415);
+      tl.set("#mnt4", { autoAlpha: 0 }, 415.3);
+
+      // sc26 · tagline  (9s)
+      streak(415.3);
+      drop("#sc26 .eyebrow", 415.42);
+      words("#sc26 .ln .wd", 415.54);
+      drop("#sc26 .sub", 416.12);
+      whipOut("#sc26 .inner", 424);
+      tl.set("#sc26 .inner", { autoAlpha: 0 }, 424.3);
+
+      // sc27 · action  (9s)
+      streak(424.3);
+      drop("#sc27 .eyebrow", 424.42);
+      words("#sc27 .ln .wd", 424.54);
+      drop("#sc27 .sub", 425.12);
+      whipOut("#sc27 .inner", 433);
+      tl.set("#sc27 .inner", { autoAlpha: 0 }, 433.3);
+
+      // sc28 · hero  (6s)
+      streak(433.3);
+      drop("#sc28 .eyebrow", 433.42);
+      words("#sc28 .ln .wd", 433.54);
+      whipOut("#sc28 .inner", 439);
+      tl.set("#sc28 .inner", { autoAlpha: 0 }, 439.3);
+
+      // sc29 · sponsor  (60s)
+      streak(439.3);
+      drop("#sc29 .eyebrow", 439.42);
+      glowIn("#sc29 .logo", 439.64, 0.14);
+      drift("#sc29 .logorow", 441.3, 11.88);
+      whipOut("#sc29 .inner", 499);
+      tl.set("#sc29 .inner", { autoAlpha: 0 }, 499.3);
+
+      // sc30 · sponsor  (12s)
+      streak(499.3);
+      drop("#sc30 .eyebrow", 499.42);
+      glowIn("#sc30 .logo", 499.64, 0.14);
+      whipOut("#sc30 .inner", 511);
+      tl.set("#sc30 .inner", { autoAlpha: 0 }, 511.3);
+
+      // sc31 · tagline  (8s)
+      streak(511.3);
+      drop("#sc31 .eyebrow", 511.42);
+      words("#sc31 .ln .wd", 511.54);
+      drop("#sc31 .sub", 512.12);
+      whipOut("#sc31 .inner", 519);
+      tl.set("#sc31 .inner", { autoAlpha: 0 }, 519.3);
+
+      // sc32 · mount testi-earning  (70.3s, voice audio)
+      streak(519.3);
+      tl.set("#mnt5", { autoAlpha: 0 }, 0);
+      tl.set("#mnt5-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt5", 519.3);
+      tl.set("#mnt5-poster", { autoAlpha: 0 }, 519.5);
+      tl.set("#mnt5-last", { autoAlpha: 1 }, 589.16);
+      whipOut("#mnt5", 589.3);
+      tl.set("#mnt5", { autoAlpha: 0 }, 589.6);
+
+      // sc33 · win  (8s)
+      streak(589.6);
+      drop("#sc33 .eyebrow", 589.74);
+      words("#sc33 .winhead .wd", 589.88);
+      drop("#sc33 .winsub", 590.35);
+      drop("#sc33 .winname", 590.52);
+      shotIn("#sc33 .winshot", 590);
+      drift("#sc33 .winshot", 591.4, 1.17);
+      drop("#sc33 .sub", 590.42);
+      whipOut("#sc33 .inner", 597.3);
+      tl.set("#sc33 .inner", { autoAlpha: 0 }, 597.6);
+
+      // sc34 · win  (8s)
+      streak(597.6);
+      drop("#sc34 .eyebrow", 597.74);
+      words("#sc34 .winhead .wd", 597.88);
+      drop("#sc34 .winsub", 598.35);
+      drop("#sc34 .winname", 598.52);
+      shotIn("#sc34 .winshot", 598);
+      drift("#sc34 .winshot", 599.4, 1.17);
+      drop("#sc34 .sub", 598.42);
+      whipOut("#sc34 .inner", 605.3);
+      tl.set("#sc34 .inner", { autoAlpha: 0 }, 605.6);
+
+      // sc35 · win  (8s)
+      streak(605.6);
+      drop("#sc35 .eyebrow", 605.74);
+      words("#sc35 .winhead .wd", 605.88);
+      drop("#sc35 .winsub", 606.35);
+      drop("#sc35 .winname", 606.52);
+      shotIn("#sc35 .winshot", 606);
+      drift("#sc35 .winshot", 607.4, 1.17);
+      drop("#sc35 .sub", 606.42);
+      whipOut("#sc35 .inner", 613.3);
+      tl.set("#sc35 .inner", { autoAlpha: 0 }, 613.6);
+
+      // sc36 · win  (8s)
+      streak(613.6);
+      drop("#sc36 .eyebrow", 613.74);
+      words("#sc36 .winhead .wd", 613.88);
+      drop("#sc36 .winsub", 614.35);
+      drop("#sc36 .winname", 614.52);
+      shotIn("#sc36 .winshot", 614);
+      drift("#sc36 .winshot", 615.4, 1.17);
+      drop("#sc36 .sub", 614.42);
+      whipOut("#sc36 .inner", 621.3);
+      tl.set("#sc36 .inner", { autoAlpha: 0 }, 621.6);
+
+      // sc37 · action  (9s)
+      streak(621.6);
+      drop("#sc37 .eyebrow", 621.72);
+      words("#sc37 .ln .wd", 621.84);
+      drop("#sc37 .sub", 622.42);
+      whipOut("#sc37 .inner", 630.3);
+      tl.set("#sc37 .inner", { autoAlpha: 0 }, 630.6);
+
+      // sc38 · quote  (8s)
+      streak(630.6);
+      drop("#sc38 .eyebrow", 630.72);
+      words("#sc38 .quoteln .wd", 630.86);
+      drop("#sc38 .attrib", 631.55);
+      whipOut("#sc38 .inner", 638.3);
+      tl.set("#sc38 .inner", { autoAlpha: 0 }, 638.6);
+
+      // sc39 · tagline  (9s)
+      streak(638.6);
+      drop("#sc39 .eyebrow", 638.72);
+      words("#sc39 .ln .wd", 638.84);
+      drop("#sc39 .sub", 639.42);
+      whipOut("#sc39 .inner", 647.3);
+      tl.set("#sc39 .inner", { autoAlpha: 0 }, 647.6);
+
+      // sc40 · action  (9s)
+      streak(647.6);
+      drop("#sc40 .eyebrow", 647.72);
+      words("#sc40 .ln .wd", 647.84);
+      drop("#sc40 .sub", 648.42);
+      whipOut("#sc40 .inner", 656.3);
+      tl.set("#sc40 .inner", { autoAlpha: 0 }, 656.6);
+
+      // sc41 · action  (9s)
+      streak(656.6);
+      drop("#sc41 .eyebrow", 656.72);
+      words("#sc41 .ln .wd", 656.84);
+      drop("#sc41 .sub", 657.42);
+      whipOut("#sc41 .inner", 665.3);
+      tl.set("#sc41 .inner", { autoAlpha: 0 }, 665.6);
+
+      // sc42 · quote  (8s)
+      streak(665.6);
+      drop("#sc42 .eyebrow", 665.72);
+      words("#sc42 .quoteln .wd", 665.86);
+      drop("#sc42 .attrib", 666.55);
+      whipOut("#sc42 .inner", 673.3);
+      tl.set("#sc42 .inner", { autoAlpha: 0 }, 673.6);
+
+      // sc43 · stat  (8s)
+      streak(673.6);
+      drop("#sc43 .kicker", 673.88);
+      pop("#sc43 .num", 674.02);
+      countUp("#sc43 .num", 674.08, 1600, 1.1, "+");
+      drop("#sc43 .unit", 674.38);
+      drop("#sc43 .sub", 674.42);
+      whipOut("#sc43 .inner", 681.3);
+      tl.set("#sc43 .inner", { autoAlpha: 0 }, 681.6);
+
+      // sc44 · action  (9s)
+      streak(681.6);
+      drop("#sc44 .eyebrow", 681.72);
+      words("#sc44 .ln .wd", 681.84);
+      drop("#sc44 .sub", 682.42);
+      whipOut("#sc44 .inner", 690.3);
+      tl.set("#sc44 .inner", { autoAlpha: 0 }, 690.6);
+
+      // sc45 · quote  (8s)
+      streak(690.6);
+      drop("#sc45 .eyebrow", 690.72);
+      words("#sc45 .quoteln .wd", 690.86);
+      drop("#sc45 .attrib", 691.55);
+      whipOut("#sc45 .inner", 698.3);
+      tl.set("#sc45 .inner", { autoAlpha: 0 }, 698.6);
+
+      // sc46 · markflash  (10.067s)
+      streak(698.6);
+      markPop("#sc46 .bigmark", 698.82);
+      drop("#sc46 .sub", 699.42);
+      settleOut("#sc46 .inner", 707.767);
+
+      tl.to({}, { duration: D }, 0); // Law #11 — fill the slot
+      window.__timelines["cmp-day2-opening-fill"] = tl;
+    </script>
+  </body>
+</html>

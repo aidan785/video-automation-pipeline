@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Seedance 2.5 intro — lottie-motion-design Playful pass</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Caveat:wght@700&display=swap");
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage video { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+
+  :root { --teal: #33D4C8; --sun: #FFD84A; --ink: #101214; }
+
+  /* ---------- cold open ---------- */
+  #veil { position: absolute; inset: 0; background: rgba(5,6,7,0.62);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+  #open { position: absolute; inset: 0; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; gap: 22px; }
+  #open h1 { font: 900 190px/1 "Archivo", "Helvetica Neue", sans-serif;
+    color: var(--teal); letter-spacing: -0.02em;
+    text-shadow: 0 0 50px rgba(51,212,200,0.35), 0 12px 50px rgba(0,0,0,0.6); }
+  #open .sub { font: 700 40px/1 "Archivo", sans-serif; color: #fff;
+    letter-spacing: 0.22em; text-transform: uppercase; }
+  #open .hand { font: 700 58px/1 "Caveat", cursive; color: var(--sun);
+    transform: rotate(-4deg); }
+
+  /* ---------- what's new pop ---------- */
+  #wnew { position: absolute; left: 64px; top: 200px;
+    background: var(--sun); color: var(--ink); border-radius: 18px;
+    padding: 26px 42px; transform: rotate(-2deg);
+    font: 900 64px/1 "Archivo", sans-serif; text-transform: uppercase; letter-spacing: -0.01em;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.45); }
+
+  /* ---------- checklist ---------- */
+  #list { position: absolute; left: 64px; bottom: 96px;
+    background: rgba(16,18,20,0.90);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border: 2px solid rgba(255,255,255,0.12); border-radius: 20px;
+    padding: 26px 34px; display: flex; flex-direction: column; gap: 18px;
+    box-shadow: 0 22px 55px rgba(0,0,0,0.5); }
+  #list .hdr { font: 700 22px/1 "Archivo", sans-serif; color: var(--teal);
+    letter-spacing: 0.20em; text-transform: uppercase; margin-bottom: 4px; }
+  .row { display: flex; align-items: center; gap: 16px; transform-origin: 0% 50%; }
+  .row .chk { width: 44px; height: 44px; border-radius: 50%; background: var(--teal);
+    display: flex; align-items: center; justify-content: center; flex: none; }
+  .row .chk svg path { stroke: var(--ink); stroke-width: 3.6; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 22; stroke-dashoffset: 0; }
+  .row .t { font: 700 36px/1 "Archivo", sans-serif; color: #fff; white-space: nowrap; }
+  .row .t b { color: var(--sun); }
+
+  /* ---------- trio ---------- */
+  #trio { position: absolute; left: 0; right: 0; top: 420px;
+    display: flex; justify-content: center; gap: 34px; }
+  .word { border-radius: 18px; padding: 26px 40px;
+    font: 900 62px/1 "Archivo", sans-serif; text-transform: uppercase;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.5); }
+  .w1 { background: var(--teal); color: var(--ink); transform: rotate(-2deg); }
+  .w2 { background: var(--sun);  color: var(--ink); transform: rotate(1.5deg); }
+  .w3 { background: #fff;        color: var(--ink); transform: rotate(-1deg); }
+
+  /* ---------- ambient ---------- */
+  #vig { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,0.55) 100%);
+    opacity: 0.32; }
+  #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='23'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 240px 240px; }
+
+  #endfade { position: absolute; inset: 0; background: #000; }
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="lottie-intro-seedance25" data-start="0" data-width="1920" data-height="1080">
+
+  <video id="vid" src="assets/intro.mp4" data-has-audio="true" data-start="0" data-duration="60.0" data-track-index="0"></video>
+
+  <div id="vig"   class="clip" data-start="0" data-duration="60.0" data-track-index="9"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="60.0" data-track-index="10"></div>
+
+  <!-- beat 1 — cold open: "officially available in the US" (1.64) -->
+  <div id="veil" class="clip" data-start="0" data-duration="5.2" data-track-index="2"></div>
+  <div id="open" class="clip" data-start="0" data-duration="5.2" data-track-index="3">
+    <h1>Seedance 2.5</h1>
+    <div class="sub">Now available in the US</div>
+    <div class="hand">let's test it in Blender!</div>
+  </div>
+
+  <!-- beat 2 — "what's new with Seedance 2.5?" (7.28) -->
+  <div id="wnew" class="clip" data-start="7.05" data-duration="2.4" data-track-index="4">What's new?</div>
+
+  <!-- beat 3 — accumulating checklist: 9.46 / 21.24 / 27.32 / 42.42 -->
+  <div id="list" class="clip" data-start="9.2" data-duration="44.6" data-track-index="4">
+    <div class="hdr">Seedance 2.5 — what's new</div>
+    <div class="row r1"><span class="chk"><svg width="26" height="26" viewBox="0 0 26 26"><path d="M5 14l5 5 11-12"/></svg></span><span class="t"><b>30s</b> generations</span></div>
+    <div class="row r2"><span class="chk"><svg width="26" height="26" viewBox="0 0 26 26"><path d="M5 14l5 5 11-12"/></svg></span><span class="t">Native <b>4K</b></span></div>
+    <div class="row r3"><span class="chk"><svg width="26" height="26" viewBox="0 0 26 26"><path d="M5 14l5 5 11-12"/></svg></span><span class="t"><b>50</b> references</span></div>
+    <div class="row r4"><span class="chk"><svg width="26" height="26" viewBox="0 0 26 26"><path d="M5 14l5 5 11-12"/></svg></span><span class="t"><b>+20%</b> adherence</span></div>
+  </div>
+
+  <!-- beat 4 — trio: "cleaner, cheaper, and more efficient" (55.22) -->
+  <div id="trio" class="clip" data-start="55.0" data-duration="4.5" data-track-index="4">
+    <div class="word w1">Cleaner</div>
+    <div class="word w2">Cheaper</div>
+    <div class="word w3">Efficient</div>
+  </div>
+
+  <div id="endfade" class="clip" data-start="59.5" data-duration="0.5" data-track-index="11"></div>
+</div>
+
+<script>
+(() => {
+  const DUR = 60.0;
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+
+  /* Playful archetype (lottie-motion-design):
+     back.out(1.7) entrances 150-300ms (~15% overshoot), power2.in exits
+     150-200ms, stagger 60-90ms, idle sine wobble under 1deg. */
+
+  /* ===== ambient ===== */
+  tl.fromTo("#vig", { opacity: 0.26 }, { opacity: 0.38, duration: 4, ease: "sine.inOut", repeat: 13, yoyo: true, immediateRender: true }, 0);
+  for (let t = 0, i = 0; t < DUR; t += 0.25, i++) {
+    tl.set("#grain", { backgroundPosition:
+      (120 * Math.abs(Math.sin(i * 0.83 + 0.4))).toFixed(1) + "px " +
+      (120 * Math.abs(Math.cos(i * 1.31 + 0.2))).toFixed(1) + "px" }, t);
+  }
+
+  /* ===== beat 1 — cold open (0 - 5.2) ===== */
+  tl.from("#open h1",    { y: 90, scale: 0.7, autoAlpha: 0, duration: 0.30, ease: "back.out(1.7)" }, 0.30);
+  tl.from("#open .sub",  { y: 40, autoAlpha: 0, duration: 0.26, ease: "back.out(1.7)" }, 0.42);
+  tl.from("#open .hand", { scale: 0, rotation: 8, autoAlpha: 0, duration: 0.28, ease: "back.out(2.0)", transformOrigin: "50% 50%" }, 0.56); // third in the stagger
+  // gentle idle float while the open holds
+  tl.to("#open h1", { y: -8, duration: 1.4, ease: "sine.inOut", repeat: 1, yoyo: true }, 0.75);
+  tl.to("#open .hand", { rotation: -7, duration: 0.9, ease: "sine.inOut", repeat: 3, yoyo: true }, 0.95);
+  tl.to("#open .hand", { scale: 0.6, autoAlpha: 0, duration: 0.18, ease: "power2.in" }, 4.72);
+  tl.to("#open .sub",  { y: -26, autoAlpha: 0, duration: 0.18, ease: "power2.in" }, 4.66);
+  tl.to("#open h1",    { y: -50, autoAlpha: 0, duration: 0.20, ease: "power2.in" }, 4.72);
+  tl.fromTo("#veil", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.40, ease: "power2.inOut", immediateRender: true }, 4.78);
+
+  /* ===== beat 2 — what's new pop (7.05 - 9.45) ===== */
+  tl.from("#wnew", { scale: 0, rotation: -14, autoAlpha: 0, duration: 0.28, ease: "back.out(1.9)", transformOrigin: "50% 50%" }, 7.10);
+  tl.to("#wnew", { rotation: -1, duration: 0.8, ease: "sine.inOut", repeat: 1, yoyo: true }, 7.45);
+  tl.to("#wnew", { scale: 0.75, autoAlpha: 0, duration: 0.18, ease: "power2.in" }, 9.15);
+
+  /* ===== beat 3 — checklist (9.2 - 53.8) ===== */
+  tl.from("#list", { y: 110, scale: 0.85, autoAlpha: 0, duration: 0.30, ease: "back.out(1.7)", transformOrigin: "0% 100%" }, 9.30);
+  tl.from("#list .hdr", { autoAlpha: 0, x: -14, duration: 0.22, ease: "power2.out" }, 9.48);
+  // whole-card idle wobble (ambient life, <1deg)
+  tl.to("#list", { rotation: 0.4, duration: 2.4, ease: "sine.inOut", repeat: 17, yoyo: true, transformOrigin: "50% 100%" }, 9.8);
+
+  const rows = [ [".r1", 9.46], [".r2", 21.10], [".r3", 27.20], [".r4", 42.30] ];
+  rows.forEach(([r, t]) => {
+    tl.from("#list " + r, { x: -70, autoAlpha: 0, duration: 0.26, ease: "back.out(1.7)" }, t);
+    tl.from("#list " + r + " .chk", { scale: 0, duration: 0.24, ease: "back.out(2.4)" }, t + 0.08);   // secondary pop
+    tl.fromTo("#list " + r + " .chk path", { strokeDashoffset: 22 }, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out", immediateRender: true }, t + 0.18);
+  });
+  // "upload 50 references" spoken again — r3 celebrates (36.64)
+  tl.to("#list .r3", { scale: 1.09, duration: 0.15, ease: "power2.out", transformOrigin: "0% 50%" }, 36.62);
+  tl.to("#list .r3", { scale: 1.0, duration: 0.26, ease: "back.out(2.2)" }, 36.78);
+  // "no more re-rolls" — r4 nod (46.74)
+  tl.to("#list .r4", { scale: 1.07, duration: 0.15, ease: "power2.out", transformOrigin: "0% 50%" }, 46.72);
+  tl.to("#list .r4", { scale: 1.0, duration: 0.26, ease: "back.out(2.2)" }, 46.88);
+  tl.to("#list", { y: 90, autoAlpha: 0, duration: 0.22, ease: "power2.in" }, 53.5);
+
+  /* ===== beat 4 — trio (55.0 - 59.5), staggered on the spoken words ===== */
+  tl.from("#trio .w1", { y: 120, scale: 0.6, autoAlpha: 0, duration: 0.28, ease: "back.out(1.8)" }, 55.15);
+  tl.from("#trio .w2", { y: 120, scale: 0.6, autoAlpha: 0, duration: 0.28, ease: "back.out(1.8)" }, 55.85);
+  tl.from("#trio .w3", { y: 120, scale: 0.6, autoAlpha: 0, duration: 0.28, ease: "back.out(1.8)" }, 56.55);
+  [".w1", ".w2", ".w3"].forEach((w, i) => {
+    tl.to("#trio " + w, { y: -10, duration: 1.1, ease: "sine.inOut", repeat: 1, yoyo: true }, 57.0 + i * 0.15);
+    tl.to("#trio " + w, { y: 60, autoAlpha: 0, duration: 0.18, ease: "power2.in" }, 59.05 + i * 0.07);
+  });
+  tl.set("#trio", { autoAlpha: 0 }, 59.45);
+
+  tl.fromTo("#endfade", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45, ease: "power2.in", immediateRender: true }, 59.52);
+
+  tl.to({}, { duration: DUR }, 0);   // Law #11
+  window.__timelines["lottie-intro-seedance25"] = tl;
+})();
+</script>
+</body>
+</html>

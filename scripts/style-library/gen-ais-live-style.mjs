@@ -91,7 +91,14 @@ const SHARED_CSS = `
       .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
         background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
       .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
-        background:rgba(var(--red-rgb),.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}`;
+        background:rgba(var(--red-rgb),.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+
+      /* Official AIS+ PRODUCT mark (distinct from the AIS/LIVE event mark above):
+         ALL WHITE, italic-900 Montserrat, the + included. Inline it in copy with
+         <span class="plus">AIS<span class="p">+</span></span>. Never tint the +. */
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);letter-spacing:var(--track-tight);
+        display:inline-block;color:var(--white);text-shadow:0 0 34px rgba(255,255,255,.28);}
+      .plus .p{color:var(--white);text-shadow:0 0 34px rgba(255,255,255,.28);}`;
 
 // ---------------------------------------------------------------------------
 // shared JS — reveal/transition helpers + ambient loop, tokens-driven eases.
@@ -140,15 +147,18 @@ const SHARED_JS = dur => `
         tl.fromTo(".whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
         tl.to(".whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
       }
-      function countUp(sel, at, target, d, suffix){
-        var o={v:0};
-        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+      function countUp(sel, at, target, d, suffix, prefix){
+        var p=prefix||"", o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent=p+"0"+(suffix||"");}, null, at-0.001);
         tl.to(o,{v:target,duration:d,ease:"power2.out",onUpdate:function(){
-          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+          var el=document.querySelector(sel); if(el) el.textContent=p+Math.round(o.v)+(suffix||"");}},at);
       }
 
-      /* AMBIENT — camera never sleeps; finite, deterministic, scaled to DUR */
-      tl.to(".camera", { scale:1.03, y:-14, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      /* AMBIENT — the camera never sleeps, but it rides the BACKGROUND ONLY.
+         Scaling/translating the text layer (.camera/.inner) rasterizes it once
+         then interpolates, which SOFTENS the type as it moves. Move .bg instead
+         so the depth tunnel/glow push in for camera-feel while text stays sharp. */
+      tl.to(".bg", { scale:1.06, y:-14, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
       tl.to(".grid-floor",   { backgroundPositionY:"+=330px", duration:DUR, ease:"none" }, 0);
       tl.to(".grid-ceiling", { backgroundPositionY:"-=330px", duration:DUR, ease:"none" }, 0);
       tl.to(".beam", { rotation:8, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
@@ -453,6 +463,51 @@ card({
       glowIn(".logo", 0.40, 0.16);`,
 }));
 
+// 10) custom · testimonial — stat-left + real-clip-right (the split proof card) -
+card({
+  id: "ais-live.custom.testimonial", tier: "custom", purpose: "testimonial", treatment: "split",
+  file: "custom/custom-testimonial.html",
+  slots: [
+    { name: "eyebrow", type: "text", maxChars: 30 },
+    { name: "name", type: "text", maxChars: 34 },
+    { name: "stat", type: "text", maxChars: 8, note: "count-up target; use #tnum + countUp('#tnum',at,60,1.1,'K','$')" },
+    { name: "unit", type: "text", maxChars: 30 },
+    { name: "clip", type: "video", note: "swap .clipph for a root-level <video muted data-has-audio=false> + sibling <audio>; frame is 784x441 @ left1006/top320" },
+  ],
+  duration: { min: 4, max: 6 },
+}, shell({
+  id: "ais-live.custom.testimonial", dur: 5,
+  comment: `AIS LIVE · custom · TESTIMONIAL · SPLIT\n  The proof card: a mono NAME kicker + big blue COUNT-UP number + unit on the\n  LEFT, the member's talking-head clip framed on the RIGHT. Placeholder clip box\n  shown here — in a real comp, drop a root-level <video muted playsinline\n  data-has-audio="false"> + sibling <audio> over .tframe (784x441 @ left1006/top320).\n  CHAIN several of these with a SIDE-SWIPE MATCH CUT: keep ONE persistent frame,\n  swipe the whole block (blur+scale ~0.24s), swap name/number/clip while blurred,\n  land the next clip SHARP as the swipe ends. NEVER digitally zoom the <video>\n  (frame-seek shake) — the footage's own motion carries it.`,
+  extraCss: `      .inner{display:block;padding:0;}
+      .t-eyebrow{position:absolute;top:168px;left:50%;transform:translateX(-50%);}
+      .tstat{position:absolute;left:110px;top:0;bottom:0;width:830px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+      .tstat .kicker{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:var(--size-label);letter-spacing:var(--track-wide);text-transform:uppercase;color:var(--white);}
+      .tstat .num{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:250px;line-height:1.0;
+        letter-spacing:var(--track-num);padding:.06em .13em .18em;will-change:transform,opacity;
+        background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-num);}
+      .tstat .unit{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:28px;letter-spacing:var(--track-wide);text-transform:uppercase;color:var(--blue);}
+      .tframe{position:absolute;left:1006px;top:320px;width:784px;height:441px;border-radius:var(--radius);overflow:hidden;
+        border:1px solid rgba(var(--blue-rgb),.3);box-shadow:var(--card-shadow);background:#04101a;will-change:transform,opacity;}
+      .tframe video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+      .clipph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+        background:repeating-linear-gradient(135deg,rgba(var(--blue-rgb),.06) 0 22px,rgba(4,10,17,.4) 22px 44px);}
+      .clipph .film{font-size:44px;filter:grayscale(1) opacity(.75);}
+      .clipph .badge{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);}`,
+  body: `        <div class="eyebrow coral t-eyebrow" data-slot="eyebrow">REAL MEMBERS · REAL NUMBERS</div>
+        <div class="tstat">
+          <div class="kicker" data-slot="name">GLENN MARCUS · AIS MEMBER</div>
+          <div class="num" id="tnum" data-slot="stat">$0K</div>
+          <div class="unit" data-slot="unit">FIRST CONTRACT · 5 DAYS IN</div>
+        </div>
+        <div class="tframe" data-slot="clip"><div class="clipph"><div class="film">&#127916;</div><div class="badge">Member clip</div></div></div>`,
+  timeline: `      drop(".t-eyebrow", 0.20);
+      drop(".kicker", 0.35);
+      pop(".num", 0.50);
+      countUp("#tnum", 0.55, 60, 1.1, "K", "$");
+      drop(".unit", 0.95);
+      tl.fromTo(".tframe",{autoAlpha:0,y:18,scale:.975},{autoAlpha:1,y:0,scale:1,duration:1.0,ease:"power3.out"},0.55);`,
+}));
+
 // ---------------------------------------------------------------------------
 // write style.json
 // ---------------------------------------------------------------------------
@@ -483,9 +538,9 @@ const styleJson = {
       "Montserrat italic-900 is the headline / big-number / mark voice; Inter (300-500, italic sub) is body/captions; JetBrains Mono is eyebrows/kickers/units/timestamps. No serif.",
   },
   motion:
-    "Snappy + kinetic + broadcast. Headlines reveal word-by-word (blur+rise, expo.out); stat numbers pop (back.out) and count up; speaker cards 3D-flip and drift; agenda/track rows slide in from the left; the mark blooms with a blur+brightness pop. The camera never sleeps — a slow continuous dolly, grid scroll, beam rock, glow drift, and breathing vignette run under every card, with a pulsing live-dot. Deterministic (no random / no Date.now).",
+    "Snappy + kinetic + broadcast. Headlines reveal word-by-word (blur+rise, expo.out); stat numbers pop (back.out) and count up; speaker cards 3D-flip and drift; agenda/track rows slide in from the left; the mark blooms with a blur+brightness pop. The camera never sleeps, but it rides the BACKGROUND ONLY (depth tunnel/glow push in + parallax drift) so the text layer never scales/translates and stays pin-sharp. Real member clips sit dead still — NEVER digitally zoom a <video> (frame-seek shake); the footage's own motion carries it. Deterministic (no random / no Date.now).",
   transitions:
-    "A motion-blur whip + light streak fires on every cut (never a hard cut). Exits whip up + blur, or dolly-through-type on punchlines. Entrances blur-in.",
+    "A fast motion-blur whip (~0.22s) + light streak fires on every cut (never a hard cut). When SEQUENCING beats, OVERLAP them so the incoming beat enters as the outgoing whips out — the screen never fades to black between sections. To swap same-format panels (e.g. a testimonial chain: stat-left + clip-right), use a SIDE-SWIPE MATCH CUT (~0.24s): swipe the whole block with blur+scale, swap content while blurred, land the next SHARP as it ends. Trimmed clips: hide any black head frame under the swipe (start the clip a hair early, move its audio with it).",
   cards: cards.map(c => ({
     id: c.id,
     tier: c.tier,

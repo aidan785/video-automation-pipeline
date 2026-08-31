@@ -1,0 +1,208 @@
+<!doctype html>
+<!--
+  VOX EXPLAINER · Premiere popup sheet for Higgsfield tutorial (1 Edited.mp4)
+  Static popups shot to transparent PNGs via _shot-popups.mjs.
+  Style: style-library/01-vox-explainer (tokens.css). No arrows, no scribbles.
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../../style-library/01-vox-explainer/tokens.css" />
+<style>
+  html, body { margin: 0; background: transparent; }
+  .stage { display: inline-block; padding: 48px; }
+
+  /* ---- shared paper-cut bits ---------------------------------------- */
+  .grain-fill {
+    position: absolute; inset: 0; background: var(--tex-grain);
+    background-size: 180px 180px; mix-blend-mode: multiply; opacity: 0.35;
+    pointer-events: none; border-radius: inherit;
+  }
+
+  /* ---- SECTION CARDS ------------------------------------------------- */
+  .section-card { position: relative; }
+  .section-card .kicker {
+    position: relative; display: inline-block;
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 30px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); background: var(--paper); padding: 10px 22px 8px;
+    box-shadow: 5px 5px 0 rgba(23,19,14,0.14);
+    transform: rotate(-0.8deg); margin-bottom: 30px;
+  }
+  .section-card .titlebox {
+    position: relative; display: inline-block; clear: both; float: left;
+    background: var(--yellow); padding: 10px 44px 22px;
+    box-shadow: 9px 9px 0 rgba(23,19,14,0.16);
+    transform: skewX(-1.6deg) rotate(-0.6deg);
+  }
+  .section-card .title {
+    font-family: var(--font-display); font-weight: var(--wt-black);
+    font-size: 170px; line-height: 1.0; letter-spacing: var(--track-tight);
+    color: var(--ink); white-space: nowrap;
+  }
+  .section-card .numtab {
+    position: relative; display: inline-block; clear: both; float: left;
+    margin-top: 26px; background: var(--ink); color: var(--paper);
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 34px; letter-spacing: 0.12em; padding: 10px 20px 8px;
+    box-shadow: 5px 5px 0 rgba(23,19,14,0.14); transform: rotate(0.7deg);
+  }
+  /* layer toggles */
+  .layer-box .kicker, .layer-box .numtab { visibility: hidden; }
+  .layer-box .title { visibility: hidden; }
+  .layer-text .titlebox { background: transparent; box-shadow: none; }
+  .layer-text .titlebox .grain-fill { display: none; }
+  .layer-text .kicker, .layer-text .numtab { visibility: hidden; }
+
+  /* ---- ROLE TAGS (animators / scriptwriters / editors) --------------- */
+  .tag { position: relative; display: inline-block;
+    background: var(--paper); border: 5px solid var(--ink);
+    padding: 18px 40px 14px; box-shadow: 8px 8px 0 rgba(23,19,14,0.18);
+  }
+  .tag .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 64px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink); line-height: 1.0; white-space: nowrap;
+  }
+  .tag.r-neg  { transform: rotate(-1.6deg); }
+  .tag.r-pos  { transform: rotate(1.2deg); }
+  .tag.r-neg2 { transform: rotate(-0.7deg); }
+  .tag.orange { border-color: var(--orange); }
+
+  /* strike version — clean typographic strike, not a scribble */
+  .tag .strike {
+    position: absolute; left: -14px; right: -14px; top: 50%; height: 9px;
+    background: var(--red); transform: translateY(-50%) rotate(-1.2deg);
+  }
+
+  /* ---- HIGGSFIELD chip ----------------------------------------------- */
+  .brand { position: relative; display: inline-block;
+    background: var(--yellow); padding: 20px 46px 16px;
+    box-shadow: 8px 8px 0 rgba(23,19,14,0.18);
+    transform: skewX(-1.2deg) rotate(-0.8deg);
+  }
+  .brand .small {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 24px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); opacity: 0.75; margin-bottom: 4px;
+  }
+  .brand .txt {
+    font-family: var(--font-display); font-weight: var(--wt-black);
+    font-size: 92px; line-height: 1.0; letter-spacing: var(--track-tight);
+    color: var(--ink); white-space: nowrap;
+  }
+
+  /* ---- PROMPT card ---------------------------------------------------- */
+  .prompt { position: relative; display: inline-block;
+    background: var(--paper); border: 5px solid var(--ink);
+    padding: 30px 42px 34px; box-shadow: 10px 10px 0 rgba(23,19,14,0.18);
+    transform: rotate(-0.6deg);
+  }
+  .prompt .small {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 26px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); margin-bottom: 18px;
+  }
+  .prompt .row { display: flex; align-items: center; gap: 6px; }
+  .prompt .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 78px; line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--ink); white-space: nowrap;
+  }
+  .prompt .cursor { width: 38px; height: 74px; background: var(--yellow);
+    box-shadow: 3px 3px 0 rgba(23,19,14,0.2); }
+
+  /* ---- PIPELINE chips -------------------------------------------------- */
+  .chip { position: relative; display: inline-block;
+    background: var(--ink); padding: 16px 34px 12px;
+    box-shadow: 7px 7px 0 rgba(23,19,14,0.16);
+  }
+  .chip .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 56px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--paper); line-height: 1.0; white-space: nowrap;
+  }
+  .chip.paper { background: var(--paper); border: 4px solid var(--ink); }
+  .chip.paper .txt { color: var(--ink); }
+  .chip.r1 { transform: rotate(-1.4deg); }
+  .chip.r2 { transform: rotate(1.0deg); }
+  .chip.r3 { transform: rotate(-0.6deg); }
+  .chip.r4 { transform: rotate(1.4deg); }
+</style>
+</head>
+<body>
+
+<!-- ============ SECTION CARDS ============ -->
+<div class="stage" id="section-setup">
+  <div class="section-card">
+    <div class="kicker">EXPLAINER STUDIO · PHASE 01<div class="grain-fill"></div></div><br/>
+    <div class="titlebox"><div class="title">The Setup</div><div class="grain-fill"></div></div><br/>
+    <div class="numtab">01 / 03<div class="grain-fill"></div></div>
+  </div>
+</div>
+
+<div class="stage" id="section-prompting">
+  <div class="section-card">
+    <div class="kicker">EXPLAINER STUDIO · PHASE 02<div class="grain-fill"></div></div><br/>
+    <div class="titlebox"><div class="title">The Prompting</div><div class="grain-fill"></div></div><br/>
+    <div class="numtab">02 / 03<div class="grain-fill"></div></div>
+  </div>
+</div>
+
+<div class="stage" id="section-outputs">
+  <div class="section-card">
+    <div class="kicker">EXPLAINER STUDIO · PHASE 03<div class="grain-fill"></div></div><br/>
+    <div class="titlebox"><div class="title">The Outputs</div><div class="grain-fill"></div></div><br/>
+    <div class="numtab">03 / 03<div class="grain-fill"></div></div>
+  </div>
+</div>
+
+<!-- ============ INTRO POPUPS (10s–38s) ============ -->
+<div class="stage" id="role-animators">
+  <div class="tag r-neg"><div class="txt">Animators</div><div class="grain-fill"></div></div>
+</div>
+<div class="stage" id="role-scriptwriters">
+  <div class="tag r-pos"><div class="txt">Scriptwriters</div><div class="grain-fill"></div></div>
+</div>
+<div class="stage" id="role-editors">
+  <div class="tag r-neg2"><div class="txt">Editors</div><div class="grain-fill"></div></div>
+</div>
+
+<div class="stage" id="full-team">
+  <div class="tag r-neg orange"><div class="txt">A Full Creative Team</div><div class="grain-fill"></div></div>
+</div>
+<div class="stage" id="full-team-strike">
+  <div class="tag r-neg orange"><div class="txt">A Full Creative Team</div><div class="grain-fill"></div><div class="strike"></div></div>
+</div>
+
+<div class="stage" id="higgsfield">
+  <div class="brand">
+    <div class="small">Powered by</div>
+    <div class="txt">Higgsfield</div>
+    <div class="grain-fill"></div>
+  </div>
+</div>
+
+<div class="stage" id="single-prompt">
+  <div class="prompt">
+    <div class="small">Just one prompt.</div>
+    <div class="row"><div class="txt">/explainerstudio</div><div class="cursor"></div></div>
+    <div class="grain-fill"></div>
+  </div>
+</div>
+
+<div class="stage" id="chip-scripting">
+  <div class="chip r1"><div class="txt">Scripting</div><div class="grain-fill"></div></div>
+</div>
+<div class="stage" id="chip-editing">
+  <div class="chip paper r2"><div class="txt">Editing</div><div class="grain-fill"></div></div>
+</div>
+<div class="stage" id="chip-animating">
+  <div class="chip r3"><div class="txt">Animating</div><div class="grain-fill"></div></div>
+</div>
+<div class="stage" id="chip-generating">
+  <div class="chip paper r4"><div class="txt">Generating</div><div class="grain-fill"></div></div>
+</div>
+
+</body>
+</html>

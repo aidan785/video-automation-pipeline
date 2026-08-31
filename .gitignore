@@ -39,3 +39,24 @@ Thumbs.db
 # style-library preview posters (regenerable from cards; keep the dir, not the PNGs)
 style-library/*/preview/*
 !style-library/*/preview/.gitkeep
+
+# local hyperframes CLI install (Node-25 sharp workaround)
+.hf-cli/
+
+# motion-graphics frame-verification output
+video-projects/*/snapshots/
+
+# caic-interview-1: generated per-graphic mini-projects (rebuild with _gen.mjs)
+video-projects/caic-interview-1/g/
+
+# frame-extraction verification output (regenerable from renders)
+video-projects/*/frames/
+video-projects/*/.hyperframes/
+
+# debug screenshot output (root _shot-*.mjs scripts)
+_shots-*/
+_shots-*.png
+
+# misc local junk
+*.bak
+Screenshot *.png

@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
+<link href="file:///Users/aidanstanik/Projects/Video Automation/video-projects/ais-live-stings/assets/fonts/fonts.css" rel="stylesheet"/>
+<style>
+  :root{ --ac:#37bdf8; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1920px;height:1080px;}
+  body{background:transparent;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;}
+  .card{position:relative;width:1560px;min-height:560px;border-radius:30px;overflow:hidden;
+    background:linear-gradient(180deg, rgba(9,20,32,0.96), rgba(6,14,22,0.97));
+    border:1px solid rgba(255,255,255,0.10);
+    box-shadow:0 60px 150px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
+    padding:70px 78px 66px;display:flex;flex-direction:column;}
+  .glow{position:absolute;top:-160px;right:-120px;width:620px;height:620px;border-radius:50%;background:rgba(55,189,248,0.30);filter:blur(120px);}
+  .grid{position:absolute;inset:0;opacity:.5;background-image:
+    linear-gradient(rgba(55,189,248,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(55,189,248,0.05) 1px,transparent 1px);background-size:26px 26px;}
+  .in{position:relative;z-index:2;display:flex;flex-direction:column;height:100%;flex:1;}
+  .top{display:flex;align-items:center;justify-content:space-between;}
+  .mark{font-family:'Montserrat',sans-serif;font-style:italic;font-weight:900;letter-spacing:-0.03em;font-size:30px;
+    display:inline-flex;align-items:baseline;position:relative;}
+  .mark .ais{color:#fff;} .mark .gap{width:.08em;display:inline-block;}
+  .mark .live{color:#37bdf8;position:relative;text-shadow:0 0 30px rgba(55,189,248,0.55);padding-right:.30em;}
+  .mark .dot{position:absolute;top:.06em;left:100%;margin-left:.04em;width:.15em;height:.15em;border-radius:50%;
+    background:#ff3b30;box-shadow:0 0 .7em #ff3b30;}
+  .day{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;letter-spacing:.24em;text-transform:uppercase;color:rgba(209,220,232,0.55);}
+  .day b{color:var(--ac);}
+  .mid{flex:1;display:flex;flex-direction:column;justify-content:center;padding:34px 0;}
+  .chip{align-self:flex-start;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--ac);margin-bottom:24px;}
+  .chip .c{color:rgba(209,220,232,0.6);}
+  .title{font-family:'Montserrat',sans-serif;font-style:italic;font-weight:900;letter-spacing:-0.035em;line-height:0.98;
+    font-size:76px;color:#fff;max-width:1320px;}
+  .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;border-top:1px solid rgba(255,255,255,0.12);padding-top:28px;}
+  .time .t{font-family:'Montserrat',sans-serif;font-style:italic;font-weight:900;font-size:56px;letter-spacing:-0.03em;line-height:0.9;color:var(--ac);white-space:nowrap;}
+  .time .m{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:rgba(209,220,232,0.5);margin-top:8px;}
+  .spk{text-align:right;display:flex;flex-direction:column;gap:7px;max-width:920px;}
+  .spk .lbl{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:rgba(209,220,232,0.5);}
+  .spk .name{font-family:'Montserrat',sans-serif;font-weight:800;font-size:32px;letter-spacing:-0.02em;line-height:1.06;color:#fff;}
+</style></head>
+<body>
+  <div class="card">
+    <div class="glow"></div><div class="grid"></div>
+    <div class="in">
+      <div class="top">
+        <span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span></span>
+        <span class="day"><b>DAY 1</b> · SAT JULY 11</span>
+      </div>
+      <div class="mid">
+        <span class="chip">MAIN STAGE · DEBRIEF</span>
+        <h1 class="title">Live Debrief: Patterns from Real Deals</h1>
+      </div>
+      <div class="foot">
+        <div class="time"><div class="t">11:55 AM</div><div class="m">Central Time</div></div>
+        <div class="spk"><span class="lbl">Debrief</span><span class="name">Yash · Jon Morrow</span></div>
+      </div>
+    </div>
+  </div>
+</body></html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<!--
+  EISENBERG PAPER — 30s style-proof demo (vertical 1080x1920)
+  Eight library cards mounted back-to-back over the reference reel's VO
+  (assets/greg30.mp4, first 30s — INTERNAL STYLE TEST ONLY, replace the
+  scratch VO before any publishing). Beats are word-timestamp synced to
+  assets/greg30.json:
+    0.0-4.4   thesis-stack    "These 3 ... can stop Claude"
+    4.4-6.1   section-sticker "First up, Caveman"
+    6.1-10.0  overview-pills  "crisp, to-the-point answers"
+    10.0-14.0 terminal-hero   "type this prompt ... give it a task"
+    14.0-18.4 list-terminal   "four bullets ... sparing you the spend"
+    18.4-21.9 quote-ledger    "saved budget goes straight into the next plugin"
+    21.9-25.4 icon-connect    "Morph sits inside Claude Code"
+    25.4-30.0 stat-progress   "reasoning is expensive"
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="tokens.css" />
+    <style>
+      html, body { margin: 0; background: #000; }
+      #eisenberg-demo {
+        position: absolute; inset: 0; width: 1080px; height: 1920px;
+        background: var(--paper-mid); overflow: hidden;
+      }
+      #fader {
+        position: absolute; inset: 0; z-index: 50;
+        background: #0E0C0B; pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="eisenberg-demo" data-composition-id="eisenberg-demo" data-start="0" data-duration="30" data-width="1080" data-height="1920">
+
+      <!-- VO scratch track (audio only; no base video — the cards carry all 30s) -->
+      <audio id="vo" data-start="0" data-duration="30" data-track-index="0" src="assets/greg30.mp4" data-volume="1"></audio>
+
+      <!-- the eight beats, track 1 -->
+      <div id="b1" class="clip" data-composition-id="ep-t1-thesis-stack"    data-composition-src="cards/t1-thesis-stack.html"    data-start="0"    data-duration="4.75" data-track-index="1"></div>
+      <div id="b2" class="clip" data-composition-id="ep-t1-section-sticker" data-composition-src="cards/t1-section-sticker.html" data-start="4.4"  data-duration="2.05" data-track-index="2"></div>
+      <div id="b3" class="clip" data-composition-id="ep-t1-overview-pills"  data-composition-src="cards/t1-overview-pills.html"  data-start="6.1"  data-duration="4.25" data-track-index="1"></div>
+      <div id="b4" class="clip" data-composition-id="ep-t1-terminal-hero"   data-composition-src="cards/t1-terminal-hero.html"   data-start="10"   data-duration="4.35" data-track-index="2"></div>
+      <div id="b5" class="clip" data-composition-id="ep-t1-list-terminal"   data-composition-src="cards/t1-list-terminal.html"   data-start="14"   data-duration="4.75" data-track-index="1"></div>
+      <div id="b6" class="clip" data-composition-id="ep-t1-quote-ledger"    data-composition-src="cards/t1-quote-ledger.html"    data-start="18.4" data-duration="3.85" data-track-index="2"></div>
+      <div id="b7" class="clip" data-composition-id="ep-custom-icon-connect" data-composition-src="cards/custom-icon-connect.html" data-start="21.9" data-duration="3.85" data-track-index="1"></div>
+      <div id="b8" class="clip" data-composition-id="ep-t1-stat-progress"   data-composition-src="cards/t1-stat-progress.html"   data-start="25.4" data-duration="4.6"  data-track-index="2"></div>
+
+      <div id="fader"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* open from black, close to black (final-scene fade only) */
+      tl.fromTo("#fader", { opacity: 1 }, { opacity: 0, duration: 0.35, ease: "power2.out" }, 0)
+        .to("#fader", { opacity: 1, duration: 0.5, ease: "power2.in" }, 29.5);
+
+      /* crossfade incoming beats over the outgoing card (0.35s overlap) */
+      [["#b2", 4.4], ["#b3", 6.1], ["#b4", 10], ["#b5", 14],
+       ["#b6", 18.4], ["#b7", 21.9], ["#b8", 25.4]].forEach(([sel, t]) => {
+        tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.inOut" }, t);
+      });
+
+      window.__timelines["eisenberg-demo"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link href="file:///Users/aidanstanik/Projects/Video Automation/video-projects/ais-live-day2-opening-fill/assets/fonts/fonts.css" rel="stylesheet">
+<style>
+  body{background:transparent;margin:0;padding:40px;display:flex;flex-direction:column;gap:28px;
+    font-family:"Inter",sans-serif;width:640px;}
+  .chip{display:flex;gap:14px;align-items:flex-start;width:max-content;max-width:640px;
+    background:linear-gradient(158deg,rgba(13,24,37,.96),rgba(9,18,28,.96));
+    border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:16px 22px 17px 16px;
+    box-shadow:0 18px 44px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);}
+  .avatar{width:44px;height:44px;flex:0 0 44px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;
+    border:1px solid rgba(255,255,255,.22);}
+  .body{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .meta{display:flex;align-items:baseline;gap:10px;}
+  .name{font-weight:700;font-size:16px;color:#37bdf8;}
+  .time{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:11.5px;letter-spacing:.06em;
+    color:rgba(209,220,232,.45);}
+  .msg{font-weight:500;font-size:17.5px;line-height:1.35;color:rgba(235,242,248,.96);}
+</style></head><body>
+<div class="chip" id="chip0">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">MT</div>
+    <div class="body">
+      <div class="meta"><span class="name">Marcus T.</span><span class="time">11:42 AM</span></div>
+      <div class="msg">Does Glaido handle inbound and outbound calls?</div>
+    </div>
+  </div>
+<div class="chip" id="chip1">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">PS</div>
+    <div class="body">
+      <div class="meta"><span class="name">Priya S.</span><span class="time">11:44 AM</span></div>
+      <div class="msg">What languages does Glaido support?</div>
+    </div>
+  </div>
+<div class="chip" id="chip2">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">DR</div>
+    <div class="body">
+      <div class="meta"><span class="name">Devon R.</span><span class="time">11:47 AM</span></div>
+      <div class="msg">That Glaido demo was smooth. The voice sounded actually human</div>
+    </div>
+  </div>
+<div class="chip" id="chip3">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">EV</div>
+    <div class="body">
+      <div class="meta"><span class="name">Elena V.</span><span class="time">11:49 AM</span></div>
+      <div class="msg">Can I white label Glaido for my clients?</div>
+    </div>
+  </div>
+<div class="chip" id="chip4">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">SK</div>
+    <div class="body">
+      <div class="meta"><span class="name">Sam K.</span><span class="time">11:51 AM</span></div>
+      <div class="msg">Whats Glaido pricing look like for a small agency?</div>
+    </div>
+  </div>
+<div class="chip" id="chip5">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">JM</div>
+    <div class="body">
+      <div class="meta"><span class="name">Jordan M.</span><span class="time">11:53 AM</span></div>
+      <div class="msg">How does Glaido handle interruptions mid sentence?</div>
+    </div>
+  </div>
+<div class="chip" id="chip6">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">AB</div>
+    <div class="body">
+      <div class="meta"><span class="name">Aisha B.</span><span class="time">11:55 AM</span></div>
+      <div class="msg">Glaido plus a booking calendar = receptionist replaced honestly</div>
+    </div>
+  </div>
+<div class="chip" id="chip7">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">TW</div>
+    <div class="body">
+      <div class="meta"><span class="name">Tom W.</span><span class="time">11:58 AM</span></div>
+      <div class="msg">Is there a Glaido API or just the dashboard?</div>
+    </div>
+  </div>
+<div class="chip" id="chip8">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">RD</div>
+    <div class="body">
+      <div class="meta"><span class="name">Rachel D.</span><span class="time">12:01 PM</span></div>
+      <div class="msg">Anyone using Glaido for dental offices? Client wants voice booking</div>
+    </div>
+  </div>
+<div class="chip" id="chip9">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">VH</div>
+    <div class="body">
+      <div class="meta"><span class="name">Victor H.</span><span class="time">12:03 PM</span></div>
+      <div class="msg">The latency on that Glaido call was impressive</div>
+    </div>
+  </div>
+<div class="chip" id="chip10">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">NP</div>
+    <div class="body">
+      <div class="meta"><span class="name">Nina P.</span><span class="time">12:05 PM</span></div>
+      <div class="msg">Can Glaido transfer to a human when it gets stuck?</div>
+    </div>
+  </div>
+<div class="chip" id="chip11">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">CL</div>
+    <div class="body">
+      <div class="meta"><span class="name">Chris L.</span><span class="time">12:08 PM</span></div>
+      <div class="msg">Booth visit was worth it, the Glaido team answered everything</div>
+    </div>
+  </div>
+<div class="chip" id="chip12">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">MF</div>
+    <div class="body">
+      <div class="meta"><span class="name">Megan F.</span><span class="time">10:22 AM</span></div>
+      <div class="msg">Will the recordings be available after?</div>
+    </div>
+  </div>
+<div class="chip" id="chip13">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">OJ</div>
+    <div class="body">
+      <div class="meta"><span class="name">Omar J.</span><span class="time">10:25 AM</span></div>
+      <div class="msg">Are the slides shared anywhere?</div>
+    </div>
+  </div>
+<div class="chip" id="chip14">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">KN</div>
+    <div class="body">
+      <div class="meta"><span class="name">Katie N.</span><span class="time">12:44 PM</span></div>
+      <div class="msg">Which room is the Foundation track?</div>
+    </div>
+  </div>
+<div class="chip" id="chip15">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">BA</div>
+    <div class="body">
+      <div class="meta"><span class="name">Ben A.</span><span class="time">12:47 PM</span></div>
+      <div class="msg">Is every workshop template saved for AIS+ members?</div>
+    </div>
+  </div>
+<div class="chip" id="chip16">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">LG</div>
+    <div class="body">
+      <div class="meta"><span class="name">Lucia G.</span><span class="time">9:36 AM</span></div>
+      <div class="msg">First time here. This chat moves FAST</div>
+    </div>
+  </div>
+<div class="chip" id="chip17">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">DC</div>
+    <div class="body">
+      <div class="meta"><span class="name">Derek C.</span><span class="time">2:02 PM</span></div>
+      <div class="msg">Coffee refilled, ready for round two</div>
+    </div>
+  </div>
+<div class="chip" id="chip18">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">HW</div>
+    <div class="body">
+      <div class="meta"><span class="name">Hannah W.</span><span class="time">5:28 PM</span></div>
+      <div class="msg">What time does Nate open tomorrow?</div>
+    </div>
+  </div>
+<div class="chip" id="chip19">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">RP</div>
+    <div class="body">
+      <div class="meta"><span class="name">Raj P.</span><span class="time">3:19 PM</span></div>
+      <div class="msg">Can we get the link to the skills repo again?</div>
+    </div>
+  </div>
+<div class="chip" id="chip20">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">SM</div>
+    <div class="body">
+      <div class="meta"><span class="name">Sofia M.</span><span class="time">1:11 PM</span></div>
+      <div class="msg">Anyone else taking notes in Claude while watching?</div>
+    </div>
+  </div>
+<div class="chip" id="chip21">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">TB</div>
+    <div class="body">
+      <div class="meta"><span class="name">Tyler B.</span><span class="time">9:48 AM</span></div>
+      <div class="msg">How do I star sessions on my agenda?</div>
+    </div>
+  </div>
+<div class="chip" id="chip22">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">GE</div>
+    <div class="body">
+      <div class="meta"><span class="name">Grace E.</span><span class="time">10:18 AM</span></div>
+      <div class="msg">The VIP Q&A was worth the upgrade alone</div>
+    </div>
+  </div>
+<div class="chip" id="chip23">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">IS</div>
+    <div class="body">
+      <div class="meta"><span class="name">Ivan S.</span><span class="time">5:09 PM</span></div>
+      <div class="msg">Is the certification open to international members?</div>
+    </div>
+  </div>
+<div class="chip" id="chip24">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">PR</div>
+    <div class="body">
+      <div class="meta"><span class="name">Paula R.</span><span class="time">11:24 AM</span></div>
+      <div class="msg">Missed the first hour. Is there a recap anywhere?</div>
+    </div>
+  </div>
+<div class="chip" id="chip25">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">JH</div>
+    <div class="body">
+      <div class="meta"><span class="name">Jake H.</span><span class="time">12:31 PM</span></div>
+      <div class="msg">This session is pure gold</div>
+    </div>
+  </div>
+<div class="chip" id="chip26">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">DK</div>
+    <div class="body">
+      <div class="meta"><span class="name">Dana K.</span><span class="time">10:19 AM</span></div>
+      <div class="msg">Nate delivered AGAIN</div>
+    </div>
+  </div>
+<div class="chip" id="chip27">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">FO</div>
+    <div class="body">
+      <div class="meta"><span class="name">Felix O.</span><span class="time">3:27 PM</span></div>
+      <div class="msg">Okay that demo just blew my mind</div>
+    </div>
+  </div>
+<div class="chip" id="chip28">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">AR</div>
+    <div class="body">
+      <div class="meta"><span class="name">Anika R.</span><span class="time">1:05 PM</span></div>
+      <div class="msg">Watching from Bangladesh. 3am here and wide awake</div>
+    </div>
+  </div>
+<div class="chip" id="chip29">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">SQ</div>
+    <div class="body">
+      <div class="meta"><span class="name">Sean Q.</span><span class="time">11:12 AM</span></div>
+      <div class="msg">The energy in this chat is unreal</div>
+    </div>
+  </div>
+<div class="chip" id="chip30">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">ML</div>
+    <div class="body">
+      <div class="meta"><span class="name">Maya L.</span><span class="time">2:52 PM</span></div>
+      <div class="msg">Screenshot everything folks</div>
+    </div>
+  </div>
+<div class="chip" id="chip31">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">ND</div>
+    <div class="body">
+      <div class="meta"><span class="name">Noah D.</span><span class="time">4:33 PM</span></div>
+      <div class="msg">Best virtual event I have attended this year</div>
+    </div>
+  </div>
+<div class="chip" id="chip32">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">CS</div>
+    <div class="body">
+      <div class="meta"><span class="name">Carmen S.</span><span class="time">5:22 PM</span></div>
+      <div class="msg">Day 1 and I already got my moneys worth</div>
+    </div>
+  </div>
+<div class="chip" id="chip33">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">LF</div>
+    <div class="body">
+      <div class="meta"><span class="name">Leo F.</span><span class="time">10:41 AM</span></div>
+      <div class="msg">The production quality of this stream is insane</div>
+    </div>
+  </div>
+<div class="chip" id="chip34">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">TV</div>
+    <div class="body">
+      <div class="meta"><span class="name">Tara V.</span><span class="time">12:58 PM</span></div>
+      <div class="msg">Whoever is running this chat, you are a legend</div>
+    </div>
+  </div>
+<div class="chip" id="chip35">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">GM</div>
+    <div class="body">
+      <div class="meta"><span class="name">Gus M.</span><span class="time">2:41 PM</span></div>
+      <div class="msg">Give the AV team a raise</div>
+    </div>
+  </div>
+<div class="chip" id="chip36">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">IB</div>
+    <div class="body">
+      <div class="meta"><span class="name">Iris B.</span><span class="time">4:07 PM</span></div>
+      <div class="msg">This is better than conferences I paid 10x more for</div>
+    </div>
+  </div>
+<div class="chip" id="chip37">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">CW</div>
+    <div class="body">
+      <div class="meta"><span class="name">Cole W.</span><span class="time">5:31 PM</span></div>
+      <div class="msg">Take my money, joining AIS+ right now</div>
+    </div>
+  </div>
+<div class="chip" id="chip38">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">FN</div>
+    <div class="body">
+      <div class="meta"><span class="name">Farah N.</span><span class="time">1:29 PM</span></div>
+      <div class="msg">Watching with my whole team in the office</div>
+    </div>
+  </div>
+<div class="chip" id="chip39">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">ET</div>
+    <div class="body">
+      <div class="meta"><span class="name">Eddie T.</span><span class="time">5:36 PM</span></div>
+      <div class="msg">Cant believe this is only day 1</div>
+    </div>
+  </div>
+<div class="chip" id="chip40">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">ZC</div>
+    <div class="body">
+      <div class="meta"><span class="name">Zoe C.</span><span class="time">10:52 AM</span></div>
+      <div class="msg">Just closed my first client last week. This is next level</div>
+    </div>
+  </div>
+<div class="chip" id="chip41">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">MJ</div>
+    <div class="body">
+      <div class="meta"><span class="name">Miles J.</span><span class="time">1:18 PM</span></div>
+      <div class="msg">Building along live. My agent just worked first try</div>
+    </div>
+  </div>
+<div class="chip" id="chip42">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">RA</div>
+    <div class="body">
+      <div class="meta"><span class="name">Ruth A.</span><span class="time">12:39 PM</span></div>
+      <div class="msg">Used the eval trick from earlier and found 3 bugs already</div>
+    </div>
+  </div>
+<div class="chip" id="chip43">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(205,72%,52%),hsl(219,70%,38%))">AB</div>
+    <div class="body">
+      <div class="meta"><span class="name">Andre B.</span><span class="time">1:52 PM</span></div>
+      <div class="msg">My discovery call skill is DONE. 20 minutes</div>
+    </div>
+  </div>
+<div class="chip" id="chip44">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(212,72%,52%),hsl(226,70%,38%))">JY</div>
+    <div class="body">
+      <div class="meta"><span class="name">Jenna Y.</span><span class="time">3:44 PM</span></div>
+      <div class="msg">Cloned the marketing skills. My post scored 8.9</div>
+    </div>
+  </div>
+<div class="chip" id="chip45">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(218,72%,52%),hsl(232,70%,38%))">PG</div>
+    <div class="body">
+      <div class="meta"><span class="name">Pete G.</span><span class="time">2:16 PM</span></div>
+      <div class="msg">Sent my first proposal during the lunch break lol</div>
+    </div>
+  </div>
+<div class="chip" id="chip46">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(194,72%,52%),hsl(208,70%,38%))">LH</div>
+    <div class="body">
+      <div class="meta"><span class="name">Layla H.</span><span class="time">4:49 PM</span></div>
+      <div class="msg">That pricing framework just paid for my ticket</div>
+    </div>
+  </div>
+<div class="chip" id="chip47">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(224,72%,52%),hsl(238,70%,38%))">OK</div>
+    <div class="body">
+      <div class="meta"><span class="name">Owen K.</span><span class="time">2:38 PM</span></div>
+      <div class="msg">Note to self: stop charging hourly</div>
+    </div>
+  </div>
+<div class="chip" id="chip48">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(208,72%,52%),hsl(222,70%,38%))">MD</div>
+    <div class="body">
+      <div class="meta"><span class="name">Marco D.</span><span class="time">3:58 PM</span></div>
+      <div class="msg">My wife asked why I am smiling at a spreadsheet</div>
+    </div>
+  </div>
+<div class="chip" id="chip49">
+    <div class="avatar" style="background:linear-gradient(145deg,hsl(199,72%,52%),hsl(213,70%,38%))">SR</div>
+    <div class="body">
+      <div class="meta"><span class="name">Steph R.</span><span class="time">5:40 PM</span></div>
+      <div class="msg">See everyone tomorrow for Earn Day</div>
+    </div>
+  </div>
+</body></html>

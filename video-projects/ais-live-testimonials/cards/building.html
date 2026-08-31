@@ -31,7 +31,7 @@
       .eyebrow-fixed { position: absolute; top: 62px; left: 112px; font-family: var(--font-mono); font-weight: 700;
         font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(209,220,232,0.62);
         display: inline-flex; align-items: center; gap: 13px; }
-      .eyebrow-fixed::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: #37bdf8; box-shadow: 0 0 10px #37bdf8; }
+      /* no ::before marker chip — live-asset directives */
       .markbug { position: absolute; top: 52px; right: 108px; }
       .botbar { position: absolute; bottom: 56px; left: 112px; right: 108px; display: flex; justify-content: flex-end; align-items: center; }
       .tagchip { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase;
@@ -44,9 +44,12 @@
       .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 34px; padding: 200px 240px; }
       .i-kicker { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: #37bdf8;
         display: inline-flex; align-items: center; gap: 13px; }
-      .i-kicker::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: #37bdf8; box-shadow: 0 0 10px #37bdf8; }
-      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 0.95;
-        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.05em 0.18em; }
+      /* the wipe-reveal clip-path clips at the BORDER box, so italic-900 descenders
+         (the y in "They") need generous room inside it — 0.16em bottom still clipped
+         at 128px (Aidan 2026-07-08); 0.30em clears the full descender. Negative
+         margin returns the extra padding so the sub line doesn't drift down. */
+      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 1.1;
+        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.08em 0.18em 0.30em; margin-bottom: -0.17em; }
       .i-line em, .o-line em { font-style: italic; color: #37bdf8; }
       .i-sub, .o-sub { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 40px; line-height: 1.22;
         letter-spacing: -0.01em; color: rgba(209,220,232,0.82); max-width: 1180px; }
@@ -82,7 +85,7 @@
       .mtext { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
       .tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 19px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--a); }
-      .tag::before { content: ""; width: 28px; height: 2px; background: var(--a); }
+      /* no ::before marker line — live-asset directives */
       .name { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 86px; line-height: 0.96; letter-spacing: -0.03em; color: #fff; }
       .role { font-family: var(--font-mono); font-weight: 600; font-size: 19px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(209,220,232,0.72); }
       .quote { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 42px; line-height: 1.2; letter-spacing: -0.015em; color: #fff; max-width: 720px; }
@@ -90,7 +93,7 @@
       .built { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
         border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 11px 20px; }
-      .built::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--a); box-shadow: 0 0 10px var(--a); }
+      /* no ::before dot in the built chip — live-asset directives */
       .metricwrap { display: flex; align-items: baseline; gap: 20px; }
       .metric { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 116px; line-height: 0.9; letter-spacing: -0.04em; color: var(--a); text-shadow: 0 0 60px rgba(255,255,255,0.12); }
       .msub { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(209,220,232,0.74); }
@@ -141,11 +144,11 @@
           <div class="name">Frank Priboy</div>
           <div class="role">AIS+ Member</div>
           <div class="quote"><span class="qm">&ldquo;</span>I have yet to find something I can't build.&rdquo;</div>
-          <div class="built">Built — AI consultancy</div>
+          <div class="built">Built · AI consultancy</div>
           <div class="counter">01 / 05</div>
         </div>
       </div>
-      <div id="m1" class="panel mslide" style="--a:#ff8a5c">
+      <div id="m1" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -156,11 +159,11 @@
           <div class="name">Amy Simpson</div>
           <div class="role">AIS+ Member</div>
           <div class="quote"><span class="qm">&ldquo;</span>I swore I'd never design a website. Now it comes naturally to me.&rdquo;</div>
-          <div class="built">Built — Websites & code</div>
+          <div class="built">Built · Websites & code</div>
           <div class="counter">02 / 05</div>
         </div>
       </div>
-      <div id="m2" class="panel mslide" style="--a:#f5d82a">
+      <div id="m2" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -171,7 +174,7 @@
           <div class="name">Balaji Iyer</div>
           <div class="role">AIS+ Member</div>
           <div class="quote"><span class="qm">&ldquo;</span>I spun up a workflow I never thought I would build.&rdquo;</div>
-          <div class="built">Built — Self-hosted n8n system</div>
+          <div class="built">Built · Self-hosted n8n system</div>
           <div class="counter">03 / 05</div>
         </div>
       </div>
@@ -186,11 +189,11 @@
           <div class="name">Miguel Zamarripa</div>
           <div class="role">AIS+ Member</div>
           <div class="quote"><span class="qm">&ldquo;</span>I deliver real projects now, not just nice demos.&rdquo;</div>
-          <div class="built">Built — Real client projects</div>
+          <div class="built">Built · Real client projects</div>
           <div class="counter">04 / 05</div>
         </div>
       </div>
-      <div id="m4" class="panel mslide" style="--a:#ff8a5c">
+      <div id="m4" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -201,7 +204,7 @@
           <div class="name">Griffin Maklansky</div>
           <div class="role">AIS+ Member</div>
           <div class="quote"><span class="qm">&ldquo;</span>A month and a half from laid off to hired.&rdquo;</div>
-          <div class="built">Built — First app + a job</div>
+          <div class="built">Built · First app + a job</div>
           <div class="counter">05 / 05</div>
         </div>
       </div>
@@ -216,11 +219,11 @@
         <video id="vid-m0" src="assets/builder/frank-priboy.mp4" muted playsinline data-has-audio="false" data-start="6.4" data-duration="15.32" data-track-index="10"></video>
       </div>
       <audio id="aud-m0" src="assets/builder/frank-priboy.mp4" data-start="6.4" data-duration="14.72" data-track-index="20" data-volume="1"></audio>
-      <div id="rv-m1" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m1" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m1" src="assets/builder/amy-simpson.mp4" muted playsinline data-has-audio="false" data-start="21.12" data-duration="11.70" data-track-index="11"></video>
       </div>
       <audio id="aud-m1" src="assets/builder/amy-simpson.mp4" data-start="21.12" data-duration="11.10" data-track-index="21" data-volume="1"></audio>
-      <div id="rv-m2" class="realvid" style="--a:#f5d82a; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m2" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m2" src="assets/builder/balaji-iyer.mp4" muted playsinline data-has-audio="false" data-start="32.22" data-duration="10.84" data-track-index="12"></video>
       </div>
       <audio id="aud-m2" src="assets/builder/balaji-iyer.mp4" data-start="32.22" data-duration="10.24" data-track-index="22" data-volume="1"></audio>
@@ -228,7 +231,7 @@
         <video id="vid-m3" src="assets/builder/miguel-zamarripa.mp4" muted playsinline data-has-audio="false" data-start="42.46" data-duration="9.56" data-track-index="13"></video>
       </div>
       <audio id="aud-m3" src="assets/builder/miguel-zamarripa.mp4" data-start="42.46" data-duration="8.96" data-track-index="23" data-volume="1"></audio>
-      <div id="rv-m4" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m4" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m4" src="assets/builder/griffin-maklansky.mp4" muted playsinline data-has-audio="false" data-start="51.42" data-duration="5.10" data-track-index="14"></video>
       </div>
       <audio id="aud-m4" src="assets/builder/griffin-maklansky.mp4" data-start="51.42" data-duration="4.50" data-track-index="24" data-volume="1"></audio>

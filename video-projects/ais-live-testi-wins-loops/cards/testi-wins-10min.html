@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — Testimonials + Wins + Quotes (10 min loop)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --red-live:#ff3b30; /* coral = ambient bg glow only */
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;z-index:30;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:34px;padding:96px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:0 0 16px rgba(55,189,248,.45);}
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:122px;line-height:1.16;
+        letter-spacing:-.03em;max-width:1600px;}
+      .ln.hero{font-size:176px;}
+      .ln .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .ln.quoteln{font-size:78px;line-height:1.28;max-width:1500px;}
+      .quoteln{position:relative;}
+      .quoteln::before{content:"\201C";color:var(--blue);margin-right:.04em;}
+      .quoteln::after{content:"\201D";color:var(--blue);margin-left:.04em;}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:41px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+      .attrib{font-style:normal;font-family:var(--font-mono);font-weight:500;font-size:27px;letter-spacing:.06em;color:rgba(180,214,238,.82);}
+
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:900;color:#fff;letter-spacing:-.02em;}
+      .plus .p{color:#fff;}
+
+      /* stat */
+      .statwrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
+      .kicker{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.30em;text-transform:uppercase;color:#fff;}
+      .num{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:320px;line-height:1.0;
+        letter-spacing:-.04em;padding:.08em .14em .26em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 90px rgba(55,189,248,.6);}
+      .unit{font-family:var(--font-mono);font-weight:700;font-size:28px;letter-spacing:.30em;text-transform:uppercase;color:var(--blue);}
+
+      /* ---------- member win card: summary left, post screenshot right ---------- */
+      .winwrap{position:absolute;inset:0;display:flex;align-items:center;gap:70px;padding:80px 110px 90px 150px;}
+      .wintext{flex:0 0 760px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;}
+      .peyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 16px rgba(55,189,248,.45);will-change:transform,opacity;}
+      .winhead{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:76px;line-height:1.12;
+        letter-spacing:-.03em;margin-left:-.15em;max-width:780px;}
+      .winhead .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .winhead .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .winsub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:31px;line-height:1.35;
+        color:rgba(209,220,232,.85);margin-top:16px;max-width:720px;will-change:transform,opacity;}
+      .winname{font-family:var(--font-mono);font-weight:500;font-size:24px;letter-spacing:.2em;text-transform:uppercase;
+        color:var(--blue);margin-top:30px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+      .winshot{flex:1;display:flex;align-items:center;justify-content:center;max-height:840px;
+        will-change:transform,opacity;transform-style:preserve-3d;}
+      .winshot img{max-width:100%;max-height:840px;object-fit:contain;border-radius:20px;
+        border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 60px rgba(55,189,248,.10);}
+
+      /* mounted finished pieces — full-frame, above the camera scenes */
+      .mount{position:absolute;inset:0;background:#000;will-change:transform,opacity,filter;z-index:20;}
+      .mfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="cmp-testi-wins-10min" data-start="0" data-duration="600" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="600" data-track-index="0">
+        <div class="depth grid-ceiling"></div>
+        <div class="depth grid-floor"></div>
+        <div class="beam"></div>
+        <div class="glow blue"></div>
+        <div class="glow coral"></div>
+        <div class="vignette"></div>
+        <div class="grain"></div>
+      </div>
+      <div class="whip clip" id="whip" data-start="0" data-duration="600" data-track-index="1"></div>
+      <div id="markbug" class="clip" data-start="0" data-duration="600" data-track-index="2">
+        <div class="backdrop-mark"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+      </div>
+
+      <div id="camera">
+      <section id="sc0" class="scene clip" data-start="0" data-duration="5.4" data-track-index="12">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln hero"><span class="wd ">Real</span><span class="wd ">members.</span><span class="wd ac">Real</span><span class="wd ac">numbers.</span></div>
+        </div>
+      </section>
+      <section id="sc2" class="scene clip" data-start="69.333" data-duration="8.4" data-track-index="14">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$385,000</span><span class="wd ac">contract.</span></div>
+            <div class="winsub">A $25K implementation fee plus $15K a month for 24 months, closed at a 76% profit margin.</div>
+            <div class="winname">David Kim</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/david-kim.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc3" class="scene clip" data-start="77.333" data-duration="8.4" data-track-index="15">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Two</span><span class="wd ">deals,</span><span class="wd ac">one</span><span class="wd ac">week.</span></div>
+            <div class="winsub">$22.5K and $42K sold in the same week, crossing $15K MRR and making his first hire.</div>
+            <div class="winname">Jacob West</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/jacob-west.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc4" class="scene clip" data-start="85.333" data-duration="8.4" data-track-index="16">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$50K+</span><span class="wd ">in</span><span class="wd ac">the</span><span class="wd ac">pipeline.</span></div>
+            <div class="winsub">Four new clients within a month, just a couple of weeks in.</div>
+            <div class="winname">Mohammad Sallam</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/mohammad-sallam.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc5" class="scene clip" data-start="93.333" data-duration="8.4" data-track-index="17">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$40K</span><span class="wd ac">upfront.</span></div>
+            <div class="winsub">Plus 20% revenue share, on one custom AI build.</div>
+            <div class="winname">Kobe Shemesh</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/kobe-shemesh.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc6" class="scene clip" data-start="101.333" data-duration="8.4" data-track-index="18">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">£1K</span><span class="wd ">to</span><span class="wd ac">£30K</span><span class="wd ac">projects.</span></div>
+            <div class="winsub">From selling £1,000 workflows a year ago to closing AI agent projects at £25-30K.</div>
+            <div class="winname">Joe Scott</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/joe-scott.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc7" class="scene clip" data-start="109.333" data-duration="8.4" data-track-index="19">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln quoteln"><span class="wd ">In</span><span class="wd ">six</span><span class="wd ">weeks</span><span class="wd ">I</span><span class="wd ">landed</span><span class="wd ">two</span><span class="wd ">contracts</span><span class="wd ">worth</span><span class="wd ">nearly</span><span class="wd ">$20,000.</span><span class="wd ">And</span><span class="wd ">the</span><span class="wd ">sky's</span><span class="wd ">the</span><span class="wd ">limit.</span></div><div class="sub attrib">Amy Simpson</div>
+        </div>
+      </section>
+      <section id="sc8" class="scene clip" data-start="117.333" data-duration="8.4" data-track-index="20">
+        <div class="inner">
+        <div class="eyebrow">MEMBER WIN</div><div class="ln quoteln"><span class="wd ">Every</span><span class="wd ">client</span><span class="wd ">came</span><span class="wd ">to</span><span class="wd ">me.</span><span class="wd ">I</span><span class="wd ">never</span><span class="wd ">sent</span><span class="wd ">a</span><span class="wd ">single</span><span class="wd ">cold</span><span class="wd ">DM.</span></div><div class="sub attrib">Abdurrahman Ibrahim</div>
+        </div>
+      </section>
+      <section id="sc9" class="scene clip" data-start="125.333" data-duration="7.4" data-track-index="21">
+        <div class="inner">
+        
+        <div class="statwrap">
+          <div class="kicker">MEMBERS WORLDWIDE</div>
+          <div class="num">0K+</div>
+          <div class="unit">BUILDERS STRONG</div>
+        </div><div class="sub">One community. Every timezone.</div>
+        </div>
+      </section>
+      <section id="sc10" class="scene clip" data-start="132.333" data-duration="8.4" data-track-index="22">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">The community is winning.</div>
+        </div>
+      </section>
+      <section id="sc11" class="scene clip" data-start="140.333" data-duration="5.4" data-track-index="23">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln hero"><span class="wd ">Real</span><span class="wd ">builds.</span><span class="wd ac">Real</span><span class="wd ac">paydays.</span></div>
+        </div>
+      </section>
+      <section id="sc13" class="scene clip" data-start="215.633" data-duration="8.4" data-track-index="25">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$25K</span><span class="wd ac">this</span><span class="wd ac">month.</span></div>
+            <div class="winsub">What started as a side hustle now invoices $25K a month, with $9K more in the pipeline.</div>
+            <div class="winname">Sef El</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/sef-el.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc14" class="scene clip" data-start="223.633" data-duration="8.4" data-track-index="26">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$10K</span><span class="wd ">in</span><span class="wd ac">one</span><span class="wd ac">year.</span></div>
+            <div class="winsub">A side hustle while still in university. 80% of it came through <span class="plus">AIS<span class="p">+</span></span> connections.</div>
+            <div class="winname">Abdurrahman Ibrahim</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/abdurrahman-ibrahim.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc15" class="scene clip" data-start="231.633" data-duration="8.4" data-track-index="27">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">First</span><span class="wd ">client,</span><span class="wd ac">$5K.</span></div>
+            <div class="winsub">Closed at 18 years old.</div>
+            <div class="winname">Noel Payano</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/noel-payano.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc16" class="scene clip" data-start="239.633" data-duration="8.4" data-track-index="28">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$5,000,</span><span class="wd ac">locked</span><span class="wd ac">in.</span></div>
+            <div class="winsub">First client closed at 38, with a full-time job and a toddler at home.</div>
+            <div class="winname">Tyler Capps</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/tyler-capps.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc17" class="scene clip" data-start="247.633" data-duration="8.4" data-track-index="29">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Three</span><span class="wd ">builds,</span><span class="wd ac">one</span><span class="wd ac">week.</span></div>
+            <div class="winsub">Two recurring sites at $150 and $200 a month, plus a $1,000 portfolio build.</div>
+            <div class="winname">Michael Elliott</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/michael-elliott.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc18" class="scene clip" data-start="255.633" data-duration="8.4" data-track-index="30">
+        <div class="inner">
+        <div class="eyebrow">FROM LAID OFF TO HIRED</div><div class="ln quoteln"><span class="wd ">In</span><span class="wd ">a</span><span class="wd ">month</span><span class="wd ">and</span><span class="wd ">a</span><span class="wd ">half,</span><span class="wd ">I</span><span class="wd ">went</span><span class="wd ">from</span><span class="wd ">being</span><span class="wd ">laid</span><span class="wd ">off</span><span class="wd ">to</span><span class="wd ">having</span><span class="wd ">a</span><span class="wd ">job.</span></div><div class="sub attrib">Griffin Maklansky</div>
+        </div>
+      </section>
+      <section id="sc19" class="scene clip" data-start="263.633" data-duration="8.4" data-track-index="31">
+        <div class="inner">
+        <div class="eyebrow">MEMBER WIN</div><div class="ln quoteln"><span class="wd ">Six</span><span class="wd ">months</span><span class="wd ">of</span><span class="wd ">engineering</span><span class="wd ">work,</span><span class="wd ">compressed</span><span class="wd ">into</span><span class="wd ">one</span><span class="wd ">afternoon.</span></div><div class="sub attrib">Duy Nguyen</div>
+        </div>
+      </section>
+      <section id="sc20" class="scene clip" data-start="271.633" data-duration="7.4" data-track-index="32">
+        <div class="inner">
+        
+        <div class="statwrap">
+          <div class="kicker">THE ROOM IS PACKED</div>
+          <div class="num">0+</div>
+          <div class="unit">PEOPLE GOING</div>
+        </div><div class="sub">Two days, together in the room.</div>
+        </div>
+      </section>
+      <section id="sc21" class="scene clip" data-start="278.633" data-duration="8.4" data-track-index="33">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">The community is winning.</div>
+        </div>
+      </section>
+      <section id="sc22" class="scene clip" data-start="286.633" data-duration="5.4" data-track-index="34">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln hero"><span class="wd ">The</span><span class="wd ">community</span><span class="wd ac">delivers.</span></div>
+        </div>
+      </section>
+      <section id="sc24" class="scene clip" data-start="355.966" data-duration="8.4" data-track-index="36">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$750</span><span class="wd ">in</span><span class="wd ac">six</span><span class="wd ac">days.</span></div>
+            <div class="winsub">Landed her first AI OS build less than a week after joining.</div>
+            <div class="winname">Galyn Fergerson</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/galyn-fergerson.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc25" class="scene clip" data-start="363.966" data-duration="8.4" data-track-index="37">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Paid</span><span class="wd ">$800,</span><span class="wd ac">first</span><span class="wd ac">project.</span></div>
+            <div class="winsub">A Claude-coded home inventory system cataloging 1,000+ items.</div>
+            <div class="winname">Nika Matveeva</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/nika-matveeva.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc26" class="scene clip" data-start="371.966" data-duration="8.4" data-track-index="38">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Second</span><span class="wd ">client</span><span class="wd ac">in</span><span class="wd ac">3</span><span class="wd ac">days.</span></div>
+            <div class="winsub">Three days after signing his first, and the new client paid on the spot.</div>
+            <div class="winname">Christian Barraza</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/christian-barraza.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc27" class="scene clip" data-start="379.966" data-duration="8.4" data-track-index="39">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Client</span><span class="wd ">in</span><span class="wd ac">week</span><span class="wd ac">one.</span></div>
+            <div class="winsub">Two courses finished and a first paying client, all in the first week.</div>
+            <div class="winname">Chase Coughlin</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/chase-coughlin.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc28" class="scene clip" data-start="387.966" data-duration="8.4" data-track-index="40">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">100</span><span class="wd ">sessions</span><span class="wd ac">at</span><span class="wd ac">68.</span></div>
+            <div class="winsub">Her 100th Claude Code session, building automations at 68 years young.</div>
+            <div class="winname">Diane McCracken</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/diane-mccracken.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc29" class="scene clip" data-start="395.966" data-duration="8.4" data-track-index="41">
+        <div class="inner">
+        <div class="eyebrow">WHY WE'RE HERE</div><div class="ln quoteln"><span class="wd ">I</span><span class="wd ">found</span><span class="wd ">my</span><span class="wd ">home.</span><span class="wd ">I</span><span class="wd ">found</span><span class="wd ">my</span><span class="wd ">tribe.</span></div><div class="sub attrib">Tonia Hardeman</div>
+        </div>
+      </section>
+      <section id="sc30" class="scene clip" data-start="403.966" data-duration="8.4" data-track-index="42">
+        <div class="inner">
+        <div class="eyebrow">CAREER SHIFT</div><div class="ln quoteln"><span class="wd ">I</span><span class="wd ">actually</span><span class="wd ">got</span><span class="wd ">my</span><span class="wd ">dream</span><span class="wd ">role:</span><span class="wd ">head</span><span class="wd ">of</span><span class="wd ">AI.</span></div><div class="sub attrib">Pedro Gomez</div>
+        </div>
+      </section>
+      <section id="sc31" class="scene clip" data-start="411.966" data-duration="7.4" data-track-index="43">
+        <div class="inner">
+        
+        <div class="statwrap">
+          <div class="kicker">SHIPPED BY THE COMMUNITY</div>
+          <div class="num">0K+</div>
+          <div class="unit">AUTOMATIONS SHIPPED</div>
+        </div><div class="sub">Real workflows. Real businesses.</div>
+        </div>
+      </section>
+      <section id="sc32" class="scene clip" data-start="418.966" data-duration="8.4" data-track-index="44">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">The community is winning.</div>
+        </div>
+      </section>
+      <section id="sc33" class="scene clip" data-start="426.966" data-duration="5.4" data-track-index="45">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln hero"><span class="wd ">Proof,</span><span class="wd ac">on</span><span class="wd ac">repeat.</span></div>
+        </div>
+      </section>
+      <section id="sc35" class="scene clip" data-start="502.266" data-duration="8.4" data-track-index="47">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Analyst</span><span class="wd ac">to</span><span class="wd ac">builder.</span></div>
+            <div class="winsub">After 15 years designing systems, he finally builds them, and signed a monthly retainer.</div>
+            <div class="winname">Wayne Dowden</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/wayne-dowden.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc36" class="scene clip" data-start="510.266" data-duration="8.4" data-track-index="48">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$385,000</span><span class="wd ac">contract.</span></div>
+            <div class="winsub">A $25K implementation fee plus $15K a month for 24 months, closed at a 76% profit margin.</div>
+            <div class="winname">David Kim</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/david-kim.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc37" class="scene clip" data-start="518.266" data-duration="8.4" data-track-index="49">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Two</span><span class="wd ">deals,</span><span class="wd ac">one</span><span class="wd ac">week.</span></div>
+            <div class="winsub">$22.5K and $42K sold in the same week, crossing $15K MRR and making his first hire.</div>
+            <div class="winname">Jacob West</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/jacob-west.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc38" class="scene clip" data-start="526.266" data-duration="8.4" data-track-index="50">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$50K+</span><span class="wd ">in</span><span class="wd ac">the</span><span class="wd ac">pipeline.</span></div>
+            <div class="winsub">Four new clients within a month, just a couple of weeks in.</div>
+            <div class="winname">Mohammad Sallam</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/mohammad-sallam.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc39" class="scene clip" data-start="534.266" data-duration="8.4" data-track-index="51">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$40K</span><span class="wd ac">upfront.</span></div>
+            <div class="winsub">Plus 20% revenue share, on one custom AI build.</div>
+            <div class="winname">Kobe Shemesh</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/kobe-shemesh.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc40" class="scene clip" data-start="542.266" data-duration="8.4" data-track-index="52">
+        <div class="inner">
+        <div class="eyebrow">THE VERDICT</div><div class="ln quoteln"><span class="wd ">The</span><span class="wd ">best</span><span class="wd ">money</span><span class="wd ">I've</span><span class="wd ">ever</span><span class="wd ">spent</span><span class="wd ">on</span><span class="wd ">any</span><span class="wd ">community.</span></div><div class="sub attrib">Nick Mohler</div>
+        </div>
+      </section>
+      <section id="sc41" class="scene clip" data-start="550.266" data-duration="8.4" data-track-index="53">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln quoteln"><span class="wd ">In</span><span class="wd ">six</span><span class="wd ">weeks</span><span class="wd ">I</span><span class="wd ">landed</span><span class="wd ">two</span><span class="wd ">contracts</span><span class="wd ">worth</span><span class="wd ">nearly</span><span class="wd ">$20,000.</span><span class="wd ">And</span><span class="wd ">the</span><span class="wd ">sky's</span><span class="wd ">the</span><span class="wd ">limit.</span></div><div class="sub attrib">Amy Simpson</div>
+        </div>
+      </section>
+      <section id="sc42" class="scene clip" data-start="558.266" data-duration="7.4" data-track-index="54">
+        <div class="inner">
+        
+        <div class="statwrap">
+          <div class="kicker">THE WORLD IS WATCHING</div>
+          <div class="num">0M+</div>
+          <div class="unit">VIEWS & COUNTING</div>
+        </div><div class="sub">They watch. We build.</div>
+        </div>
+      </section>
+      <section id="sc43" class="scene clip" data-start="565.266" data-duration="8.4" data-track-index="55">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">£1K</span><span class="wd ">to</span><span class="wd ac">£30K</span><span class="wd ac">projects.</span></div>
+            <div class="winsub">From selling £1,000 workflows a year ago to closing AI agent projects at £25-30K.</div>
+            <div class="winname">Joe Scott</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/joe-scott.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc44" class="scene clip" data-start="573.266" data-duration="8.4" data-track-index="56">
+        <div class="inner">
+        <div class="eyebrow">MEMBER WIN</div><div class="ln quoteln"><span class="wd ">Every</span><span class="wd ">client</span><span class="wd ">came</span><span class="wd ">to</span><span class="wd ">me.</span><span class="wd ">I</span><span class="wd ">never</span><span class="wd ">sent</span><span class="wd ">a</span><span class="wd ">single</span><span class="wd ">cold</span><span class="wd ">DM.</span></div><div class="sub attrib">Abdurrahman Ibrahim</div>
+        </div>
+      </section>
+      <section id="sc45" class="scene clip" data-start="581.266" data-duration="8.4" data-track-index="57">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$25K</span><span class="wd ac">this</span><span class="wd ac">month.</span></div>
+            <div class="winsub">What started as a side hustle now invoices $25K a month, with $9K more in the pipeline.</div>
+            <div class="winname">Sef El</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/sef-el.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc46" class="scene clip" data-start="589.266" data-duration="10.734" data-track-index="58">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">The community is winning.</div>
+        </div>
+      </section>
+      </div>
+      <div id="mnt0" class="mount">
+        <img id="mnt0-poster" class="mfill" src="assets/video/testi-building-v2-poster.jpg" alt="" />
+        <video id="mnt0-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-building-v2.mp4" data-start="5" data-duration="63.93333333333333" data-track-index="501"></video>
+        <img id="mnt0-last" class="mfill" src="assets/video/testi-building-v2-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt1" class="mount">
+        <img id="mnt1-poster" class="mfill" src="assets/video/testi-earning-v2-poster.jpg" alt="" />
+        <video id="mnt1-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-earning-v2.mp4" data-start="145.333" data-duration="69.9" data-track-index="502"></video>
+        <img id="mnt1-last" class="mfill" src="assets/video/testi-earning-v2-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt2" class="mount">
+        <img id="mnt2-poster" class="mfill" src="assets/video/testi-building-v2-poster.jpg" alt="" />
+        <video id="mnt2-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-building-v2.mp4" data-start="291.633" data-duration="63.93333333333333" data-track-index="503"></video>
+        <img id="mnt2-last" class="mfill" src="assets/video/testi-building-v2-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt3" class="mount">
+        <img id="mnt3-poster" class="mfill" src="assets/video/testi-earning-v2-poster.jpg" alt="" />
+        <video id="mnt3-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-earning-v2.mp4" data-start="431.966" data-duration="69.9" data-track-index="504"></video>
+        <img id="mnt3-last" class="mfill" src="assets/video/testi-earning-v2-lastframe.jpg" alt="" />
+      </div>
+      <audio id="mnt0-a" src="assets/video/testi-building-v2.mp4" data-start="5" data-duration="63.93333333333333" data-track-index="561" data-volume="1"></audio>
+      <audio id="mnt1-a" src="assets/video/testi-earning-v2.mp4" data-start="145.333" data-duration="69.9" data-track-index="562" data-volume="1"></audio>
+      <audio id="mnt2-a" src="assets/video/testi-building-v2.mp4" data-start="291.633" data-duration="63.93333333333333" data-track-index="563" data-volume="1"></audio>
+      <audio id="mnt3-a" src="assets/video/testi-earning-v2.mp4" data-start="431.966" data-duration="69.9" data-track-index="564" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 600;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers (all fromTo so nothing is left invisible) ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%"},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function shotIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,x:70,rotationY:-14,filter:"blur(8px)"},
+        {autoAlpha:1,x:0,rotationY:0,filter:"blur(0px)",duration:.65,ease:"power3.out"},at); }
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function mountIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:1.045,filter:"blur(14px)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px)",duration:.5,ease:"power2.out",transformOrigin:"50% 50%"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+      function countUp(sel, at, target, dur, suffix){
+        var o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+        tl.to(o,{v:target,duration:dur,ease:"power2.out",onUpdate:function(){
+          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+      }
+
+      /* ---- AMBIENT — short fixed cycles, even counts so motion rests at the loop seam ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/20, yoyo:true, repeat:19, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/24, yoyo:true, repeat:23, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/100, yoyo:true, repeat:99, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/20, yoyo:true, repeat:19, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral",{ x:-36, y:22, duration:D/20, yoyo:true, repeat:19, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/72, yoyo:true, repeat:71, ease:"sine.inOut" }, 0);
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:749, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:374, ease:"none" }, 0);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (5s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.24);
+      whipOut("#sc0 .inner", 4.7);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 5);
+
+      // sc1 · mount testi-building-v2  (64.333s, voice audio)
+      streak(5);
+      tl.set("#mnt0", { autoAlpha: 0 }, 0);
+      tl.set("#mnt0-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt0", 5);
+      tl.set("#mnt0-poster", { autoAlpha: 0 }, 5.2);
+      tl.set("#mnt0-last", { autoAlpha: 1 }, 68.893);
+      whipOut("#mnt0", 69.033);
+      tl.set("#mnt0", { autoAlpha: 0 }, 69.333);
+
+      // sc2 · win  (8s)
+      streak(69.333);
+      drop("#sc2 .peyebrow", 69.473);
+      words("#sc2 .winhead .wd", 69.613);
+      drop("#sc2 .winsub", 70.083);
+      drop("#sc2 .winname", 70.253);
+      shotIn("#sc2 .winshot", 69.733);
+      drift("#sc2 .winshot", 71.133, 1.17);
+      whipOut("#sc2 .inner", 77.033);
+      tl.set("#sc2 .inner", { autoAlpha: 0 }, 77.333);
+
+      // sc3 · win  (8s)
+      streak(77.333);
+      drop("#sc3 .peyebrow", 77.473);
+      words("#sc3 .winhead .wd", 77.613);
+      drop("#sc3 .winsub", 78.083);
+      drop("#sc3 .winname", 78.253);
+      shotIn("#sc3 .winshot", 77.733);
+      drift("#sc3 .winshot", 79.133, 1.17);
+      whipOut("#sc3 .inner", 85.033);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 85.333);
+
+      // sc4 · win  (8s)
+      streak(85.333);
+      drop("#sc4 .peyebrow", 85.473);
+      words("#sc4 .winhead .wd", 85.613);
+      drop("#sc4 .winsub", 86.083);
+      drop("#sc4 .winname", 86.253);
+      shotIn("#sc4 .winshot", 85.733);
+      drift("#sc4 .winshot", 87.133, 1.17);
+      whipOut("#sc4 .inner", 93.033);
+      tl.set("#sc4 .inner", { autoAlpha: 0 }, 93.333);
+
+      // sc5 · win  (8s)
+      streak(93.333);
+      drop("#sc5 .peyebrow", 93.473);
+      words("#sc5 .winhead .wd", 93.613);
+      drop("#sc5 .winsub", 94.083);
+      drop("#sc5 .winname", 94.253);
+      shotIn("#sc5 .winshot", 93.733);
+      drift("#sc5 .winshot", 95.133, 1.17);
+      whipOut("#sc5 .inner", 101.033);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 101.333);
+
+      // sc6 · win  (8s)
+      streak(101.333);
+      drop("#sc6 .peyebrow", 101.473);
+      words("#sc6 .winhead .wd", 101.613);
+      drop("#sc6 .winsub", 102.083);
+      drop("#sc6 .winname", 102.253);
+      shotIn("#sc6 .winshot", 101.733);
+      drift("#sc6 .winshot", 103.133, 1.17);
+      whipOut("#sc6 .inner", 109.033);
+      tl.set("#sc6 .inner", { autoAlpha: 0 }, 109.333);
+
+      // sc7 · quote  (8s)
+      streak(109.333);
+      drop("#sc7 .eyebrow", 109.453);
+      words("#sc7 .quoteln .wd", 109.593);
+      drop("#sc7 .attrib", 110.283);
+      whipOut("#sc7 .inner", 117.033);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 117.333);
+
+      // sc8 · quote  (8s)
+      streak(117.333);
+      drop("#sc8 .eyebrow", 117.453);
+      words("#sc8 .quoteln .wd", 117.593);
+      drop("#sc8 .attrib", 118.283);
+      whipOut("#sc8 .inner", 125.033);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 125.333);
+
+      // sc9 · stat  (7s)
+      streak(125.333);
+      drop("#sc9 .kicker", 125.613);
+      pop("#sc9 .num", 125.753);
+      countUp("#sc9 .num", 125.813, 400, 1.0, "K+");
+      drop("#sc9 .unit", 126.113);
+      drop("#sc9 .sub", 126.153);
+      whipOut("#sc9 .inner", 132.033);
+      tl.set("#sc9 .inner", { autoAlpha: 0 }, 132.333);
+
+      // sc10 · markflash  (8s)
+      streak(132.333);
+      markPop("#sc10 .bigmark", 132.553);
+      drop("#sc10 .sub", 133.153);
+      whipOut("#sc10 .inner", 140.033);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 140.333);
+
+      // sc11 · hero  (5s)
+      streak(140.333);
+      drop("#sc11 .eyebrow", 140.453);
+      words("#sc11 .ln .wd", 140.573);
+      whipOut("#sc11 .inner", 145.033);
+      tl.set("#sc11 .inner", { autoAlpha: 0 }, 145.333);
+
+      // sc12 · mount testi-earning-v2  (70.3s, voice audio)
+      streak(145.333);
+      tl.set("#mnt1", { autoAlpha: 0 }, 0);
+      tl.set("#mnt1-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt1", 145.333);
+      tl.set("#mnt1-poster", { autoAlpha: 0 }, 145.533);
+      tl.set("#mnt1-last", { autoAlpha: 1 }, 215.193);
+      whipOut("#mnt1", 215.333);
+      tl.set("#mnt1", { autoAlpha: 0 }, 215.633);
+
+      // sc13 · win  (8s)
+      streak(215.633);
+      drop("#sc13 .peyebrow", 215.773);
+      words("#sc13 .winhead .wd", 215.913);
+      drop("#sc13 .winsub", 216.383);
+      drop("#sc13 .winname", 216.553);
+      shotIn("#sc13 .winshot", 216.033);
+      drift("#sc13 .winshot", 217.433, 1.17);
+      whipOut("#sc13 .inner", 223.333);
+      tl.set("#sc13 .inner", { autoAlpha: 0 }, 223.633);
+
+      // sc14 · win  (8s)
+      streak(223.633);
+      drop("#sc14 .peyebrow", 223.773);
+      words("#sc14 .winhead .wd", 223.913);
+      drop("#sc14 .winsub", 224.383);
+      drop("#sc14 .winname", 224.553);
+      shotIn("#sc14 .winshot", 224.033);
+      drift("#sc14 .winshot", 225.433, 1.17);
+      whipOut("#sc14 .inner", 231.333);
+      tl.set("#sc14 .inner", { autoAlpha: 0 }, 231.633);
+
+      // sc15 · win  (8s)
+      streak(231.633);
+      drop("#sc15 .peyebrow", 231.773);
+      words("#sc15 .winhead .wd", 231.913);
+      drop("#sc15 .winsub", 232.383);
+      drop("#sc15 .winname", 232.553);
+      shotIn("#sc15 .winshot", 232.033);
+      drift("#sc15 .winshot", 233.433, 1.17);
+      whipOut("#sc15 .inner", 239.333);
+      tl.set("#sc15 .inner", { autoAlpha: 0 }, 239.633);
+
+      // sc16 · win  (8s)
+      streak(239.633);
+      drop("#sc16 .peyebrow", 239.773);
+      words("#sc16 .winhead .wd", 239.913);
+      drop("#sc16 .winsub", 240.383);
+      drop("#sc16 .winname", 240.553);
+      shotIn("#sc16 .winshot", 240.033);
+      drift("#sc16 .winshot", 241.433, 1.17);
+      whipOut("#sc16 .inner", 247.333);
+      tl.set("#sc16 .inner", { autoAlpha: 0 }, 247.633);
+
+      // sc17 · win  (8s)
+      streak(247.633);
+      drop("#sc17 .peyebrow", 247.773);
+      words("#sc17 .winhead .wd", 247.913);
+      drop("#sc17 .winsub", 248.383);
+      drop("#sc17 .winname", 248.553);
+      shotIn("#sc17 .winshot", 248.033);
+      drift("#sc17 .winshot", 249.433, 1.17);
+      whipOut("#sc17 .inner", 255.333);
+      tl.set("#sc17 .inner", { autoAlpha: 0 }, 255.633);
+
+      // sc18 · quote  (8s)
+      streak(255.633);
+      drop("#sc18 .eyebrow", 255.753);
+      words("#sc18 .quoteln .wd", 255.893);
+      drop("#sc18 .attrib", 256.583);
+      whipOut("#sc18 .inner", 263.333);
+      tl.set("#sc18 .inner", { autoAlpha: 0 }, 263.633);
+
+      // sc19 · quote  (8s)
+      streak(263.633);
+      drop("#sc19 .eyebrow", 263.753);
+      words("#sc19 .quoteln .wd", 263.893);
+      drop("#sc19 .attrib", 264.583);
+      whipOut("#sc19 .inner", 271.333);
+      tl.set("#sc19 .inner", { autoAlpha: 0 }, 271.633);
+
+      // sc20 · stat  (7s)
+      streak(271.633);
+      drop("#sc20 .kicker", 271.913);
+      pop("#sc20 .num", 272.053);
+      countUp("#sc20 .num", 272.113, 1300, 1.0, "+");
+      drop("#sc20 .unit", 272.413);
+      drop("#sc20 .sub", 272.453);
+      whipOut("#sc20 .inner", 278.333);
+      tl.set("#sc20 .inner", { autoAlpha: 0 }, 278.633);
+
+      // sc21 · markflash  (8s)
+      streak(278.633);
+      markPop("#sc21 .bigmark", 278.853);
+      drop("#sc21 .sub", 279.453);
+      whipOut("#sc21 .inner", 286.333);
+      tl.set("#sc21 .inner", { autoAlpha: 0 }, 286.633);
+
+      // sc22 · hero  (5s)
+      streak(286.633);
+      drop("#sc22 .eyebrow", 286.753);
+      words("#sc22 .ln .wd", 286.873);
+      whipOut("#sc22 .inner", 291.333);
+      tl.set("#sc22 .inner", { autoAlpha: 0 }, 291.633);
+
+      // sc23 · mount testi-building-v2  (64.333s, voice audio)
+      streak(291.633);
+      tl.set("#mnt2", { autoAlpha: 0 }, 0);
+      tl.set("#mnt2-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt2", 291.633);
+      tl.set("#mnt2-poster", { autoAlpha: 0 }, 291.833);
+      tl.set("#mnt2-last", { autoAlpha: 1 }, 355.526);
+      whipOut("#mnt2", 355.666);
+      tl.set("#mnt2", { autoAlpha: 0 }, 355.966);
+
+      // sc24 · win  (8s)
+      streak(355.966);
+      drop("#sc24 .peyebrow", 356.106);
+      words("#sc24 .winhead .wd", 356.246);
+      drop("#sc24 .winsub", 356.716);
+      drop("#sc24 .winname", 356.886);
+      shotIn("#sc24 .winshot", 356.366);
+      drift("#sc24 .winshot", 357.766, 1.17);
+      whipOut("#sc24 .inner", 363.666);
+      tl.set("#sc24 .inner", { autoAlpha: 0 }, 363.966);
+
+      // sc25 · win  (8s)
+      streak(363.966);
+      drop("#sc25 .peyebrow", 364.106);
+      words("#sc25 .winhead .wd", 364.246);
+      drop("#sc25 .winsub", 364.716);
+      drop("#sc25 .winname", 364.886);
+      shotIn("#sc25 .winshot", 364.366);
+      drift("#sc25 .winshot", 365.766, 1.17);
+      whipOut("#sc25 .inner", 371.666);
+      tl.set("#sc25 .inner", { autoAlpha: 0 }, 371.966);
+
+      // sc26 · win  (8s)
+      streak(371.966);
+      drop("#sc26 .peyebrow", 372.106);
+      words("#sc26 .winhead .wd", 372.246);
+      drop("#sc26 .winsub", 372.716);
+      drop("#sc26 .winname", 372.886);
+      shotIn("#sc26 .winshot", 372.366);
+      drift("#sc26 .winshot", 373.766, 1.17);
+      whipOut("#sc26 .inner", 379.666);
+      tl.set("#sc26 .inner", { autoAlpha: 0 }, 379.966);
+
+      // sc27 · win  (8s)
+      streak(379.966);
+      drop("#sc27 .peyebrow", 380.106);
+      words("#sc27 .winhead .wd", 380.246);
+      drop("#sc27 .winsub", 380.716);
+      drop("#sc27 .winname", 380.886);
+      shotIn("#sc27 .winshot", 380.366);
+      drift("#sc27 .winshot", 381.766, 1.17);
+      whipOut("#sc27 .inner", 387.666);
+      tl.set("#sc27 .inner", { autoAlpha: 0 }, 387.966);
+
+      // sc28 · win  (8s)
+      streak(387.966);
+      drop("#sc28 .peyebrow", 388.106);
+      words("#sc28 .winhead .wd", 388.246);
+      drop("#sc28 .winsub", 388.716);
+      drop("#sc28 .winname", 388.886);
+      shotIn("#sc28 .winshot", 388.366);
+      drift("#sc28 .winshot", 389.766, 1.17);
+      whipOut("#sc28 .inner", 395.666);
+      tl.set("#sc28 .inner", { autoAlpha: 0 }, 395.966);
+
+      // sc29 · quote  (8s)
+      streak(395.966);
+      drop("#sc29 .eyebrow", 396.086);
+      words("#sc29 .quoteln .wd", 396.226);
+      drop("#sc29 .attrib", 396.916);
+      whipOut("#sc29 .inner", 403.666);
+      tl.set("#sc29 .inner", { autoAlpha: 0 }, 403.966);
+
+      // sc30 · quote  (8s)
+      streak(403.966);
+      drop("#sc30 .eyebrow", 404.086);
+      words("#sc30 .quoteln .wd", 404.226);
+      drop("#sc30 .attrib", 404.916);
+      whipOut("#sc30 .inner", 411.666);
+      tl.set("#sc30 .inner", { autoAlpha: 0 }, 411.966);
+
+      // sc31 · stat  (7s)
+      streak(411.966);
+      drop("#sc31 .kicker", 412.246);
+      pop("#sc31 .num", 412.386);
+      countUp("#sc31 .num", 412.446, 100, 1.0, "K+");
+      drop("#sc31 .unit", 412.746);
+      drop("#sc31 .sub", 412.786);
+      whipOut("#sc31 .inner", 418.666);
+      tl.set("#sc31 .inner", { autoAlpha: 0 }, 418.966);
+
+      // sc32 · markflash  (8s)
+      streak(418.966);
+      markPop("#sc32 .bigmark", 419.186);
+      drop("#sc32 .sub", 419.786);
+      whipOut("#sc32 .inner", 426.666);
+      tl.set("#sc32 .inner", { autoAlpha: 0 }, 426.966);
+
+      // sc33 · hero  (5s)
+      streak(426.966);
+      drop("#sc33 .eyebrow", 427.086);
+      words("#sc33 .ln .wd", 427.206);
+      whipOut("#sc33 .inner", 431.666);
+      tl.set("#sc33 .inner", { autoAlpha: 0 }, 431.966);
+
+      // sc34 · mount testi-earning-v2  (70.3s, voice audio)
+      streak(431.966);
+      tl.set("#mnt3", { autoAlpha: 0 }, 0);
+      tl.set("#mnt3-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt3", 431.966);
+      tl.set("#mnt3-poster", { autoAlpha: 0 }, 432.166);
+      tl.set("#mnt3-last", { autoAlpha: 1 }, 501.826);
+      whipOut("#mnt3", 501.966);
+      tl.set("#mnt3", { autoAlpha: 0 }, 502.266);
+
+      // sc35 · win  (8s)
+      streak(502.266);
+      drop("#sc35 .peyebrow", 502.406);
+      words("#sc35 .winhead .wd", 502.546);
+      drop("#sc35 .winsub", 503.016);
+      drop("#sc35 .winname", 503.186);
+      shotIn("#sc35 .winshot", 502.666);
+      drift("#sc35 .winshot", 504.066, 1.17);
+      whipOut("#sc35 .inner", 509.966);
+      tl.set("#sc35 .inner", { autoAlpha: 0 }, 510.266);
+
+      // sc36 · win  (8s)
+      streak(510.266);
+      drop("#sc36 .peyebrow", 510.406);
+      words("#sc36 .winhead .wd", 510.546);
+      drop("#sc36 .winsub", 511.016);
+      drop("#sc36 .winname", 511.186);
+      shotIn("#sc36 .winshot", 510.666);
+      drift("#sc36 .winshot", 512.066, 1.17);
+      whipOut("#sc36 .inner", 517.966);
+      tl.set("#sc36 .inner", { autoAlpha: 0 }, 518.266);
+
+      // sc37 · win  (8s)
+      streak(518.266);
+      drop("#sc37 .peyebrow", 518.406);
+      words("#sc37 .winhead .wd", 518.546);
+      drop("#sc37 .winsub", 519.016);
+      drop("#sc37 .winname", 519.186);
+      shotIn("#sc37 .winshot", 518.666);
+      drift("#sc37 .winshot", 520.066, 1.17);
+      whipOut("#sc37 .inner", 525.966);
+      tl.set("#sc37 .inner", { autoAlpha: 0 }, 526.266);
+
+      // sc38 · win  (8s)
+      streak(526.266);
+      drop("#sc38 .peyebrow", 526.406);
+      words("#sc38 .winhead .wd", 526.546);
+      drop("#sc38 .winsub", 527.016);
+      drop("#sc38 .winname", 527.186);
+      shotIn("#sc38 .winshot", 526.666);
+      drift("#sc38 .winshot", 528.066, 1.17);
+      whipOut("#sc38 .inner", 533.966);
+      tl.set("#sc38 .inner", { autoAlpha: 0 }, 534.266);
+
+      // sc39 · win  (8s)
+      streak(534.266);
+      drop("#sc39 .peyebrow", 534.406);
+      words("#sc39 .winhead .wd", 534.546);
+      drop("#sc39 .winsub", 535.016);
+      drop("#sc39 .winname", 535.186);
+      shotIn("#sc39 .winshot", 534.666);
+      drift("#sc39 .winshot", 536.066, 1.17);
+      whipOut("#sc39 .inner", 541.966);
+      tl.set("#sc39 .inner", { autoAlpha: 0 }, 542.266);
+
+      // sc40 · quote  (8s)
+      streak(542.266);
+      drop("#sc40 .eyebrow", 542.386);
+      words("#sc40 .quoteln .wd", 542.526);
+      drop("#sc40 .attrib", 543.216);
+      whipOut("#sc40 .inner", 549.966);
+      tl.set("#sc40 .inner", { autoAlpha: 0 }, 550.266);
+
+      // sc41 · quote  (8s)
+      streak(550.266);
+      drop("#sc41 .eyebrow", 550.386);
+      words("#sc41 .quoteln .wd", 550.526);
+      drop("#sc41 .attrib", 551.216);
+      whipOut("#sc41 .inner", 557.966);
+      tl.set("#sc41 .inner", { autoAlpha: 0 }, 558.266);
+
+      // sc42 · stat  (7s)
+      streak(558.266);
+      drop("#sc42 .kicker", 558.546);
+      pop("#sc42 .num", 558.686);
+      countUp("#sc42 .num", 558.746, 40, 1.0, "M+");
+      drop("#sc42 .unit", 559.046);
+      drop("#sc42 .sub", 559.086);
+      whipOut("#sc42 .inner", 564.966);
+      tl.set("#sc42 .inner", { autoAlpha: 0 }, 565.266);
+
+      // sc43 · win  (8s)
+      streak(565.266);
+      drop("#sc43 .peyebrow", 565.406);
+      words("#sc43 .winhead .wd", 565.546);
+      drop("#sc43 .winsub", 566.016);
+      drop("#sc43 .winname", 566.186);
+      shotIn("#sc43 .winshot", 565.666);
+      drift("#sc43 .winshot", 567.066, 1.17);
+      whipOut("#sc43 .inner", 572.966);
+      tl.set("#sc43 .inner", { autoAlpha: 0 }, 573.266);
+
+      // sc44 · quote  (8s)
+      streak(573.266);
+      drop("#sc44 .eyebrow", 573.386);
+      words("#sc44 .quoteln .wd", 573.526);
+      drop("#sc44 .attrib", 574.216);
+      whipOut("#sc44 .inner", 580.966);
+      tl.set("#sc44 .inner", { autoAlpha: 0 }, 581.266);
+
+      // sc45 · win  (8s)
+      streak(581.266);
+      drop("#sc45 .peyebrow", 581.406);
+      words("#sc45 .winhead .wd", 581.546);
+      drop("#sc45 .winsub", 582.016);
+      drop("#sc45 .winname", 582.186);
+      shotIn("#sc45 .winshot", 581.666);
+      drift("#sc45 .winshot", 583.066, 1.17);
+      whipOut("#sc45 .inner", 588.966);
+      tl.set("#sc45 .inner", { autoAlpha: 0 }, 589.266);
+
+      // sc46 · markflash  (10.734s)
+      streak(589.266);
+      markPop("#sc46 .bigmark", 589.486);
+      drop("#sc46 .sub", 590.086);
+      whipOut("#sc46 .inner", 599.7);
+
+      tl.to({}, { duration: D }, 0); // Law #11 — fill the slot
+      window.__timelines["cmp-testi-wins-10min"] = tl;
+    </script>
+  </body>
+</html>

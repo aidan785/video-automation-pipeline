@@ -1,0 +1,74 @@
+<!doctype html>
+<!--
+  EISENBERG PAPER · tier2 · lower-third · PILLS  (vertical 1080x1920)
+  Transparent overlay for reels: two bold-mono pills slide up bottom-left
+  with motion blur + back.out settle, drift, then ghost out. First pill
+  mint, second paper-white; '>' prompt matches the text color. Placed above
+  the caption safe-zone.
+  Slots: pill1 · pill2.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+
+      #ep-t2-lower-pills {
+        position: absolute; inset: 0; width: 1080px; height: 1920px;
+        background: transparent; font-family: var(--font-mono); overflow: hidden;
+      }
+      #ep-t2-lower-pills .pill {
+        position: absolute;
+        background: var(--card); border-radius: var(--radius-pill);
+        border-top: 1px solid var(--card-hi);
+        border-left: 1px solid var(--card-hi-l);
+        box-shadow: var(--shadow-pill);
+        padding: 20px 34px;
+        font-size: var(--size-pill); font-weight: 600; color: var(--tag);
+        letter-spacing: var(--track-pill); text-transform: uppercase; white-space: nowrap;
+      }
+      #ep-t2-lower-pills .pill .pfx { margin-right: 16px; }
+      #ep-t2-lower-pills .pill.hot { color: var(--mint); }
+      #ep-t2-lower-pills .p1 { left: 70px; top: 1380px; transform: rotate(-0.7deg); }
+      #ep-t2-lower-pills .p2 { left: 96px; top: 1500px; transform: rotate(0.5deg); }
+    </style>
+  </head>
+  <body>
+    <div id="ep-t2-lower-pills" data-composition-id="ep-t2-lower-pills" data-start="0" data-width="1080" data-height="1920">
+      <div class="drift"><div class="mover pill hot p1"><span class="pfx">&gt;</span><span data-slot="pill1">crisp answers</span></div></div>
+      <div class="drift"><div class="mover pill p2"><span class="pfx">&gt;</span><span data-slot="pill2">no essays</span></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const root = "#ep-t2-lower-pills";
+      const DUR = 5;
+
+      function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+      const rnd = mulberry32(707);
+
+      const tl = gsap.timeline({ paused: true });
+
+      document.querySelectorAll(root + " .drift").forEach((el) => {
+        const half = 1.4 + rnd() * 0.7;
+        tl.to(el, {
+          x: (rnd() * 2 - 1) * 4, y: 3 + rnd() * 2.5, rotation: (rnd() * 2 - 1) * 0.35,
+          duration: half, ease: "sine.inOut", yoyo: true, repeat: Math.ceil(DUR / half),
+        }, 0);
+      });
+
+      tl
+        .fromTo(root + " .pill",
+          { y: 240, x: -14, autoAlpha: 0, filter: "blur(9px)" },
+          { y: 0, autoAlpha: 1, filter: "blur(0px)", duration: 0.65, ease: "back.out(1.0)", stagger: 0.14 }, 0.15)
+
+        /* ghost out — blur + fade, never a hard cut */
+        .to(root + " .pill", { autoAlpha: 0, filter: "blur(7px)", y: -26, duration: 0.55, ease: "power2.in", stagger: 0.1 }, DUR - 0.6)
+        .set({}, {}, DUR);
+
+      window.__timelines["ep-t2-lower-pills"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<template id="tpl-ep-t1-overview-pills">
+<div id="ep-t1-overview-pills" data-composition-id="ep-t1-overview-pills" data-start="0" data-width="1080" data-height="1920">
+      <div class="ep-cam">
+        <div class="ep-paper"></div>
+        <div class="stage">
+          <div class="drift"><div class="mover termwrap">
+            <div class="term">
+              <div class="chrome">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="appicon">C</span>
+              </div>
+              <div class="mascot"></div>
+              <div class="line" data-slot="l1">Claude Code v2.1.6&#10;Welcome back, Daniel!</div>
+              <div class="line dim" data-slot="l2">Sonnet 4.5 · API Usage Billing · Why Try AI&#10;~/Claude Code</div>
+              <div class="status" data-slot="status">[CAVEMAN ACTIVE]</div>
+            </div>
+          </div></div>
+
+          <div class="drift"><div class="mover pill hot p1"><span class="pfx">&gt;</span><span data-slot="pill1">crisp answers</span></div></div>
+          <div class="drift"><div class="mover pill p2"><span class="pfx">&gt;</span><span data-slot="pill2">no essays</span></div></div>
+          <div class="drift"><div class="mover pill p3"><span class="pfx">&gt;</span><span data-slot="pill3">less tokens</span></div></div>
+          <div class="drift"><div class="mover pill p4"><span class="pfx">&gt;</span><span data-slot="pill4">fast output</span></div></div>
+        </div>
+      </div>
+      <div class="ep-lens"></div>
+      <div class="ep-vig"></div>
+      <div class="ep-grain"></div>
+    
+  <style>
+      #ep-t1-overview-pills {
+        position: absolute; inset: 0; width: 1080px; height: 1920px;
+        background: var(--paper-mid); color: var(--term-text);
+        font-family: var(--font-mono); overflow: hidden;
+      }
+      #ep-t1-overview-pills .stage { position: absolute; inset: 0; z-index: 3; }
+
+      #ep-t1-overview-pills .termwrap { position: absolute; left: 80px; top: 380px; }
+      #ep-t1-overview-pills .term {
+        position: relative; width: 920px;
+        background: var(--card); border-radius: var(--radius-card);
+        border-top: 1px solid var(--card-hi);
+        border-left: 1px solid var(--card-hi-l);
+        box-shadow: var(--shadow-card);
+        padding: 34px 50px 48px; box-sizing: border-box;
+        transform: rotate(-0.4deg);
+      }
+      #ep-t1-overview-pills .chrome { display: flex; align-items: center; gap: 12px; margin-bottom: 34px; }
+      #ep-t1-overview-pills .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--tag); }
+      #ep-t1-overview-pills .appicon {
+        margin-left: 16px; width: 32px; height: 32px; border-radius: 8px;
+        background: #2A2827; display: flex; align-items: center; justify-content: center;
+        color: var(--tag); font-size: 18px; font-weight: 600;
+      }
+      #ep-t1-overview-pills .line { font-size: var(--size-term-sm); line-height: 1.55; white-space: pre-line; }
+      #ep-t1-overview-pills .line.dim { color: var(--term-dim); margin-top: 22px; }
+      #ep-t1-overview-pills .status { margin-top: 28px; font-size: var(--size-term-sm); color: var(--mint); letter-spacing: var(--track-pill); }
+
+      /* mascot */
+      #ep-t1-overview-pills .mascot { position: absolute; top: 96px; right: 120px; width: 11px; height: 11px; }
+      #ep-t1-overview-pills .mascot::before {
+        content: ""; position: absolute; width: 11px; height: 11px; background: var(--coral);
+        box-shadow:
+          11px 0 var(--coral), 22px 0 var(--coral), 33px 0 var(--coral), 44px 0 var(--coral), 55px 0 var(--coral), 66px 0 var(--coral),
+          0 11px var(--coral), 11px 11px var(--card), 22px 11px var(--coral), 33px 11px var(--coral), 44px 11px var(--coral), 55px 11px var(--card), 66px 11px var(--coral),
+          0 22px var(--coral), 11px 22px var(--coral), 22px 22px var(--coral), 33px 22px var(--coral), 44px 22px var(--coral), 55px 22px var(--coral), 66px 22px var(--coral),
+          11px 33px var(--coral), 55px 33px var(--coral);
+      }
+
+      /* pills — bold mono, loose 2x2, slight rotations */
+      #ep-t1-overview-pills .pill {
+        position: absolute;
+        background: var(--card); border-radius: var(--radius-pill);
+        border-top: 1px solid var(--card-hi);
+        border-left: 1px solid var(--card-hi-l);
+        box-shadow: var(--shadow-pill);
+        padding: 20px 34px;
+        font-size: var(--size-pill); font-weight: 600; color: var(--tag);
+        letter-spacing: var(--track-pill); text-transform: uppercase; white-space: nowrap;
+      }
+      #ep-t1-overview-pills .pill .pfx { margin-right: 16px; }
+      #ep-t1-overview-pills .pill.hot { color: var(--mint); }
+      #ep-t1-overview-pills .p1 { left: 70px;  top: 1210px; transform: rotate(-0.7deg); }
+      #ep-t1-overview-pills .p2 { left: 590px; top: 1222px; transform: rotate(0.5deg); }
+      #ep-t1-overview-pills .p3 { left: 96px;  top: 1345px; transform: rotate(0.4deg); }
+      #ep-t1-overview-pills .p4 { left: 570px; top: 1358px; transform: rotate(-0.5deg); }
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+      window.__timelines = window.__timelines || {};
+      const root = "#ep-t1-overview-pills";
+      const DUR = 7;
+
+      function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+      const rnd = mulberry32(404);
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(root + " .ep-cam", { scale: 1.04 }, { scale: 1.09, duration: DUR, ease: "none" }, 0)
+        .to(root + " .ep-cam", { x: 5, y: 5, rotation: -0.22, duration: DUR / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+
+      document.querySelectorAll(root + " .drift").forEach((el) => {
+        const half = 1.4 + rnd() * 0.7;
+        tl.to(el, {
+          x: (rnd() * 2 - 1) * 4, y: 3 + rnd() * 2.5, rotation: (rnd() * 2 - 1) * 0.35,
+          duration: half, ease: "sine.inOut", yoyo: true, repeat: Math.ceil(DUR / half),
+        }, 0);
+      });
+
+      tl
+        /* terminal slides up with motion blur */
+        .fromTo(root + " .termwrap",
+          { y: 780, x: -22, autoAlpha: 0, filter: "blur(10px)" },
+          { y: 0, x: 0, autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "back.out(0.9)" }, 0.15)
+
+        /* follow-through: chrome trails the card landing (Disney #5) */
+        .from(root + " .chrome, " + root + " .mascot", { y: -10, autoAlpha: 0, duration: 0.35, ease: "power2.out" }, 0.62)
+
+        /* pills stagger in, one beat apart */
+        .fromTo(root + " .pill",
+          { y: 90, autoAlpha: 0, filter: "blur(10px)" },
+          { y: 0, autoAlpha: 1, filter: "blur(0px)", duration: 0.6, ease: "back.out(1.0)", stagger: 0.14 }, 1.6)
+
+        /* breathing hold */
+        .set({}, {}, DUR);
+
+      window.__timelines["ep-t1-overview-pills"] = tl;
+    </script>
+</div>
+</template>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — sting: lunch-break</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c;
+        --charcoal: #0a0e14;
+        --blue: #37bdf8;
+        --coral: #ff8a5c;
+        --red-live: #ff3b30;
+        --font-display: "Montserrat", sans-serif;
+        --font-body: "Inter", sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #000; color: #fff; font-family: var(--font-body);
+      }
+      #root {
+        position: relative; width: 1920px; height: 1080px;
+        overflow: hidden; background: var(--onyx); isolation: isolate;
+      }
+      /* clip layers fill the frame so the mark glow / italic overhang / live-dot are never chopped */
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- background ---------- */
+      .grid {
+        position: absolute; inset: -48px;
+        background-image:
+          linear-gradient(rgba(55, 189, 248, 0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55, 189, 248, 0.065) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      .glow { position: absolute; top: -160px; left: 50%; border-radius: 50%; }
+      .glow.blue { width: 760px; height: 760px; margin-left: -380px; background: var(--blue); filter: blur(150px); opacity: 0.20; }
+      .glow.coral { width: 680px; height: 680px; margin-left: -340px; background: var(--coral); filter: blur(140px); opacity: 0.20; }
+      .vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.55) 95%);
+      }
+
+      /* ---------- scene ---------- */
+      .wrap {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 44px; padding: 120px; text-align: center;
+      }
+
+      /* eyebrow — JetBrains Mono, UPPER +0.32em, accent color */
+      .eyebrow {
+        font-family: var(--font-mono); font-weight: 700; font-size: 24px;
+        letter-spacing: 0.32em; text-transform: uppercase; color: #ff8a5c;
+        display: inline-flex; align-items: center; gap: 12px;
+      }
+      .eyebrow::before {
+        content: ""; width: 9px; height: 9px; border-radius: 2px;
+        background: currentColor; box-shadow: 0 0 10px currentColor;
+      }
+
+      /* message line — Montserrat 900 italic, one colored accent word */
+      .line {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        font-size: 112px; line-height: 0.95; letter-spacing: -0.035em;
+        color: #fff; max-width: 1520px; clip-path: inset(0 0 0 0);
+      }
+      .line .accent { color: #ff8a5c; font-style: italic; }
+
+      /* countdown */
+      .count { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+      .kicker {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        font-size: 64px; line-height: 0.95; letter-spacing: -0.03em; color: #fff;
+      }
+      .num {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        font-size: 300px; line-height: 0.86; letter-spacing: -0.05em; color: #ff8a5c;
+        text-shadow: 0 0 80px rgba(255,138,92,0.55);
+      }
+      .unit {
+        font-family: var(--font-mono); font-weight: 700; font-size: 26px;
+        letter-spacing: 0.32em; text-transform: uppercase; color: #ff8a5c;
+      }
+
+      /* ---------- AIS LIVE mark (solid, brand §3.2) ---------- */
+      .markwrap { display: inline-flex; }
+      .mark {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        letter-spacing: -0.03em; line-height: 0.9; font-size: 92px;
+        display: inline-flex; align-items: baseline; position: relative;
+      }
+      .mark .ais { color: #fff; }
+      .mark .gap { display: inline-block; width: 0.08em; }
+      .mark .live {
+        position: relative; color: var(--blue);
+        text-shadow: 0 0 60px rgba(55, 189, 248, 0.55);
+        padding-right: 0.28em;
+      }
+      .mark .dot {
+        position: absolute; top: 0.08em; left: 100%; margin-left: 0.06em;
+        width: 0.16em; height: 0.16em; border-radius: 50%;
+        background: var(--red-live);
+        box-shadow: 0 0 0.7em #ff3b30, 0 0 0.25em #ff3b30;
+      }
+      .mark .ring {
+        position: absolute; top: 0.08em; left: 100%; margin-left: 0.06em;
+        width: 0.16em; height: 0.16em; border-radius: 50%;
+        background: rgba(255, 59, 48, 0.55); opacity: 0;
+        transform-origin: 50% 50%; pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="sting-lunch-break" data-start="0" data-duration="8" data-width="1920" data-height="1080" style="--mark-size: 92px">
+      <div id="bg" class="clip" data-start="0" data-duration="8" data-track-index="0">
+        <div class="grid"></div>
+        <div class="glow coral"></div>
+        <div class="vignette"></div>
+      </div>
+      <div id="scene" class="clip" data-start="0" data-duration="8" data-track-index="1">
+        <div class="wrap">
+        <div class="eyebrow">BREAK</div>
+        <div class="line">Lunch <span class="accent">break.</span></div>
+        <div class="markwrap"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 8;
+      const tl = gsap.timeline({ paused: true });
+
+      /* AMBIENT — phase-locked to 1.6s, seamless at the loop point */
+      // live-dot pulse — scale 1 -> 1.1 -> 1, the only ambient motion the brand allows
+      tl.to(".mark .dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 9, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+      // outward ring — appears small+bright, expands and fades, invisible at every cycle edge
+      tl.fromTo(".mark .ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
+        { autoAlpha: 0.5, scale: 1, duration: 0.001 },
+        { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
+        { autoAlpha: 0, scale: 1, duration: 0.6 }
+      ], repeat: 4, ease: "none" }, 0);
+      // glow blob drift — sine.inOut yoyo returns to origin with zero velocity (seamless)
+      tl.to(".glow", { x: 40, y: -22, duration: 4, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      // command-deck grid scan — one 24px tile over the full duration (tiles seamlessly)
+      tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
+
+      /* ENTRANCE — settles to the rest pose, then holds */
+      tl.from(".eyebrow", { autoAlpha: 0, y: -12, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.from(".line", { clipPath: "inset(0 100% 0 0)", duration: 0.6, ease: "power3.out" }, 0.32);
+      tl.from(".markwrap", { autoAlpha: 0, scale: 0.92, y: 8, duration: 0.5, ease: "back.out(1.4)", transformOrigin: "50% 50%" }, 0.72);
+
+      tl.set({}, {}, D); // Law #11 — fill the slot
+      window.__timelines["sting-lunch-break"] = tl;
+    </script>
+  </body>
+</html>

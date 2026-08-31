@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p22 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .blue   { color: var(--accent);  text-shadow: var(--textglow-accent); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.done { color: var(--text-dim); }
+  .mpill.done .mn { color: rgba(var(--accent-rgb), .7); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 24px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow.bad .n { color: var(--alert); border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 14px rgba(var(--alert-rgb), .25); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 37px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 25px; color: var(--text-dim); margin-top: 8px; }
+  .qrow .tx .sub b { color: var(--text); }
+
+  .kc { padding: 28px 34px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc.dead { border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 16px rgba(var(--alert-rgb), .22), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 10px; }
+  .kc.dead .lab { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 38px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 26px; color: var(--text-dim); margin-top: 10px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  /* ---------- B1 cold open ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; line-height: 1.08; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  #b1 .l2 { margin-top: 30px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 40px; color: var(--text); }
+
+  /* ---------- B2 refund vs walk-through (over, FULL+shift) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 320px; display: flex; flex-direction: column; gap: 18px; }
+  #b2 .stack > div { align-self: flex-start; max-width: 750px; }
+  #b2 .chipx b { color: var(--white); }
+  #b2 .warnx b { color: var(--alert); }
+
+  /* ---------- B3 the question takeover ---------- */
+  #b3 { display: grid; place-items: center; text-align: center; }
+  #b3 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; line-height: 1.15; color: var(--white); text-shadow: var(--textglow); max-width: 1500px; }
+  #b3 .l2 { margin-top: 28px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 38px; color: var(--text-dim); }
+
+  /* ---------- B4 what scope is (under, PIP) ---------- */
+  #b4 .head { position: absolute; left: 110px; top: 130px; }
+  #b4 .chips { position: absolute; left: 110px; top: 230px; display: flex; gap: 18px; }
+  #b4 .chips .chipx b { color: var(--white); }
+  #b4 .sum { position: absolute; left: 110px; top: 350px; max-width: 1000px; }
+  #b4 .sum .punchx { font-size: 36px; line-height: 1.35; }
+
+  /* ---------- B5a POC (under, PIP) ---------- */
+  #b5a .head { position: absolute; left: 110px; top: 110px; }
+  #b5a .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 64px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b5a .card { position: absolute; left: 110px; top: 330px; width: 1000px; }
+  #b5a .mile { position: absolute; left: 110px; top: 560px; max-width: 1000px; }
+  #b5a .mile .chipx b { color: var(--white); }
+
+  /* ---------- B5b the gift (under, PIP) ---------- */
+  #b5b .head { position: absolute; left: 110px; top: 120px; }
+  #b5b .stack { position: absolute; left: 110px; top: 210px; width: 1050px; display: flex; flex-direction: column; gap: 18px; }
+  #b5b .stack > div { align-self: flex-start; }
+  #b5b .chipx b { color: var(--white); }
+
+  /* ---------- B6 scope card takeover ---------- */
+  #b6 { display: grid; place-items: center; }
+  #b6 .wrap { width: 1480px; }
+  #b6 .kicker { text-align: center; margin-bottom: 36px; }
+  #b6 .cols { display: flex; gap: 26px; }
+  #b6 .col { flex: 1; padding: 30px 34px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b6 .col.out { border-color: rgba(var(--alert-rgb), .5); }
+  #b6 .col .ct { font-family: var(--font-mono); font-size: 24px; letter-spacing: var(--track-wide); text-transform: uppercase; margin-bottom: 22px; }
+  #b6 .col.out .ct { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  #b6 .col.in .ct { color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b6 .item { padding: 16px 24px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 27px; color: var(--text); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); margin-bottom: 14px; }
+  #b6 .item b { color: var(--white); }
+  #b6 .item .why { display: block; font-family: var(--font-mono); font-size: 19px; color: var(--text-faint); margin-top: 6px; text-transform: uppercase; letter-spacing: var(--track-wide); }
+  #b6 .order { margin-top: 34px; display: flex; justify-content: center; gap: 18px; }
+  #b6 .order .chipx b { color: var(--white); }
+
+  /* ---------- B6x employed creep (over, FULL+shift) ---------- */
+  #b6x .stack { position: absolute; left: 80px; top: 380px; display: flex; flex-direction: column; gap: 18px; }
+  #b6x .stack > div { align-self: flex-start; max-width: 740px; }
+  #b6x .chipx b { color: var(--white); }
+
+  /* ---------- B7 done test (under, PIP) ---------- */
+  #b7 .head { position: absolute; left: 110px; top: 96px; }
+  #b7 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 66px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b7 .traits { position: absolute; left: 110px; top: 268px; display: flex; gap: 16px; }
+  #b7 .traits .chipx { font-size: 27px; padding: 14px 26px; }
+  #b7 .traits .chipx b { color: var(--white); }
+  #b7 .cards { position: absolute; left: 110px; top: 380px; width: 1070px; display: flex; flex-direction: column; gap: 22px; }
+  #b7 .prov { position: absolute; left: 110px; top: 850px; max-width: 1050px; }
+  #b7 .prov .chipx b { color: var(--white); }
+
+  /* B7s rule swap (track 5) */
+  #b7s .stack { position: absolute; left: 110px; top: 330px; width: 1040px; display: flex; flex-direction: column; gap: 20px; }
+  #b7s .stack > div { align-self: flex-start; }
+  #b7s .warnx b { color: var(--alert); }
+  #b7s .punchx { font-size: 38px; line-height: 1.35; }
+
+  /* ---------- B8 the menu (under, PIP) ---------- */
+  #b8 .head { position: absolute; left: 110px; top: 96px; }
+  #b8 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 66px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b8 .tiers { position: absolute; left: 110px; top: 280px; display: flex; gap: 16px; }
+  #b8 .tiers .chipx b { color: var(--white); }
+  #b8 .stack { position: absolute; left: 110px; top: 400px; width: 1050px; display: flex; flex-direction: column; gap: 18px; }
+  #b8 .stack > div { align-self: flex-start; }
+  #b8 .chipx b { color: var(--white); }
+
+  /* ---------- B9 say it out loud (under, PIP) ---------- */
+  #b9 .head { position: absolute; left: 110px; top: 100px; }
+  #b9 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 64px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b9 .stack { position: absolute; left: 110px; top: 290px; width: 1050px; display: flex; flex-direction: column; gap: 18px; }
+  #b9 .stack > div { align-self: flex-start; }
+  #b9 .quote { max-width: 980px; }
+  #b9 .chipx b { color: var(--white); }
+
+  /* ---------- B10 demo wish list (under, PIP) ---------- */
+  #b10 .head { position: absolute; left: 110px; top: 130px; }
+  #b10 .stack { position: absolute; left: 110px; top: 230px; width: 1050px; display: flex; flex-direction: column; gap: 20px; }
+  #b10 .stack > div { align-self: flex-start; }
+  #b10 .chipx b { color: var(--white); }
+  #b10 .punchx { font-size: 34px; line-height: 1.4; max-width: 950px; }
+  #b10 .tease { font-family: var(--font-mono); font-size: 24px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); }
+
+  /* ---------- B11 project is the data (under, PIP) ---------- */
+  #b11 .head { position: absolute; left: 110px; top: 96px; }
+  #b11 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 58px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b11 .mig { position: absolute; left: 110px; top: 250px; max-width: 1050px; }
+  #b11 .mig .chipx b { color: var(--white); }
+  #b11 .card { position: absolute; left: 110px; top: 360px; width: 1050px; }
+  #b11 .stack { position: absolute; left: 110px; top: 700px; width: 1050px; display: flex; flex-direction: column; gap: 16px; }
+  #b11 .stack > div { align-self: flex-start; }
+  #b11 .warnx b { color: var(--alert); }
+
+  /* ---------- B12 beginner mistakes (under, PIP) ---------- */
+  #b12 .head { position: absolute; left: 110px; top: 96px; }
+  #b12 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 66px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b12 .list { position: absolute; left: 110px; top: 280px; width: 1070px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* ---------- B13 outro ---------- */
+  #b13 { display: grid; place-items: center; text-align: center; }
+  #b13 .rail { display: flex; align-items: center; justify-content: center; }
+  #b13 .nx { margin-top: 70px; }
+  #b13 .nx .kick { margin-bottom: 20px; }
+  #b13 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; color: var(--white); text-shadow: var(--textglow); }
+</style>
+</head>
+<body>
+
+<div id="p22" data-composition-id="p22" data-start="0" data-width="1920" data-height="1080">
+
+  <div id="bg" class="clip" data-start="0" data-duration="453.5" data-track-index="2">
+    <div class="base"></div><div class="dots"></div><div class="bloom"></div><div class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (track 4) ============ -->
+
+  <!-- B1 cold open takeover (0-13.4) -->
+  <div id="b1" class="under clip" data-start="0" data-duration="13.4" data-track-index="4">
+    <div class="inner">
+      <div class="kick">Pillar Two · Step Two: Scope</div>
+      <div class="l1"><span class="word w1">A</span> <span class="word w2">Mountain</span> <span class="word w3">of</span> <span class="word w4">Content,</span><br><span class="word w5 grad">Vectorized.</span></div>
+      <div class="l2"><span class="word w6">Technically</span> <span class="word w7">solid.</span> <span class="word w8">Results:</span> <span class="word w9 blue">weird.</span></div>
+    </div>
+  </div>
+
+  <!-- B3 the question takeover (41.6-48.1) -->
+  <div id="b3" class="under clip" data-start="41.6" data-duration="6.5" data-track-index="4">
+    <div class="inner">
+      <div class="l1">"In production, how will this <span class="grad">actually be used?</span>"</div>
+      <div class="l2">The question almost nobody asks before they scope.</div>
+    </div>
+  </div>
+
+  <!-- B4 what scope is (48.4-61.9, PIP) -->
+  <div id="b4" class="under clip" data-start="48.4" data-duration="13.5" data-track-index="4">
+    <div class="head"><div class="kick">Scope is this lesson</div></div>
+    <div class="chips">
+      <div class="chipx c1">What's <b>in</b></div>
+      <div class="chipx c2">What's <b>out</b></div>
+      <div class="chipx c3">What <b>done</b> means</div>
+    </div>
+    <div class="sum"><div class="punchx">Drawn before the work starts. It protects both of you, if you draw it <span class="blue">where reality is</span>.</div></div>
+  </div>
+
+  <!-- B5a POC (62.2-82.8, PIP) -->
+  <div id="b5a" class="under clip" data-start="62.2" data-duration="20.6" data-track-index="4">
+    <div class="head">
+      <div class="kick">Where to start</div>
+      <div class="t">Design Around the POC</div>
+    </div>
+    <div class="card kc hot">
+      <div class="lab">Proof of concept</div>
+      <div class="val">The smallest build that works</div>
+      <div class="det">Well enough to <b>prove to the client we can do this</b>. The minimal solution that proves each milestone's value.</div>
+    </div>
+    <div class="mile"><div class="chipx">Milestone = a checkpoint <b>both sides agree</b> marks real progress</div></div>
+  </div>
+
+  <!-- B5b the gift (83.0-110.3, PIP) -->
+  <div id="b5b" class="under clip" data-start="83" data-duration="27.3" data-track-index="4">
+    <div class="head"><div class="kick">Walk them through the milestones, and watch</div></div>
+    <div class="stack">
+      <div class="quote q1">"Could it also do this? Could it also do that?"</div>
+      <div class="punchx p1">Every one of those questions is a gift</div>
+      <div class="chipx c1">"Yes, it could. Add it now, or out of scope?"</div>
+      <div class="chipx c2">The out-of-scope list writes itself, <b>with their agreement baked in</b></div>
+    </div>
+  </div>
+
+  <!-- B6 scope card takeover (110.6-141.6) -->
+  <div id="b6" class="under clip" data-start="110.6" data-duration="31" data-track-index="4">
+    <div class="wrap">
+      <div class="kicker kick">When you write the document, the out-of-scope list goes first</div>
+      <div class="cols">
+        <div class="col out">
+          <div class="ct">Out of scope · first</div>
+          <div class="item i1"><b>Insurance questions</b><span class="why">Next phase, per the audit</span></div>
+          <div class="item i2"><b>Clinical + emergency calls</b><span class="why">Leave it. Never.</span></div>
+          <div class="item i3">Anything not listed</div>
+        </div>
+        <div class="col in">
+          <div class="ct">In scope · Brightwater Dental</div>
+          <div class="item i4"><b>Reminder system</b><span class="why">Both office locations</span></div>
+          <div class="item i5">Each item carries a done test</div>
+        </div>
+      </div>
+      <div class="order">
+        <div class="chipx o1"><b>Think</b> in-scope first: it proves value</div>
+        <div class="chipx o2"><b>Present</b> out-of-scope first: it's the line you hold</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B7 done test (159.6-210.9, PIP) -->
+  <div id="b7" class="under clip" data-start="159.6" data-duration="51.3" data-track-index="4">
+    <div class="head">
+      <div class="kick">Every item inside the line</div>
+      <div class="t">The Done Test</div>
+    </div>
+    <div class="traits">
+      <div class="chipx t1"><b>Binary</b></div>
+      <div class="chipx t2"><b>Pass or fail</b></div>
+      <div class="chipx t3"><b>Objective</b></div>
+      <div class="chipx t4">Checkable by the client, <b>alone</b></div>
+    </div>
+    <div class="cards">
+      <div class="kc dead ka">
+        <div class="lab">Vague</div>
+        <div class="val">"Build a reminder system"</div>
+        <div class="det">"It still isn't finished." Forever. <b>And they're sort of right.</b></div>
+      </div>
+      <div class="kc hot kb">
+        <div class="lab">Verifiable</div>
+        <div class="val">Reminders at 48h and 24h, every appointment, each confirmation logged</div>
+        <div class="det db">They check it themselves: <b>your demo video + their own scheduling screen</b>.</div>
+      </div>
+    </div>
+    <div class="prov"><div class="chipx">Milestones with provable tests are milestones <b>nobody argues about</b></div></div>
+  </div>
+
+  <!-- B7s the rule (211.1-226.2, track 5) -->
+  <div id="b7s" class="under clip" data-start="211.1" data-duration="15.1" data-track-index="5">
+    <div class="stack">
+      <div class="warnx w1">We once scoped a <b>response-time commitment we hadn't proven</b>. The milestone dispute followed.</div>
+      <div class="punchx p1">Never write a done test you haven't already passed in private, or aren't certain you can pass.</div>
+    </div>
+  </div>
+
+  <!-- B8 the menu (226.5-283.5, PIP) -->
+  <div id="b8" class="under clip" data-start="226.5" data-duration="57" data-track-index="4">
+    <div class="head">
+      <div class="kick">A document they feel ownership of</div>
+      <div class="t">Give a Menu</div>
+    </div>
+    <div class="tiers">
+      <div class="chipx t1"><b>Standard</b> package</div>
+      <div class="chipx t2"><b>Premium</b> package</div>
+      <div class="chipx t3"><b>À la carte</b> add-ons · voice, front end</div>
+    </div>
+    <div class="stack">
+      <div class="chipx c1">They choose <b>what's in and what's out</b></div>
+      <div class="punchx p1">Not "do we work together" but <span class="blue">in what capacity</span></div>
+      <div class="chipx c2">They co-author the scope line, item by item. <b>People defend lines they helped draw.</b></div>
+      <div class="chipx c3">Mid-project surprises become <b>both of you looking at choices they made</b></div>
+      <div class="chipx c4">Employed track: three shapes, one recommendation. <b>Leadership picks, leadership co-owns.</b></div>
+    </div>
+  </div>
+
+  <!-- B9 say it out loud (286.6-316.4, PIP) -->
+  <div id="b9" class="under clip" data-start="286.6" data-duration="29.8" data-track-index="4">
+    <div class="head">
+      <div class="kick">Before anyone signs</div>
+      <div class="t">Say the Line Out Loud</div>
+    </div>
+    <div class="stack">
+      <div class="quote q1">"These are the <b>three milestones</b> in this sprint. This is what's <b>out of scope</b>. Do you feel comfortable with this?"</div>
+      <div class="chipx c1">Frame it in their terms: <b>we want to move fast here</b></div>
+      <div class="chipx c2">Mid-build changes <b>slow the entire process down</b></div>
+      <div class="punchx p1">Their own impatience defends your scope</div>
+    </div>
+  </div>
+
+  <!-- B10 demo wish list (316.9-340.7, PIP) -->
+  <div id="b10" class="under clip" data-start="316.9" data-duration="23.8" data-track-index="4">
+    <div class="head"><div class="kick">One more expectation to set now, because it is coming</div></div>
+    <div class="stack">
+      <div class="chipx c1">After the first or second demo, they <b>will</b> find things they want. It's a good sign.</div>
+      <div class="punchx p1">New ideas go on a running list for the next version. We keep building this one.</div>
+      <div class="tease t1">What that list becomes: the Terms lesson</div>
+    </div>
+  </div>
+
+  <!-- B11 project is the data (341.3-398.0, PIP) -->
+  <div id="b11" class="under clip" data-start="341.3" data-duration="56.7" data-track-index="4">
+    <div class="head">
+      <div class="kick">One more scope reality</div>
+      <div class="t">"We're Running a Data Infrastructure Agency"</div>
+    </div>
+    <div class="mig"><div class="chipx">Some of our first scopes weren't AI at all: <b>database migrations, getting the data AI-ready</b></div></div>
+    <div class="card kc">
+      <div class="lab">The awning company · the cautionary tale</div>
+      <div class="val">Half a million documents, formats everywhere</div>
+      <div class="det d1">The scope should have been: <b>1. Normalize everything into one form.</b></div>
+      <div class="det d2"><b>2. Hand them a template</b> so everything new comes in clean. That template can be its own little build you sell.</div>
+    </div>
+    <div class="stack">
+      <div class="punchx p1">The mess goes in the scope, as a <span class="blue">priced line item</span></div>
+      <div class="warnx w1">Unpriced cleanup still happens: <b>unpaid, on your nights and weekends</b>, timeline slipping</div>
+    </div>
+  </div>
+
+  <!-- B12 beginner mistakes (398.6-437.9, PIP) -->
+  <div id="b12" class="under clip" data-start="398.6" data-duration="39.3" data-track-index="4">
+    <div class="head">
+      <div class="kick">Where scoping goes wrong</div>
+      <div class="t">Three Scoping Mistakes</div>
+    </div>
+    <div class="list">
+      <div class="qrow bad m1"><div class="n">01</div><div class="tx">Under-scoping, in all its forms<span class="sub">The data never checked. The integration never tested. <b>The production question never asked.</b></span></div></div>
+      <div class="qrow bad m2"><div class="n">02</div><div class="tx">Done tests too loose to argue<span class="sub">Make it binary: <b>pass or fail</b>.</span></div></div>
+      <div class="qrow bad m3"><div class="n">03</div><div class="tx">Drawing the line without the client<span class="sub">A scope they never co-authored is <b>just your opinion</b>. It holds because they helped draw it.</span></div></div>
+    </div>
+  </div>
+
+  <!-- B13 outro (438.5-453.5) -->
+  <div id="b13" class="under clip" data-start="438.5" data-duration="15" data-track-index="4">
+    <div class="inner">
+      <div class="rail">
+        <div class="mpill done o1"><span class="mn">✓</span>Outcome</div>
+        <div class="mconn oc1"></div>
+        <div class="mpill done o2"><span class="mn">✓</span>Scope</div>
+        <div class="mconn oc2"></div>
+        <div class="mpill lit o3"><span class="mn">03</span>Price</div>
+        <div class="mconn oc3"></div>
+        <div class="mpill o4"><span class="mn">04</span>Terms</div>
+      </div>
+      <div class="nx">
+        <div class="kick">Up next</div>
+        <div class="t">Step Three: <span class="grad">Price</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div id="vidwrap">
+    <div id="vidframe">
+      <video id="p22-video" src="assets/clean.mp4" muted data-start="0" data-duration="449.18" data-track-index="0"></video>
+      <div id="vidrim"></div>
+    </div>
+  </div>
+  <div id="vidshade"></div>
+  <audio id="p22-audio" src="assets/audio.m4a" data-start="0" data-duration="449.18" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <!-- B2 refund vs walk-through (over FULL+shift, 19.2-41.0) -->
+  <div id="b2" class="over clip" data-start="19.2" data-duration="21.8" data-track-index="6">
+    <div class="stack">
+      <div class="chipx r1">Great: <b>"What's the refund policy?"</b></div>
+      <div class="warnx r2">Falls apart: <b>"Walk me through everything that happened, in order."</b></div>
+      <div class="punchx r3">Nobody asked how it would actually be used in production</div>
+      <div class="chipx r4">We wrote the scope. <b>That miss was on us.</b></div>
+    </div>
+  </div>
+
+  <!-- B6x employed creep (over FULL+shift, 144.4-159.2) -->
+  <div id="b6x" class="over clip" data-start="144.4" data-duration="14.8" data-track-index="6">
+    <div class="stack">
+      <div class="chipx e1">Employed track: this document is <b>the spine of your project charter</b></div>
+      <div class="chipx e2">Your scope creep sounds like: <b>"Hey, can you add X, Y, and Z this week? Thanks."</b></div>
+    </div>
+  </div>
+
+  <div id="vig" class="clip" data-start="0" data-duration="453.5" data-track-index="10"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="453.5" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 453.5;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* shot plan:
+     0-13.4 takeover -> FULL 13.2 -> shift 19.1 (B2) -> home 40.6 -> OFF 41.4 (B3)
+     -> 48.3 fromOFF PIP (B4, B5a, B5b) -> OFF 110.4 (B6 takeover) -> 141.8 fromOFF FULL
+     -> shift 144.0 (B6x) -> home 158.8 -> PIP 159.4 (B7..B12) -> out 438.2 (B13) */
+  tl.set(wrap, { opacity: 0, scale: 1.06, x: -57, y: -32, filter: 'blur(22px)' }, 0);
+  tl.to(wrap, { opacity: 1, scale: 1, x: 0, y: 0, duration: 1.0, ease: 'power3.out' }, 13.2);
+  tl.to(wrap, { filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 13.4);
+  toOFF(41.4);
+  fromOFF(48.3, { x: PIP.x, y: PIP.y, scale: PIP.scale }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  toOFF(110.4);
+  fromOFF(141.8, { x: 0, y: 0, scale: 1 });
+  toPIP(159.4);
+  tl.to(wrap, { opacity: 0, filter: 'blur(20px)', scale: 1.04, duration: 1.0, ease: 'power2.in' }, 438.2);
+
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  clearLeft(19.1);  unclearLeft(40.6);   // B2 refund vs walk-through
+  clearLeft(144.0); unclearLeft(158.8);  // B6x employed creep
+
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 112, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 89, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 112, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open — vectorized 8.0 · technically solid 13.9 */
+  inUp(0.4, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.12 }, 0.7);
+  tl.fromTo('#b1 .l2 .word', { y: 26, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.11 }, 3.4);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 1.0, ease: 'power2.in' }, 12.3);
+
+  /* B2 refund vs walk-through — refund 20.5 · falls apart 22.3 · nobody asked 26.9 · on us 39.2 */
+  inLeft(20.2, '#b2 .r1', 0.7);
+  inLeft(22.4, '#b2 .r2', 0.7);
+  spring(27.1, '#b2 .r3', 0.7);
+  inLeft(37.5, '#b2 .r4', 0.7);
+  outBlur(40.2, '#b2 .stack', 0.45);
+
+  /* B3 question takeover — 41.7 */
+  tl.fromTo('#b3 .l1', { y: 36, opacity: 0, scale: 0.94, filter: 'blur(10px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.8, ease: 'expo.out' }, 41.8);
+  tl.fromTo('#b3 .l2', { y: 22, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, 43.6);
+  tl.to('#b3 .inner', { scale: 2.6, opacity: 0, filter: 'blur(22px)', duration: 0.9, ease: 'power2.in' }, 47.1);
+
+  /* B4 what scope is — includes 51.5 · doesn't 52.6 · done means 53.7 · protects 56.3 */
+  inUp(49.4, '#b4 .head', 0.6, 20);
+  spring(51.3, '#b4 .c1', 0.55);
+  spring(52.4, '#b4 .c2', 0.55);
+  spring(53.5, '#b4 .c3', 0.55);
+  spring(56.4, '#b4 .sum', 0.7);
+  outBlur(61.3, '#b4 .chips', 0.5);
+  outBlur(61.35, '#b4 .sum', 0.5);
+  outBlur(61.4, '#b4 .head', 0.5);
+
+  /* B5a POC — POC 64.9 · smallest version 66.5 · milestone 77.6 */
+  inUp(63.2, '#b5a .head', 0.7, 26);
+  inUp(64.8, '#b5a .card', 0.8, 34);
+  inLeft(77.4, '#b5a .mile', 0.7);
+  outBlur(82.2, '#b5a .card', 0.5);
+  outBlur(82.25, '#b5a .mile', 0.5);
+  outBlur(82.3, '#b5a .head', 0.5);
+
+  /* B5b the gift — could it also 89.4 · gift 95.5 · add now or out 100.5 · writes itself 104.5 */
+  inUp(84.0, '#b5b .head', 0.6, 20);
+  spring(89.3, '#b5b .q1', 0.7);
+  spring(95.3, '#b5b .p1', 0.7);
+  inLeft(100.2, '#b5b .c1', 0.7);
+  inLeft(104.3, '#b5b .c2', 0.7);
+  outBlur(109.7, '#b5b .stack', 0.5);
+  outBlur(109.75, '#b5b .head', 0.5);
+
+  /* B6 scope card takeover — goes first 112.5 · insurance 121.5 · reminders 118.3 · clinical 128.2 · think/present 133.8-141.0 */
+  inUp(111.3, '#b6 .kicker', 0.6, 20);
+  tl.fromTo('#b6 .col', { y: 40, opacity: 0, filter: 'blur(10px)' },
+    { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.7, ease: 'power3.out', stagger: 0.15 }, 112.3);
+  spring(118.2, '#b6 .i4', 0.6);
+  spring(121.7, '#b6 .i1', 0.6);
+  spring(128.1, '#b6 .i2', 0.6);
+  spring(130.9, '#b6 .i3', 0.5);
+  spring(131.4, '#b6 .i5', 0.5);
+  inLeft(134.2, '#b6 .o1', 0.6);
+  inLeft(137.7, '#b6 .o2', 0.6);
+  outBlur(140.8, '#b6 .wrap', 0.6, -70);
+
+  /* B6x employed creep — charter 146.5 · boss quote 153.2 */
+  inLeft(145.3, '#b6x .e1', 0.7);
+  inLeft(152.9, '#b6x .e2', 0.7);
+  outBlur(158.3, '#b6x .stack', 0.45);
+
+  /* B7 done test — done test 160.9 · binary 163.4 · pass/fail 164.9 · objective 166.4 · client alone 168.0 · vague 172.5 · verifiable 183.9 · verify themselves 190.9 · provable 203.9 */
+  inUp(160.6, '#b7 .head', 0.7, 26);
+  spring(163.3, '#b7 .t1', 0.5);
+  spring(164.8, '#b7 .t2', 0.5);
+  spring(166.3, '#b7 .t3', 0.5);
+  spring(167.9, '#b7 .t4', 0.5);
+  inUp(172.4, '#b7 .ka', 0.8, 34);
+  inUp(183.8, '#b7 .kb', 0.8, 34);
+  tl.fromTo('#b7 .db', { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 191.0);
+  inLeft(204.0, '#b7 .prov', 0.7);
+  /* compress out for the rule swap */
+  tl.to('#b7 .cards', { y: -40, opacity: 0, filter: 'blur(12px)', duration: 0.6, ease: 'power2.in' }, 210.4);
+  tl.to('#b7 .traits', { opacity: 0, filter: 'blur(10px)', duration: 0.5, ease: 'power2.in' }, 210.4);
+  tl.to('#b7 .prov', { opacity: 0, filter: 'blur(10px)', duration: 0.5, ease: 'power2.in' }, 210.4);
+  tl.set('#b7 .cards', { opacity: 0 }, 211.05);
+  tl.set('#b7 .traits', { opacity: 0 }, 211.05);
+  tl.set('#b7 .prov', { opacity: 0 }, 211.05);
+
+  /* B7s the rule — commitment 212.0 · dispute 216.5 · the rule 219.0 */
+  inLeft(212.0, '#b7s .w1', 0.7);
+  spring(218.9, '#b7s .p1', 0.8);
+  outBlur(225.6, '#b7s .stack', 0.55);
+  tl.to('#b7 .head', { y: -30, opacity: 0, filter: 'blur(10px)', duration: 0.5, ease: 'power2.in' }, 225.6);
+
+  /* B8 menu — menu 231.4 · tiers 240.0-243 · add-ons 244-251 · choose 251.2 · capacity 256.5 · co-author 261.5 · defend 264.4 · surfaces 266.9 · conference 275.0 */
+  inUp(227.4, '#b8 .head', 0.7, 26);
+  spring(239.9, '#b8 .t1', 0.5);
+  spring(241.4, '#b8 .t2', 0.5);
+  spring(242.9, '#b8 .t3', 0.5);
+  inLeft(251.1, '#b8 .c1', 0.7);
+  spring(255.4, '#b8 .p1', 0.7);
+  inLeft(261.3, '#b8 .c2', 0.7);
+  inLeft(266.8, '#b8 .c3', 0.7);
+  inLeft(274.7, '#b8 .c4', 0.7);
+  outBlur(283.0, '#b8 .tiers', 0.5);
+  outBlur(283.02, '#b8 .stack', 0.5);
+  outBlur(283.05, '#b8 .head', 0.5);
+
+  /* B9 out loud — verbal alignment 288.4 · milestones quote 290.5 · their terms 302.5 · move fast 304.2 · slows down 308.5 · impatience 312.5 */
+  inUp(287.4, '#b9 .head', 0.7, 26);
+  spring(290.4, '#b9 .q1', 0.7);
+  inLeft(303.9, '#b9 .c1', 0.7);
+  inLeft(308.3, '#b9 .c2', 0.7);
+  spring(312.3, '#b9 .p1', 0.7);
+  outBlur(315.9, '#b9 .stack', 0.5);
+  outBlur(315.95, '#b9 .head', 0.5);
+
+  /* B10 wish list — it is coming 318.0 · will happen 325.4 · good sign 327.9 · running list 331.5 · terms 336.5 */
+  inUp(317.8, '#b10 .head', 0.6, 20);
+  inLeft(319.8, '#b10 .c1', 0.7);
+  spring(330.4, '#b10 .p1', 0.7);
+  inUp(336.4, '#b10 .t1', 0.6, 16);
+  outBlur(340.2, '#b10 .stack', 0.5);
+  outBlur(340.25, '#b10 .head', 0.5);
+
+  /* B11 data — joke 344.5 · migrations 352.0 · awning 360.5 · half a million 362.5 · normalize 369.5 · template 373.6 · own build 377.5 · priced 384.0 · unpaid 390.5 */
+  inUp(342.3, '#b11 .head .kick', 0.6, 20);
+  inUp(344.3, '#b11 .head .t', 0.8, 28);
+  inLeft(351.6, '#b11 .mig', 0.7);
+  inUp(360.2, '#b11 .card', 0.8, 34);
+  tl.fromTo('#b11 .d1', { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 369.3);
+  tl.fromTo('#b11 .d2', { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 373.5);
+  spring(383.9, '#b11 .p1', 0.7);
+  inLeft(390.2, '#b11 .w1', 0.7);
+  outBlur(397.3, '#b11 .mig', 0.5);
+  outBlur(397.32, '#b11 .card', 0.5);
+  outBlur(397.35, '#b11 .stack', 0.5);
+  outBlur(397.4, '#b11 .head', 0.5);
+
+  /* B12 mistakes — go wrong 398.5 · under-scoping 403.7 · loose tests 419.1 · without the client 426.8 */
+  inUp(399.5, '#b12 .head', 0.7, 24);
+  inLeft(403.6, '#b12 .m1', 0.8);
+  inLeft(419.0, '#b12 .m2', 0.8);
+  inLeft(426.6, '#b12 .m3', 0.8);
+  outBlur(437.4, '#b12 .list', 0.5);
+  outBlur(437.45, '#b12 .head', 0.5);
+
+  /* B13 outro — pricing 440.5 · VO ends 449.2 */
+  spring(439.3, '#b13 .o1', 0.5);
+  tl.fromTo('#b13 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 439.65);
+  spring(439.85, '#b13 .o2', 0.5);
+  tl.fromTo('#b13 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 440.15);
+  spring(440.35, '#b13 .o3', 0.5);
+  tl.fromTo('#b13 .oc3', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 440.65);
+  spring(440.85, '#b13 .o4', 0.5);
+  tl.fromTo('#b13 .o3', { boxShadow: '0 0 22px rgba(55,189,248,0.55), 0 0 56px rgba(55,189,248,0.3), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 40px rgba(55,189,248,0.7), 0 0 110px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 441.6);
+  inUp(442.0, '#b13 .nx .kick', 0.6, 20);
+  tl.fromTo('#b13 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 442.3);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p22'] = tl;
+})();
+</script>
+</body>
+</html>

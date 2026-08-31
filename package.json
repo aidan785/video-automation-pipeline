@@ -7,12 +7,14 @@
   "scripts": {
     "transcribe": "node scripts/transcribe-elevenlabs.mjs",
     "validate-beats": "node scripts/validate-beat-sync.mjs",
-    "preflight": "node scripts/preflight.mjs"
+    "preflight": "node scripts/preflight.mjs",
+    "os": "node editing-os/server.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "hyperframes": "^0.7.26",
     "playwright": "^1.60.0"
   }
 }

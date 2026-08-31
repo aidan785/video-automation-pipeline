@@ -1,0 +1,109 @@
+<template id="tpl-ep-custom-icon-connect">
+<div id="ep-custom-icon-connect" data-composition-id="ep-custom-icon-connect" data-start="0" data-width="1080" data-height="1920">
+      <div class="ep-cam">
+        <div class="ep-paper"></div>
+        <div class="stage">
+          <div class="drift"><div class="mover stickwrap">
+            <div class="sticker"><span class="glyph" data-slot="glyph">M</span></div>
+            <div class="name" data-slot="name">morph</div>
+          </div></div>
+
+          <div class="drift"><div class="mover connwrap">
+            <svg class="conn" width="80" height="240" viewBox="0 0 80 240">
+              <path class="connpath" d="M 10 0 C 10 100, 40 130, 40 235" />
+            </svg>
+          </div></div>
+
+          <div class="drift"><div class="mover termwrap">
+            <div class="term">
+              <div class="chrome">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="appicon">M</span>
+              </div>
+              <div class="line" data-slot="l1">Claude Code v2.1.6&#10;Welcome back, Daniel!&#10;Sonnet 4.5 · API Usage Billing · Why Try AI</div>
+              <div class="status" data-slot="status">[MORPH ACTIVE]</div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+      <div class="ep-lens"></div>
+      <div class="ep-vig"></div>
+      <div class="ep-grain"></div>
+    
+  <style>
+      #ep-custom-icon-connect {
+        position: absolute; inset: 0; width: 1080px; height: 1920px;
+        background: var(--paper-mid); color: var(--ink);
+        font-family: var(--font-mono); overflow: hidden;
+      }
+      #ep-custom-icon-connect .stage { position: absolute; inset: 0; z-index: 3; }
+
+      #ep-custom-icon-connect .stickwrap { position: absolute; left: 420px; top: 330px; }
+      #ep-custom-icon-connect .sticker {
+        width: 240px; height: 240px;
+        background: var(--card); border-radius: 56px;
+        border-top: 1px solid var(--card-hi);
+        border-left: 1px solid var(--card-hi-l);
+        box-shadow: var(--shadow-card);
+        display: flex; align-items: center; justify-content: center;
+        transform: rotate(-0.8deg);
+      }
+      #ep-custom-icon-connect .glyph { font-size: 120px; line-height: 1; color: var(--lime); font-weight: 600; }
+      #ep-custom-icon-connect .name {
+        position: absolute; left: 30px; top: 265px;
+        font-family: var(--font-display); font-style: italic;
+        font-size: 62px; color: var(--ink); white-space: nowrap;
+        text-shadow: var(--press);
+      }
+
+      #ep-custom-icon-connect svg.conn { position: absolute; left: 530px; top: 620px; overflow: visible; }
+      #ep-custom-icon-connect svg.conn path { fill: none; stroke: var(--connector); stroke-width: 3; stroke-dasharray: 9 9; }
+
+      #ep-custom-icon-connect .termwrap { position: absolute; left: 90px; top: 860px; }
+      #ep-custom-icon-connect .term {
+        width: 900px;
+        background: var(--card); border-radius: var(--radius-card);
+        border-top: 1px solid var(--card-hi);
+        border-left: 1px solid var(--card-hi-l);
+        box-shadow: var(--shadow-card);
+        padding: 34px 48px 50px; box-sizing: border-box;
+        color: var(--term-dim); font-size: var(--size-term-sm); line-height: 1.55;
+        transform: rotate(0.4deg);
+      }
+      #ep-custom-icon-connect .chrome { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+      #ep-custom-icon-connect .dot { width: 13px; height: 13px; border-radius: 50%; background: var(--tag); }
+      #ep-custom-icon-connect .appicon {
+        margin-left: 16px; width: 30px; height: 30px; border-radius: 8px;
+        background: #2A2827; display: flex; align-items: center; justify-content: center;
+        color: var(--tag); font-size: 17px; font-weight: 600;
+      }
+      #ep-custom-icon-connect .term .line { white-space: pre-line; }
+      #ep-custom-icon-connect .term .status { margin-top: 24px; color: var(--mint); letter-spacing: var(--track-pill); }
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+      window.__timelines = window.__timelines || {};
+      const root = "#ep-custom-icon-connect";
+      const DUR = 7;
+
+      /* SLOP: statics instead of animation — numbers at final value, meter full */
+      document.querySelectorAll(root + " .count").forEach((el) => {
+        const v = parseFloat(el.getAttribute("data-value")) || 0;
+        const p = el.getAttribute("data-prefix") || "";
+        el.textContent = p + Math.round(v).toLocaleString("en-US");
+      });
+      const fill = document.querySelector(root + " .fill");
+      if (fill) fill.style.transform = "scaleX(0.78)";
+      const cur = document.querySelector(root + " .cursor, " + root + " .caret");
+      if (cur) cur.style.display = "none";
+
+      /* SLOP: one uniform opacity fade for everything, same duration, same ease */
+      const tl = gsap.timeline({ paused: true });
+      const movers = gsap.utils.toArray(root + " .mover");
+      tl.from(movers, { autoAlpha: 0, y: 30, duration: 0.4, ease: "power1.out", stagger: 0.45 }, 0.2)
+        .set({}, {}, DUR);
+
+      window.__timelines["ep-custom-icon-connect"] = tl;
+  </script>
+</div>
+</template>

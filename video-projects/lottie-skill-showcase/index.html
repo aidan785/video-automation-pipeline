@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>The Motion Design Skill — 60s showcase</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,900;1,9..144,300&family=JetBrains+Mono:wght@400;700&display=swap");
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000;
+    font-family: "Archivo", "Helvetica Neue", sans-serif; }
+  #camera { position: absolute; inset: 0; will-change: transform; }
+
+  :root { --teal: #33D4C8; --amber: #FFB224; --violet: #A155FF; }
+
+  .chrome {
+    background: linear-gradient(180deg, #ffffff 0%, #999999 62%, #cccccc 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .halo { text-shadow: 0 0 24px rgba(255,255,255,0.45), 0 0 60px rgba(255,255,255,0.18); }
+  .mono { font-family: "JetBrains Mono", "SF Mono", monospace; }
+
+  /* ---------- canvas spine: grid + crosshairs + vignette + grain ---------- */
+  .grid-floor { position: absolute; inset: -20% 0 0 0; height: 140%;
+    transform: perspective(900px) rotateX(60deg) translateY(18%);
+    background:
+      repeating-linear-gradient(0deg,  rgba(255,255,255,.05) 0 1px, transparent 1px 80px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 80px);
+    background-color: #000; }
+  #cross { position: absolute; inset: 0; pointer-events: none; }
+  #cross .x { position: absolute; color: rgba(255,255,255,0.22);
+    font: 400 26px/1 "JetBrains Mono", monospace; }
+  #vig { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 28%, #000 96%); }
+  #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='5'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 240px 240px; }
+
+  .scene { position: absolute; inset: 0; }
+  .wrap { position: absolute; inset: 0; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; will-change: transform, filter; }
+
+  /* ---------- S1: motion is a language ---------- */
+  #s1 h1 { font-weight: 900; font-size: 122px; letter-spacing: -0.02em; line-height: 1.0;
+    text-transform: uppercase; display: flex; gap: 34px; white-space: nowrap; }
+  #s1 h1 .w { white-space: nowrap; }
+  #s1 .sub { margin-top: 34px; font: 400 30px/1 "Archivo", sans-serif; letter-spacing: 0.32em;
+    text-transform: uppercase; color: rgba(255,255,255,0.55); }
+  #s1 .feel { margin-top: 56px; font: italic 300 64px/1 "Fraunces", serif; color: var(--teal);
+    text-shadow: 0 0 40px rgba(51,212,200,0.45); }
+
+  /* ---------- S2: three pillars ---------- */
+  #s2 .kick { font: 700 28px/1 "Archivo", sans-serif; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--violet); margin-bottom: 60px; }
+  #s2 .cards { display: flex; gap: 44px; }
+  .pillar { width: 430px; padding: 54px 40px 48px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.05));
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 30px 70px rgba(0,0,0,0.55);
+    display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .pillar .n { font: 700 22px/1 "JetBrains Mono", monospace; color: var(--teal); letter-spacing: 0.2em; }
+  .pillar h3 { font-weight: 900; font-size: 52px; line-height: 1.02; text-transform: uppercase; }
+  .pillar p { font: 400 24px/1.4 "Archivo", sans-serif; color: rgba(255,255,255,0.55); }
+
+  /* ---------- S3: personalities ---------- */
+  #s3 .kick { position: absolute; top: 110px; left: 0; right: 0; text-align: center;
+    font: 700 28px/1 "Archivo", sans-serif; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--amber); }
+  #orbStage { position: absolute; top: 250px; left: 0; right: 0; height: 380px;
+    display: flex; justify-content: center; align-items: center; }
+  #orb { width: 170px; height: 170px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #7ff3ea, var(--teal) 55%, #0d7f77 100%);
+    box-shadow: 0 0 70px rgba(51,212,200,0.55), 0 34px 70px rgba(0,0,0,0.6); }
+  #plabels { position: absolute; top: 700px; left: 0; right: 0; height: 150px; text-align: center; }
+  #plabels .pl { position: absolute; left: 0; right: 0; }
+  #plabels .name { font-weight: 900; font-size: 96px; text-transform: uppercase; letter-spacing: -0.01em; }
+  #plabels .prem .name { font-family: "Fraunces", serif; font-weight: 300; font-style: italic;
+    text-transform: none; letter-spacing: 0.01em; }
+  #plabels .const { margin-top: 14px; font: 400 27px/1 "JetBrains Mono", monospace;
+    color: rgba(255,255,255,0.6); }
+  #plabels .const b { color: var(--amber); font-weight: 700; }
+
+  /* ---------- S4: timing tables ---------- */
+  #s4 .kick { font: 700 28px/1 "Archivo", sans-serif; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 64px; }
+  #s4 .rows { display: flex; flex-direction: column; gap: 40px; width: 1240px; }
+  .trow { display: grid; grid-template-columns: 300px 1fr 170px; align-items: center; gap: 34px; }
+  .trow .tn { font-weight: 900; font-size: 42px; text-transform: uppercase; text-align: right; }
+  .trow .track { position: relative; height: 22px; border-radius: 11px;
+    background: rgba(255,255,255,0.08); overflow: hidden; }
+  .trow .fill { position: absolute; inset: 0; border-radius: 11px;
+    background: linear-gradient(90deg, var(--teal), #7ff3ea); transform-origin: 0% 50%;
+    box-shadow: 0 0 26px rgba(51,212,200,0.5); }
+  .trow .ms { font: 700 40px/1 "JetBrains Mono", monospace; color: var(--amber); }
+
+  /* ---------- S5: choreography ---------- */
+  #s5 .kick { font: 700 28px/1 "Archivo", sans-serif; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--violet); margin-bottom: 54px; }
+  #dash { display: grid; grid-template-columns: 760px 250px; grid-template-rows: 300px 150px; gap: 26px; }
+  #dash > div { border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.05));
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 26px 60px rgba(0,0,0,0.5); }
+  #dHero { grid-column: 1; grid-row: 1; display: flex; align-items: flex-end; gap: 16px; padding: 34px; }
+  #dHero i { flex: 1; display: block; border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #7ff3ea, var(--teal)); transform-origin: bottom;
+    box-shadow: 0 0 22px rgba(51,212,200,0.4); }
+  #dSide { grid-column: 2; grid-row: 1 / 3; }
+  #dCards { grid-column: 1; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px;
+    background: none; border: none; box-shadow: none; }
+  #dCards div { border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.05));
+    border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 20px 44px rgba(0,0,0,0.5); }
+  #s5 .budget { margin-top: 52px; font: 700 34px/1 "JetBrains Mono", monospace; color: var(--amber);
+    background: rgba(255,178,36,0.08); border: 1px solid rgba(255,178,36,0.35);
+    border-radius: 12px; padding: 18px 34px; }
+
+  /* ---------- S6: rules ---------- */
+  #s6 .rules { display: flex; flex-direction: column; gap: 44px; align-items: center; }
+  #s6 .rule { font-weight: 900; font-size: 108px; text-transform: uppercase;
+    letter-spacing: -0.015em; line-height: 1; }
+  #s6 .rule.last { color: var(--amber); -webkit-text-fill-color: var(--amber);
+    text-shadow: 0 0 44px rgba(255,178,36,0.45); }
+  #race { display: flex; flex-direction: column; gap: 18px; margin-top: 8px; width: 900px; }
+  #race .lane { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 26px; }
+  #race .ln { font: 700 24px/1 "JetBrains Mono", monospace; color: rgba(255,255,255,0.55); text-align: right; }
+  #race .path { position: relative; height: 34px; }
+  #race .dot { position: absolute; left: 0; top: 0; width: 34px; height: 34px; border-radius: 50%; }
+  #race .d1 { background: rgba(255,255,255,0.35); }
+  #race .d2 { background: var(--violet); box-shadow: 0 0 26px rgba(161,85,255,0.6); }
+  #layers { position: relative; width: 560px; height: 210px; margin-top: 8px; }
+  #layers .plane { position: absolute; left: 50%; top: 50%; width: 440px; height: 96px;
+    margin: -48px 0 0 -220px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font: 700 26px/1 "JetBrains Mono", monospace; letter-spacing: 0.18em; }
+  #layers .p1 { background: rgba(51,212,200,0.16); color: var(--teal); }
+  #layers .p2 { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
+  #layers .p3 { background: rgba(161,85,255,0.14); color: var(--violet); }
+
+  /* ---------- S7: outro ---------- */
+  #s7 .orb2 { width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, #7ff3ea, var(--teal) 55%, #0d7f77 100%);
+    box-shadow: 0 0 60px rgba(51,212,200,0.55); margin-bottom: 44px; }
+  #s7 h1 { font-weight: 900; font-size: 128px; letter-spacing: -0.02em; text-transform: lowercase; }
+  #s7 .by { margin-top: 20px; font: 400 30px/1 "Archivo", sans-serif; letter-spacing: 0.3em;
+    text-transform: uppercase; color: rgba(255,255,255,0.55); }
+  #term { margin-top: 70px; background: rgba(10,12,13,0.92);
+    border: 1px solid rgba(255,255,255,0.16); border-radius: 14px; padding: 30px 44px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 30px 70px rgba(0,0,0,0.6);
+    font: 700 36px/1 "JetBrains Mono", monospace; display: flex; align-items: center; gap: 4px; }
+  #term .dollar { color: var(--violet); margin-right: 18px; }
+  #term .cmd { color: #fff; white-space: pre; }
+  #term .cmd .c { display: inline-block; }
+  #term .cmd .hl { color: var(--teal); }
+  #term .cursor { width: 20px; height: 40px; background: var(--teal); margin-left: 8px; }
+
+  /* ---------- whip streaks ---------- */
+  .streak { position: absolute; left: 10%; right: 10%; top: 50%; height: 12px;
+    background: linear-gradient(90deg, transparent, var(--violet) 30%, #fff 50%, var(--violet) 70%, transparent);
+    filter: blur(9px); transform: translateY(-50%); }
+
+  #endfade { position: absolute; inset: 0; background: #000; }
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="lottie-skill-showcase" data-start="0" data-duration="62" data-width="1920" data-height="1080">
+
+  <audio id="vo" src="assets/vo.wav" data-start="0.5" data-track-index="15" data-volume="1.0"></audio>
+
+  <div id="camera">
+    <div class="grid-floor clip" data-start="0" data-duration="62" data-track-index="0"></div>
+    <div id="cross" class="clip" data-start="0" data-duration="62" data-track-index="1"></div>
+
+    <!-- S1 — "Motion is a language." -->
+    <div id="s1" class="scene clip" data-start="0" data-duration="7.1" data-track-index="2">
+      <div class="wrap">
+        <h1 class="halo"><span class="w chrome">Motion</span><span class="w chrome">is a</span><span class="w chrome">language</span></h1>
+        <div class="sub">A skill for AI agents</div>
+        <div class="feel">it starts with a feeling</div>
+      </div>
+    </div>
+
+    <!-- S2 — three pillars -->
+    <div id="s2" class="scene clip" data-start="6.95" data-duration="7.8" data-track-index="3">
+      <div class="wrap">
+        <div class="kick">Three pillars</div>
+        <div class="cards">
+          <div class="pillar pA"><span class="n">01</span><h3 class="chrome">Emotional intent</h3><p>What should the viewer feel?</p></div>
+          <div class="pillar pB"><span class="n">02</span><h3 class="chrome">Visual narrative</h3><p>What is the micro-story?</p></div>
+          <div class="pillar pC"><span class="n">03</span><h3 class="chrome">Motion craft</h3><p>How do we make it believable?</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S3 — four personalities, one orb -->
+    <div id="s3" class="scene clip" data-start="14.75" data-duration="12.35" data-track-index="2">
+      <div class="wrap" style="justify-content: flex-start;">
+        <div class="kick">Every element gets a personality</div>
+        <div id="orbStage"><div id="orb"></div></div>
+        <div id="plabels">
+          <div class="pl play"><div class="name chrome halo">Playful</div><div class="const">240ms &middot; ease-out-back &middot; overshoot <b>+18%</b></div></div>
+          <div class="pl prem"><div class="name chrome halo">Premium</div><div class="const">500ms &middot; cubic-bezier(.4, 0, .2, 1) &middot; overshoot <b>0%</b></div></div>
+          <div class="pl corp"><div class="name chrome halo">Corporate</div><div class="const">300ms &middot; cubic-bezier(.2, 0, 0, 1) &middot; overshoot <b>0%</b></div></div>
+          <div class="pl ener"><div class="name chrome halo">Energetic</div><div class="const">160ms &middot; ease-out-expo &middot; overshoot <b>+28%</b></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4 — timing tables -->
+    <div id="s4" class="scene clip" data-start="27.1" data-duration="9.0" data-track-index="3">
+      <div class="wrap">
+        <div class="kick">Timing from tables, not guesses</div>
+        <div class="rows">
+          <div class="trow r1"><span class="tn chrome">Tooltip</span><span class="track"><span class="fill"></span></span><span class="ms">100ms</span></div>
+          <div class="trow r2"><span class="tn chrome">Button</span><span class="track"><span class="fill"></span></span><span class="ms">150ms</span></div>
+          <div class="trow r3"><span class="tn chrome">Modal</span><span class="track"><span class="fill"></span></span><span class="ms">350ms</span></div>
+          <div class="trow r4"><span class="tn chrome">Page</span><span class="track"><span class="fill"></span></span><span class="ms">500ms</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S5 — choreography -->
+    <div id="s5" class="scene clip" data-start="36.1" data-duration="4.5" data-track-index="2">
+      <div class="wrap">
+        <div class="kick">Lead with the hero. Stagger the rest.</div>
+        <div id="dash">
+          <div id="dHero"><i style="height:42%"></i><i style="height:68%"></i><i style="height:54%"></i><i style="height:88%"></i><i style="height:62%"></i><i style="height:76%"></i></div>
+          <div id="dSide"></div>
+          <div id="dCards"><div></div><div></div><div></div></div>
+        </div>
+        <div class="budget">total stagger: 460ms &lt; 500ms budget</div>
+      </div>
+    </div>
+
+    <!-- S6 — the rules -->
+    <div id="s6" class="scene clip" data-start="40.6" data-duration="8.75" data-track-index="3">
+      <div class="wrap">
+        <div class="rules">
+          <div class="rule chrome halo rl1">Never linear</div>
+          <div id="race">
+            <div class="lane"><span class="ln">linear</span><span class="path"><span class="dot d1"></span></span></div>
+            <div class="lane"><span class="ln">eased</span><span class="path"><span class="dot d2"></span></span></div>
+          </div>
+          <div class="rule chrome halo rl2">Never opacity alone</div>
+          <div class="rule chrome halo rl3">Three layers of motion</div>
+          <div id="layers">
+            <div class="plane p3">AMBIENT</div>
+            <div class="plane p2">SECONDARY</div>
+            <div class="plane p1">PRIMARY</div>
+          </div>
+          <div class="rule last rl4">Every time.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S7 — outro lockup + install -->
+    <div id="s7" class="scene clip" data-start="49.35" data-duration="12.65" data-track-index="2">
+      <div class="wrap">
+        <div class="orb2"></div>
+        <h1 class="chrome halo">motion-design-skill</h1>
+        <div class="by">by LottieFiles</div>
+        <div id="term"><span class="dollar">$</span><span class="cmd" id="cmd">npx skills add <span class="hl">LottieFiles/motion-design-skill</span></span><span class="cursor"></span></div>
+      </div>
+    </div>
+
+    <!-- whip streaks -->
+    <div class="streak clip" id="wh1" data-start="6.70"  data-duration="0.45" data-track-index="7"></div>
+    <div class="streak clip" id="wh2" data-start="14.50" data-duration="0.45" data-track-index="7"></div>
+    <div class="streak clip" id="wh3" data-start="26.80" data-duration="0.45" data-track-index="7"></div>
+    <div class="streak clip" id="wh4" data-start="35.85" data-duration="0.45" data-track-index="7"></div>
+    <div class="streak clip" id="wh5" data-start="40.30" data-duration="0.45" data-track-index="7"></div>
+    <div class="streak clip" id="wh6" data-start="49.05" data-duration="0.45" data-track-index="7"></div>
+
+    <div id="vig"   class="clip" data-start="0" data-duration="62" data-track-index="8"></div>
+    <div id="grain" class="clip" data-start="0" data-duration="62" data-track-index="9"></div>
+  </div>
+
+  <div id="endfade" class="clip" data-start="61.4" data-duration="0.6" data-track-index="11"></div>
+</div>
+
+<script>
+(() => {
+  const DUR = 62.0;
+  window.__timelines = window.__timelines || {};
+
+  /* deterministic crosshair field (harmonic hash, no Math.random) */
+  const cross = document.getElementById("cross");
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement("span");
+    el.className = "x";
+    el.textContent = "+";
+    el.style.left = (110 + 1700 * Math.abs(Math.sin(i * 1.7 + 0.4) * Math.cos(i * 0.9 + 1.1))) + "px";
+    el.style.top  = (90  + 900  * Math.abs(Math.sin(i * 2.3 + 0.8) * Math.cos(i * 1.3 + 0.2))) + "px";
+    cross.appendChild(el);
+  }
+
+  /* split terminal command into chars for typing */
+  const cmd = document.getElementById("cmd");
+  (function split(node) {
+    [...node.childNodes].forEach(ch => {
+      if (ch.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        for (const c of ch.textContent) {
+          const s = document.createElement("span");
+          s.className = "c";
+          s.textContent = c === " " ? " " : c;
+          frag.appendChild(s);
+        }
+        node.replaceChild(frag, ch);
+      } else split(ch);
+    });
+  })(cmd);
+
+  const tl = gsap.timeline({ paused: true });
+
+  /* ===== camera never sleeps: continuous slow push + grid parallax ===== */
+  gsap.set("#camera", { transformOrigin: "50% 42%" });
+  tl.fromTo("#camera", { scale: 1.0 }, { scale: 1.06, duration: DUR, ease: "none", immediateRender: true }, 0);
+  tl.to(".grid-floor", { backgroundPosition: "0px 240px, 0px 0px", duration: DUR, ease: "none" }, 0);
+  tl.to("#vig", { opacity: 0.88, duration: 4, ease: "sine.inOut", repeat: 14, yoyo: true }, 0);
+  for (let t = 0, i = 0; t < DUR; t += 0.25, i++) {
+    tl.set("#grain", { backgroundPosition:
+      (120 * Math.abs(Math.sin(i * 0.83 + 0.4))).toFixed(1) + "px " +
+      (120 * Math.abs(Math.cos(i * 1.31 + 0.2))).toFixed(1) + "px" }, t);
+  }
+  /* crosshair twinkle — deterministic stagger */
+  tl.fromTo("#cross .x", { opacity: 0.08 }, { opacity: 0.3, duration: 2.2, ease: "sine.inOut",
+    repeat: 26, yoyo: true, stagger: { each: 0.35 }, immediateRender: true }, 0);
+
+  /* ===== whip streaks ===== */
+  ["#wh1", "#wh2", "#wh3", "#wh4", "#wh5", "#wh6"].forEach((s, i) => {
+    const t = [6.72, 14.52, 26.82, 35.87, 40.32, 49.07][i];
+    tl.fromTo(s, { xPercent: -130, scaleX: 0.5, autoAlpha: 1 },
+      { xPercent: 130, scaleX: 1.5, duration: 0.42, ease: "power3.in", immediateRender: true }, t);
+  });
+
+  /* helper: cut-the-curve entry/exit for a scene wrap */
+  function enter(sel, t, dur = 1.0) {
+    tl.fromTo(sel + " .wrap", { y: 150, filter: "blur(30px)", autoAlpha: 0 },
+      { y: 0, filter: "blur(0px)", autoAlpha: 1, duration: dur, ease: "power2.out", immediateRender: false }, t);
+  }
+  function exit(sel, t) {
+    tl.to(sel + " .wrap", { y: -150, filter: "blur(30px)", autoAlpha: 0, duration: 0.33, ease: "power2.in" }, t);
+  }
+
+  /* ===== S1 (0 - 7.1) — "Motion is a language" (VO 0.60) ===== */
+  gsap.set("#s1 .wrap", { autoAlpha: 1 });
+  tl.from("#s1 .w", { y: 90, autoAlpha: 0, scale: 0.85, duration: 0.6, ease: "power3.out", stagger: 0.30 }, 0.45);
+  tl.from("#s1 .sub", { autoAlpha: 0, y: 24, duration: 0.5, ease: "power2.out" }, 2.2);
+  // "a decision about feeling" (4.72) — the serif line breathes in
+  tl.from("#s1 .feel", { autoAlpha: 0, scale: 0.92, duration: 0.7, ease: "power2.out" }, 4.65);
+  tl.to("#s1 .feel", { scale: 1.04, duration: 1.4, ease: "sine.inOut" }, 5.35);
+  exit("#s1", 6.72);
+
+  /* ===== S2 (6.95 - 14.75) — pillars on their words: 9.64 / 11.32 / 13.16 ===== */
+  enter("#s2", 7.05, 0.9);
+  tl.from("#s2 .kick", { autoAlpha: 0, letterSpacing: "0.6em", duration: 0.6, ease: "power2.out" }, 7.9);
+  tl.from("#s2 .pA", { y: 120, autoAlpha: 0, duration: 0.55, ease: "power3.out" }, 9.55);
+  tl.from("#s2 .pB", { y: 120, autoAlpha: 0, duration: 0.55, ease: "power3.out" }, 11.25);
+  tl.from("#s2 .pC", { y: 120, autoAlpha: 0, duration: 0.55, ease: "power3.out" }, 13.10);
+  [".pA", ".pB", ".pC"].forEach((p, i) => {   // secondary: number ticks + idle float
+    tl.from("#s2 " + p + " .n", { autoAlpha: 0, x: -12, duration: 0.3, ease: "power2.out" }, 9.85 + i * 1.7);
+    tl.to("#s2 " + p, { y: -8, duration: 1.6, ease: "sine.inOut", repeat: 1, yoyo: true }, 10.3 + i * 1.2);
+  });
+  exit("#s2", 14.52);
+
+  /* ===== S3 (14.75 - 27.1) — one orb, four souls ===== */
+  enter("#s3", 14.85, 0.9);
+  tl.from("#s3 .kick", { autoAlpha: 0, y: 20, duration: 0.5, ease: "power2.out" }, 15.35);
+  gsap.set("#plabels .pl", { autoAlpha: 0 });
+  gsap.set("#orb", { autoAlpha: 0 });
+
+  function swapLabel(cls, t) {
+    tl.to("#plabels .pl", { autoAlpha: 0, y: -16, duration: 0.16, ease: "power2.in", overwrite: false }, t - 0.05);
+    tl.fromTo("#plabels ." + cls, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, t + 0.12);
+  }
+
+  // PLAYFUL (17.10): drop + bounce + squash
+  tl.set("#orb", { autoAlpha: 1, y: -430, scale: 1 }, 17.00);
+  tl.to("#orb", { y: 0, duration: 0.85, ease: "bounce.out" }, 17.02);
+  tl.to("#orb", { scaleY: 0.82, scaleX: 1.14, duration: 0.09, ease: "power2.in" }, 17.36);
+  tl.to("#orb", { scaleY: 1, scaleX: 1, duration: 0.34, ease: "back.out(2.2)" }, 17.45);
+  swapLabel("play", 17.10);
+
+  // PREMIUM (18.64): slow weightless glide, zero overshoot
+  tl.to("#orb", { y: -46, scale: 1.06, duration: 1.0, ease: "power2.inOut" }, 18.62);
+  tl.to("#orb", { y: 0, scale: 1.0, duration: 0.9, ease: "power2.inOut" }, 19.62);
+  swapLabel("prem", 18.72);
+
+  // CORPORATE (20.44): clean decisive snap, no overshoot
+  tl.to("#orb", { x: -170, duration: 0.30, ease: "power3.out" }, 20.55);
+  tl.to("#orb", { x: 170, duration: 0.30, ease: "power3.out" }, 21.25);
+  tl.to("#orb", { x: 0, duration: 0.30, ease: "power3.out" }, 21.95);
+  swapLabel("corp", 20.55);
+
+  // ENERGETIC (23.06): slam + "snaps back" (24.82)
+  tl.to("#orb", { scale: 0.4, autoAlpha: 0, duration: 0.14, ease: "power2.in" }, 23.00);
+  tl.to("#orb", { scale: 1.35, autoAlpha: 1, duration: 0.16, ease: "expo.out" }, 23.16);
+  tl.to("#orb", { scale: 1.0, duration: 0.22, ease: "back.out(3)" }, 23.34);
+  swapLabel("ener", 23.16);
+  tl.to("#orb", { scale: 1.28, duration: 0.10, ease: "expo.out" }, 24.85);   // snap
+  tl.to("#orb", { scale: 1.0, duration: 0.26, ease: "back.out(3)" }, 24.96);
+  exit("#s3", 26.82);
+
+  /* ===== S4 (27.1 - 36.1) — bars at literal durations ===== */
+  enter("#s4", 27.20, 0.9);
+  tl.from("#s4 .kick", { autoAlpha: 0, letterSpacing: "0.6em", duration: 0.6, ease: "power2.out" }, 27.75);
+  gsap.set("#s4 .fill", { scaleX: 0 });
+  tl.from("#s4 .trow", { autoAlpha: 0, y: 40, duration: 0.4, ease: "power2.out", stagger: 0.09 }, 28.4);
+  // each bar fills in EXACTLY its labelled duration
+  tl.to("#s4 .r1 .fill", { scaleX: 1, duration: 0.10, ease: "none" }, 30.95);   // "tooltip lands" 30.26→ number 31.58
+  tl.to("#s4 .r2 .fill", { scaleX: 1, duration: 0.15, ease: "none" }, 32.30);
+  tl.to("#s4 .r3 .fill", { scaleX: 1, duration: 0.35, ease: "none" }, 33.95);   // "three fifty" 34.0
+  tl.to("#s4 .r4 .fill", { scaleX: 1, duration: 0.50, ease: "none" }, 34.85);
+  [".r1", ".r2", ".r3", ".r4"].forEach((r, i) => {   // ms value pulses as its bar lands
+    const end = [31.05, 32.45, 34.30, 35.35][i];
+    tl.fromTo("#s4 " + r + " .ms", { scale: 1 }, { scale: 1.18, duration: 0.12, ease: "power2.out", immediateRender: false }, end);
+    tl.to("#s4 " + r + " .ms", { scale: 1, duration: 0.2, ease: "power2.out" }, end + 0.12);
+  });
+  exit("#s4", 35.87);
+
+  /* ===== S5 (36.1 - 40.6) — choreography: hero 36.72, stagger 37.96, budget 38.92 ===== */
+  enter("#s5", 36.20, 0.7);
+  tl.from("#s5 .kick", { autoAlpha: 0, y: 20, duration: 0.4, ease: "power2.out" }, 36.35);
+  tl.from("#dHero", { y: 90, autoAlpha: 0, duration: 0.45, ease: "power3.out" }, 36.70);
+  tl.from("#dHero i", { scaleY: 0, duration: 0.4, ease: "power2.out", stagger: 0.05 }, 36.95);
+  tl.from("#dCards div", { y: 70, autoAlpha: 0, duration: 0.35, ease: "power3.out", stagger: 0.09 }, 37.95);
+  tl.from("#dSide", { y: 70, autoAlpha: 0, duration: 0.35, ease: "power3.out" }, 38.30);
+  tl.from("#s5 .budget", { autoAlpha: 0, scale: 0.9, duration: 0.35, ease: "back.out(1.6)" }, 38.95);
+  exit("#s5", 40.32);
+
+  /* ===== S6 (40.6 - 49.35) — rules: 42.88 / 44.08 / 46.26 / 48.00 ===== */
+  enter("#s6", 40.70, 0.8);
+  gsap.set(["#s6 .rl1", "#s6 .rl2", "#s6 .rl3", "#s6 .rl4", "#race", "#layers"], { autoAlpha: 0 });
+  tl.to("#s6 .rl1", { autoAlpha: 1, duration: 0.01 }, 42.80);
+  tl.from("#s6 .rl1", { y: 60, scale: 0.9, duration: 0.28, ease: "expo.out" }, 42.80);
+  tl.to("#race", { autoAlpha: 1, duration: 0.2 }, 42.95);
+  tl.to("#race .d1", { x: 690, duration: 0.8, ease: "none" }, 43.05);        // the offender
+  tl.to("#race .d2", { x: 690, duration: 0.8, ease: "power3.out" }, 43.05);  // the fix
+  tl.to("#s6 .rl2", { autoAlpha: 1, duration: 0.01 }, 44.00);
+  tl.from("#s6 .rl2", { y: 60, scale: 0.9, duration: 0.28, ease: "expo.out" }, 44.00);
+  tl.to("#s6 .rl3", { autoAlpha: 1, duration: 0.01 }, 46.18);
+  tl.from("#s6 .rl3", { y: 60, scale: 0.9, duration: 0.28, ease: "expo.out" }, 46.18);
+  tl.to("#layers", { autoAlpha: 1, duration: 0.2 }, 46.40);
+  tl.from("#layers .p1", { y: 0, duration: 0.4, ease: "power2.out" }, 46.45);
+  tl.to("#layers .p1", { y: -52, rotation: -1.2, duration: 0.45, ease: "power2.out", overwrite: "auto" }, 46.55);
+  tl.to("#layers .p3", { y: 52, rotation: 1.2, duration: 0.45, ease: "power2.out" }, 46.55);
+  tl.to("#s6 .rl4", { autoAlpha: 1, duration: 0.01 }, 47.95);
+  tl.from("#s6 .rl4", { scale: 2.2, duration: 0.24, ease: "expo.out" }, 47.95);
+  exit("#s6", 49.07);
+
+  /* ===== S7 (49.35 - 62) — outro, callback orb, install ===== */
+  enter("#s7", 49.45, 0.9);
+  tl.from("#s7 .orb2", { scale: 0, autoAlpha: 0, duration: 0.5, ease: "back.out(1.6)" }, 49.60);
+  tl.from("#s7 h1", { y: 60, autoAlpha: 0, duration: 0.6, ease: "power3.out" }, 49.80);
+  tl.from("#s7 .by", { autoAlpha: 0, y: 20, duration: 0.5, ease: "power2.out" }, 50.4);
+  tl.from("#term", { y: 60, autoAlpha: 0, duration: 0.5, ease: "power3.out" }, 52.6);
+  // type the command, stepped (deterministic)
+  gsap.set("#term .c", { autoAlpha: 0 });
+  tl.to("#term .c", { autoAlpha: 1, duration: 0.01, stagger: 0.045 }, 53.3);
+  for (let t = 53.3; t < 61.0; t += 0.5) {   // cursor blink
+    tl.set("#term .cursor", { autoAlpha: 0 }, t + 0.25);
+    tl.set("#term .cursor", { autoAlpha: 1 }, t + 0.5);
+  }
+  // outro breathes: orb float
+  tl.to("#s7 .orb2", { y: -12, duration: 2.2, ease: "sine.inOut", repeat: 3, yoyo: true }, 53.0);
+
+  tl.fromTo("#endfade", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.55, ease: "power2.in", immediateRender: true }, 61.42);
+
+  tl.to({}, { duration: DUR }, 0);   // Law #11 — timeline fills the slot
+  window.__timelines["lottie-skill-showcase"] = tl;
+})();
+</script>
+</body>
+</html>

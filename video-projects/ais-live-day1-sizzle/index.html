@@ -1,212 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Day 1 Opening Sizzle (#2) — scaffold</title>
+<meta charset="UTF-8">
+<title>Day 1 Opening Sizzle (#2) — AIS LIVE launch film</title>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,800;1,900&family=Inter:ital,wght@0,300;0,400;0,700;1,300&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Inter:wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --onyx:#07121c; --blue:#37bdf8; --blue-glow:rgba(55,189,248,.55);
-    --teal:#2dd4bf; --orange:#ff9025; --red:#ff3b30;
-    --fd:"Montserrat",sans-serif; --fb:"Inter",sans-serif; --fm:"Roboto Mono",monospace;
+    --onyx:#07121C; --onyx2:#0b1a28; --paper:#eef2f7; --ink:#0b1a28;
+    --blue:#37BDF8; --blue-deep:#0a4a7a; --coral:#FF8A5C; --red:#FF3B30; --white:#fff;
+    --blue-glow:rgba(55,189,248,.55);
+    --fd:"Montserrat",sans-serif; --fb:"Inter",sans-serif; --fm:"JetBrains Mono",monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
     color:#fff;font-family:var(--fb);isolation:isolate;}
 
-  #bg{position:absolute;inset:0;}
-  #bg .grid{position:absolute;inset:-48px;
-    background-image:linear-gradient(rgba(55,189,248,.06) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(55,189,248,.06) 1px,transparent 1px);background-size:26px 26px;}
-  #bg .glow{position:absolute;top:-200px;left:50%;width:860px;height:860px;margin-left:-430px;
-    border-radius:50%;background:var(--blue);filter:blur(160px);opacity:.20;}
-  #bg .glow2{position:absolute;bottom:-260px;left:-140px;width:660px;height:660px;
-    border-radius:50%;background:var(--teal);filter:blur(180px);opacity:.10;}
-  #bg .vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 42%,rgba(0,0,0,.62) 95%);}
-  #bg .grain{position:absolute;inset:0;opacity:.045;mix-blend-mode:screen;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  /* every section is a full-frame scene with its own background */
+  .sec{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;perspective:1700px;overflow:hidden;will-change:transform,opacity;}
+  .bgfill{position:absolute;inset:0;z-index:0;}
+  .glow{position:absolute;border-radius:50%;filter:blur(160px);}
+  .vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.55) 96%);z-index:1;}
+  .content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:30px;padding:0 120px;}
 
-  #markbug{position:absolute;right:64px;bottom:52px;font-family:var(--fd);font-style:italic;font-weight:900;
-    font-size:38px;letter-spacing:-.03em;display:inline-flex;align-items:baseline;opacity:.9;z-index:6;}
-  #markbug .ais{color:#fff;} #markbug .gap{width:.18em;}
-  #markbug .live{color:var(--blue);position:relative;text-shadow:0 0 24px var(--blue-glow);}
-  #markbug .dot{position:absolute;top:.12em;right:-.5em;width:.16em;height:.16em;border-radius:50%;
-    background:var(--red);box-shadow:0 0 10px var(--red);}
+  /* backgrounds */
+  .bg-onyx{background:var(--onyx);}
+  .bg-blue{background:radial-gradient(circle at 50% 42%, #1f8fd6 0%, #0e4f86 45%, #072742 100%);}
+  .bg-deepblue{background:radial-gradient(circle at 50% 60%, #124b7d 0%, #08243d 60%, #05131f 100%);}
+  .bg-paper{background:radial-gradient(circle at 50% 30%, #ffffff 0%, #e7edf5 60%, #d7e0ea 100%);}
 
-  .scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;text-align:center;padding:120px 140px;gap:30px;}
-  .eyebrow{font-family:var(--fm);font-weight:700;font-size:23px;letter-spacing:.34em;text-transform:uppercase;
+  .eyebrow{font-family:var(--fm);font-weight:700;font-size:22px;letter-spacing:.34em;text-transform:uppercase;
     color:var(--blue);display:inline-flex;align-items:center;gap:12px;}
+  .eyebrow.coral{color:var(--coral);} .eyebrow.ink{color:var(--blue-deep);}
   .eyebrow::before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor;box-shadow:0 0 10px currentColor;}
-  .ln{font-family:var(--fd);font-style:italic;font-weight:900;line-height:.94;letter-spacing:-.038em;
-    color:#fff;max-width:1640px;clip-path:inset(0 0 0 0);overflow:hidden;}
-  .ln .ac{color:var(--blue);} .ln .aco{color:var(--orange);}
-  .ln.h0{font-size:160px;} .ln.h1{font-size:128px;} .ln.h2{font-size:96px;}
-  .sub{font-family:var(--fb);font-weight:300;font-style:italic;font-size:38px;color:rgba(209,220,232,.85);max-width:1280px;}
-  .r{opacity:0;}
 
-  /* Nate talking-head centerpiece slot */
-  .slot{position:relative;border:2px dashed rgba(55,189,248,.5);border-radius:22px;background:
-    repeating-linear-gradient(135deg,rgba(55,189,248,.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden;}
-  .slot .film{font-size:44px;filter:grayscale(1) opacity(.7);}
-  .slot .badge{font-family:var(--fm);font-weight:700;font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);}
-  .slot .desc{font-family:var(--fb);font-weight:300;font-style:italic;font-size:23px;color:rgba(209,220,232,.72);max-width:78%;text-align:center;}
-  .slot.hero{width:1180px;height:620px;}
-  /* lower-third name card (reusable speaker template) */
-  .lt{position:absolute;left:44px;bottom:40px;background:rgba(6,12,20,.72);backdrop-filter:blur(8px);
-    border:1px solid rgba(55,189,248,.3);border-left:4px solid var(--blue);border-radius:12px;padding:16px 26px;text-align:left;}
-  .lt .n{font-family:var(--fd);font-style:italic;font-weight:900;font-size:44px;letter-spacing:-.02em;}
-  .lt .role{font-family:var(--fm);font-weight:700;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-top:4px;}
+  .hl{font-family:var(--fd);font-style:italic;font-weight:900;line-height:1.03;letter-spacing:-.035em;color:#fff;
+    max-width:1500px;}
+  .hl .w{display:inline-block;} /* word wrapper for kinetic reveal */
+  .hl .ac{color:var(--blue);} .hl .aco{color:var(--coral);}
+  .hl.h1{font-size:120px;} .hl.h2{font-size:92px;} .hl.giant{font-size:172px;}
+  .hl.ink{color:var(--ink);}
+  .sub{font-family:var(--fb);font-weight:400;font-size:32px;color:rgba(220,230,240,.9);max-width:1100px;}
+  .sub.ink{color:rgba(20,30,45,.75);}
+  .mono{font-family:var(--fm);font-weight:500;font-size:24px;color:rgba(180,214,238,.85);}
 
-  /* speaker montage row */
-  .strip{display:flex;gap:26px;justify-content:center;}
-  .spk{width:330px;height:440px;position:relative;border-radius:16px;overflow:hidden;
-    border:2px dashed rgba(55,189,248,.5);
-    background:repeating-linear-gradient(135deg,rgba(55,189,248,.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
-    display:flex;align-items:center;justify-content:center;}
-  .spk .film{font-size:30px;filter:grayscale(1) opacity(.6);}
-  .spk .nm{position:absolute;left:0;right:0;bottom:0;padding:16px;text-align:left;
-    background:linear-gradient(0deg,rgba(4,10,16,.94),transparent);}
-  .spk .nm b{font-family:var(--fd);font-style:italic;font-weight:900;font-size:30px;display:block;}
-  .spk .nm span{font-family:var(--fm);font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);}
+  /* concentric rings (welcome) */
+  .rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;}
+  .rings .rg{position:absolute;border:1.5px solid rgba(255,255,255,.14);border-radius:50%;}
 
-  /* b-roll montage tiles */
-  .broll{display:flex;gap:22px;justify-content:center;}
-  .btile{width:400px;height:300px;position:relative;border-radius:14px;overflow:hidden;
-    border:2px dashed rgba(45,212,191,.5);
-    background:repeating-linear-gradient(135deg,rgba(45,212,191,.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
-    display:flex;align-items:center;justify-content:center;}
-  .btile .lab{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;text-align:left;
-    font-family:var(--fm);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:#fff;
-    background:linear-gradient(0deg,rgba(4,10,16,.92),transparent);}
-  .btile .lab b{color:var(--teal);}
+  /* generic floating UI card */
+  .card{position:relative;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 50px 130px rgba(0,0,0,.55);backdrop-filter:blur(8px);will-change:transform,filter;transform-style:preserve-3d;}
+  .card.light{background:#fff;border:1px solid rgba(20,40,70,.1);box-shadow:0 50px 130px rgba(20,40,70,.28);}
 
-  /* big promise */
-  .promise{font-family:var(--fd);font-style:italic;font-weight:900;font-size:150px;line-height:.9;letter-spacing:-.04em;display:flex;gap:.35em;justify-content:center;flex-wrap:wrap;}
-  .promise span{display:inline-block;}
-  .promise .w1{color:#fff;} .promise .w2{color:var(--blue);} .promise .w3{color:var(--orange);}
+  /* S1 messy stack */
+  .messy{position:relative;width:760px;height:440px;}
+  .mcard{position:absolute;width:520px;height:150px;border-radius:14px;background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 80px rgba(0,0,0,.5);padding:20px 24px;text-align:left;}
+  .mcard .bar{height:12px;border-radius:6px;background:rgba(255,255,255,.14);margin:8px 0;}
+  .mcard.err{border-color:rgba(255,59,48,.5);} .mcard.err .dotx{position:absolute;top:16px;right:18px;width:12px;height:12px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);}
 
-  /* finale mark */
-  .bigmark{font-family:var(--fd);font-style:italic;font-weight:900;font-size:280px;letter-spacing:-.04em;
-    display:inline-flex;align-items:baseline;line-height:.85;}
+  /* S3 community dashboard */
+  .dash{width:1180px;padding:34px 38px;text-align:left;}
+  .dash .dhead{display:flex;align-items:center;gap:14px;font-family:var(--fm);font-weight:700;font-size:22px;color:#fff;margin-bottom:26px;letter-spacing:.04em;}
+  .dash .dhead .dico{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),#1f6fb0);box-shadow:0 0 18px var(--blue-glow);}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .tile{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:26px 28px;}
+  .tile .v{font-family:var(--fd);font-style:italic;font-weight:900;font-size:76px;line-height:.9;letter-spacing:-.03em;color:var(--blue);text-shadow:0 0 40px var(--blue-glow);font-variant-numeric:tabular-nums;}
+  .tile .l{font-family:var(--fm);font-weight:700;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:rgba(220,230,240,.8);margin-top:10px;}
+  .tile.c2 .v{color:var(--white);} .tile.c3 .v{color:var(--coral);text-shadow:0 0 40px rgba(255,138,92,.5);}
+
+  /* S4 speaker grid */
+  .spkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;width:1360px;}
+  .spk{aspect-ratio:4/5;border-radius:16px;overflow:hidden;border:1px solid rgba(55,189,248,.3);
+    box-shadow:0 40px 90px rgba(0,0,0,.5);will-change:transform,filter;}
+  .spk img{width:100%;height:100%;object-fit:cover;display:block;}
+
+  /* S5 schedule + agent (light) */
+  .s5wrap{display:flex;gap:44px;align-items:center;justify-content:center;}
+  .sched{width:560px;padding:30px 32px;text-align:left;}
+  .sched .st{display:flex;gap:14px;margin-bottom:20px;}
+  .sched .tab{font-family:var(--fm);font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;
+    padding:8px 18px;border-radius:999px;background:rgba(55,189,248,.14);color:var(--blue-deep);}
+  .sched .tab.coral{background:rgba(255,138,92,.16);color:#c85a2a;}
+  .srow{display:flex;align-items:center;gap:18px;padding:16px 0;border-top:1px solid rgba(20,40,70,.1);}
+  .srow .t{font-family:var(--fm);font-weight:700;font-size:19px;color:var(--blue-deep);min-width:96px;}
+  .srow .name{font-family:var(--fb);font-weight:600;font-size:24px;color:var(--ink);}
+  .agent{width:440px;padding:30px 28px;}
+  .agent .atitle{font-family:var(--fm);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-deep);margin-bottom:22px;}
+  .flow{display:flex;align-items:center;justify-content:space-between;}
+  .fnode{width:78px;height:78px;border-radius:14px;background:#f4f8fd;border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;}
+  .fnode .fdot{width:14px;height:14px;border-radius:4px;background:var(--blue);}
+  .fnode.agentn{border-color:var(--coral);} .fnode.agentn .fdot{background:var(--coral);border-radius:50%;}
+  .fconn{flex:1;height:3px;background:linear-gradient(90deg,var(--blue),var(--coral));margin:0 6px;border-radius:3px;transform-origin:0 50%;}
+  .flabels{display:flex;justify-content:space-between;margin-top:12px;font-family:var(--fm);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(20,40,70,.55);}
+  .runbtn{margin-top:26px;display:flex;align-items:center;justify-content:center;gap:10px;height:52px;border-radius:12px;
+    background:linear-gradient(135deg,var(--blue),#1f6fb0);color:#fff;font-family:var(--fm);font-weight:700;font-size:18px;letter-spacing:.08em;box-shadow:0 14px 34px rgba(55,189,248,.4);}
+  .fpacket{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--coral);box-shadow:0 0 12px rgba(255,138,92,.9);opacity:0;top:0;left:0;}
+  #cursor{position:absolute;z-index:5;width:34px;height:34px;opacity:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+
+  /* S6 proof */
+  .proofwrap{display:flex;gap:50px;align-items:center;}
+  .photo{width:640px;height:400px;border-radius:20px;overflow:hidden;box-shadow:0 50px 130px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .bignum{font-family:var(--fd);font-style:italic;font-weight:900;font-size:170px;line-height:.85;letter-spacing:-.04em;color:var(--coral);text-shadow:0 0 70px rgba(255,138,92,.5);font-variant-numeric:tabular-nums;}
+  .confetti{position:absolute;inset:0;z-index:4;pointer-events:none;}
+  .cf{position:absolute;width:16px;height:22px;border-radius:3px;opacity:0;}
+  .check{width:120px;height:120px;border-radius:50%;background:rgba(55,189,248,.16);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;}
+  .check svg{width:60px;height:60px;}
+
+  /* S7 finale */
+  .halo{position:absolute;left:50%;top:44%;width:1300px;height:1300px;margin-left:-650px;margin-top:-650px;border-radius:50%;
+    background:radial-gradient(circle,var(--blue) 0%,transparent 60%);filter:blur(100px);opacity:0;z-index:0;}
+  .fring{position:absolute;left:50%;top:44%;width:440px;height:440px;margin-left:-220px;margin-top:-220px;border-radius:50%;border:3px solid var(--blue);box-shadow:0 0 50px var(--blue-glow);opacity:0;z-index:1;}
+  .fflash{position:absolute;inset:0;background:radial-gradient(circle at 50% 44%,#fff,transparent 58%);opacity:0;mix-blend-mode:screen;z-index:3;}
+  .bigmark{position:relative;z-index:2;font-family:var(--fd);font-style:italic;font-weight:900;font-size:300px;letter-spacing:-.04em;
+    display:inline-flex;align-items:baseline;line-height:.85;padding:0 .08em;will-change:transform;}
   .bigmark .ais{color:#fff;} .bigmark .gap{width:.16em;}
   .bigmark .live{color:var(--blue);position:relative;text-shadow:0 0 70px var(--blue-glow);}
-  .bigmark .dot{position:absolute;top:.14em;right:-.42em;width:.14em;height:.14em;border-radius:50%;background:var(--red);box-shadow:0 0 24px var(--red);}
-  .datebar{font-family:var(--fm);font-weight:700;font-size:34px;letter-spacing:.24em;text-transform:uppercase;color:#fff;}
+  .bigmark .dot{position:absolute;top:.14em;right:-.30em;width:.14em;height:.14em;border-radius:50%;background:var(--red);box-shadow:0 0 24px var(--red);}
+  .datebar{position:relative;z-index:2;font-family:var(--fm);font-weight:700;font-size:32px;letter-spacing:.24em;text-transform:uppercase;color:#fff;}
   .datebar b{color:var(--blue);}
+  .cta{position:relative;z-index:2;display:inline-flex;align-items:center;gap:14px;margin-top:6px;padding:18px 40px;border-radius:999px;
+    background:linear-gradient(135deg,var(--coral),#ff6b3d);color:#fff;font-family:var(--fm);font-weight:700;font-size:24px;letter-spacing:.06em;
+    box-shadow:0 20px 50px rgba(255,138,92,.4);}
+  .url{position:relative;z-index:2;font-family:var(--fm);font-weight:500;font-size:22px;color:rgba(180,214,238,.8);letter-spacing:.1em;}
+
+  #flashcut{position:absolute;inset:0;z-index:9;pointer-events:none;opacity:0;mix-blend-mode:screen;
+    background:radial-gradient(circle at 50% 50%,#fff 0%,rgba(255,255,255,.4) 30%,transparent 62%);}
+  #streak{position:absolute;top:-10%;bottom:-10%;left:0;width:34%;z-index:9;pointer-events:none;opacity:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);filter:blur(16px);transform:skewX(-16deg);}
+  #grain{position:absolute;inset:0;z-index:8;opacity:.05;mix-blend-mode:screen;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .r{opacity:0;}
 </style>
 </head>
 <body>
-<div id="stage" data-composition-id="ais-live-day1-sizzle" data-start="0" data-width="1920" data-height="1080">
+<div data-hf-id="hf-3z49" id="stage" data-composition-id="ais-live-day1-sizzle" data-start="0" data-width="1920" data-height="1080">
 
-  <div id="bg" class="clip" data-start="0" data-duration="72" data-track-index="0">
-    <div class="grid"></div><div class="glow"></div><div class="glow2"></div><div class="vig"></div><div class="grain"></div>
-  </div>
-  <div id="markbug" class="clip" data-start="8" data-duration="48" data-track-index="1">
-    <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
-  </div>
-
-  <!-- S1 · COLD OPEN (0-9) -->
-  <section id="s1" class="scene clip" data-start="0" data-duration="9" data-track-index="10">
-    <div class="eyebrow r" id="s1eye">AIS LIVE · July 11–12</div>
-    <div class="ln h1" id="s1a">You've been building <span class="ac">alone.</span></div>
-    <div class="ln h0" id="s1b">Not this <span class="ac">weekend.</span></div>
-  </section>
-
-  <!-- S2 · NATE TO CAMERA (9-19) -->
-  <section id="s2" class="scene clip" data-start="9" data-duration="10" data-track-index="11">
-    <div class="slot hero r" id="s2slot">
-      <div class="film">🎬</div><div class="badge">Talking head · Nate (centerpiece)</div>
-      <div class="desc">under-10s direct-to-camera line — the emotional anchor of the open</div>
-      <div class="lt r" id="s2lt"><div class="n">Nate Herk</div><div class="role">AIS LIVE · Host</div></div>
+  <!-- ===== S1 · HOOK (0–7.3) ===== -->
+  <section data-hf-id="hf-brl8" class="sec bg-onyx clip" id="s1" data-start="0" data-duration="7.3" data-track-index="10">
+    <div data-hf-id="hf-nmrn" class="glow" style="width:900px;height:900px;left:20%;top:30%;background:var(--blue);opacity:.12;"></div>
+    <div data-hf-id="hf-e4a6" class="vig"></div>
+    <div data-hf-id="hf-3tpt" class="messy" id="s1stack">
+      <div data-hf-id="hf-qp4y" class="mcard" id="m1" style="left:60px;top:20px;transform:rotate(-7deg);"><div data-hf-id="hf-0ory" class="bar" style="width:60%"></div><div data-hf-id="hf-l64b" class="bar" style="width:85%"></div><div data-hf-id="hf-7upw" class="bar" style="width:40%"></div></div>
+      <div data-hf-id="hf-9qlt" class="mcard err" id="m2" style="left:170px;top:150px;transform:rotate(5deg);"><span data-hf-id="hf-mkc2" class="dotx"></span><div data-hf-id="hf-fmjr" class="bar" style="width:70%"></div><div data-hf-id="hf-8jrp" class="bar" style="width:50%"></div><div data-hf-id="hf-gtyp" class="bar" style="width:65%"></div></div>
+      <div data-hf-id="hf-8wgs" class="mcard" id="m3" style="left:110px;top:280px;transform:rotate(-3deg);"><div data-hf-id="hf-5wp4" class="bar" style="width:80%"></div><div data-hf-id="hf-izwv" class="bar" style="width:45%"></div></div>
+    </div>
+    <div data-hf-id="hf-ghlw" class="content" style="position:absolute;bottom:150px;">
+      <div data-hf-id="hf-upu4" class="eyebrow coral r" id="s1eye">The reality</div>
+      <div data-hf-id="hf-5mxs" class="hl h1" id="s1hl">Building AI alone is <span data-hf-id="hf-zqth" class="w aco">exhausting.</span></div>
+      <div data-hf-id="hf-d4z2" class="mono r" id="s1mono">// 47 tabs open · 12 errors · 0 shipped</div>
     </div>
   </section>
 
-  <!-- S3 · THE SPEAKERS (19-31) -->
-  <section id="s3" class="scene clip" data-start="19" data-duration="12" data-track-index="12">
-    <div class="eyebrow r" id="s3eye">The lineup · 14 speakers</div>
-    <div class="strip">
-      <div class="spk r" id="s3a"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
-      <div class="spk r" id="s3b"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
-      <div class="spk r" id="s3c"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
-      <div class="spk r" id="s3d"><div class="film">🎬</div><div class="nm"><b>Speaker</b><span>role / title</span></div></div>
+  <!-- ===== S2 · WELCOME (6.9–14.3) ===== -->
+  <section data-hf-id="hf-u3qe" class="sec bg-blue clip" id="s2" data-start="6.9" data-duration="7.4" data-track-index="11">
+    <div data-hf-id="hf-alz9" class="rings" id="s2rings">
+      <div data-hf-id="hf-9wk2" class="rg" style="width:520px;height:520px;"></div>
+      <div data-hf-id="hf-3mds" class="rg" style="width:820px;height:820px;"></div>
+      <div data-hf-id="hf-p268" class="rg" style="width:1180px;height:1180px;"></div>
     </div>
-    <div class="sub r" id="s3sub">name-card lower-third = reusable template, one per speaker</div>
-  </section>
-
-  <!-- S4 · REAL BUILDS / COMMUNITY (31-44) -->
-  <section id="s4" class="scene clip" data-start="31" data-duration="13" data-track-index="13">
-    <div class="eyebrow r" id="s4eye" style="color:var(--teal)">Real builds · real people</div>
-    <div class="broll">
-      <div class="btile r" id="s4a"><div class="lab"><b>B-ROLL</b> live builds</div></div>
-      <div class="btile r" id="s4b"><div class="lab"><b>B-ROLL</b> the room</div></div>
-      <div class="btile r" id="s4c"><div class="lab"><b>B-ROLL</b> community wins</div></div>
+    <div data-hf-id="hf-mcm7" class="content">
+      <div data-hf-id="hf-zqqv" class="eyebrow r" id="s2eye">July 11–12 · Two days</div>
+      <div data-hf-id="hf-tl4a" class="hl giant" id="s2hl"><span data-hf-id="hf-6s7h" class="w">Welcome to</span> <span data-hf-id="hf-nawz" class="w ac">AIS&#160;LIVE.</span></div>
+      <div data-hf-id="hf-fm3z" class="sub r" id="s2sub">The room where builders become earners.</div>
     </div>
-    <div class="sub r" id="s4sub">shot list: builds shipping, hands on keyboards, faces reacting, the crowd</div>
   </section>
 
-  <!-- S5 · THE PROMISE (44-56) -->
-  <section id="s5" class="scene clip" data-start="44" data-duration="12" data-track-index="14">
-    <div class="eyebrow r" id="s5eye">Two days</div>
-    <div class="promise"><span class="w1 r" id="p1">Build.</span><span class="w2 r" id="p2">Ship.</span><span class="w3 r" id="p3">Get paid.</span></div>
+  <!-- ===== S3 · COMMUNITY (13.9–22.3) ===== -->
+  <section data-hf-id="hf-yj13" class="sec bg-deepblue clip" id="s3" data-start="13.9" data-duration="8.4" data-track-index="12">
+    <div data-hf-id="hf-oucv" class="glow" style="width:800px;height:800px;left:55%;top:10%;background:var(--blue);opacity:.16;"></div>
+    <div data-hf-id="hf-cmya" class="vig"></div>
+    <div data-hf-id="hf-i7rz" class="content">
+      <div data-hf-id="hf-x928" class="eyebrow r" id="s3eye">The community</div>
+      <div data-hf-id="hf-2mfz" class="hl h2" id="s3hl">The largest <span data-hf-id="hf-z8do" class="w ac">AI-builder</span> room on earth.</div>
+      <div data-hf-id="hf-arcm" class="card dash" id="s3dash">
+        <div data-hf-id="hf-a7hu" class="dhead"><span data-hf-id="hf-4rhq" class="dico"></span> AIS · Command Center</div>
+        <div data-hf-id="hf-hovr" class="tiles">
+          <div data-hf-id="hf-aehg" class="tile c1"><div data-hf-id="hf-b0xw" class="v"><span data-hf-id="hf-c20p" id="t1">0</span>K+</div><div data-hf-id="hf-q24v" class="l">members</div></div>
+          <div data-hf-id="hf-j2db" class="tile c2"><div data-hf-id="hf-qtku" class="v"><span data-hf-id="hf-n148" id="t2">0</span>M+</div><div data-hf-id="hf-l46y" class="l">views</div></div>
+          <div data-hf-id="hf-f49a" class="tile c3"><div data-hf-id="hf-0f5o" class="v"><span data-hf-id="hf-d73n" id="t3">0</span>K+</div><div data-hf-id="hf-k5pj" class="l">automations shipped</div></div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- S6 · TITLE FINALE (56-72) -->
-  <section id="s6" class="scene clip" data-start="56" data-duration="16" data-track-index="15">
-    <div class="bigmark r" id="s6mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span></div>
-    <div class="datebar r" id="s6date">July 11–12 · <b>Build Day → Earn Day</b></div>
-    <div class="sub r" id="s6sub">Doors open 8:30am. This is where builders become earners.</div>
+  <!-- ===== S4 · SPEAKERS (21.9–30.3) ===== -->
+  <section data-hf-id="hf-c3fo" class="sec bg-onyx clip" id="s4" data-start="21.9" data-duration="8.4" data-track-index="13">
+    <div data-hf-id="hf-wyao" class="glow" style="width:900px;height:900px;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--blue);opacity:.12;"></div>
+    <div data-hf-id="hf-d19b" class="vig"></div>
+    <div data-hf-id="hf-htgy" class="content">
+      <div data-hf-id="hf-8fip" class="eyebrow r" id="s4eye">The lineup</div>
+      <div data-hf-id="hf-jlgu" class="hl h2" id="s4hl"><span data-hf-id="hf-a412" class="w ac">25+</span> world-class speakers.</div>
+      <div data-hf-id="hf-s5z7" class="spkgrid" id="s4grid">
+        <div data-hf-id="hf-z8i0" class="spk"><img data-hf-id="hf-0c81" src="assets/matt-wolfe.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-a24g" class="spk"><img data-hf-id="hf-sep6" src="assets/nate-herk.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-8v7d" class="spk"><img data-hf-id="hf-wr6s" src="assets/sabrina-ramonov.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-99ie" class="spk"><img data-hf-id="hf-29ok" src="assets/dave-ebbelaar.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-82lb" class="spk"><img data-hf-id="hf-3d86" src="assets/cole-medin.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-8gwc" class="spk"><img data-hf-id="hf-4moa" src="assets/jonathan-stark.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-79z9" class="spk"><img data-hf-id="hf-nbt0" src="assets/devin-kearns.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-7oaa" class="spk"><img data-hf-id="hf-jh0y" src="assets/alex-mcdonnell.jpg" crossorigin="anonymous"></div>
+      </div>
+    </div>
   </section>
+
+  <!-- ===== S5 · BUILD → EARN (29.9–40.3, light) ===== -->
+  <section data-hf-id="hf-1ov7" class="sec bg-paper clip" id="s5" data-start="29.9" data-duration="10.4" data-track-index="14">
+    <div data-hf-id="hf-hf5x" class="content">
+      <div data-hf-id="hf-8949" class="eyebrow ink r" id="s5eye">Two days · one system</div>
+      <div data-hf-id="hf-mr1q" class="hl h2 ink" id="s5hl"><span data-hf-id="hf-7he8" class="w ac">Build</span> Day <span data-hf-id="hf-9pum" class="w">→</span> <span data-hf-id="hf-w0h5" class="w aco">Earn</span> Day.</div>
+      <div data-hf-id="hf-b9k0" class="s5wrap">
+        <div data-hf-id="hf-h9nq" class="card light sched" id="s5sched">
+          <div data-hf-id="hf-fs85" class="st"><span data-hf-id="hf-e1b2" class="tab">Day 1 · Build</span><span data-hf-id="hf-7sec" class="tab coral">Day 2 · Earn</span></div>
+          <div data-hf-id="hf-csr1" class="srow"><span data-hf-id="hf-dw6w" class="t">10:00</span><span data-hf-id="hf-nrck" class="name">Anatomy of an Agent</span></div>
+          <div data-hf-id="hf-2lkx" class="srow"><span data-hf-id="hf-e22s" class="t">1:00</span><span data-hf-id="hf-whkc" class="name">Live build workshops</span></div>
+          <div data-hf-id="hf-3si0" class="srow"><span data-hf-id="hf-g54t" class="t">Day 2</span><span data-hf-id="hf-tl52" class="name">The Pricing War Room</span></div>
+        </div>
+        <div data-hf-id="hf-2nk2" class="card light agent" id="s5agent">
+          <div data-hf-id="hf-97uv" class="atitle">You'll build this</div>
+          <div data-hf-id="hf-ck2w" class="flow">
+            <div data-hf-id="hf-c8xp" class="fnode" id="fn1"><span data-hf-id="hf-zbey" class="fdot"></span></div>
+            <div data-hf-id="hf-x74s" class="fconn" id="fc1"></div>
+            <div data-hf-id="hf-2rqj" class="fnode agentn" id="fn2"><span data-hf-id="hf-ct3i" class="fdot"></span></div>
+            <div data-hf-id="hf-82mf" class="fconn" id="fc2"></div>
+            <div data-hf-id="hf-k55r" class="fnode" id="fn3"><span data-hf-id="hf-d7ej" class="fdot"></span></div>
+          </div>
+          <div data-hf-id="hf-wk4b" class="flabels"><span data-hf-id="hf-up7b">Input</span><span data-hf-id="hf-ijtm">Agent</span><span data-hf-id="hf-q3yg">Output</span></div>
+          <div data-hf-id="hf-qx0i" class="runbtn" id="runbtn">Run agent</div>
+          <div data-hf-id="hf-dnc1" class="fpacket" id="fpk"></div>
+        </div>
+      </div>
+    </div>
+    <svg data-hf-id="hf-ubtd" id="cursor" viewBox="0 0 24 24"><path data-hf-id="hf-ozj7" d="M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z" fill="#fff" stroke="#0b1a28" stroke-width="1.4" /></svg>
+  </section>
+
+  <!-- ===== S6 · PROOF (39.9–47.3) ===== -->
+  <section data-hf-id="hf-p462" class="sec bg-deepblue clip" id="s6" data-start="39.9" data-duration="7.4" data-track-index="15">
+    <div data-hf-id="hf-5nnk" class="glow" style="width:800px;height:800px;left:30%;top:40%;background:var(--coral);opacity:.12;"></div>
+    <div data-hf-id="hf-dfkc" class="vig"></div>
+    <div data-hf-id="hf-31zi" class="confetti" id="confetti"></div>
+    <div data-hf-id="hf-k7b4" class="content">
+      <div data-hf-id="hf-h22p" class="eyebrow coral r" id="s6eye">The results</div>
+      <div data-hf-id="hf-7cfa" class="proofwrap">
+        <div data-hf-id="hf-i75p" class="photo card" id="s6photo"><img data-hf-id="hf-m2ti" src="assets/celebrate.jpg" crossorigin="anonymous"></div>
+        <div data-hf-id="hf-sr3d" style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;">
+          <div data-hf-id="hf-82fe" class="bignum"><span data-hf-id="hf-my1r">$</span><span data-hf-id="hf-9npx" id="s6num">0</span><span data-hf-id="hf-ul67">K+</span></div>
+          <div data-hf-id="hf-cqtz" class="sub" id="s6sub" style="text-align:left;max-width:520px;">in member wins — built and shipped live.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== S7 · LOGO + CTA (46.9–55) ===== -->
+  <section data-hf-id="hf-t4eq" class="sec bg-onyx clip" id="s7" data-start="46.9" data-duration="8.1" data-track-index="16">
+    <div data-hf-id="hf-7pec" class="halo" id="fHalo"></div>
+    <div data-hf-id="hf-d182" class="fring" id="fRing"></div>
+    <div data-hf-id="hf-q9p6" class="fflash" id="fFlash"></div>
+    <div data-hf-id="hf-jt03" class="content">
+      <div data-hf-id="hf-qdny" class="bigmark r" id="fMark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-9gry" class="dot"></span></span></div>
+      <div data-hf-id="hf-yyas" class="datebar r" id="fDate">July 11–12 · <b data-hf-id="hf-kgyx">Build Day → Earn Day</b></div>
+      <div data-hf-id="hf-r66l" class="cta r" id="fCta">Save your seat →</div>
+      <div data-hf-id="hf-3v5z" class="url r" id="fUrl">ais.live</div>
+    </div>
+  </section>
+
+  <div data-hf-id="hf-o6jj" id="flashcut" class="clip" data-start="0" data-duration="55" data-track-index="21"></div>
+  <div data-hf-id="hf-80fs" id="streak" class="clip" data-start="0" data-duration="55" data-track-index="22"></div>
+  <div data-hf-id="hf-5m3t" id="grain" class="clip" data-start="0" data-duration="55" data-track-index="20"></div>
 
 </div>
 
 <script>
 (function(){
-  const tl = gsap.timeline({paused:true});
-  const D = 72;
-  function rev(sel,t,from,d,e){
-    tl.fromTo(sel, Object.assign({autoAlpha:0}, from||{}),
-      {autoAlpha:1,x:0,y:0,scale:1, duration:d||.55, ease:e||"power2.out"}, t);
+  const D=55;
+  // confetti (deterministic)
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  const rnd=mulberry32(77);
+  const cols=["#37BDF8","#FF8A5C","#ffffff","#7fd4ff"];
+  const cwrap=document.getElementById("confetti");
+  const cfEls=[];
+  for(let i=0;i<28;i++){const d=document.createElement("div");d.className="cf";
+    d.style.left=(20+rnd()*60)+"%";d.style.top=(-10-rnd()*20)+"%";d.style.background=cols[i%4];
+    d.style.transform=`rotate(${rnd()*360}deg)`;cwrap.appendChild(d);cfEls.push({el:d,fall:520+rnd()*260,rot:rnd()*720-360,delay:rnd()*0.5});}
+
+  const tl=gsap.timeline({paused:true});
+
+  tl.set("#m1", { x: 0, y: 0, data: "hf-hold" }, 0);
+
+  // ---- motion kit (AE feel: fast zoom-through cuts + a camera that never stops) ----
+  const EO="expo.out", QO="quart.out", PI="power2.in", PIO="power3.inOut", BO="back.out(1.6)", P4="power4.out";
+  // fast zoom-through transition: outgoing keeps zooming in, incoming settles from the same zoom
+  function secOut(sel,t){ tl.to(sel,{autoAlpha:0,scale:1.18,duration:.32,ease:PI},t); }
+  function secIn(sel,t){ tl.fromTo(sel,{autoAlpha:0,scale:1.16},{autoAlpha:1,scale:1,duration:.5,ease:"power3.out"},t); }
+  // slow camera push-in on a scene's content — nothing ever sits still
+  function cam(sel,t,dur,to){ tl.fromTo(sel,{scale:1},{scale:to||1.07,duration:dur,ease:"none"},t); }
+  // light-streak whip + bloom flash to punch every cut
+  function cut(t){
+    tl.set("#streak",{x:-720,autoAlpha:0},t-0.12);
+    tl.to("#streak",{x:2500,duration:.36,ease:PI},t-0.12);
+    tl.to("#streak",{autoAlpha:.9,duration:.16,ease:"power2.out"},t-0.12);
+    tl.to("#streak",{autoAlpha:0,duration:.18,ease:"power2.in"},t+0.06);
+    tl.set("#flashcut",{autoAlpha:0},t-0.05);
+    tl.to("#flashcut",{autoAlpha:.3,duration:.1,ease:"power2.out"},t-0.05);
+    tl.to("#flashcut",{autoAlpha:0,duration:.24,ease:"power2.in"},t+0.07);
   }
-  function wipe(sel,t,d,e){ tl.fromTo(sel,{clipPath:"inset(0 100% 0 0)"},{clipPath:"inset(0 0% 0 0)",duration:d||.62,ease:e||"power3.out"}, t); }
-  function out(sel,t){ tl.to(sel,{autoAlpha:0,duration:.35,ease:"power2.in"}, t); }
+  function kin(sel,t){ tl.fromTo(sel+" .w",{autoAlpha:0,yPercent:70,filter:"blur(8px)"},
+    {autoAlpha:1,yPercent:0,filter:"blur(0px)",duration:.55,ease:EO,stagger:.08},t);
+    tl.fromTo(sel,{autoAlpha:0},{autoAlpha:1,duration:.2},t); }
+  function rev(sel,t,from,d,e){ tl.fromTo(sel,Object.assign({autoAlpha:0},from||{}),{autoAlpha:1,x:0,y:0,scale:1,duration:d||.5,ease:e||QO},t); }
+  function floatCard(sel,t,d){ tl.fromTo(sel,{autoAlpha:0,y:130,rotateX:22,scale:.9,filter:"blur(12px)"},
+    {autoAlpha:1,y:0,rotateX:0,scale:1,filter:"blur(0px)",duration:d||.7,ease:EO},t); }
+  function count(id,to,t,dur){const o={v:0};tl.to(o,{v:to,duration:dur||1.3,ease:QO,
+    onUpdate:()=>{document.getElementById(id).textContent=Math.round(o.v);}},t);}
 
-  tl.to("#markbug .dot",{scale:1.15,duration:.8,yoyo:true,repeat:Math.round(D/0.8)-1,ease:"sine.inOut",transformOrigin:"50% 50%"},0);
-  tl.to("#bg .grid",{backgroundPosition:"26px 26px",duration:D,ease:"none"},0);
+  // ===== S1 HOOK =====
+  secIn("#s1",0);cam("#s1 .content",0,6.9);cam("#s1stack",0,6.9,1.05);
+  tl.fromTo("#m2",{autoAlpha:0,y:90,rotate:12,scale:.9},{autoAlpha:1,y:0,rotate:5,scale:1,duration:.6,ease:EO},0.45);
+  tl.fromTo("#m3",{autoAlpha:0,y:110,rotate:-9,scale:.9},{autoAlpha:1,y:0,rotate:-3,scale:1,duration:.6,ease:EO},0.6);
+  tl.to("#s1stack",{y:-14,duration:3,yoyo:true,repeat:1,ease:"sine.inOut"},1.0);
+  rev("#s1eye",0.7,{y:-14},.4);
+  kin("#s1hl",1.0);
+  rev("#s1mono",1.9,{y:14},.4);
+  secOut("#s1",6.85);cut(6.9);
 
-  // S1 cold open
-  rev("#s1eye",0.3,{y:-12}); wipe("#s1a",0.7); wipe("#s1b",1.7,.7); out("#s1",8.4);
-  // S2 nate
-  rev("#s2slot",9.3,{scale:.95,y:24},.55,"back.out(1.3)");
-  rev("#s2lt",10.6,{x:-30}); out("#s2",18.4);
-  // S3 speakers
-  rev("#s3eye",19.2,{y:-12});
-  rev("#s3a",19.6,{y:30,scale:.93},.48,"back.out(1.3)");
-  rev("#s3b",19.9,{y:30,scale:.93},.48,"back.out(1.3)");
-  rev("#s3c",20.2,{y:30,scale:.93},.48,"back.out(1.3)");
-  rev("#s3d",20.5,{y:30,scale:.93},.48,"back.out(1.3)");
-  rev("#s3sub",21.4,{y:12}); out("#s3",30.4);
-  // S4 broll
-  rev("#s4eye",31.2,{y:-12});
-  rev("#s4a",31.6,{y:26,scale:.94},.48,"back.out(1.3)");
-  rev("#s4b",31.9,{y:26,scale:.94},.48,"back.out(1.3)");
-  rev("#s4c",32.2,{y:26,scale:.94},.48,"back.out(1.3)");
-  rev("#s4sub",33.1,{y:12}); out("#s4",43.4);
-  // S5 promise (word by word)
-  rev("#s5eye",44.2,{y:-12});
-  rev("#p1",44.7,{y:30,scale:.7},.45,"back.out(2)");
-  rev("#p2",45.25,{y:30,scale:.7},.45,"back.out(2)");
-  rev("#p3",45.85,{y:30,scale:.7},.5,"back.out(2.2)");
-  out("#s5",55.4);
-  // S6 finale
-  rev("#s6mark",56.4,{scale:.78},.7,"back.out(1.4)");
-  rev("#s6date",57.6,{y:18});
-  rev("#s6sub",58.4,{y:14});
+  // ===== S2 WELCOME =====
+  secIn("#s2",6.9);cam("#s2 .content",6.9,7.0);
+  tl.fromTo("#s2rings .rg",{scale:.3,autoAlpha:0},{scale:1,autoAlpha:1,duration:.9,ease:EO,stagger:.1},7.05);
+  tl.to("#s2rings",{scale:1.1,duration:6.5,ease:"none"},7.1);
+  rev("#s2eye",7.15,{y:-14},.4);
+  kin("#s2hl",7.45);
+  tl.from("#s2hl",{scale:1.32,duration:.7,ease:P4},7.45);
+  tl.to("#s2hl .ac",{scale:1.05,duration:.35,yoyo:true,repeat:1,ease:"sine.inOut"},8.4);
+  rev("#s2sub",8.5,{y:16},.5);
+  secOut("#s2",13.85);cut(13.9);
+
+  // ===== S3 COMMUNITY =====
+  secIn("#s3",13.9);cam("#s3 .content",13.9,8.0);
+  rev("#s3eye",14.05,{y:-14},.4);
+  kin("#s3hl",14.3);
+  floatCard("#s3dash",15.0,.8);
+  tl.fromTo("#s3 .tile",{autoAlpha:0,y:30,scale:.9},{autoAlpha:1,y:0,scale:1,duration:.5,ease:BO,stagger:.1},15.7);
+  count("t1",400,15.9,1.3);count("t2",40,16.1,1.3);count("t3",100,16.3,1.3);
+  secOut("#s3",21.85);cut(21.9);
+
+  // ===== S4 SPEAKERS =====
+  secIn("#s4",21.9);cam("#s4 .content",21.9,8.0,1.08);
+  rev("#s4eye",22.05,{y:-14},.4);
+  kin("#s4hl",22.3);
+  tl.fromTo("#s4grid .spk",{autoAlpha:0,y:90,rotateX:24,scale:.8,filter:"blur(10px)"},
+    {autoAlpha:1,y:0,rotateX:0,scale:1,filter:"blur(0px)",duration:.6,ease:"back.out(1.3)",stagger:.06},22.9);
+  secOut("#s4",29.85);cut(29.9);
+
+  // ===== S5 BUILD -> EARN (light) =====
+  secIn("#s5",29.9);cam("#s5 .content",29.9,10.0);
+  rev("#s5eye",30.05,{y:-14},.4);
+  kin("#s5hl",30.3);
+  floatCard("#s5sched",31.0,.7);
+  tl.fromTo("#s5sched .srow",{autoAlpha:0,x:30},{autoAlpha:1,x:0,duration:.45,ease:QO,stagger:.1},31.4);
+  floatCard("#s5agent",31.4,.7);
+  tl.fromTo(["#fc1","#fc2"],{scaleX:0},{scaleX:1,duration:.45,ease:QO,stagger:.14},32.3);
+  tl.set("#cursor",{autoAlpha:0,x:1230,y:560},33.0);
+  tl.to("#cursor",{autoAlpha:1,x:1150,y:690,duration:.6,ease:PIO},33.1);
+  tl.to("#cursor",{scale:.85,duration:.12,yoyo:true,repeat:1,ease:PI},33.8);
+  tl.to("#runbtn",{scale:.96,duration:.12,yoyo:true,repeat:1,ease:PI},33.8);
+  tl.set("#fpk",{opacity:1,x:1006,y:452},33.95);
+  tl.to("#fpk",{x:1196,duration:.8,ease:PIO},33.95);
+  tl.to("#fpk",{opacity:0,duration:.2},34.75);
+  tl.to("#cursor",{autoAlpha:0,duration:.4},35.0);
+  secOut("#s5",39.85);cut(39.9);
+
+  // ===== S6 PROOF =====
+  secIn("#s6",39.9);cam("#s6 .content",39.9,7.0);
+  rev("#s6eye",40.05,{y:-14},.4);
+  floatCard("#s6photo",40.3,.7);
+  rev("#s6sub",41.4,{x:30},.5);
+  count("s6num",60,40.8,1.5);
+  tl.from("#s6num",{scale:1.4,duration:.6,ease:P4},40.8);
+  tl.to(cfEls.map(c=>c.el),{autoAlpha:1,duration:.2},41.0);
+  cfEls.forEach(c=>{ tl.fromTo(c.el,{y:0},{y:c.fall,rotation:c.rot,duration:2.2,ease:"power1.in"},41.0+c.delay);
+    tl.to(c.el,{autoAlpha:0,duration:.6},42.6+c.delay); });
+  secOut("#s6",46.85);cut(46.9);
+
+  // ===== S7 FINALE =====
+  secIn("#s7",46.9);cam("#s7 .content",47.3,7.5,1.05);
+  tl.fromTo("#fMark",{autoAlpha:0,scale:2.4},{autoAlpha:1,scale:1,duration:.66,ease:P4},47.25);
+  tl.fromTo("#fFlash",{autoAlpha:0},{autoAlpha:.5,duration:.12,ease:"power2.out"},47.8);
+  tl.to("#fFlash",{autoAlpha:0,duration:.4,ease:PI},47.92);
+  tl.fromTo("#fRing",{autoAlpha:.9,scale:.2},{autoAlpha:0,scale:3,duration:.85,ease:"power2.out"},47.8);
+  tl.fromTo("#fMark .dot",{scale:0},{scale:1,duration:.3,ease:"back.out(2)"},47.85);
+  tl.to("#fMark .dot",{scale:1.25,duration:.7,yoyo:true,repeat:Math.round((D-48.4)/0.7)-1,ease:"sine.inOut",transformOrigin:"50% 50%"},48.4);
+  tl.fromTo("#fHalo",{autoAlpha:0,scale:.6},{autoAlpha:.85,scale:1,duration:.7,ease:EO},47.95);
+  rev("#fDate",48.5,{y:20},.45);
+  rev("#fCta",48.9,{y:18,scale:.9},.45,BO);
+  rev("#fUrl",49.3,{y:12},.45);
 
   tl.set({}, {}, D);
+  tl.fromTo("#m1", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, ease: "expo.out" }, 0.3);
+  tl.fromTo("#m1", { rotate: -14 }, { rotate: -7, duration: 0.6, ease: "expo.out" }, 0.3);
+  tl.fromTo("#m1", { scale: 0.9 }, { scale: 1, duration: 0.6, ease: "expo.out" }, 0.3);
+  tl.to("#m1", { keyframes: { "0%": { x: 0, y: 0 }, "1.9%": { x: 0, y: 0 }, "100%": { x: -171, y: -97 } }, duration: 32.279 }, 0.3);
   window.__timelines = window.__timelines || {};
   window.__timelines["ais-live-day1-sizzle"] = tl;
 })();

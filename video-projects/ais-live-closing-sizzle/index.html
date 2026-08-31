@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>AIS LIVE — Event Closing Sizzle (#12) — SCAFFOLD</title>
+<link href="assets/fonts/fonts.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  :root{
+    --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --red-live:#ff3b30;
+    --blue-rgb:55,189,248; --coral-rgb:255,138,92; --red-rgb:255,59,48;
+    --fd:"Montserrat",sans-serif; --fb:"Inter",sans-serif; --fm:"JetBrains Mono",monospace;
+    --grad-chrome:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+    --grad-blue:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+    --grad-coral:linear-gradient(180deg,#ffdcc0 0%,#ff8a5c 56%,#e5673a 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--fb);}
+  #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+    isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+  #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+  #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+  /* ---------- depth background (camera motion rides THIS, not the text) ---------- */
+  #bg{overflow:hidden;}
+  .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(var(--blue-rgb),.16) 0 1px, transparent 1px 66px),
+      repeating-linear-gradient(90deg, rgba(var(--blue-rgb),.09) 0 1px, transparent 1px 66px);
+    will-change:background-position;}
+  .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+    -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+    mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+  .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+    -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+    mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+  .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+    background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(var(--blue-rgb),.14) 22deg, transparent 44deg);
+    filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+  .glow{position:absolute;border-radius:50%;will-change:transform;}
+  .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+  .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+  .vignette{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+  .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(var(--blue-rgb),.8),transparent);
+    filter:blur(7px);will-change:transform,opacity;}
+
+  /* ---------- scene ---------- */
+  .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+  .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:30px;padding:92px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+  .eyebrow{font-family:var(--fm);font-weight:700;font-size:26px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:0 0 16px rgba(var(--blue-rgb),.45);}
+  .eyebrow::before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor;box-shadow:0 0 12px currentColor;}
+  .eyebrow.coral{color:var(--coral);text-shadow:0 0 16px rgba(var(--coral-rgb),.45);}
+
+  .ln{font-family:var(--fd);font-style:italic;font-weight:900;font-size:104px;line-height:1.12;
+    letter-spacing:-.03em;max-width:1560px;transform-style:preserve-3d;}
+  .ln .wd{transform-style:preserve-3d;}
+  .ln.hero{font-size:150px;}
+  .ln.sm{font-size:82px;}
+  .ln .wd{display:inline-block;padding:.08em .13em .24em;will-change:transform,opacity;
+    background:var(--grad-chrome);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 34px rgba(255,255,255,.22);}
+  .ln .wd.ac{background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 48px rgba(var(--blue-rgb),.62);}
+  .ln .wd.aco{background:var(--grad-coral);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 48px rgba(var(--coral-rgb),.58);}
+
+  .sub{font-family:var(--fb);font-weight:300;font-style:italic;font-size:40px;line-height:1.25;
+    color:rgba(209,220,232,.85);max-width:1400px;will-change:transform,opacity;}
+
+  /* AIS+ product mark — all white, + included */
+  .plus{font-family:var(--fd);font-style:italic;font-weight:900;letter-spacing:-.03em;display:inline-block;color:#fff;text-shadow:0 0 34px rgba(255,255,255,.28);}
+  .plus .p{color:#fff;text-shadow:0 0 34px rgba(255,255,255,.28);}
+
+  /* recap stat trio */
+  .stattrio{display:flex;gap:120px;justify-content:center;align-items:flex-start;transform-style:preserve-3d;}
+  .st{display:flex;flex-direction:column;align-items:center;gap:8px;will-change:transform,opacity;transform-style:preserve-3d;}
+  .st .num{font-family:var(--fd);font-style:italic;font-weight:900;font-size:180px;line-height:.95;letter-spacing:-.04em;padding:.02em .1em .12em;
+    background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:0 0 90px rgba(var(--blue-rgb),.6);}
+  .st .lab{font-family:var(--fm);font-weight:700;font-size:26px;letter-spacing:.24em;text-transform:uppercase;color:#fff;}
+
+  /* footage placeholder slots (swap for real event footage) */
+  .slot{position:relative;border:2px dashed rgba(var(--blue-rgb),.5);border-radius:20px;background:
+    repeating-linear-gradient(135deg,rgba(var(--blue-rgb),.05) 0 22px,rgba(6,12,20,.35) 22px 44px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.45);will-change:transform,opacity;}
+  .slot .film{font-size:44px;filter:grayscale(1) opacity(.75);}
+  .slot .badge{font-family:var(--fm);font-weight:700;font-size:20px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);}
+  .slot .desc{font-family:var(--fb);font-weight:300;font-style:italic;font-size:22px;color:rgba(209,220,232,.72);max-width:86%;text-align:center;}
+
+  /* montage grid (two-days recap) */
+  .grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;width:1660px;transform-style:preserve-3d;}
+  .grid2 .slot{height:300px;}
+
+  /* full-bleed reaction slot */
+  #s4 .eyebrow{position:absolute;top:120px;left:50%;transform:translateX(-50%);}
+  .reactframe{position:absolute;left:360px;top:200px;width:1200px;height:675px;}
+  .reactcap{position:absolute;left:380px;top:900px;display:inline-flex;align-items:baseline;gap:20px;padding:12px 26px;border-radius:12px;background:rgba(4,10,17,.62);will-change:transform,opacity;}
+  .reactcap .rc{font-family:var(--fm);font-weight:700;font-size:24px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);}
+  .reactcap .rn{font-family:var(--fb);font-weight:700;font-size:30px;color:#fff;}
+
+  /* persistent corner mark */
+  .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+  .mark{font-family:var(--fd);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+    font-size:80px;display:inline-flex;align-items:baseline;position:relative;}
+  .mark.big{font-size:230px;}
+  .mark .ais{color:#fff;}
+  .mark .gap{display:inline-block;width:.08em;}
+  .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(var(--blue-rgb),.55);padding-right:.28em;}
+  .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+    background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
+  .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+    background:rgba(var(--red-rgb),.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+  .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="ais-live-closing-sizzle" data-start="0" data-duration="75" data-width="1920" data-height="1080">
+
+  <div id="bg" class="clip" data-start="0" data-duration="75" data-track-index="0">
+    <div class="depth grid-ceiling"></div>
+    <div class="depth grid-floor"></div>
+    <div class="beam"></div>
+    <div class="glow blue"></div>
+    <div class="glow coral"></div>
+    <div class="vignette"></div>
+    <div class="grain"></div>
+  </div>
+  <div class="whip clip" id="whip" data-start="0" data-duration="75" data-track-index="1"></div>
+  <div id="markbug" class="clip" data-start="5" data-duration="70" data-track-index="2">
+    <div class="backdrop-mark"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+  </div>
+
+  <div id="camera">
+
+    <!-- S1 · COLD OPEN (0-5) -->
+    <section id="s1" class="scene clip" data-start="0" data-duration="5.4" data-track-index="10">
+      <div class="inner">
+        <div class="eyebrow">DAY 2 · THE CLOSE</div>
+        <div class="ln hero">That's a <em class="wd-em">wrap.</em></div>
+      </div>
+    </section>
+
+    <!-- S2 · RECAP STAT TRIO (5-14) — placeholder numbers, swap post-event -->
+    <section id="s2" class="scene clip" data-start="5" data-duration="9.2" data-track-index="11">
+      <div class="inner">
+        <div class="eyebrow coral">TWO DAYS · BY THE NUMBERS</div>
+        <div class="stattrio">
+          <div class="st"><div class="num" id="n1">0</div><div class="lab">SESSIONS</div></div>
+          <div class="st"><div class="num" id="n2">0</div><div class="lab">BUILDERS</div></div>
+          <div class="st"><div class="num" id="n3">0</div><div class="lab">DEALS SHIPPED</div></div>
+        </div>
+        <div class="sub">Placeholder totals &mdash; swap for the real event numbers.</div>
+      </div>
+    </section>
+
+    <!-- S3 · TWO-DAYS MONTAGE GRID (14-26) — event footage placeholders -->
+    <section id="s3" class="scene clip" data-start="14" data-duration="11.8" data-track-index="12">
+      <div class="inner">
+        <div class="eyebrow">TWO DAYS IN THE ROOM</div>
+        <div class="grid2">
+          <div class="slot"><div class="film">&#127909;</div><div class="badge">Day 1 · Keynote</div></div>
+          <div class="slot"><div class="film">&#127909;</div><div class="badge">Workshop floor</div></div>
+          <div class="slot"><div class="film">&#127909;</div><div class="badge">Day 1 · Panel</div></div>
+          <div class="slot"><div class="film">&#127909;</div><div class="badge">Networking</div></div>
+          <div class="slot"><div class="film">&#127909;</div><div class="badge">Day 2 · Stage</div></div>
+          <div class="slot"><div class="film">&#127909;</div><div class="badge">Community</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S4 · AUDIENCE REACTION (26-36) — full-bleed clip placeholder -->
+    <section id="s4" class="scene clip" data-start="25.8" data-duration="10.2" data-track-index="13">
+      <div class="inner">
+        <div class="eyebrow coral">THE ENERGY IN THE ROOM</div>
+      </div>
+    </section>
+
+    <!-- S5 · MEMBER MOMENT (36-46) — testimonial/quote placeholder -->
+    <section id="s5" class="scene clip" data-start="35.8" data-duration="10.2" data-track-index="14">
+      <div class="inner">
+        <div class="eyebrow">WHAT MEMBERS SAID</div>
+        <div class="ln sm">&ldquo;<em class="wd-em">Placeholder</em> member soundbite goes here.&rdquo;</div>
+        <div class="sub">Drop a real attendee reaction clip or pull-quote post-event.</div>
+      </div>
+    </section>
+
+    <!-- S6 · THANK YOU (46-54) -->
+    <section id="s6" class="scene clip" data-start="45.8" data-duration="8.2" data-track-index="15">
+      <div class="inner">
+        <div class="ln hero">Thank <em class="wd-em">you.</em></div>
+        <div class="sub">To every builder who showed up and shipped.</div>
+      </div>
+    </section>
+
+    <!-- S7 · FORWARD-LOOKING (NEUTRAL — no September naming) (54-63) -->
+    <section id="s7" class="scene clip" data-start="53.8" data-duration="9.2" data-track-index="16">
+      <div class="inner">
+        <div class="eyebrow coral">WHAT'S NEXT</div>
+        <div class="ln sm">The <em class="wd-em">journey</em> continues.</div>
+        <div class="sub">[ placeholder &mdash; forward beat; specifics TBC ]</div>
+      </div>
+    </section>
+
+    <!-- S8 · OUTRO MARK HOLD (63-75) -->
+    <section id="s8" class="scene clip" data-start="62.8" data-duration="12.2" data-track-index="17">
+      <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring" id="ring2"></span><span class="dot"></span></span></span></div>
+        <div class="sub" style="margin-top:10px">See you soon.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- S4 reaction footage placeholder (root-level; swap the .slot for a muted <video> + sibling <audio>) -->
+  <div id="s4frame" class="clip" data-start="25.8" data-duration="10.2" data-track-index="9">
+    <div class="slot reactframe"><div class="film">&#127909;</div><div class="badge">Audience reaction · full-bleed</div><div class="desc">drop a muted &lt;video&gt; + sibling &lt;audio&gt; here (784&times;441 or full 1200&times;675)</div></div>
+    <div class="reactcap" id="reactcap"><span class="rc">LIVE</span><span class="rn">Reaction / crowd moment</span></div>
+  </div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const D = 75;
+  const tl = gsap.timeline({ paused: true });
+
+  function splitWords(ln){
+    const frag = document.createDocumentFragment();
+    ln.childNodes.forEach(node => {
+      const el = node.nodeType === 1;
+      const em = el && node.classList.contains("wd-em");
+      const plus = el && node.classList.contains("plus");
+      const coral = em && node.classList.contains("co");
+      if (plus) { frag.appendChild(node.cloneNode(true)); frag.appendChild(document.createTextNode(" ")); return; }
+      (node.textContent || "").trim().split(/\s+/).forEach(w => {
+        if (!w) return;
+        const s = document.createElement("span");
+        s.className = "wd" + (em ? (coral ? " ac aco" : " ac") : "");
+        s.textContent = w;
+        frag.appendChild(s);
+      });
+    });
+    ln.textContent = "";
+    ln.appendChild(frag);
+    ln.querySelectorAll(".plus").forEach(p => p.classList.add("wd","plusword"));
+  }
+  document.querySelectorAll(".ln").forEach(splitWords);
+
+  /* helpers — smooth, crisp (text never scales for camera) */
+  function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-10},{autoAlpha:1,y:0,duration:d||.85,ease:"power2.out"},at); }
+  function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:44,scale:.985},
+    {autoAlpha:1,yPercent:0,scale:1,duration:.95,ease:"power3.out",stagger:.085,transformOrigin:"50% 100%"},at); }
+  function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.92},{autoAlpha:1,scale:1,duration:d||.9,ease:"power2.out"},at); }
+  function flip3dX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,rotationX:-26,y:22,z:-60,transformOrigin:"50% 100%"},
+    {autoAlpha:1,rotationX:0,y:0,z:0,duration:1.0,ease:"power3.out",stagger:step||.12},at); }
+  function popZ(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,z:-220,scale:.9},{autoAlpha:1,z:0,scale:1,duration:1.1,ease:"power3.out",stagger:step||.12},at); }
+  function riseSlot(sel, at){ tl.fromTo(sel,{autoAlpha:0,y:18,scale:.975},{autoAlpha:1,y:0,scale:1,duration:1.0,ease:"power3.out"},at); }
+  function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+    {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.9,ease:"back.out(1.4)",transformOrigin:"50% 50%"},at); }
+  function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-58,filter:"blur(12px)",duration:.22,ease:"power2.in"},at); }
+  function streak(at){
+    tl.fromTo("#whip",{xPercent:-130,scaleX:.6,autoAlpha:0},{autoAlpha:.72,duration:.14,ease:"sine.out",immediateRender:false,overwrite:"auto"},at-0.08);
+    tl.to("#whip",{xPercent:250,scaleX:1.5,autoAlpha:0,duration:.4,ease:"sine.in",overwrite:"auto"},at);
+  }
+  function countUp(sel, at, target, dur, suffix){
+    var o={v:0};
+    tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+    tl.to(o,{v:target,duration:dur,ease:"power2.out",onUpdate:function(){
+      var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+  }
+
+  /* ---- AMBIENT — camera rides the BACKGROUND only; text stays pin-sharp ---- */
+  tl.to("#bg", { scale:1.10, duration:D, ease:"none", transformOrigin:"50% 50%" }, 0);
+  tl.to("#bg", { x:44, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+  tl.to("#bg", { y:-30, duration:D/3, yoyo:true, repeat:2, ease:"sine.inOut" }, 0);
+  tl.to(".grid-floor",   { backgroundPositionY:"+=760px", duration:D, ease:"none" }, 0);
+  tl.to(".grid-ceiling", { backgroundPositionY:"-=760px", duration:D, ease:"none" }, 0);
+  tl.to(".beam", { rotation:8, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+  tl.to(".beam", { opacity:.4, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+  tl.to(".glow.blue",  { x:44, y:-24, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+  tl.to(".glow.coral", { x:-36, y:22, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+  tl.to(".vignette", { opacity:.9, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+  tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:Math.round(D/0.8)-1, ease:"sine.inOut", transformOrigin:"50% 50%" }, 5);
+  tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+    { autoAlpha:.5, scale:1, duration:.001 },
+    { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+    { autoAlpha:0, scale:1, duration:.6 }
+  ], repeat:Math.round(D/1.6)-1, ease:"none" }, 5);
+  drop("#markbug", 5, .8);
+
+  /* ---- SCENES (fast whip cuts + streak, overlapping so no fade-to-black) ---- */
+  // S1 cold open
+  drop("#s1 .eyebrow", 0.2);
+  words("#s1 .ln .wd", 0.5);
+  whipOut("#s1 .inner", 5.0); streak(5.05);
+
+  // S2 recap stats
+  drop("#s2 .eyebrow", 5.1);
+  popZ(".st", 5.35, 0.14);
+  countUp("#n1", 5.5, 30, 1.2, "+");
+  countUp("#n2", 5.7, 250, 1.3, "+");
+  countUp("#n3", 5.9, 12, 1.1, "");
+  drop("#s2 .sub", 6.9);
+  whipOut("#s2 .inner", 13.8); streak(13.85);
+
+  // S3 two-days montage grid
+  drop("#s3 .eyebrow", 14.1);
+  flip3dX(".grid2 .slot", 14.4, 0.10);
+  whipOut("#s3 .inner", 25.4); streak(25.45);
+
+  // S4 audience reaction (full-bleed placeholder)
+  drop("#s4 .eyebrow", 25.9);
+  riseSlot("#s4frame .reactframe", 26.2);
+  tl.fromTo("#reactcap",{autoAlpha:0,y:12},{autoAlpha:1,y:0,duration:.6,ease:"power2.out"},26.8);
+  whipOut("#s4 .inner", 35.4);
+  tl.to("#s4frame .reactframe",{autoAlpha:0,y:-58,filter:"blur(12px)",duration:.22,ease:"power2.in"},35.4);
+  tl.to("#reactcap",{autoAlpha:0,duration:.2,ease:"power2.in"},35.4);
+  tl.set("#s4frame",{autoAlpha:0},35.7);
+  streak(35.45);
+
+  // S5 member moment
+  drop("#s5 .eyebrow", 35.9);
+  words("#s5 .ln .wd", 36.2);
+  drop("#s5 .sub", 37.3);
+  whipOut("#s5 .inner", 45.4); streak(45.45);
+
+  // S6 thank you
+  words("#s6 .ln .wd", 45.9);
+  drop("#s6 .sub", 46.9);
+  whipOut("#s6 .inner", 53.4); streak(53.45);
+
+  // S7 forward-looking (neutral)
+  drop("#s7 .eyebrow", 53.9);
+  words("#s7 .ln .wd", 54.2);
+  drop("#s7 .sub", 55.3);
+  whipOut("#s7 .inner", 62.4); streak(62.45);
+
+  // S8 outro mark hold
+  markPop("#s8 .bigmark", 62.9);
+  drop("#s8 .sub", 63.9);
+
+  tl.to({}, { duration: D }, 0); // Law #11 — fill the slot
+  window.__timelines["ais-live-closing-sizzle"] = tl;
+</script>
+</body>
+</html>

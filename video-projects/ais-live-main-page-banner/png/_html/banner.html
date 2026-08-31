@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/>
+<link href="file:///Users/aidanstanik/Projects/Video Automation/video-projects/ais-live-stings/assets/fonts/fonts.css" rel="stylesheet"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1500px;height:600px;overflow:hidden;}
+  body{position:relative;font-family:'Inter',sans-serif;background:#07121C;}
+
+  /* --- dramatic diagonal: pitch black top-left flowing to dark blue bottom-right --- */
+  .bg{position:absolute;inset:0;
+    background:linear-gradient(133deg,#000000 0%,#01060C 28%,#062036 68%,#0B3252 100%);}
+  .bloom{position:absolute;border-radius:50%;}
+  .bloom.b2{bottom:-620px;right:-380px;width:1700px;height:1400px;
+    background:radial-gradient(circle,rgba(55,189,248,0.22) 0%,rgba(55,189,248,0.0) 62%);}
+  .vignette{position:absolute;inset:0;
+    background:radial-gradient(130% 140% at 55% 45%,transparent 60%,rgba(0,2,5,0.45) 100%);}
+  .grain{position:absolute;inset:0;opacity:0.09;mix-blend-mode:screen;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .grain2{position:absolute;inset:0;opacity:0.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:170px 170px;}
+
+  /* --- AIS LIVE mark --- */
+  .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding-bottom:34px;}
+  .mark{font-family:'Montserrat',sans-serif;font-style:italic;font-weight:900;letter-spacing:-0.03em;
+    line-height:.9;font-size:190px;display:inline-flex;align-items:baseline;position:relative;
+    padding:0 .3em;} /* horizontal padding: italic mark clips at edges otherwise */
+  .mark .ais{color:#FFFFFF;}
+  .mark .gap{display:inline-block;width:.08em;}
+  .mark .live{position:relative;color:#37BDF8;text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+  .mark .dot{position:absolute;top:.08em;left:100%;margin-left:-.04em;width:.16em;height:.16em;
+    border-radius:50%;background:#FF3B30;
+    box-shadow:0 0 .22em rgba(255,80,66,.95), 0 0 .55em rgba(255,59,48,.85), 0 0 1.1em rgba(255,59,48,.5);}
+  .tagline{margin-top:26px;font-family:'Montserrat',sans-serif;font-style:italic;font-weight:700;
+    font-size:44px;letter-spacing:-0.01em;color:#FFFFFF;padding:0 .3em;}
+  .tagline .hl{color:#37BDF8;text-shadow:0 0 40px rgba(55,189,248,.45);margin-left:.45em;}
+
+  /* --- corners --- */
+  .corner{position:absolute;bottom:44px;font-family:'JetBrains Mono',monospace;font-weight:500;
+    font-size:19px;letter-spacing:0.26em;text-transform:uppercase;color:rgba(180,214,238,0.75);}
+  .corner.left{left:56px;}
+  .corner.right{right:56px;}
+</style></head>
+<body>
+  <div class="bg"></div>
+  <div class="bloom b2"></div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+  <div class="grain2"></div>
+
+  <div class="center">
+    <span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span></span>
+    <div class="tagline">Real Projects<span class="hl">Real Revenue</span></div>
+  </div>
+
+  <div class="corner left">Hosted by Nate Herk</div>
+  <div class="corner right">July 11-12, 2026</div>
+</body></html>

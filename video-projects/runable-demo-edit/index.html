@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Runable Demo — Screen + PIP</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    #comp { position: relative; width: 1920px; height: 1080px; background: #000; overflow: hidden; }
+
+    /* Background: left half of the 3840x1080 dual-wide source = the screen recording, 1:1 pixels */
+    .screen-wrap { position: absolute; inset: 0; overflow: hidden; }
+    .screen-wrap video { position: absolute; left: 0; top: 0; width: 3840px; height: 1080px; }
+
+    /* PIP: square crop of the webcam half (source rect x=2560 y=0 w=1080 h=1080), bottom-right */
+    .pip-wrap {
+      position: absolute; right: 28px; bottom: 28px;
+      width: 440px; height: 440px;
+      border-radius: 18px; overflow: hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.55), 0 0 0 3px rgba(255,255,255,0.10);
+      background: #111;
+    }
+    /* scale = 440/1080; offset left = -2560 * scale */
+    .pip-wrap video { position: absolute; left: -1043.0px; top: 0; width: 1564.4px; height: 440px; }
+  </style>
+</head>
+<body>
+  <div data-hf-id="hf-nwpb" id="comp" data-composition-id="comp" data-start="0" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-5jho" id="screen-wrap" class="screen-wrap">
+      <video data-hf-id="hf-hm9z" id="screen-video" src="assets/clean.mp4" muted playsinline data-has-audio="false" data-start="0" data-duration="507.333" data-track-index="3"></video>
+    </div>
+    <div data-hf-id="hf-xqny" id="pip-wrap" class="pip-wrap">
+      <video data-hf-id="hf-ud6n" id="pip-video" src="assets/clean.mp4" muted playsinline data-has-audio="false" data-start="0" data-duration="507.333" data-track-index="4"></video>
+    </div>
+    <audio data-hf-id="hf-y1di" id="main-audio" src="assets/clean.mp4" data-start="0" data-duration="507.333" data-track-index="10" data-volume="1"></audio>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.set({}, {}, 507.333);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["comp"] = tl;
+  </script>
+</body>
+</html>

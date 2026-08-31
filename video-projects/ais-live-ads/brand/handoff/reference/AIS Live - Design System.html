@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AIS Live — Design System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<template id="__bundler_thumbnail" data-bg-color="#07121c">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#07121c"/>
+    <text x="600" y="440" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="900" font-style="italic" font-size="220" letter-spacing="-10">
+      <tspan fill="#ffffff">AIS</tspan><tspan fill="#37bdf8">LIVE</tspan>
+    </text>
+    <text x="600" y="530" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="28" letter-spacing="8" fill="#37bdf8">DESIGN SYSTEM</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────────────────
+     AIS LIVE — DESIGN SYSTEM TOKENS
+     Lifted from AIS Live - Brand & Partnership Sheet (Live Dot)
+     ─────────────────────────────────────────────────────────── */
+  :root {
+    /* Surfaces */
+    --onyx:      #07121c;   /* primary dark surface */
+    --charcoal:  #0a0e14;   /* deepest background */
+    --black:     #000000;
+    --cream:     #f0eee9;   /* primary light surface */
+    --paper:     #ffffff;
+
+    /* Brand accents */
+    --blue:      #37bdf8;   /* PRIMARY accent — “LIVE” */
+    --yellow:    #f5d82a;
+    --coral:     #FF8A5C;
+    --red-live:  #ff3b30;   /* live-dot only */
+
+    /* Ink (text) */
+    --ink:       #2a251f;
+    --ink-soft:  rgba(60,50,40,0.72);
+    --rule:      rgba(60,50,40,0.18);
+    --ink-mute:  rgba(60,50,40,0.55);
+
+    /* Inverse ink (on dark) */
+    --paper-soft: rgba(209,220,232,0.78);
+    --paper-mute: rgba(209,220,232,0.55);
+    --rule-dark:  rgba(255,255,255,0.10);
+
+    /* Type stacks */
+    --font-display: 'Montserrat', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+
+    /* Radii / borders */
+    --radius-card: 4px;
+    --radius-pill: 999px;
+
+    /* Spacing scale (used across sheets) */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 24px;
+    --s-6: 32px;
+    --s-7: 48px;
+    --s-8: 64px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #2a251f;
+    font-family: var(--font-body);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page shell — single long sheet, screen-first ── */
+  .doc {
+    max-width: 1180px;
+    margin: 32px auto;
+    background: var(--cream);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    overflow: hidden;
+  }
+  .band { padding: 64px 72px; position: relative; }
+  .band.dark    { background: var(--onyx);     color: #fff; }
+  .band.charcoal{ background: var(--charcoal); color: #fff; }
+  .band.cream   { background: var(--cream);    color: var(--ink); }
+  .band.paper   { background: var(--paper);    color: var(--ink); }
+
+  /* ── Chrome eyebrow (matches brand sheet) ── */
+  .chrome-top {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; font-weight: 700;
+    color: var(--ink-mute);
+    padding: 14px 72px; border-bottom: 1px solid var(--rule);
+    background: var(--cream);
+  }
+  .chrome-top.dark { color: var(--paper-mute); border-bottom-color: var(--rule-dark); background: var(--onyx); }
+  .mark-mini {
+    display: inline-flex; align-items: baseline;
+    font-family: var(--font-display); font-style: italic; font-weight: 900;
+    font-size: 12px; letter-spacing: -0.02em; color: var(--ink);
+  }
+  .chrome-top.dark .mark-mini { color: #fff; }
+  .mark-mini b { color: var(--blue); font-weight: 900; margin-left: 3px; }
+
+  /* ── Eyebrow label ── */
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.32em;
+    text-transform: uppercase; font-weight: 700; color: var(--blue);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content:''; width:6px;height:6px;border-radius:3px;background:currentColor;}
+
+  /* ── Display + section type ── */
+  .page-title {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 72px; letter-spacing: -0.035em; line-height: 0.92;
+    margin: 16px 0 0;
+  }
+  .page-title em { font-style: italic; color: var(--blue); }
+  .sec-title {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 34px; letter-spacing: -0.035em; line-height: 1;
+    margin: 0 0 8px;
+  }
+  .sec-title em { font-style: italic; color: var(--blue); }
+  .deck {
+    font-family: var(--font-body); font-size: 14px; line-height: 1.6;
+    color: var(--ink-soft); max-width: 600px;
+  }
+  .band.dark .deck, .band.charcoal .deck { color: var(--paper-soft); }
+  .deck b { color: var(--ink); font-weight: 700; }
+  .band.dark .deck b, .band.charcoal .deck b { color: #fff; }
+
+  /* ── Section header (label + rule) ── */
+  .sec-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px; margin-bottom: 24px;
+  }
+  .band.dark .sec-head, .band.charcoal .sec-head { border-bottom-color: var(--rule-dark); }
+  .sec-head .num {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.3em;
+    text-transform: uppercase; font-weight: 700; color: var(--ink-mute);
+  }
+  .band.dark .sec-head .num, .band.charcoal .sec-head .num { color: var(--paper-mute); }
+
+  /* ───────────── Color tokens grid ───────────── */
+  .swatch-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .sw-card {
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: var(--radius-card); overflow: hidden;
+  }
+  .band.dark .sw-card, .band.charcoal .sw-card {
+    background: rgba(255,255,255,0.03); border-color: var(--rule-dark);
+  }
+  .sw-chip { height: 96px; }
+  .sw-meta { padding: 12px 14px; font-family: var(--font-mono); font-size: 10px; line-height: 1.55; }
+  .sw-meta .name { font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+  .band.dark .sw-meta .name, .band.charcoal .sw-meta .name { color: #fff; }
+  .sw-meta .hex { color: var(--ink-mute); letter-spacing: 0.04em; }
+  .band.dark .sw-meta .hex, .band.charcoal .sw-meta .hex { color: var(--paper-mute); }
+  .sw-meta .role { display: block; margin-top: 4px; color: var(--ink-mute); }
+  .band.dark .sw-meta .role, .band.charcoal .sw-meta .role { color: var(--paper-mute); }
+
+  /* ───────────── Type specimens ───────────── */
+  .type-grid {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 28px 32px; align-items: baseline;
+  }
+  .type-key {
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink-mute); padding-top: 10px;
+  }
+  .type-key b { display:block; color: var(--ink); font-weight: 700; letter-spacing: 0.18em; }
+  .band.dark .type-key, .band.charcoal .type-key { color: var(--paper-mute); }
+  .band.dark .type-key b, .band.charcoal .type-key b { color: #fff; }
+  .type-spec { border-bottom: 1px dashed var(--rule); padding-bottom: 24px; }
+  .band.dark .type-spec, .band.charcoal .type-spec { border-bottom-color: var(--rule-dark); }
+  .type-grid > div:nth-last-child(-n+2) .type-spec, .type-grid > .type-key:nth-last-child(2) { border: 0; }
+
+  /* ───────────── Spec table (lifted) ───────────── */
+  .spec {
+    display: grid; grid-template-columns: 140px 1fr;
+    gap: 4px 16px;
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.55;
+    padding: 16px 18px;
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: var(--radius-card);
+  }
+  .band.dark .spec, .band.charcoal .spec {
+    background: rgba(255,255,255,0.03); border-color: var(--rule-dark); color: #d1dce8;
+  }
+  .spec .k { color: var(--ink-mute); letter-spacing: 0.18em; text-transform: uppercase; font-size: 9px; padding-top: 2px; }
+  .band.dark .spec .k, .band.charcoal .spec .k { color: var(--paper-mute); }
+  .spec .v { color: var(--ink); }
+  .band.dark .spec .v, .band.charcoal .spec .v { color: #fff; }
+  .spec .v b { color: #000; font-weight: 700; }
+  .band.dark .spec .v b, .band.charcoal .spec .v b { color: #fff; }
+
+  .sw-inline { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: 6px; border: 1px solid rgba(0,0,0,0.08); }
+
+  /* ───────────── Lockup tile (logo on different grounds) ───────────── */
+  .lockup-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .lockup {
+    display: flex; align-items: center; justify-content: center;
+    height: 150px; border-radius: var(--radius-card);
+    border: 1px solid var(--rule);
+    position: relative; overflow: hidden;
+  }
+  .lockup .label {
+    position: absolute; top: 10px; left: 12px;
+    font-family: var(--font-mono); font-size: 8.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; font-weight: 700;
+    color: var(--ink-mute);
+  }
+  .lockup.on-dark .label, .lockup.on-blue .label, .lockup.on-coral .label, .lockup.on-onyx .label { color: rgba(255,255,255,0.6); }
+  .lockup.on-yellow .label { color: rgba(0,0,0,0.6); }
+
+  /* ───────────── Live mark (the lockup itself) ───────────── */
+  .mark {
+    font-family: var(--font-display); font-style: italic; font-weight: 900;
+    letter-spacing: -0.03em; line-height: 0.9;
+    display: inline-flex; align-items: baseline;
+    position: relative;
+  }
+  .mark .ais { color: #fff; }
+  .mark .gap { display: inline-block; width: 0.08em; }
+  .mark .live {
+    color: var(--blue); position: relative;
+    text-shadow: 0 0 60px rgba(55,189,248,0.55);
+    padding-right: 0.28em;
+  }
+  .mark .dot {
+    position: absolute; top: 0.08em; left: 100%;
+    margin-left: 0.06em;
+    width: 0.16em; height: 0.16em; border-radius: 50%;
+    background: var(--red-live);
+    box-shadow: 0 0 0.7em var(--red-live), 0 0 0.25em var(--red-live);
+  }
+  /* No-dot variant — reset padding so the wordmark sits flush */
+  .mark.no-dot .live { padding-right: 0; }
+
+  /* Theme variants for the mark on different surfaces */
+  .mark.theme-dark   .ais { color: #fff;       }  .mark.theme-dark   .live { color: var(--blue); text-shadow: 0 0 60px rgba(55,189,248,0.55); }
+  .mark.theme-blue   .ais { color: #fff;       }  .mark.theme-blue   .live { color: var(--onyx); text-shadow: none; }
+  .mark.theme-yellow .ais { color: var(--onyx);}  .mark.theme-yellow .live { color: #fff;       text-shadow: none; }
+  .mark.theme-coral  .ais { color: var(--onyx);}  .mark.theme-coral  .live { color: #fff;       text-shadow: none; }
+  .mark.theme-cream  .ais { color: var(--onyx);}  .mark.theme-cream  .live { color: var(--blue);text-shadow: none; }
+  .mark.theme-paper  .ais { color: var(--onyx);}  .mark.theme-paper  .live { color: var(--blue);text-shadow: 0 0 30px rgba(55,189,248,0.25); }
+
+  /* Lockup ground colors */
+  .lockup.on-cream { background: var(--cream); }
+  .lockup.on-paper { background: var(--paper); }
+  .lockup.on-onyx  { background: var(--onyx); }
+  .lockup.on-charcoal{ background: var(--charcoal); }
+  .lockup.on-blue  { background: var(--blue); }
+  .lockup.on-yellow{ background: var(--yellow); }
+  .lockup.on-coral { background: var(--coral); }
+
+  /* ───────────── Live dot pulse (the asset) ───────────── */
+  @keyframes live-pulse {
+    0%, 100% { transform: scale(1);   box-shadow: 0 0 0 0 rgba(255,59,48,0.7), 0 0 8px rgba(255,59,48,0.8); }
+    50%      { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255,59,48,0),   0 0 12px rgba(255,59,48,1); }
+  }
+  .live-dot {
+    display: inline-block;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--red-live);
+    animation: live-pulse 1.6s ease-in-out infinite;
+  }
+  .live-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px 6px 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; font-weight: 700; color: #fff;
+  }
+  .band.cream .live-pill, .band.paper .live-pill {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.12);
+    color: var(--ink);
+  }
+
+  /* ───────────── Background patterns ───────────── */
+  .cmd-bg {
+    position: relative; height: 120px; border-radius: var(--radius-card);
+    border: 1px solid var(--rule-dark);
+    background: var(--onyx);
+    overflow: hidden;
+  }
+  .cmd-bg::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(55,189,248,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(55,189,248,0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* ───────────── Component cards ───────────── */
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .comp {
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: var(--radius-card); padding: 18px 18px 16px;
+  }
+  .band.dark .comp, .band.charcoal .comp {
+    background: rgba(255,255,255,0.03); border-color: var(--rule-dark);
+  }
+  .comp .label {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.28em;
+    text-transform: uppercase; font-weight: 700; color: var(--ink-mute);
+    margin-bottom: 14px;
+  }
+  .band.dark .comp .label, .band.charcoal .comp .label { color: var(--paper-mute); }
+
+  /* Inline tabular row — used as a small spec callout */
+  .kv {
+    display: grid; grid-template-columns: 110px 1fr; gap: 6px 14px;
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.6;
+  }
+  .kv .k { color: var(--ink-mute); letter-spacing: 0.16em; text-transform: uppercase; font-size: 9px; padding-top: 3px; }
+  .kv .v { color: var(--ink); }
+  .band.dark .kv .v, .band.charcoal .kv .v { color: #fff; }
+  .band.dark .kv .k, .band.charcoal .kv .k { color: var(--paper-mute); }
+
+  /* Footer */
+  .foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 72px;
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; font-weight: 700; color: var(--ink-mute);
+    border-top: 1px solid var(--rule); background: var(--cream);
+  }
+
+  /* Stack helpers */
+  .stack-6 > * + * { margin-top: 24px; }
+  .stack-7 > * + * { margin-top: 32px; }
+  .stack-8 > * + * { margin-top: 48px; }
+  .row { display: flex; gap: 20px; align-items: stretch; }
+  .row > * { flex: 1; min-width: 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+</style>
+</head>
+<body>
+  <div class="doc">
+
+    <!-- ─────────── Top eyebrow chrome ─────────── -->
+    <div class="chrome-top dark">
+      <span class="mark-mini" style="color:#fff">AIS<b>LIVE</b></span>
+      <span>Design System · v1.0 · 2026</span>
+    </div>
+
+    <!-- ─────────── Cover band ─────────── -->
+    <div class="band dark">
+      <div class="eyebrow" style="color:var(--coral)">Design System · 2026</div>
+      <h1 class="page-title" style="color:#fff">AIS<em>LIVE</em></h1>
+      <p class="deck" style="margin-top:18px">
+        The visual system used across the AIS Live brand & partnership sheet, landing pages, shift mockups,
+        favorites lists and form banners. Tokens, type, lockups and live-dot specs in one reference.
+      </p>
+
+      <div style="margin-top:36px; display:flex; flex-direction:column; gap:24px">
+        <span class="mark theme-dark" style="font-size:120px">
+          <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+        </span>
+        <span class="mark theme-dark no-dot" style="font-size:120px">
+          <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- ─────────── 01 · Color ─────────── -->
+    <div class="band cream">
+      <div class="sec-head">
+        <h2 class="sec-title">Color <em>tokens</em></h2>
+        <span class="num">01 · Palette</span>
+      </div>
+
+      <div class="eyebrow" style="margin-bottom:14px">Surfaces</div>
+      <div class="swatch-grid" style="margin-bottom:32px">
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--onyx)"></div>
+          <div class="sw-meta"><div class="name">Onyx</div><div class="hex">#07121C</div><span class="role">Primary dark surface</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--charcoal)"></div>
+          <div class="sw-meta"><div class="name">Charcoal</div><div class="hex">#0A0E14</div><span class="role">Deepest background</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--cream); border-bottom:1px solid var(--rule)"></div>
+          <div class="sw-meta"><div class="name">Cream</div><div class="hex">#F0EEE9</div><span class="role">Primary light surface</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--paper); border-bottom:1px solid var(--rule)"></div>
+          <div class="sw-meta"><div class="name">Paper</div><div class="hex">#FFFFFF</div><span class="role">Cards, spec tables</span></div>
+        </div>
+      </div>
+
+      <div class="eyebrow" style="margin-bottom:14px">Brand accents</div>
+      <div class="swatch-grid" style="margin-bottom:32px">
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--blue)"></div>
+          <div class="sw-meta"><div class="name">Blue · Primary</div><div class="hex">#37BDF8</div><span class="role">“LIVE”, links, accents</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--yellow)"></div>
+          <div class="sw-meta"><div class="name">Yellow</div><div class="hex">#F5D82A</div><span class="role">Highlights, callouts</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--coral)"></div>
+          <div class="sw-meta"><div class="name">Coral</div><div class="hex">#FF8A5C</div><span class="role">Secondary eyebrow, glow</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--red-live)"></div>
+          <div class="sw-meta"><div class="name">Live Red</div><div class="hex">#FF3B30</div><span class="role">Live-dot ONLY</span></div>
+        </div>
+      </div>
+
+      <div class="eyebrow" style="margin-bottom:14px">Ink</div>
+      <div class="swatch-grid">
+        <div class="sw-card">
+          <div class="sw-chip" style="background:var(--ink)"></div>
+          <div class="sw-meta"><div class="name">Ink</div><div class="hex">#2A251F</div><span class="role">Body text on cream</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:rgba(60,50,40,0.72)"></div>
+          <div class="sw-meta"><div class="name">Ink Soft</div><div class="hex">rgba(60,50,40,.72)</div><span class="role">Deck / paragraph copy</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:rgba(60,50,40,0.55)"></div>
+          <div class="sw-meta"><div class="name">Ink Mute</div><div class="hex">rgba(60,50,40,.55)</div><span class="role">Eyebrow / mono labels</span></div>
+        </div>
+        <div class="sw-card">
+          <div class="sw-chip" style="background:rgba(60,50,40,0.18)"></div>
+          <div class="sw-meta"><div class="name">Rule</div><div class="hex">rgba(60,50,40,.18)</div><span class="role">Hairlines, dividers</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────── 02 · Type ─────────── -->
+    <div class="band paper">
+      <div class="sec-head">
+        <h2 class="sec-title">Type <em>system</em></h2>
+        <span class="num">02 · Typography</span>
+      </div>
+
+      <p class="deck" style="margin-bottom:36px">
+        Three families. <b>Montserrat</b> (italic, 900) carries the brand voice and all display.
+        <b>Inter</b> sets body and decks. <b>JetBrains Mono</b> sets eyebrows, specs and any tabular data.
+      </p>
+
+      <div class="type-grid">
+        <div class="type-key"><b>Display XL</b>Montserrat<br>900 italic<br>150 / 0.9 / -0.04em</div>
+        <div class="type-spec">
+          <div style="font-family:var(--font-display);font-style:italic;font-weight:900;font-size:96px;letter-spacing:-0.04em;line-height:0.9;color:var(--ink)">
+            Real <em style="color:var(--blue)">Revenue</em>.
+          </div>
+        </div>
+
+        <div class="type-key"><b>Page Title</b>Montserrat<br>900<br>56–72 / 0.92 / -0.035em</div>
+        <div class="type-spec">
+          <h1 class="page-title" style="margin:0;font-size:60px">Brand &amp; <em>Partnership</em></h1>
+        </div>
+
+        <div class="type-key"><b>Section</b>Montserrat<br>900<br>30–34 / 1 / -0.035em</div>
+        <div class="type-spec">
+          <h2 class="sec-title" style="margin:0">How it <em>works</em></h2>
+        </div>
+
+        <div class="type-key"><b>Eyebrow</b>JetBrains Mono<br>700<br>10 / +0.32em / UPPER</div>
+        <div class="type-spec">
+          <span class="eyebrow">Brand &amp; Partnership Sheet · 2026</span>
+        </div>
+
+        <div class="type-key"><b>Deck / Body</b>Inter<br>400 / 700 bold<br>13.5–14 / 1.55–1.6</div>
+        <div class="type-spec">
+          <p class="deck" style="max-width:520px;margin:0">
+            Real projects. <b>Real revenue.</b> AIS Live pairs working creators with partners
+            shipping under live deadlines — measurable shifts, not impressions.
+          </p>
+        </div>
+
+        <div class="type-key"><b>Mono Spec</b>JetBrains Mono<br>400 / 700<br>10–11 / 1.55</div>
+        <div class="type-spec">
+          <div class="spec" style="max-width:480px">
+            <span class="k">Mark</span><span class="v"><b>AIS LIVE</b> · italic 900</span>
+            <span class="k">Accent</span><span class="v"><span class="sw-inline" style="background:var(--blue)"></span><b>#37BDF8</b></span>
+            <span class="k">Live dot</span><span class="v"><span class="sw-inline" style="background:var(--red-live)"></span><b>#FF3B30</b></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────── 03 · The Mark ─────────── -->
+    <div class="band charcoal">
+      <div class="sec-head">
+        <h2 class="sec-title" style="color:#fff">The <em>mark</em></h2>
+        <span class="num">03 · Lockup</span>
+      </div>
+
+      <p class="deck" style="margin-bottom:28px">
+        The wordmark is <b>Montserrat 900 italic</b>, set tight at <b>-0.03em</b>.
+        “AIS” takes the surface’s ink color, “LIVE” takes the primary blue (or its inverse on warm grounds),
+        and a small red <b>live-dot</b> sits at the top-right baseline — the one element that never changes color.
+      </p>
+
+      <!-- Hero marks: with-dot + no-dot, side by side -->
+      <div class="grid-2" style="margin-bottom:24px">
+        <div style="background:var(--onyx); border:1px solid var(--rule-dark); border-radius:var(--radius-card); padding:48px; display:flex; flex-direction:column; align-items:center; gap:16px; position:relative; overflow:hidden">
+          <span class="mark theme-dark" style="font-size:96px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+          <span style="font-family:var(--font-mono); font-size:9px; letter-spacing:0.28em; text-transform:uppercase; font-weight:700; color:var(--paper-mute)">Primary · with live dot</span>
+        </div>
+        <div style="background:var(--onyx); border:1px solid var(--rule-dark); border-radius:var(--radius-card); padding:48px; display:flex; flex-direction:column; align-items:center; gap:16px; position:relative; overflow:hidden">
+          <span class="mark theme-dark no-dot" style="font-size:96px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+          <span style="font-family:var(--font-mono); font-size:9px; letter-spacing:0.28em; text-transform:uppercase; font-weight:700; color:var(--paper-mute)">Wordmark · no dot</span>
+        </div>
+      </div>
+
+      <!-- Color variants — with dot -->
+      <div class="eyebrow" style="color:var(--paper-mute); margin-bottom:14px">With live dot</div>
+      <div class="lockup-grid">
+        <div class="lockup on-cream"><span class="label">on cream</span>
+          <span class="mark theme-cream" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+        </div>
+        <div class="lockup on-onyx"><span class="label">on onyx</span>
+          <span class="mark theme-dark" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+        </div>
+        <div class="lockup on-paper"><span class="label">on paper</span>
+          <span class="mark theme-paper" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+        </div>
+        <div class="lockup on-blue"><span class="label">on blue</span>
+          <span class="mark theme-blue" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+        </div>
+        <div class="lockup on-yellow"><span class="label">on yellow</span>
+          <span class="mark theme-yellow" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+        </div>
+        <div class="lockup on-coral"><span class="label">on coral</span>
+          <span class="mark theme-coral" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="dot"></span></span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Color variants — no dot -->
+      <div class="eyebrow" style="color:var(--paper-mute); margin:32px 0 14px">Wordmark only · no dot</div>
+      <div class="lockup-grid">
+        <div class="lockup on-cream"><span class="label">on cream</span>
+          <span class="mark theme-cream no-dot" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+        </div>
+        <div class="lockup on-onyx"><span class="label">on onyx</span>
+          <span class="mark theme-dark no-dot" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+        </div>
+        <div class="lockup on-paper"><span class="label">on paper</span>
+          <span class="mark theme-paper no-dot" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+        </div>
+        <div class="lockup on-blue"><span class="label">on blue</span>
+          <span class="mark theme-blue no-dot" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+        </div>
+        <div class="lockup on-yellow"><span class="label">on yellow</span>
+          <span class="mark theme-yellow no-dot" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+        </div>
+        <div class="lockup on-coral"><span class="label">on coral</span>
+          <span class="mark theme-coral no-dot" style="font-size:48px">
+            <span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Anatomy spec -->
+      <div class="spec" style="margin-top:24px">
+        <span class="k">Family</span>      <span class="v"><b>Montserrat</b> · 900 italic</span>
+        <span class="k">Tracking</span>    <span class="v">-0.03em (mark) · -0.035em (display)</span>
+        <span class="k">Line height</span> <span class="v">0.9</span>
+        <span class="k">Word gap</span>    <span class="v">0.08em (between AIS and LIVE)</span>
+        <span class="k">Glow</span>        <span class="v">on dark only · text-shadow 0 0 60px rgba(55,189,248,0.55)</span>
+        <span class="k">Live dot</span>    <span class="v"><span class="sw-inline" style="background:var(--red-live)"></span> #FF3B30 · 0.16em ⌀ · top:0.08em · margin-left:0.06em from “E” (tight)</span>
+        <span class="k">Variants</span>    <span class="v"><b>Primary</b> (with dot) · <b>Wordmark</b> (no dot, .no-dot class)</span>
+      </div>
+    </div>
+
+    <!-- ─────────── 04 · Live dot + signals ─────────── -->
+    <div class="band cream">
+      <div class="sec-head">
+        <h2 class="sec-title">Live <em>signal</em></h2>
+        <span class="num">04 · Motion</span>
+      </div>
+
+      <p class="deck" style="margin-bottom:28px">
+        The pulsing red dot is the only ambient motion in the system. It pulses on a <b>1.6s</b> ease-in-out
+        loop with an outward shadow ring. Animation is killed in print to avoid hard-edged artifacts.
+      </p>
+
+      <div class="grid-2">
+        <div class="comp">
+          <div class="label">Standalone dot</div>
+          <div style="display:flex;align-items:center;gap:18px;padding:16px 0">
+            <span class="live-dot" style="width:14px;height:14px"></span>
+            <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-soft)">1.6s · ease-in-out · infinite</span>
+          </div>
+          <div class="kv">
+            <span class="k">Color</span><span class="v">#FF3B30</span>
+            <span class="k">Pulse</span><span class="v">scale 1 → 1.1 → 1</span>
+            <span class="k">Ring</span><span class="v">0 → 8px outward, fading rgba</span>
+          </div>
+        </div>
+
+        <div class="comp" style="background:var(--onyx);border-color:var(--rule-dark);color:#fff">
+          <div class="label" style="color:var(--paper-mute)">Live pill</div>
+          <div style="display:flex;align-items:center;gap:14px;padding:16px 0">
+            <span class="live-pill"><span class="live-dot"></span>On Air</span>
+            <span class="live-pill"><span class="live-dot"></span>Now Live · 4 shifts</span>
+          </div>
+          <div class="kv">
+            <span class="k" style="color:var(--paper-mute)">Padding</span><span class="v" style="color:#fff">6 12 / 6 10</span>
+            <span class="k" style="color:var(--paper-mute)">Border</span><span class="v" style="color:#fff">1px rgba(255,255,255,.18)</span>
+            <span class="k" style="color:var(--paper-mute)">Type</span><span class="v" style="color:#fff">Mono · 10 · +0.22em</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────── 05 · Components ─────────── -->
+    <div class="band paper">
+      <div class="sec-head">
+        <h2 class="sec-title">Core <em>components</em></h2>
+        <span class="num">05 · Components</span>
+      </div>
+
+      <div class="comp-grid">
+        <div class="comp">
+          <div class="label">Eyebrow</div>
+          <div style="padding:8px 0 14px"><span class="eyebrow">Brand &amp; Partnership Sheet · 2026</span></div>
+          <div class="kv">
+            <span class="k">Type</span><span class="v">Mono · 10/700 · +0.32em · UPPER</span>
+            <span class="k">Color</span><span class="v">var(--blue), var(--coral), or current</span>
+            <span class="k">Bullet</span><span class="v">6×6 square, currentColor, gap 8</span>
+          </div>
+        </div>
+
+        <div class="comp">
+          <div class="label">Section header</div>
+          <div class="sec-head" style="margin:0; border-bottom:1px solid var(--rule); padding-bottom:10px">
+            <h2 class="sec-title" style="margin:0;font-size:24px">How it <em>works</em></h2>
+            <span class="num">02 · Section</span>
+          </div>
+          <div class="kv" style="margin-top:14px">
+            <span class="k">Title</span><span class="v">Montserrat 900 · 30–34</span>
+            <span class="k">Number</span><span class="v">Mono · 10 · +0.3em</span>
+            <span class="k">Rule</span><span class="v">1px var(--rule)</span>
+          </div>
+        </div>
+
+        <div class="comp">
+          <div class="label">Spec table</div>
+          <div class="spec" style="margin-bottom:14px">
+            <span class="k">Mark</span><span class="v"><b>AIS LIVE</b></span>
+            <span class="k">Accent</span><span class="v"><span class="sw-inline" style="background:var(--blue)"></span>#37BDF8</span>
+            <span class="k">Surface</span><span class="v"><span class="sw-inline" style="background:var(--onyx)"></span>#07121C</span>
+          </div>
+          <div class="kv">
+            <span class="k">Grid</span><span class="v">140px / 1fr</span>
+            <span class="k">Type</span><span class="v">Mono · 11 · 1.55</span>
+            <span class="k">Card</span><span class="v">paper, rule, radius 4</span>
+          </div>
+        </div>
+
+        <div class="comp">
+          <div class="label">Mark mini (chrome)</div>
+          <div style="padding:10px 0 14px">
+            <span class="mark-mini">AIS<b>LIVE</b></span>
+          </div>
+          <div class="kv">
+            <span class="k">Type</span><span class="v">Montserrat 900 italic · 11–12</span>
+            <span class="k">Use</span><span class="v">Page eyebrow / footer</span>
+            <span class="k">Spacing</span><span class="v">3px between AIS and LIVE</span>
+          </div>
+        </div>
+
+        <div class="comp">
+          <div class="label">Command-deck grid</div>
+          <div class="cmd-bg"></div>
+          <div class="kv" style="margin-top:14px">
+            <span class="k">Lines</span><span class="v">rgba(55,189,248, .06–.07)</span>
+            <span class="k">Cell</span><span class="v">24 × 24</span>
+            <span class="k">Use</span><span class="v">Onyx covers, dark hero only</span>
+          </div>
+        </div>
+
+        <div class="comp">
+          <div class="label">Glow blob (decor)</div>
+          <div style="position:relative; height:120px; border-radius:var(--radius-card); border:1px solid var(--rule); overflow:hidden; background:var(--onyx)">
+            <div style="position:absolute; top:-40px; right:-30px; width:200px; height:200px; background:var(--blue); filter:blur(80px); opacity:0.30; border-radius:50%"></div>
+            <div style="position:absolute; bottom:-40px; left:-30px; width:160px; height:160px; background:var(--coral); filter:blur(90px); opacity:0.18; border-radius:50%"></div>
+          </div>
+          <div class="kv" style="margin-top:14px">
+            <span class="k">Filter</span><span class="v">blur(80–140px)</span>
+            <span class="k">Opacity</span><span class="v">0.16 – 0.30</span>
+            <span class="k">Print</span><span class="v">data-print-hide → display:none</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────── 06 · Surfaces & sheets ─────────── -->
+    <div class="band cream">
+      <div class="sec-head">
+        <h2 class="sec-title">Surfaces &amp; <em>sheets</em></h2>
+        <span class="num">06 · Layout</span>
+      </div>
+
+      <p class="deck" style="margin-bottom:28px">
+        Sheets are <b>US Letter</b> (8.5 × 11in), printed full-bleed with the cream / onyx / charcoal grounds carried
+        edge-to-edge. Inner padding is <b>0.6in</b>; chrome eyebrow + footer rules sit at <b>0.35in</b> from the edge.
+      </p>
+
+      <div class="row">
+        <div style="background:var(--cream); border:1px solid var(--rule); border-radius:var(--radius-card); height:240px; position:relative; overflow:hidden">
+          <div style="position:absolute; top:14px; left:18px; right:18px; display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:8px; letter-spacing:0.3em; text-transform:uppercase; font-weight:700; color:var(--ink-mute); padding-bottom:6px; border-bottom:1px solid var(--rule)">
+            <span class="mark-mini">AIS<b>LIVE</b></span>
+            <span>Sheet · Cream</span>
+          </div>
+          <div style="position:absolute; bottom:14px; left:18px; right:18px; display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:8px; letter-spacing:0.3em; text-transform:uppercase; font-weight:700; color:var(--ink-mute); padding-top:6px; border-top:1px solid var(--rule)">
+            <span>Brand &amp; Partnership · 2026</span><span>01 / 06</span>
+          </div>
+          <div style="position:absolute; left:18px; top:50%; transform:translateY(-50%);">
+            <span class="eyebrow">Cover</span>
+            <div class="sec-title" style="margin-top:8px;font-size:22px">Cream <em>ground</em></div>
+          </div>
+        </div>
+
+        <div style="background:var(--onyx); border:1px solid var(--rule-dark); border-radius:var(--radius-card); height:240px; position:relative; overflow:hidden; color:#fff">
+          <div style="position:absolute; top:14px; left:18px; right:18px; display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:8px; letter-spacing:0.3em; text-transform:uppercase; font-weight:700; color:var(--paper-mute); padding-bottom:6px; border-bottom:1px solid var(--rule-dark)">
+            <span class="mark-mini" style="color:#fff">AIS<b>LIVE</b></span>
+            <span>Sheet · Onyx</span>
+          </div>
+          <div style="position:absolute; bottom:14px; left:18px; right:18px; display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:8px; letter-spacing:0.3em; text-transform:uppercase; font-weight:700; color:var(--paper-mute); padding-top:6px; border-top:1px solid var(--rule-dark)">
+            <span>Brand &amp; Partnership · 2026</span><span>02 / 06</span>
+          </div>
+          <div style="position:absolute; left:18px; top:50%; transform:translateY(-50%);">
+            <span class="eyebrow">Cover</span>
+            <div class="sec-title" style="margin-top:8px;font-size:22px;color:#fff">Onyx <em>ground</em></div>
+          </div>
+        </div>
+
+        <div style="background:var(--charcoal); border:1px solid var(--rule-dark); border-radius:var(--radius-card); height:240px; position:relative; overflow:hidden; color:#fff">
+          <div style="position:absolute; top:14px; left:18px; right:18px; display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:8px; letter-spacing:0.3em; text-transform:uppercase; font-weight:700; color:var(--paper-mute); padding-bottom:6px; border-bottom:1px solid var(--rule-dark)">
+            <span class="mark-mini" style="color:#fff">AIS<b>LIVE</b></span>
+            <span>Sheet · Charcoal</span>
+          </div>
+          <div style="position:absolute; bottom:14px; left:18px; right:18px; display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:8px; letter-spacing:0.3em; text-transform:uppercase; font-weight:700; color:var(--paper-mute); padding-top:6px; border-top:1px solid var(--rule-dark)">
+            <span>Brand &amp; Partnership · 2026</span><span>03 / 06</span>
+          </div>
+          <div style="position:absolute; left:18px; top:50%; transform:translateY(-50%);">
+            <span class="eyebrow">Detail</span>
+            <div class="sec-title" style="margin-top:8px;font-size:22px;color:#fff">Charcoal <em>ground</em></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec" style="margin-top:24px">
+        <span class="k">Sheet</span>      <span class="v">8.5 × 11in · US Letter · full-bleed</span>
+        <span class="k">Inner pad</span>  <span class="v">0.6in (top: 0.85in to clear chrome eyebrow)</span>
+        <span class="k">Chrome</span>     <span class="v">0.35in from edge · 1px rule · Mono 8 · +0.3em</span>
+        <span class="k">Radii</span>      <span class="v">4px (cards, specs) · 999px (pills)</span>
+        <span class="k">Print rule</span> <span class="v">strip blur, backdrop-filter, box-shadow, [data-print-hide]</span>
+      </div>
+    </div>
+
+    <!-- ─────────── Footer ─────────── -->
+    <div class="foot">
+      <span class="mark-mini">AIS<b>LIVE</b> · Design System v1.0</span>
+      <span>2026 · Internal Reference</span>
+    </div>
+  </div>
+</body>
+</html>

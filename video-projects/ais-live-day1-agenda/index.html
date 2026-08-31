@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>AIS LIVE — Day 1 Agenda Walkthrough (180s)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --yellow:#f5d82a; --red-live:#ff3b30;
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:26px;padding:96px 120px 150px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.32em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;text-shadow:0 0 16px rgba(55,189,248,.45);}
+
+      /* big gradient session time */
+      .time{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:150px;line-height:1;
+        letter-spacing:-.04em;padding:.06em .14em .2em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 80px rgba(55,189,248,.55);}
+      .time.coral{background:linear-gradient(180deg,#ffdcc0 0%,#ff8a5c 56%,#e5673a 100%);
+        -webkit-background-clip:text;background-clip:text;text-shadow:0 0 80px rgba(255,138,92,.5);}
+      .time.small{font-size:110px;}
+
+      .lnwrap{line-height:0;}
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:1em;line-height:1.16;
+        letter-spacing:-.03em;max-width:1640px;}
+      .ln.hero{font-size:170px;}
+      /* background-clip:text only paints inside each word's box — italic 900 overhang
+         needs generous padding or glyph edges render transparent (looks cut). */
+      .ln .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .ln .wd.aco{background:linear-gradient(180deg,#ffdcc0 0%,#ff8a5c 56%,#e5673a 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(255,138,92,.58);}
+      .ln .wd.acy{background:linear-gradient(180deg,#fdf2b0 0%,#f5d82a 56%,#cbb114 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(245,216,42,.5);}
+
+      .spkline{font-family:var(--font-mono);font-weight:700;font-size:33px;letter-spacing:.08em;color:#fff;
+        will-change:transform,opacity;max-width:1560px;}
+      .spkline.dim{color:rgba(209,220,232,.78);font-weight:500;font-style:italic;font-family:var(--font-body);font-size:36px;letter-spacing:0;}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:39px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+
+      /* sponsor logos — white marks with a soft blue halo */
+      .slogo{display:flex;justify-content:center;will-change:transform,opacity;}
+      .slogo img{display:block;filter:drop-shadow(0 0 36px rgba(55,189,248,.30));}
+      .slogo.hero{padding:12px 0 6px;}
+
+      /* concurrent workshop split cards */
+      .wsrow{display:flex;gap:44px;justify-content:center;transform-style:preserve-3d;}
+      .wscard{width:640px;min-height:300px;border-radius:22px;padding:44px 48px;text-align:left;
+        display:flex;flex-direction:column;gap:18px;justify-content:center;will-change:transform,opacity;
+        background:linear-gradient(180deg, rgba(9,20,32,0.92), rgba(6,14,22,0.94));
+        border:1px solid rgba(255,255,255,.10);box-shadow:0 40px 100px rgba(0,0,0,.5);}
+      .wstrack{font-family:var(--font-mono);font-weight:700;font-size:22px;letter-spacing:.30em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.45);}
+      .wstitle{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:48px;line-height:1.18;
+        letter-spacing:-.02em;color:#fff;text-shadow:0 0 28px rgba(255,255,255,.18);padding-bottom:.08em;
+        text-wrap:balance;hyphens:none;-webkit-hyphens:none;}
+      .wsspk{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.06em;color:rgba(180,214,238,.9);}
+
+      /* VIP 5-room list */
+      .viplist{display:flex;flex-direction:column;gap:20px;width:max-content;max-width:1500px;}
+      .vrow{display:flex;align-items:baseline;gap:24px;text-align:left;will-change:transform,opacity;}
+      .varr{font-family:var(--font-display);font-weight:900;font-size:44px;color:var(--blue);
+        text-shadow:0 0 22px rgba(55,189,248,.55);}
+      .vtitle{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:52px;letter-spacing:-.02em;
+        color:#fff;text-shadow:0 0 26px rgba(255,255,255,.16);white-space:nowrap;padding-right:.14em;}
+      .vname{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.06em;color:var(--blue);
+        text-shadow:0 0 14px rgba(55,189,248,.45);white-space:nowrap;}
+
+      /* ---------- day progress rail ---------- */
+      #rail{z-index:5;}
+      .railwrap{position:absolute;left:150px;bottom:74px;width:1200px;will-change:opacity,transform;}
+      .railline{position:relative;height:4px;border-radius:2px;background:rgba(209,220,232,.16);overflow:visible;}
+      .railfill{position:absolute;inset:0;border-radius:2px;transform:scaleX(0);transform-origin:0 50%;
+        background:linear-gradient(90deg,rgba(55,189,248,.5),var(--blue));
+        box-shadow:0 0 14px rgba(55,189,248,.5);will-change:transform;}
+      .railhead{position:absolute;top:-5px;left:-7px;width:14px;height:14px;border-radius:50%;background:#fff;
+        box-shadow:0 0 16px rgba(55,189,248,.9),0 0 5px #fff;will-change:transform;}
+      .tick{position:absolute;top:-7px;width:0;}
+      .tick i{display:block;width:2px;height:18px;margin-left:-1px;background:rgba(209,220,232,.30);}
+      .tick span{position:absolute;top:24px;left:0;transform:translateX(-50%);
+        font-family:var(--font-mono);font-weight:700;font-size:19px;letter-spacing:.18em;color:rgba(209,220,232,.55);}
+      .raillab{position:absolute;top:-44px;right:0;white-space:nowrap;
+        font-family:var(--font-mono);font-weight:700;font-size:19px;letter-spacing:.24em;color:rgba(209,220,232,.45);}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-u6hx" id="stage" data-composition-id="cmp-day1-agenda" data-start="0" data-duration="180" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-mm1g" id="bg" class="clip" data-start="0" data-duration="180" data-track-index="0">
+        <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+        <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+        <div data-hf-id="hf-hqud" class="beam"></div>
+        <div data-hf-id="hf-uo31" class="glow blue"></div>
+        <div data-hf-id="hf-jtmg" class="glow coral"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-h60x" class="grain"></div>
+      </div>
+      <div data-hf-id="hf-9q2o" class="whip clip" id="whip" data-start="0" data-duration="180" data-track-index="1"></div>
+      <div data-hf-id="hf-b9z2" id="markbug" class="clip" data-start="0" data-duration="180" data-track-index="2">
+        <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-ohjn" class="ring"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+      </div>
+      <div data-hf-id="hf-lip2" id="rail" class="clip" data-start="0" data-duration="180" data-track-index="3">
+        <div data-hf-id="hf-vm0s" class="railwrap">
+          <div data-hf-id="hf-jlhi" class="railline"><div data-hf-id="hf-yc1m" class="railfill" id="railfill"></div></div>
+          <div data-hf-id="hf-57yi" class="railhead" id="railhead"></div>
+          <div data-hf-id="hf-dogi" class="tick" style="left:0.0px"><i data-hf-id="hf-wt6k"></i><span data-hf-id="hf-k7pu">9AM</span></div><div data-hf-id="hf-rdba" class="tick" style="left:279.6px"><i data-hf-id="hf-zeb8"></i><span data-hf-id="hf-6z7l">11AM</span></div><div data-hf-id="hf-diib" class="tick" style="left:559.2px"><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-ewt3">1PM</span></div><div data-hf-id="hf-dvcv" class="tick" style="left:838.8px"><i data-hf-id="hf-ylp6"></i><span data-hf-id="hf-1z59">3PM</span></div><div data-hf-id="hf-lrg7" class="tick" style="left:1118.4px"><i data-hf-id="hf-0l8b"></i><span data-hf-id="hf-qx4b">5PM</span></div>
+          <div data-hf-id="hf-k175" class="raillab">ALL TIMES CT</div>
+        </div>
+      </div>
+
+      <div data-hf-id="hf-kwiw" id="camera">
+      <section data-hf-id="hf-kfnf" id="sc0" class="scene clip" data-start="0" data-duration="9.9" data-track-index="12">
+        <div data-hf-id="hf-lm34" class="inner">
+        <div data-hf-id="hf-5one" class="eyebrow">SATURDAY · JULY 11 · ALL TIMES CENTRAL</div><div data-hf-id="hf-7jiu" class="ln hero"><span data-hf-id="hf-4wzi" class="wd">Day</span><span data-hf-id="hf-oh73" class="wd">1:</span><span data-hf-id="hf-ohtw" class="wd ac">Build</span><span data-hf-id="hf-ugn4" class="wd ac">Day.</span></div><div data-hf-id="hf-2kzc" class="sub">Here's everything happening today.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-vnto" id="sc1" class="scene clip" data-start="9.5" data-duration="7.4" data-track-index="13">
+        <div data-hf-id="hf-bug8" class="inner">
+        <div data-hf-id="hf-20lp" class="eyebrow">NETWORKING · 30 MIN</div>
+        <div data-hf-id="hf-qolk" class="time blue">9:00 AM</div>
+        <div data-hf-id="hf-iw82" style="font-size:104px" class="lnwrap"><div data-hf-id="hf-gmyq" class="ln"><span data-hf-id="hf-zpe5" class="wd">Doors</span><span data-hf-id="hf-hk84" class="wd">Open</span><span data-hf-id="hf-m1tp" class="wd">+</span><span data-hf-id="hf-w9ef" class="wd ac">Visit</span><span data-hf-id="hf-k9k7" class="wd ac">the</span><span data-hf-id="hf-idr8" class="wd ac">Expo</span></div></div>
+        <div data-hf-id="hf-b680" class="spkline dim">Lobby + sponsor booths open</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-tsni" id="sc2" class="scene clip" data-start="16.5" data-duration="8.9" data-track-index="14">
+        <div data-hf-id="hf-anj5" class="inner">
+        <div data-hf-id="hf-uyjw" class="eyebrow">VIP EXCLUSIVE · 45 MIN</div>
+        <div data-hf-id="hf-2fm1" class="time blue">9:30 AM</div>
+        <div data-hf-id="hf-uxay" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-ru7a" class="ln"><span data-hf-id="hf-y7fr" class="wd">VIP</span><span data-hf-id="hf-crqm" class="wd ac">Q&amp;A</span><span data-hf-id="hf-qhrw" class="wd">with</span><span data-hf-id="hf-ir0a" class="wd">Nate</span></div></div>
+        <div data-hf-id="hf-gqf0" class="spkline">Nate Herk</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-yb5k" id="sc3" class="scene clip" data-start="25" data-duration="8.4" data-track-index="15">
+        <div data-hf-id="hf-b1u6" class="inner">
+        <div data-hf-id="hf-1fbb" class="eyebrow">MAIN STAGE · 15 MIN</div>
+        <div data-hf-id="hf-drzi" class="time blue">10:15 AM</div>
+        <div data-hf-id="hf-3ake" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-s8ib" class="ln"><span data-hf-id="hf-da4g" class="wd">Welcome</span><span data-hf-id="hf-70q5" class="wd">to</span><span data-hf-id="hf-7jpv" class="wd ac">AIS</span><span data-hf-id="hf-jemm" class="wd ac">LIVE</span></div></div>
+        <div data-hf-id="hf-17as" class="spkline">Nate Herk</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-uwx7" id="sc4" class="scene clip" data-start="33" data-duration="11.4" data-track-index="16">
+        <div data-hf-id="hf-9ux3" class="inner">
+        <div data-hf-id="hf-14yy" class="eyebrow">MAIN STAGE · PANEL · 55 MIN</div>
+        <div data-hf-id="hf-amah" class="time blue">10:30 AM</div>
+        <div data-hf-id="hf-jm2u" style="font-size:104px" class="lnwrap"><div data-hf-id="hf-smtc" class="ln"><span data-hf-id="hf-eewx" class="wd">Anatomy</span><span data-hf-id="hf-rtrp" class="wd">of</span><span data-hf-id="hf-pirw" class="wd ac">Three</span><span data-hf-id="hf-ttu8" class="wd ac">Real</span><span data-hf-id="hf-ybjn" class="wd ac">Deals</span></div></div>
+        <div data-hf-id="hf-40jj" class="spkline">Aidan Finnegan · Wyatt Lyonsmith · Glenn Marcus · Nate Herk</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-8spk" id="sc5" class="scene clip" data-start="44" data-duration="7.4" data-track-index="17">
+        <div data-hf-id="hf-a984" class="inner">
+        <div data-hf-id="hf-u6iz" class="eyebrow">LIVE DEBRIEF · 15 MIN</div>
+        <div data-hf-id="hf-4mv0" class="time blue">11:25 AM</div>
+        <div data-hf-id="hf-k0dv" style="font-size:104px" class="lnwrap"><div data-hf-id="hf-puo5" class="ln"><span data-hf-id="hf-sjy7" class="wd">Patterns</span><span data-hf-id="hf-t7cc" class="wd">from</span><span data-hf-id="hf-ajoo" class="wd ac">Real</span><span data-hf-id="hf-ajbn" class="wd ac">Deals</span></div></div>
+        <div data-hf-id="hf-r0r5" class="spkline">Jon Morrow</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-b3hp" id="sc6" class="scene clip" data-start="51" data-duration="9.9" data-track-index="18">
+        <div data-hf-id="hf-92b1" class="inner">
+        <div data-hf-id="hf-sivy" class="eyebrow">HYPERAGENT KEYNOTE · 20 MIN</div>
+        <div data-hf-id="hf-vr33" class="time blue">11:40 AM</div>
+        <div data-hf-id="hf-jhfv" style="font-size:86px" class="lnwrap"><div data-hf-id="hf-q8z6" class="ln"><span data-hf-id="hf-hb87" class="wd">The</span><span data-hf-id="hf-06f6" class="wd">New</span><span data-hf-id="hf-mmcp" class="wd">Standard:</span><span data-hf-id="hf-s6an" class="wd">A</span><span data-hf-id="hf-0cw8" class="wd">Fleet</span><span data-hf-id="hf-ehex" class="wd">of</span><span data-hf-id="hf-38n1" class="wd ac">Always-On</span><span data-hf-id="hf-627u" class="wd ac">Agents</span></div></div>
+        <div data-hf-id="hf-0f0u" class="spkline">Alex McDonnell</div><div data-hf-id="hf-pl3e" class="slogo"><img data-hf-id="hf-wnc1" src="assets/sponsors/hyperagent-white.png" style="width:360px" alt=""></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-dgwf" id="sc7" class="scene clip" data-start="60.5" data-duration="7.4" data-track-index="19">
+        <div data-hf-id="hf-9gm2" class="inner">
+        <div data-hf-id="hf-j7ap" class="eyebrow">SPONSORED SESSION · 20 MIN</div>
+        <div data-hf-id="hf-ziz3" class="time blue">12:00 PM</div>
+        <div data-hf-id="hf-0oge" class="slogo hero"><img data-hf-id="hf-fqkj" src="assets/sponsors/glaido-white.png" style="width:680px" alt=""></div>
+        <div data-hf-id="hf-f4us" class="spkline dim">Voice AI for client work, live demo</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-bxef" id="sc8" class="scene clip" data-start="67.5" data-duration="8.9" data-track-index="20">
+        <div data-hf-id="hf-emlf" class="inner">
+        <div data-hf-id="hf-9xx4" class="eyebrow">MAIN STAGE · CO-BUILD · 25 MIN</div>
+        <div data-hf-id="hf-krat" class="time blue">12:20 PM</div>
+        <div data-hf-id="hf-3ovf" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-qna7" class="ln"><span data-hf-id="hf-4ful" class="wd">Evals,</span><span data-hf-id="hf-59v2" class="wd ac">Live</span></div></div>
+        <div data-hf-id="hf-25zg" class="spkline">Nate Herk · Ednan Abdullayev</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-pdd5" id="sc9" class="scene clip" data-start="76" data-duration="13.4" data-track-index="21">
+        <div data-hf-id="hf-f0wg" class="inner">
+        <div data-hf-id="hf-03xn" class="eyebrow">WORKSHOP BLOCK 1 · 75 MIN · PICK YOUR ROOM</div>
+        <div data-hf-id="hf-yjk2" class="time blue">12:45 PM</div>
+        <div data-hf-id="hf-5ohu" class="wsrow">
+          <div data-hf-id="hf-vso8" class="wscard yellow wleft">
+            <div data-hf-id="hf-5sie" class="wstrack">FOUNDATION</div>
+            <div data-hf-id="hf-ytmj" class="wstitle">Your First 30 Days in AI Automation</div>
+            <div data-hf-id="hf-2af0" class="wsspk">Liberty White</div>
+          </div>
+          <div data-hf-id="hf-4djy" class="wscard coral wright">
+            <div data-hf-id="hf-sk6t" class="wstrack">ADVANCED</div>
+            <div data-hf-id="hf-1ki8" class="wstitle">Low-Code to Full-Code</div>
+            <div data-hf-id="hf-6622" class="wsspk">Dave Ebbelaar</div>
+          </div></div><div data-hf-id="hf-z6pg" class="sub">Two rooms, same time. Pick where you are.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-p6zt" id="sc10" class="scene clip" data-start="89" data-duration="6.9" data-track-index="22">
+        <div data-hf-id="hf-kvm0" class="inner">
+        <div data-hf-id="hf-ev2u" class="eyebrow">LUNCH · 35 MIN</div>
+        <div data-hf-id="hf-ppi0" class="time blue">2:00 PM</div>
+        <div data-hf-id="hf-436g" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-r1l8" class="ln"><span data-hf-id="hf-jj6o" class="wd">Lunch</span><span data-hf-id="hf-1m8h" class="wd">+</span><span data-hf-id="hf-8jml" class="wd ac">Practice</span></div></div>
+        <div data-hf-id="hf-y9nf" class="spkline dim">Networking rooms + Expo open</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-k6bh" id="sc11" class="scene clip" data-start="95.5" data-duration="15.9" data-track-index="23">
+        <div data-hf-id="hf-khaz" class="inner">
+        <div data-hf-id="hf-4739" class="eyebrow">VIP WORKING SESSIONS · 5 ROOMS · 35 MIN</div>
+        <div data-hf-id="hf-q0xr" class="time blue small">2:00 PM</div>
+        <div data-hf-id="hf-72gh" class="viplist"><div data-hf-id="hf-03yy" class="vrow"><span data-hf-id="hf-hrws" class="varr">›</span><span data-hf-id="hf-5i0s" class="vtitle">Land Your First Paying Client</span><span data-hf-id="hf-w0pf" class="vname">Jon Morrow</span></div><div data-hf-id="hf-nbr2" class="vrow"><span data-hf-id="hf-o6g4" class="varr">›</span><span data-hf-id="hf-tjl4" class="vtitle">Turn Your Expertise Into a Service</span><span data-hf-id="hf-juqq" class="vname">Jenn Van Wagner</span></div><div data-hf-id="hf-nq23" class="vrow"><span data-hf-id="hf-mzj1" class="varr">›</span><span data-hf-id="hf-ncdx" class="vtitle">Price It Right</span><span data-hf-id="hf-3ps7" class="vname">Russ Henneberry</span></div><div data-hf-id="hf-o4d4" class="vrow"><span data-hf-id="hf-ndu2" class="varr">›</span><span data-hf-id="hf-qaue" class="vtitle">Scope to Ship</span><span data-hf-id="hf-cj2j" class="vname">Kodi Zene</span></div><div data-hf-id="hf-lc7x" class="vrow"><span data-hf-id="hf-pdd7" class="varr">›</span><span data-hf-id="hf-d8ee" class="vtitle">Tooling Reset</span><span data-hf-id="hf-93rc" class="vname">Meghan Cox</span></div></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-9rqt" id="sc12" class="scene clip" data-start="111" data-duration="10.4" data-track-index="24">
+        <div data-hf-id="hf-k2zy" class="inner">
+        <div data-hf-id="hf-x21z" class="eyebrow">FEATURED SESSION · 25 MIN</div>
+        <div data-hf-id="hf-two0" class="time blue">2:35 PM</div>
+        <div data-hf-id="hf-kh2j" style="font-size:86px" class="lnwrap"><div data-hf-id="hf-o9g1" class="ln"><span data-hf-id="hf-v2ip" class="wd">Run</span><span data-hf-id="hf-3ipv" class="wd">an</span><span data-hf-id="hf-q0jt" class="wd">Entire</span><span data-hf-id="hf-aazm" class="wd">AI</span><span data-hf-id="hf-dbr7" class="wd">Agency</span><span data-hf-id="hf-b9h4" class="wd">Using</span><span data-hf-id="hf-iir2" class="wd ac">Claude</span><span data-hf-id="hf-sa5d" class="wd ac">Code</span></div></div>
+        <div data-hf-id="hf-4eeh" class="spkline">Kacper Rutkiewicz</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-nadi" id="sc13" class="scene clip" data-start="121" data-duration="5.4" data-track-index="25">
+        <div data-hf-id="hf-joox" class="inner">
+        <div data-hf-id="hf-lha2" class="eyebrow">BREAK · 10 MIN</div>
+        <div data-hf-id="hf-kebb" class="time blue">3:00 PM</div>
+        <div data-hf-id="hf-1b19" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-onr2" class="ln"><span data-hf-id="hf-ljb7" class="wd">Break</span><span data-hf-id="hf-2t5k" class="wd">+</span><span data-hf-id="hf-zjpz" class="wd ac">Visit</span><span data-hf-id="hf-jv9j" class="wd ac">the</span><span data-hf-id="hf-9pzw" class="wd ac">Expo</span></div></div>
+        
+        </div>
+      </section>
+      <section data-hf-id="hf-1w7a" id="sc14" class="scene clip" data-start="126" data-duration="13.4" data-track-index="26">
+        <div data-hf-id="hf-jadw" class="inner">
+        <div data-hf-id="hf-qrh4" class="eyebrow">WORKSHOP BLOCK 2 · 60 MIN · PICK YOUR ROOM</div>
+        <div data-hf-id="hf-2whg" class="time blue">3:10 PM</div>
+        <div data-hf-id="hf-rn3a" class="wsrow">
+          <div data-hf-id="hf-56n4" class="wscard yellow wleft">
+            <div data-hf-id="hf-lgu2" class="wstrack">FOUNDATION</div>
+            <div data-hf-id="hf-rysy" class="wstitle">Build Your First AI Content Engine</div>
+            <div data-hf-id="hf-0ezk" class="wsspk">Sabrina Ramonov</div>
+          </div>
+          <div data-hf-id="hf-rn2a" class="wscard coral wright">
+            <div data-hf-id="hf-jmuh" class="wstrack">ADVANCED</div>
+            <div data-hf-id="hf-twpe" class="wstitle">Build a Voice AI Sales Rep</div>
+            <div data-hf-id="hf-d76q" class="wsspk">Samin Yasar</div>
+          </div></div><div data-hf-id="hf-ssaq" class="sub">Live builds, end to end, in both rooms.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-jb6x" id="sc15" class="scene clip" data-start="139" data-duration="5.4" data-track-index="27">
+        <div data-hf-id="hf-iw2v" class="inner">
+        <div data-hf-id="hf-ivdq" class="eyebrow">BREAK · 10 MIN</div>
+        <div data-hf-id="hf-z5cd" class="time blue">4:10 PM</div>
+        <div data-hf-id="hf-1pca" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-9fs2" class="ln"><span data-hf-id="hf-y6pv" class="wd">Break</span><span data-hf-id="hf-2euj" class="wd">+</span><span data-hf-id="hf-z5ey" class="wd ac">Visit</span><span data-hf-id="hf-jgyi" class="wd ac">the</span><span data-hf-id="hf-8j2t" class="wd ac">Expo</span></div></div>
+        
+        </div>
+      </section>
+      <section data-hf-id="hf-ehc1" id="sc16" class="scene clip" data-start="144" data-duration="9.4" data-track-index="28">
+        <div data-hf-id="hf-ihru" class="inner">
+        <div data-hf-id="hf-8tpc" class="eyebrow">WORKSHOP BLOCK 3 · 45 MIN</div>
+        <div data-hf-id="hf-wqsk" class="time blue">4:20 PM</div>
+        <div data-hf-id="hf-23nb" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-91h1" class="ln"><span data-hf-id="hf-u95f" class="wd">Enterprise</span><span data-hf-id="hf-wlsi" class="wd ac">AI</span><span data-hf-id="hf-jb98" class="wd ac">Services</span></div></div>
+        <div data-hf-id="hf-pvpi" class="spkline">Tangy Frederick</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-nxdd" id="sc17" class="scene clip" data-start="153" data-duration="8.9" data-track-index="29">
+        <div data-hf-id="hf-i3gt" class="inner">
+        <div data-hf-id="hf-2rjb" class="eyebrow">MAIN STAGE · 15 MIN</div>
+        <div data-hf-id="hf-5xvk" class="time blue">5:05 PM</div>
+        <div data-hf-id="hf-2hyc" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-a8e4" class="ln"><span data-hf-id="hf-gns0" class="wd">Get</span><span data-hf-id="hf-qv2w" class="wd">AIS+</span><span data-hf-id="hf-a5xl" class="wd ac">Certified</span></div></div>
+        <div data-hf-id="hf-4xdx" class="spkline">Ednan Abdullayev</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-328z" id="sc18" class="scene clip" data-start="161.5" data-duration="9.9" data-track-index="30">
+        <div data-hf-id="hf-o228" class="inner">
+        <div data-hf-id="hf-tmf4" class="eyebrow">MAIN STAGE · CLOSE · 15 MIN</div>
+        <div data-hf-id="hf-z1qz" class="time blue">5:20 PM</div>
+        <div data-hf-id="hf-62pl" style="font-size:122px" class="lnwrap"><div data-hf-id="hf-9u33" class="ln"><span data-hf-id="hf-hmua" class="wd">Day</span><span data-hf-id="hf-jnzj" class="wd">1</span><span data-hf-id="hf-g9tv" class="wd ac">Closing</span><span data-hf-id="hf-hr89" class="wd ac">Remarks</span></div></div>
+        <div data-hf-id="hf-00dp" class="spkline">Nate Herk</div><div data-hf-id="hf-qpmu" class="sub">Plus the overnight challenge.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-csy8" id="sc19" class="scene clip" data-start="171" data-duration="9.4" data-track-index="31">
+        <div data-hf-id="hf-nnr7" class="inner">
+        <div data-hf-id="hf-qqsd" class="bigmark"><span data-hf-id="hf-kh9c" class="mark big"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-qib7" class="ring"></span><span data-hf-id="hf-zcc2" class="dot"></span></span></span></div><div data-hf-id="hf-a9z0" class="sub">Day 1 · Build Day · See you in the room.</div>
+        </div>
+      </section>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 180;
+      const RAIL_W = 1200;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers (all fromTo so nothing is left invisible) ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      // transform+opacity only — NO filter on text (a filter region clips italic edges + glow)
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%"},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function slideFrom(sel, at, dx){ tl.fromTo(sel,{autoAlpha:0,x:dx,rotationY:dx<0?24:-24,z:-120},
+        {autoAlpha:1,x:0,rotationY:0,z:0,duration:.65,ease:"power3.out"},at); }
+      // gentle float during long holds — cards/rows only, never headline type
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function glowIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"back.out(1.4)"},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.6,ease:"power2.in"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+      /* day rail — fill + head glide to the current session's clock position */
+      function railTo(p, at){
+        tl.to("#railfill",{scaleX:p,duration:.7,ease:"power2.inOut",overwrite:"auto"},at);
+        tl.to("#railhead",{x:p*RAIL_W,duration:.7,ease:"power2.inOut",overwrite:"auto"},at);
+      }
+
+      /* ---- AMBIENT — the camera never sleeps ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=660px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=660px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral",{ x:-36, y:22, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+      tl.to(".dot", {
+        keyframes: { "0%": { scale: 1, transformOrigin: "50% 50%", x: 0, y: 0 }, "100%": { scale: 1.1, transformOrigin: "50% 50%" }, easeEach: "sine.inOut" },
+        duration:.8,
+        yoyo:true,
+        repeat:224,
+        ease: "none"
+      }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:112, ease:"none" }, 0);
+      drop(".railwrap", 0.35, .7);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (9.5s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.26);
+      drop("#sc0 .sub", 0.88);
+      whipOut("#sc0 .inner", 9.2);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 9.5);
+
+      // sc1 · session  (7s) · 9:00 AM
+      streak(9.5);
+      railTo(0, 9.55);
+      drop("#sc1 .eyebrow", 9.62);
+      pop("#sc1 .time", 9.72, .55);
+      words("#sc1 .ln .wd", 9.84);
+      drop("#sc1 .spkline", 10.22);
+      whipOut("#sc1 .inner", 16.2);
+      tl.set("#sc1 .inner", { autoAlpha: 0 }, 16.5);
+
+      // sc2 · session  (8.5s) · 9:30 AM
+      streak(16.5);
+      railTo(0.0583, 16.55);
+      drop("#sc2 .eyebrow", 16.62);
+      pop("#sc2 .time", 16.72, .55);
+      words("#sc2 .ln .wd", 16.84);
+      drop("#sc2 .spkline", 17.22);
+      whipOut("#sc2 .inner", 24.7);
+      tl.set("#sc2 .inner", { autoAlpha: 0 }, 25);
+
+      // sc3 · session  (8s) · 10:15 AM
+      streak(25);
+      railTo(0.1456, 25.05);
+      drop("#sc3 .eyebrow", 25.12);
+      pop("#sc3 .time", 25.22, .55);
+      words("#sc3 .ln .wd", 25.34);
+      drop("#sc3 .spkline", 25.72);
+      whipOut("#sc3 .inner", 32.7);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 33);
+
+      // sc4 · session  (11s) · 10:30 AM
+      streak(33);
+      railTo(0.1748, 33.05);
+      drop("#sc4 .eyebrow", 33.12);
+      pop("#sc4 .time", 33.22, .55);
+      words("#sc4 .ln .wd", 33.34);
+      drop("#sc4 .spkline", 33.72);
+      whipOut("#sc4 .inner", 43.7);
+      tl.set("#sc4 .inner", { autoAlpha: 0 }, 44);
+
+      // sc5 · session  (7s) · 11:25 AM
+      streak(44);
+      railTo(0.2816, 44.05);
+      drop("#sc5 .eyebrow", 44.12);
+      pop("#sc5 .time", 44.22, .55);
+      words("#sc5 .ln .wd", 44.34);
+      drop("#sc5 .spkline", 44.72);
+      whipOut("#sc5 .inner", 50.7);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 51);
+
+      // sc6 · session  (9.5s) · 11:40 AM
+      streak(51);
+      railTo(0.3107, 51.05);
+      drop("#sc6 .eyebrow", 51.12);
+      pop("#sc6 .time", 51.22, .55);
+      words("#sc6 .ln .wd", 51.34);
+      drop("#sc6 .spkline", 51.72);
+      glowIn("#sc6 .slogo:not(.hero)", 51.95);
+      whipOut("#sc6 .inner", 60.2);
+      tl.set("#sc6 .inner", { autoAlpha: 0 }, 60.5);
+
+      // sc7 · session  (7s) · 12:00 PM
+      streak(60.5);
+      railTo(0.3495, 60.55);
+      drop("#sc7 .eyebrow", 60.62);
+      pop("#sc7 .time", 60.72, .55);
+      glowIn("#sc7 .slogo.hero", 60.84);
+      drop("#sc7 .spkline", 61.22);
+      whipOut("#sc7 .inner", 67.2);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 67.5);
+
+      // sc8 · session  (8.5s) · 12:20 PM
+      streak(67.5);
+      railTo(0.3883, 67.55);
+      drop("#sc8 .eyebrow", 67.62);
+      pop("#sc8 .time", 67.72, .55);
+      words("#sc8 .ln .wd", 67.84);
+      drop("#sc8 .spkline", 68.22);
+      whipOut("#sc8 .inner", 75.7);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 76);
+
+      // sc9 · worksplit  (13s) · 12:45 PM
+      streak(76);
+      railTo(0.4369, 76.05);
+      drop("#sc9 .eyebrow", 76.12);
+      pop("#sc9 .time", 76.22, .55);
+      slideFrom("#sc9 .wleft", 76.4, -70);
+      slideFrom("#sc9 .wright", 76.52, 70);
+      drift("#sc9 .wscard", 77.6, 2.25);
+      drop("#sc9 .sub", 77.15);
+      whipOut("#sc9 .inner", 88.7);
+      tl.set("#sc9 .inner", { autoAlpha: 0 }, 89);
+
+      // sc10 · session  (6.5s) · 2:00 PM
+      streak(89);
+      railTo(0.5825, 89.05);
+      drop("#sc10 .eyebrow", 89.12);
+      pop("#sc10 .time", 89.22, .55);
+      words("#sc10 .ln .wd", 89.34);
+      drop("#sc10 .spkline", 89.72);
+      whipOut("#sc10 .inner", 95.2);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 95.5);
+
+      // sc11 · viprooms  (15.5s) · 2:00 PM
+      streak(95.5);
+      railTo(0.5825, 95.55);
+      drop("#sc11 .eyebrow", 95.62);
+      pop("#sc11 .time", 95.72, .5);
+      slideX("#sc11 .vrow", 95.88, 0.18);
+      drift("#sc11 .vrow", 97.5, 2.69);
+      whipOut("#sc11 .inner", 110.7);
+      tl.set("#sc11 .inner", { autoAlpha: 0 }, 111);
+
+      // sc12 · session  (10s) · 2:35 PM
+      streak(111);
+      railTo(0.6505, 111.05);
+      drop("#sc12 .eyebrow", 111.12);
+      pop("#sc12 .time", 111.22, .55);
+      words("#sc12 .ln .wd", 111.34);
+      drop("#sc12 .spkline", 111.72);
+      whipOut("#sc12 .inner", 120.7);
+      tl.set("#sc12 .inner", { autoAlpha: 0 }, 121);
+
+      // sc13 · break  (5s) · 3:00 PM
+      streak(121);
+      railTo(0.699, 121.05);
+      drop("#sc13 .eyebrow", 121.12);
+      pop("#sc13 .time", 121.22, .55);
+      words("#sc13 .ln .wd", 121.34);
+      whipOut("#sc13 .inner", 125.7);
+      tl.set("#sc13 .inner", { autoAlpha: 0 }, 126);
+
+      // sc14 · worksplit  (13s) · 3:10 PM
+      streak(126);
+      railTo(0.7184, 126.05);
+      drop("#sc14 .eyebrow", 126.12);
+      pop("#sc14 .time", 126.22, .55);
+      slideFrom("#sc14 .wleft", 126.4, -70);
+      slideFrom("#sc14 .wright", 126.52, 70);
+      drift("#sc14 .wscard", 127.6, 2.25);
+      drop("#sc14 .sub", 127.15);
+      whipOut("#sc14 .inner", 138.7);
+      tl.set("#sc14 .inner", { autoAlpha: 0 }, 139);
+
+      // sc15 · break  (5s) · 4:10 PM
+      streak(139);
+      railTo(0.835, 139.05);
+      drop("#sc15 .eyebrow", 139.12);
+      pop("#sc15 .time", 139.22, .55);
+      words("#sc15 .ln .wd", 139.34);
+      whipOut("#sc15 .inner", 143.7);
+      tl.set("#sc15 .inner", { autoAlpha: 0 }, 144);
+
+      // sc16 · session  (9s) · 4:20 PM
+      streak(144);
+      railTo(0.8544, 144.05);
+      drop("#sc16 .eyebrow", 144.12);
+      pop("#sc16 .time", 144.22, .55);
+      words("#sc16 .ln .wd", 144.34);
+      drop("#sc16 .spkline", 144.72);
+      whipOut("#sc16 .inner", 152.7);
+      tl.set("#sc16 .inner", { autoAlpha: 0 }, 153);
+
+      // sc17 · session  (8.5s) · 5:05 PM
+      streak(153);
+      railTo(0.9417, 153.05);
+      drop("#sc17 .eyebrow", 153.12);
+      pop("#sc17 .time", 153.22, .55);
+      words("#sc17 .ln .wd", 153.34);
+      drop("#sc17 .spkline", 153.72);
+      whipOut("#sc17 .inner", 161.2);
+      tl.set("#sc17 .inner", { autoAlpha: 0 }, 161.5);
+
+      // sc18 · session  (9.5s) · 5:20 PM
+      streak(161.5);
+      railTo(0.9709, 161.55);
+      drop("#sc18 .eyebrow", 161.62);
+      pop("#sc18 .time", 161.72, .55);
+      words("#sc18 .ln .wd", 161.84);
+      drop("#sc18 .spkline", 162.22);
+      drop("#sc18 .sub", 162.38);
+      whipOut("#sc18 .inner", 170.7);
+      tl.set("#sc18 .inner", { autoAlpha: 0 }, 171);
+
+      // sc19 · markflash  (9s)
+      streak(171);
+      railTo(1, 171.05);
+      markPop("#sc19 .bigmark", 171.22);
+      drop("#sc19 .sub", 171.88);
+      settleOut("#sc19 .inner", 179.3);
+
+      tl.to({}, { duration: D }, 0); // fill the slot
+      window.__timelines["cmp-day1-agenda"] = tl;
+    </script>
+  </body>
+</html>

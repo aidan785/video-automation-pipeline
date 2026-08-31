@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>AIS LIVE — What's Coming Today (84s)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --red-live:#ff3b30;
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.blue2{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--blue);filter:blur(165px);opacity:.08;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;}
+
+      /* ---------- persistent day label (plain mono, no marker) ---------- */
+      .daylab{position:absolute;left:150px;top:64px;
+        font-family:var(--font-mono);font-weight:700;font-size:22px;letter-spacing:.3em;text-transform:uppercase;
+        color:rgba(209,220,232,.55);will-change:transform,opacity;}
+      .daylab b{color:var(--blue);font-weight:700;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:26px;padding:96px 120px 150px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.32em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;text-shadow:0 0 16px rgba(55,189,248,.45);}
+
+      /* big gradient time */
+      .time{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:150px;line-height:1;
+        letter-spacing:-.04em;padding:.06em .14em .2em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 80px rgba(55,189,248,.55);}
+
+      .lnwrap{line-height:0;font-size:88px;}
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:1em;line-height:1.16;
+        letter-spacing:-.03em;max-width:1640px;}
+      .ln.hero{font-size:138px;}
+      .ln .wd,.ptitle .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+
+      .spkline{font-family:var(--font-display);font-style:italic;font-weight:800;font-size:33px;letter-spacing:-.01em;
+        color:var(--blue);text-shadow:0 0 22px rgba(55,189,248,.45);will-change:transform,opacity;}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:37px;line-height:1.3;
+        color:rgba(209,220,232,.85);max-width:1400px;will-change:transform,opacity;}
+
+      /* ---------- portrait scene ---------- */
+      .scene-portrait .inner{display:block;padding:0;text-align:left;}
+      .portrait{position:absolute;left:-60px;top:40px;bottom:0;width:880px;
+        display:flex;align-items:flex-end;justify-content:center;will-change:transform,opacity;}
+      .portrait img{object-fit:contain;object-position:bottom center;
+        filter:drop-shadow(0 26px 54px rgba(0,0,0,.55));
+        -webkit-mask-image:
+          linear-gradient(to bottom,#000 80%,transparent 100%),
+          linear-gradient(to right,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        -webkit-mask-composite:source-in;
+        mask-image:
+          linear-gradient(to bottom,#000 80%,transparent 100%),
+          linear-gradient(to right,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        mask-composite:intersect;}
+      .pics{position:absolute;left:170px;top:0;bottom:40px;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;}
+      .pic{display:block;border-radius:50%;will-change:transform,opacity;
+        filter:drop-shadow(0 18px 36px rgba(0,0,0,.55));}
+      .pcontent{position:absolute;left:930px;right:110px;top:0;bottom:40px;
+        display:flex;flex-direction:column;align-items:flex-start;justify-content:center;}
+      .pcontent .eyebrow{margin-bottom:26px;}
+      .plogo{margin-bottom:10px;will-change:transform,opacity;}
+      .plogo img{height:60px;display:block;filter:drop-shadow(0 0 28px rgba(55,189,248,.30));}
+      .ptitle{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;
+        line-height:1.1;color:#fff;max-width:840px;margin-left:-.15em;}
+      .divider{width:128px;height:2px;background:var(--blue);margin:26px 0 28px;
+        box-shadow:0 0 16px rgba(55,189,248,.6);transform-origin:left center;will-change:transform,opacity;}
+      .pname{font-family:var(--font-display);font-style:italic;font-weight:800;letter-spacing:-.02em;
+        font-size:44px;color:#fff;line-height:1.02;will-change:transform,opacity;}
+      .prole{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:29px;line-height:1.3;
+        letter-spacing:-.01em;color:rgba(209,220,232,.85);margin-top:10px;max-width:820px;will-change:transform,opacity;}
+      .pmeta{font-family:var(--font-mono);font-weight:500;font-size:23px;letter-spacing:.22em;
+        text-transform:uppercase;color:var(--blue);margin-top:34px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+      .pmeta.center{margin-top:6px;}
+
+      /* ---------- logo tease ---------- */
+      .bigl{will-change:transform,opacity;}
+      .bigl img{display:block;filter:drop-shadow(0 0 44px rgba(55,189,248,.35));}
+
+      /* ---------- worksplit ---------- */
+      .wrow{display:flex;gap:44px;justify-content:center;}
+      .wcard{width:640px;padding:46px 48px 42px;border-radius:20px;text-align:left;
+        background:rgba(255,255,255,.045);border:1px solid rgba(55,189,248,.20);
+        box-shadow:0 24px 60px rgba(0,0,0,.35);will-change:transform,opacity;}
+      .wtrack{font-family:var(--font-mono);font-weight:700;font-size:23px;letter-spacing:.3em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);}
+      .wtitle{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:46px;letter-spacing:-.02em;
+        line-height:1.14;color:#fff;margin-top:20px;text-wrap:balance;hyphens:none;-webkit-hyphens:none;
+        padding-right:.1em;}
+      .wspk{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:29px;
+        color:rgba(209,220,232,.85);margin-top:18px;}
+
+      /* ---------- agenda rows ---------- */
+      .arows{display:flex;flex-direction:column;gap:30px;width:max-content;max-width:1600px;}
+      .arow{display:flex;align-items:baseline;gap:34px;text-align:left;will-change:transform,opacity;}
+      .atime{font-family:var(--font-mono);font-weight:700;font-size:34px;letter-spacing:.08em;color:var(--blue);
+        text-shadow:0 0 18px rgba(55,189,248,.5);min-width:170px;}
+      .atitle{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:52px;letter-spacing:-.02em;
+        color:#fff;text-shadow:0 0 26px rgba(255,255,255,.16);white-space:nowrap;padding-right:.14em;}
+      .aspk{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:30px;
+        color:rgba(209,220,232,.75);white-space:nowrap;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-fs3t" id="stage" data-composition-id="cmp-day1-teasers" data-start="0" data-duration="83.5" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-kbqp" id="bg" class="clip" data-start="0" data-duration="83.5" data-track-index="0">
+        <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+        <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+        <div data-hf-id="hf-hqud" class="beam"></div>
+        <div data-hf-id="hf-uo31" class="glow blue"></div>
+        <div data-hf-id="hf-9x59" class="glow blue2"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-h60x" class="grain"></div>
+      </div>
+      <div data-hf-id="hf-4yux" class="whip clip" id="whip" data-start="0" data-duration="83.5" data-track-index="1"></div>
+      <div data-hf-id="hf-fffp" id="markbug" class="clip" data-start="0" data-duration="83.5" data-track-index="2">
+        <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-ohjn" class="ring"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+      </div>
+      <div data-hf-id="hf-ukmg" id="daylab" class="clip" data-start="0" data-duration="83.5" data-track-index="3">
+        <div data-hf-id="hf-cpd0" class="daylab">SAT JULY 11 · <b data-hf-id="hf-ld3x">DAY 1 · BUILD DAY</b></div>
+      </div>
+
+      <div data-hf-id="hf-kwiw" id="camera">
+      <section data-hf-id="hf-59hz" id="sc0" class="scene clip" data-start="0" data-duration="5.9" data-track-index="12">
+        <div data-hf-id="hf-lm34" class="inner">
+        <div data-hf-id="hf-alxf" class="eyebrow">TODAY'S LINEUP</div><div data-hf-id="hf-sicm" class="ln hero" style="max-width:1330px"><span data-hf-id="hf-1ybo" class="wd">Here's</span><span data-hf-id="hf-4neo" class="wd">what's</span><span data-hf-id="hf-wrvr" class="wd ac">coming</span><span data-hf-id="hf-de3l" class="wd ac">today.</span></div><div data-hf-id="hf-8rvn" class="sub">Saturday, July 11. All times Central.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-0nfv" id="sc1" class="scene clip" data-start="5.5" data-duration="8.4" data-track-index="13">
+        <div data-hf-id="hf-bug8" class="inner">
+        <div data-hf-id="hf-iqab" class="eyebrow">MAIN STAGE · 55 MIN</div>
+        <div data-hf-id="hf-ej7z" class="time">10:30 AM</div>
+        <div data-hf-id="hf-ea9i" class="lnwrap"><div data-hf-id="hf-gmyq" class="ln"><span data-hf-id="hf-eewx" class="wd">Anatomy</span><span data-hf-id="hf-rtrp" class="wd">of</span><span data-hf-id="hf-sum4" class="wd">Three</span><span data-hf-id="hf-uxq8" class="wd">Real</span><span data-hf-id="hf-4283" class="wd">Deals</span></div></div>
+        <div data-hf-id="hf-q8cb" class="spkline">Aidan Finnegan · Nate Herk · Glenn Marcus · Wyatt Lyonsmith</div><div data-hf-id="hf-gptl" class="sub">Three real client engagements, end to end. The actual version, numbers attached.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-9c5z" id="sc2" class="scene clip scene-portrait" data-start="13.5" data-duration="7.4" data-track-index="14">
+        <div data-hf-id="hf-anj5" class="inner">
+        <div data-hf-id="hf-83zl" class="portrait"><img data-hf-id="hf-eern" src="assets/cutouts/alex-mcdonnell.png" style="height:96%;width:auto;max-width:none" alt=""></div>
+        <div data-hf-id="hf-7x9j" class="pcontent">
+          <div data-hf-id="hf-k4rr" class="eyebrow">KEYNOTE · 11:40 AM · MAIN STAGE</div>
+          <div data-hf-id="hf-zph1" class="plogo"><img data-hf-id="hf-rasa" src="assets/hyperagent-white.png" alt=""></div>
+          <div data-hf-id="hf-cvtx" class="ptitle" style="font-size:84px"><span data-hf-id="hf-hb87" class="wd">The</span><span data-hf-id="hf-06f6" class="wd">New</span><span data-hf-id="hf-hk6h" class="wd">Standard</span></div>
+          <div data-hf-id="hf-jk23" class="divider"></div>
+          <div data-hf-id="hf-708t" class="pname">Alex McDonnell</div>
+          <div data-hf-id="hf-ped4" class="prole">Why you need a fleet of always-on agents.</div>
+          <div data-hf-id="hf-xnb8" class="pmeta">11:40 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-jw2z" id="sc3" class="scene clip" data-start="20.5" data-duration="6.9" data-track-index="15">
+        <div data-hf-id="hf-b1u6" class="inner">
+        <div data-hf-id="hf-upqx" class="eyebrow">SPONSORED SESSION · 12:00 PM</div>
+        <div data-hf-id="hf-zx8a" class="bigl"><img data-hf-id="hf-lucm" src="assets/glaido-white.png" style="width:520px" alt=""></div>
+        <div data-hf-id="hf-kb9p" class="sub">Voice AI you can actually bill for. Live demo from the Glaido team.</div><div data-hf-id="hf-ou6p" class="pmeta center">12:00 PM CT · MAIN STAGE</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-q4ax" id="sc4" class="scene clip scene-portrait" data-start="27" data-duration="7.4" data-track-index="16">
+        <div data-hf-id="hf-9ux3" class="inner">
+        <div data-hf-id="hf-1h2e" class="pics" style="gap:30px"><img data-hf-id="hf-e2xo" class="pic" src="assets/medallions/nate-herk.png" style="width:340px;height:340px" alt=""><img data-hf-id="hf-nkqh" class="pic" src="assets/medallions/ednan-abdullayev.png" style="width:340px;height:340px" alt=""></div>
+        <div data-hf-id="hf-t03r" class="pcontent">
+          <div data-hf-id="hf-z4t3" class="eyebrow">CO-BUILD · 12:20 PM · MAIN STAGE</div>
+          <div data-hf-id="hf-s9yi" class="ptitle" style="font-size:94px"><span data-hf-id="hf-v8oz" class="wd">Evals</span></div>
+          <div data-hf-id="hf-mh0r" class="divider"></div>
+          <div data-hf-id="hf-o4s3" class="pname">Nate Herk + Ednan Abdullayev</div>
+          <div data-hf-id="hf-dnyn" class="prole">Built live. The eval results tell you exactly what to fix.</div>
+          <div data-hf-id="hf-ui6e" class="pmeta">12:20 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-a4fi" id="sc5" class="scene clip" data-start="34" data-duration="8.4" data-track-index="17">
+        <div data-hf-id="hf-a984" class="inner">
+        <div data-hf-id="hf-09ek" class="eyebrow">WORKSHOP BLOCK 1 · 12:45 PM · PICK YOUR TRACK</div><div data-hf-id="hf-3c49" class="wrow">
+          <div data-hf-id="hf-uogd" class="wcard">
+            <div data-hf-id="hf-ki25" class="wtrack">FOUNDATION</div>
+            <div data-hf-id="hf-9pna" class="wtitle">Your First 30 Days in AI Automation</div>
+            <div data-hf-id="hf-zyfl" class="wspk">Liberty White</div>
+          </div>
+          <div data-hf-id="hf-xaip" class="wcard">
+            <div data-hf-id="hf-vlmu" class="wtrack">ADVANCED</div>
+            <div data-hf-id="hf-t1pt" class="wtitle">Low-Code to Full-Code</div>
+            <div data-hf-id="hf-zl13" class="wspk">Dave Ebbelaar</div>
+          </div></div><div data-hf-id="hf-7u2j" class="sub">Two rooms, same time. Choose the one that matches where you are.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-z22g" id="sc6" class="scene clip scene-portrait" data-start="42" data-duration="7.4" data-track-index="18">
+        <div data-hf-id="hf-92b1" class="inner">
+        <div data-hf-id="hf-45yd" class="portrait"><img data-hf-id="hf-n2ml" src="assets/cutouts/kacper-rutkiewicz.png" style="height:88%;width:auto;max-width:none" alt=""></div>
+        <div data-hf-id="hf-slsq" class="pcontent">
+          <div data-hf-id="hf-woih" class="eyebrow">FEATURED SESSION · 2:35 PM</div>
+          
+          <div data-hf-id="hf-plsb" class="ptitle" style="font-size:64px"><span data-hf-id="hf-zkpv" class="wd">An</span><span data-hf-id="hf-q0jt" class="wd">Entire</span><span data-hf-id="hf-aazm" class="wd">AI</span><span data-hf-id="hf-9fej" class="wd">Automation</span><span data-hf-id="hf-gg8t" class="wd">Agency,</span><span data-hf-id="hf-v2ip" class="wd">Run</span><span data-hf-id="hf-uybf" class="wd">in</span><span data-hf-id="hf-ff1a" class="wd">Claude</span><span data-hf-id="hf-bj1t" class="wd">Code</span></div>
+          <div data-hf-id="hf-m2pq" class="divider"></div>
+          <div data-hf-id="hf-fhy4" class="pname">Kacper Rutkiewicz</div>
+          <div data-hf-id="hf-jv0f" class="prole">Client delivery. Sales. Content. One workspace.</div>
+          <div data-hf-id="hf-kd7j" class="pmeta">2:35 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-cpu2" id="sc7" class="scene clip" data-start="49" data-duration="8.4" data-track-index="19">
+        <div data-hf-id="hf-9gm2" class="inner">
+        <div data-hf-id="hf-39bv" class="eyebrow">WORKSHOP BLOCK 2 · 3:10 PM · PICK YOUR TRACK</div><div data-hf-id="hf-t5nx" class="wrow">
+          <div data-hf-id="hf-yhfs" class="wcard">
+            <div data-hf-id="hf-vtpd" class="wtrack">FOUNDATION</div>
+            <div data-hf-id="hf-zae9" class="wtitle">Build Your First AI Content Engine</div>
+            <div data-hf-id="hf-3xfx" class="wspk">Sabrina Ramonov</div>
+          </div>
+          <div data-hf-id="hf-y34r" class="wcard">
+            <div data-hf-id="hf-387e" class="wtrack">ADVANCED</div>
+            <div data-hf-id="hf-jb81" class="wtitle">Build a Voice AI Sales Rep</div>
+            <div data-hf-id="hf-g7z7" class="wspk">Samin Yasar</div>
+          </div></div><div data-hf-id="hf-3wqz" class="sub">Live builds, end to end, on a real screen share.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-hhun" id="sc8" class="scene clip scene-portrait" data-start="57" data-duration="7.4" data-track-index="20">
+        <div data-hf-id="hf-emlf" class="inner">
+        <div data-hf-id="hf-5cvg" class="portrait"><img data-hf-id="hf-mmpg" src="assets/cutouts/tangy-frederick.png" style="height:88%;width:auto;max-width:none" alt=""></div>
+        <div data-hf-id="hf-s7hp" class="pcontent">
+          <div data-hf-id="hf-vlqa" class="eyebrow">WORKSHOP BLOCK 3 · 4:20 PM</div>
+          
+          <div data-hf-id="hf-o96h" class="ptitle" style="font-size:84px"><span data-hf-id="hf-u95f" class="wd">Enterprise</span><span data-hf-id="hf-dbly" class="wd">AI</span><span data-hf-id="hf-eccs" class="wd">Services</span></div>
+          <div data-hf-id="hf-loep" class="divider"></div>
+          <div data-hf-id="hf-6ihr" class="pname">Tangy Frederick</div>
+          <div data-hf-id="hf-enzl" class="prole">How a small AI agency wins deals against firms ten times its size.</div>
+          <div data-hf-id="hf-200f" class="pmeta">4:20 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-sw14" id="sc9" class="scene clip" data-start="64" data-duration="7.9" data-track-index="21">
+        <div data-hf-id="hf-f0wg" class="inner">
+        <div data-hf-id="hf-hmu5" class="eyebrow">TO CLOSE THE DAY</div><div data-hf-id="hf-bdei" class="arows"><div data-hf-id="hf-p1bv" class="arow"><span data-hf-id="hf-nxqs" class="atime">5:05 PM</span><span data-hf-id="hf-mjqx" class="atitle">Get AIS+ Certified</span><span data-hf-id="hf-3cvd" class="aspk">Ednan Abdullayev</span></div><div data-hf-id="hf-3j5n" class="arow"><span data-hf-id="hf-j8lj" class="atime">5:20 PM</span><span data-hf-id="hf-njw7" class="atitle">Day 1 Closing Remarks</span><span data-hf-id="hf-ygpk" class="aspk">Nate Herk</span></div></div><div data-hf-id="hf-m6dz" class="sub">Plus the overnight challenge that sets up Day 2.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-y8w6" id="sc10" class="scene clip" data-start="71.5" data-duration="6.4" data-track-index="22">
+        <div data-hf-id="hf-kvm0" class="inner">
+        <div data-hf-id="hf-d9uq" class="eyebrow">MAIN STAGE</div><div data-hf-id="hf-lw5y" class="ln hero" style="max-width:1240px"><span data-hf-id="hf-zr21" class="wd">It</span><span data-hf-id="hf-1pgf" class="wd">all</span><span data-hf-id="hf-v59d" class="wd">starts</span><span data-hf-id="hf-5wk1" class="wd">at</span><span data-hf-id="hf-qayz" class="wd ac">10:15</span><span data-hf-id="hf-9n20" class="wd ac">AM.</span></div><div data-hf-id="hf-obv2" class="sub">Welcome to AIS Live, with Nate Herk.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-sfbg" id="sc11" class="scene clip" data-start="77.5" data-duration="6.4" data-track-index="23">
+        <div data-hf-id="hf-khaz" class="inner">
+        <div data-hf-id="hf-qqsd" class="bigmark"><span data-hf-id="hf-kh9c" class="mark big"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-qib7" class="ring"></span><span data-hf-id="hf-zcc2" class="dot"></span></span></span></div><div data-hf-id="hf-ydvw" class="sub">Day 1 · Build Day</div>
+        </div>
+      </section>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 83.5;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%"},at); }
+      function rise(sel, at){ tl.fromTo(sel,{autoAlpha:0,y:110,filter:"blur(10px)"},
+        {autoAlpha:1,y:0,filter:"blur(0px)",duration:.7,ease:"power3.out"},at); }
+      function wipe(sel, at){ tl.fromTo(sel,{autoAlpha:0,scaleX:0},{autoAlpha:1,scaleX:1,duration:.55,ease:"power2.out"},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function glowIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"back.out(1.4)",stagger:step||.12},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.6,ease:"power2.in"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+
+      /* ---- AMBIENT ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=660px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=660px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue2",{ x:-36, y:22, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:103, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:51, ease:"none" }, 0);
+      drop(".daylab", 0.35, .7);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (5.5s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.26);
+      drop("#sc0 .sub", 0.9);
+      whipOut("#sc0 .inner", 5.2);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 5.5);
+
+      // sc1 · tcard  (8s)
+      streak(5.5);
+      drop("#sc1 .eyebrow", 5.62);
+      pop("#sc1 .time", 5.72, .55);
+      words("#sc1 .ln .wd", 5.88);
+      drop("#sc1 .spkline", 6.2);
+      drop("#sc1 .sub", 6.4);
+      whipOut("#sc1 .inner", 13.2);
+      tl.set("#sc1 .inner", { autoAlpha: 0 }, 13.5);
+
+      // sc2 · portrait  (7s)
+      streak(13.5);
+      drop("#sc2 .eyebrow", 13.62);
+      rise("#sc2 .portrait", 13.66);
+      drop("#sc2 .plogo", 13.76);
+      words("#sc2 .ptitle .wd", 13.86);
+      wipe("#sc2 .divider", 14.22);
+      drop("#sc2 .pname", 14.36);
+      drop("#sc2 .prole", 14.49);
+      drop("#sc2 .pmeta", 14.66);
+      whipOut("#sc2 .inner", 20.2);
+      tl.set("#sc2 .inner", { autoAlpha: 0 }, 20.5);
+
+      // sc3 · logotease  (6.5s)
+      streak(20.5);
+      drop("#sc3 .eyebrow", 20.62);
+      glowIn("#sc3 .bigl", 20.8);
+      drop("#sc3 .pmeta", 21.5);
+      drop("#sc3 .sub", 21.4);
+      whipOut("#sc3 .inner", 26.7);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 27);
+
+      // sc4 · portrait  (7s)
+      streak(27);
+      drop("#sc4 .eyebrow", 27.12);
+      glowIn("#sc4 .pic", 27.16, 0.12);
+      words("#sc4 .ptitle .wd", 27.36);
+      wipe("#sc4 .divider", 27.72);
+      drop("#sc4 .pname", 27.86);
+      drop("#sc4 .prole", 27.99);
+      drop("#sc4 .pmeta", 28.16);
+      whipOut("#sc4 .inner", 33.7);
+      tl.set("#sc4 .inner", { autoAlpha: 0 }, 34);
+
+      // sc5 · worksplit  (8s)
+      streak(34);
+      drop("#sc5 .eyebrow", 34.12);
+      slideX("#sc5 .wcard", 34.34, 0.2);
+      drift("#sc5 .wcard", 35.8, 1.17);
+      drop("#sc5 .sub", 34.9);
+      whipOut("#sc5 .inner", 41.7);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 42);
+
+      // sc6 · portrait  (7s)
+      streak(42);
+      drop("#sc6 .eyebrow", 42.12);
+      rise("#sc6 .portrait", 42.16);
+      words("#sc6 .ptitle .wd", 42.36);
+      wipe("#sc6 .divider", 42.72);
+      drop("#sc6 .pname", 42.86);
+      drop("#sc6 .prole", 42.99);
+      drop("#sc6 .pmeta", 43.16);
+      whipOut("#sc6 .inner", 48.7);
+      tl.set("#sc6 .inner", { autoAlpha: 0 }, 49);
+
+      // sc7 · worksplit  (8s)
+      streak(49);
+      drop("#sc7 .eyebrow", 49.12);
+      slideX("#sc7 .wcard", 49.34, 0.2);
+      drift("#sc7 .wcard", 50.8, 1.17);
+      drop("#sc7 .sub", 49.9);
+      whipOut("#sc7 .inner", 56.7);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 57);
+
+      // sc8 · portrait  (7s)
+      streak(57);
+      drop("#sc8 .eyebrow", 57.12);
+      rise("#sc8 .portrait", 57.16);
+      words("#sc8 .ptitle .wd", 57.36);
+      wipe("#sc8 .divider", 57.72);
+      drop("#sc8 .pname", 57.86);
+      drop("#sc8 .prole", 57.99);
+      drop("#sc8 .pmeta", 58.16);
+      whipOut("#sc8 .inner", 63.7);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 64);
+
+      // sc9 · agrows  (7.5s)
+      streak(64);
+      drop("#sc9 .eyebrow", 64.12);
+      slideX("#sc9 .arow", 64.34, 0.2);
+      drop("#sc9 .sub", 64.9);
+      whipOut("#sc9 .inner", 71.2);
+      tl.set("#sc9 .inner", { autoAlpha: 0 }, 71.5);
+
+      // sc10 · hero  (6s)
+      streak(71.5);
+      drop("#sc10 .eyebrow", 71.62);
+      words("#sc10 .ln .wd", 71.76);
+      drop("#sc10 .sub", 72.4);
+      whipOut("#sc10 .inner", 77.2);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 77.5);
+
+      // sc11 · markflash  (6s)
+      streak(77.5);
+      markPop("#sc11 .bigmark", 77.72);
+      drop("#sc11 .sub", 78.4);
+      settleOut("#sc11 .inner", 82.8);
+
+      tl.to({}, { duration: D }, 0); // fill the slot
+      window.__timelines["cmp-day1-teasers"] = tl;
+    </script>
+  </body>
+</html>

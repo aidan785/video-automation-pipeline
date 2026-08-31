@@ -1,22 +1,30 @@
-# Day 1 Opening Sizzle (#2) — DRAFT scaffold (graphics package)
+# Day 1 Opening Sizzle (#2) — AIS LIVE launch film
 
-The marquee opener. Plays Day 1 ~10:25am, sets the emotional tone for the weekend.
+Ground-up recreation as an After-Effects-style product-launch film, modeled on 3 reference
+videos (Numtera / Teamble / LangEase). Framed as a WELCOME to the event (not "Meet a product").
 
-**Status:** graphics/title scaffold. The emotional montage cutting is done in AE; this is the
-HyperFrames graphics package + timeline shape it hangs on.
+**Status:** ~55s, 1920x1080, 30fps, silent. Lint clean. Not rendered.
 
-- ~72s, 1920x1080, 30fps, AIS LIVE event brand
-- Silent + text-driven for review
+## Look
+- Dynamic shifting backgrounds: onyx-dark ↔ bright AIS-blue gradient ↔ near-white "product" section.
+- Floating product-UI in 3D perspective, buttery expo/quart easing, kinetic two-tone headlines,
+  motion-blur entrances, cursor micro-interaction, confetti, logo+CTA outro.
+- Brand kit only: onyx #07121C, blue #37BDF8, coral #FF8A5C, red-live #FF3B30; Montserrat/Inter/JetBrains Mono.
 
-## Beats
-S1 cold open ("You've been building alone. Not this weekend.") · S2 Nate-to-camera centerpiece slot + name-card lower-third · S3 speaker lineup (name-card template x4) · S4 real-builds b-roll slots · S5 promise ("Build. Ship. Get paid.") · S6 title finale (AIS LIVE + date)
+## 7 sections
+1. HOOK (dark) — "Building AI alone is exhausting." + messy tilted UI cards.
+2. WELCOME (bright blue) — "Welcome to AIS LIVE." concentric rings.
+3. COMMUNITY (deep blue) — command-center dashboard, 400K+/40M+/100K+ count-up.
+4. SPEAKERS (onyx) — 8 real branded speaker cards, 3D grid.
+5. BUILD → EARN (near-white) — schedule panel + agent-build flow + cursor "Run agent".
+6. PROOF (deep blue) — celebration photo + "$60K+" + confetti.
+7. LOGO + CTA (onyx) — AIS LIVE mark, date, "Save your seat →", ais.live.
 
-## Reusable pieces
-- `.lt` lower-third = the speaker name-card template (one per speaker)
-- `.bigmark` finale title-card
+## Assets (assets/)
+8 real speaker cards (from loops set), celebrate.jpg. Real <img> need crossorigin + HTTP to load
+(they show in Studio/render, not file://). Schedule/community/agent UI are on-brand HTML mockups.
 
-## Pending inputs
-1. Nate under-10s direct-to-camera clip → S2 hero slot.
-2. Speaker faces → S3 slots; fill real names/roles in the name cards.
-3. B-roll (live builds, the room, community wins) → S4 slots.
-4. VO/music bed. Marquee opener wants the strongest music cue of the package.
+## Pending / swap-ins
+- Confirm $60K figure + the "ais.live" URL + exact stat numbers.
+- S5 schedule rows are representative — swap to final agenda if desired.
+- Music bed (silent by design for review). Render only on Aidan's go.

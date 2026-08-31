@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS Live — Ad 3 Intro (16x9)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c; --charcoal: #0a0e14; --cream: #f0eee9; --paper: #ffffff;
+        --blue: #37bdf8; --yellow: #f5d82a; --coral: #ff8a5c; --red-live: #ff3b30;
+        --paper-soft: rgba(209, 220, 232, 0.82); --paper-mute: rgba(209, 220, 232, 0.55);
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; isolation: isolate; }
+
+      #bg-wrap { position: absolute; inset: 0; width: 1920px; height: 1080px; transform: translate(400px, 238px) scale(1.45); transform-origin: center center; }
+      #bg-video { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      #panel .scrim { position: absolute; inset: -80px; background: linear-gradient(90deg, rgba(7,18,28,0.9) 0%, rgba(7,18,28,0.7) 28%, rgba(7,18,28,0.0) 56%); }
+      #panel .grid {
+        position: absolute; inset: -80px;
+        background-image: linear-gradient(rgba(55,189,248,0.11) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.11) 1px, transparent 1px);
+        background-size: 46px 46px;
+        -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 50%); mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 50%);
+      }
+
+      .card { position: relative; overflow: hidden; border-radius: 5px; background: linear-gradient(135deg, rgba(7,18,28,0.93), rgba(10,14,20,0.86)); border: 1px solid rgba(55,189,248,0.32); box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06); }
+      .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(55,189,248,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.07) 1px, transparent 1px); background-size: 28px 28px; }
+
+      .kick { display: inline-block; font-family: var(--font-mono); font-weight: 700; font-size: 26px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--blue); white-space: nowrap; padding: 12px 20px; border-radius: 4px; border: 1.5px solid rgba(55,189,248,0.55); background: rgba(7,18,28,0.55); }
+
+      /* A · real or hype */
+      #beatA .inner { position: absolute; left: 80px; top: 372px; width: 880px; }
+      #beatA .kick { margin-bottom: 26px; }
+      #beatA .line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 94px; line-height: 1.0; letter-spacing: -0.035em; color: #fff; text-shadow: 0 3px 26px rgba(0,0,0,0.55); }
+      #beatA .box { display: inline-block; background: var(--blue); color: var(--onyx); font-style: italic; padding: 2px 20px 8px; border-radius: 5px; box-shadow: 0 0 40px rgba(55,189,248,0.4); }
+
+      /* B · two fears — gap cards */
+      #beatB .inner { position: absolute; left: 80px; top: 244px; width: 800px; }
+      #beatB .kick { margin-bottom: 28px; }
+      #beatB .gbox { padding: 28px 36px; width: 100%; }
+      #beatB .gtext { font-family: var(--font-body); font-weight: 600; font-size: 44px; line-height: 1.04; color: #fff; letter-spacing: -0.012em; }
+      #beatB .bottom .gtext { color: var(--paper-soft); }
+      #beatB .gaplabel { display: flex; align-items: center; gap: 16px; margin: 22px 0 22px 4px; font-family: var(--font-mono); font-weight: 700; font-size: 22px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--coral); }
+      #beatB .gaplabel::after { content: ""; flex: 1; height: 2px; background: linear-gradient(90deg, rgba(255,138,92,0.7), rgba(255,138,92,0)); }
+
+      /* C · the only way to know */
+      #beatC .inner { position: absolute; left: 80px; top: 360px; width: 940px; }
+      #beatC .kick { margin-bottom: 26px; }
+      #beatC .line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 84px; line-height: 1.0; letter-spacing: -0.035em; color: #fff; text-shadow: 0 3px 26px rgba(0,0,0,0.55); }
+      #beatC .box { display: inline-block; background: var(--blue); color: var(--onyx); font-style: italic; padding: 2px 20px 8px; border-radius: 5px; box-shadow: 0 0 40px rgba(55,189,248,0.4); }
+
+      /* D · introduce you (finale) */
+      #beatD .inner { position: absolute; left: 80px; top: 360px; width: 1000px; }
+      #beatD .sub { font-family: var(--font-body); font-weight: 600; font-size: 50px; color: var(--paper-soft); letter-spacing: -0.01em; margin-bottom: 24px; text-shadow: 0 3px 20px rgba(0,0,0,0.5); }
+      #beatD .big { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 138px; line-height: 0.86; letter-spacing: -0.045em; color: #fff; text-shadow: 0 4px 40px rgba(0,0,0,0.6); }
+      #beatD .big em { color: var(--blue); font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="ais-live-intro3" data-start="0" data-duration="19.46" data-width="1920" data-height="1080">
+      <div id="bg-wrap">
+        <video id="bg-video" src="assets/intro3-source.mp4" data-start="0" data-duration="19.46" data-track-index="0" data-has-audio="false" muted></video>
+      </div>
+      <audio id="bg-audio" src="assets/intro3-audio.m4a" data-start="0" data-duration="19.46" data-track-index="1"></audio>
+
+      <div id="panel" class="clip" data-start="0" data-duration="19.46" data-track-index="2">
+        <div class="scrim"></div>
+        <div class="grid"></div>
+      </div>
+
+      <!-- A · real or hype -->
+      <div id="beatA" class="clip" data-start="0.6" data-duration="4.2" data-track-index="3">
+        <div class="inner">
+          <div class="kick">Real or hype?</div>
+          <div class="line">Real money?<br />Or just <span class="box">hype?</span></div>
+        </div>
+      </div>
+
+      <!-- B · two fears -->
+      <div id="beatB" class="clip" data-start="4.6" data-duration="5.3" data-track-index="4">
+        <div class="inner">
+          <div class="kick">Two fears</div>
+          <div class="card gbox top"><span class="gtext">It&rsquo;s all just noise.</span></div>
+          <div class="gaplabel">Or</div>
+          <div class="card gbox bottom"><span class="gtext">It&rsquo;s real, happening without you.</span></div>
+        </div>
+      </div>
+
+      <!-- C · the only way to know -->
+      <div id="beatC" class="clip" data-start="10.0" data-duration="8.0" data-track-index="5">
+        <div class="inner">
+          <div class="kick">The only way to know</div>
+          <div class="line">Talk to people<br />actually <span class="box">making money.</span></div>
+        </div>
+      </div>
+
+      <!-- D · introduce you (finale) -->
+      <div id="beatD" class="clip" data-start="18.2" data-duration="1.26" data-track-index="6">
+        <div class="inner">
+          <div class="sub">And I&rsquo;d like to&hellip;</div>
+          <div class="big">Introduce <em>you.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DURATION = 19.46;
+      const tl = gsap.timeline({ paused: true });
+
+      /* A — "real or hype" ; box "hype?" on 4.06 */
+      tl.fromTo("#beatA", { autoAlpha: 0, x: -40, filter: "blur(10px)" }, { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.9);
+      tl.from("#beatA .kick", { autoAlpha: 0, y: -10, duration: 0.4, ease: "power2.out" }, 1.1);
+      tl.from("#beatA .line", { autoAlpha: 0, y: 16, duration: 0.45, ease: "power2.out" }, 1.25);
+      tl.fromTo("#beatA .box", { scale: 0.6, autoAlpha: 0, y: 8 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.4, ease: "back.out(2)", transformOrigin: "left center" }, 3.85);
+      tl.to("#beatA", { autoAlpha: 0, x: -36, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 4.45);
+
+      /* B — two fears: noise (7.26), without you (9.36); kicker on "one fear says" (4.48) */
+      tl.fromTo("#beatB", { autoAlpha: 0, x: -40, filter: "blur(10px)" }, { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 4.9);
+      tl.from("#beatB .kick", { autoAlpha: 0, y: -10, duration: 0.4, ease: "power2.out" }, 5.1);
+      tl.fromTo("#beatB .top", { autoAlpha: 0, scale: 0.94, y: -10 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out", transformOrigin: "left center" }, 6.8);
+      tl.from("#beatB .gaplabel", { autoAlpha: 0, duration: 0.4, ease: "power1.out" }, 7.9);
+      tl.fromTo("#beatB .bottom", { autoAlpha: 0, scale: 0.94, y: 34 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out", transformOrigin: "left center" }, 8.7);
+      tl.to("#beatB", { autoAlpha: 0, x: -34, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 9.7);
+
+      /* C — talk to people making money; line on "talking to people" (14.24), box "making money" on 16.98 */
+      tl.fromTo("#beatC", { autoAlpha: 0, x: -40, filter: "blur(10px)" }, { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 10.2);
+      tl.from("#beatC .kick", { autoAlpha: 0, y: -10, duration: 0.4, ease: "power2.out" }, 10.4);
+      tl.from("#beatC .line", { autoAlpha: 0, y: 16, duration: 0.5, ease: "power2.out" }, 13.9);
+      tl.fromTo("#beatC .box", { scale: 0.6, autoAlpha: 0, y: 8 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.4, ease: "back.out(2)", transformOrigin: "left center" }, 16.9);
+      tl.to("#beatC", { autoAlpha: 0, x: -34, filter: "blur(8px)", duration: 0.35, ease: "power2.in" }, 17.95);
+
+      /* D — "introduce you" 18.84 */
+      tl.fromTo("#beatD .sub", { autoAlpha: 0, y: 18, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, 18.3);
+      tl.fromTo("#beatD .big", { autoAlpha: 0, scale: 0.7, y: 14 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(1.8)", transformOrigin: "left center" }, 18.85);
+      tl.to("#beatD .sub", { autoAlpha: 0.35, duration: 0.4, ease: "power1.out" }, 18.95);
+
+      tl.set({}, {}, DURATION);
+      window.__timelines["ais-live-intro3"] = tl;
+    </script>
+  </body>
+</html>

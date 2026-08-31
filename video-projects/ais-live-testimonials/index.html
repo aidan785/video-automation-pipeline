@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1920, height=1080" />
-    <title>AIS LIVE — testimonials — testi-building</title>
-    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>AIS LIVE — testimonials — testi-earning</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       :root {
@@ -31,7 +31,7 @@
       .eyebrow-fixed { position: absolute; top: 62px; left: 112px; font-family: var(--font-mono); font-weight: 700;
         font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(209,220,232,0.62);
         display: inline-flex; align-items: center; gap: 13px; }
-      .eyebrow-fixed::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: #37bdf8; box-shadow: 0 0 10px #37bdf8; }
+      /* no ::before marker chip — live-asset directives */
       .markbug { position: absolute; top: 52px; right: 108px; }
       .botbar { position: absolute; bottom: 56px; left: 112px; right: 108px; display: flex; justify-content: flex-end; align-items: center; }
       .tagchip { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase;
@@ -44,9 +44,12 @@
       .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 34px; padding: 200px 240px; }
       .i-kicker { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: #37bdf8;
         display: inline-flex; align-items: center; gap: 13px; }
-      .i-kicker::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: #37bdf8; box-shadow: 0 0 10px #37bdf8; }
-      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 0.95;
-        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.05em 0.18em; }
+      /* the wipe-reveal clip-path clips at the BORDER box, so italic-900 descenders
+         (the y in "They") need generous room inside it — 0.16em bottom still clipped
+         at 128px (Aidan 2026-07-08); 0.30em clears the full descender. Negative
+         margin returns the extra padding so the sub line doesn't drift down. */
+      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 1.1;
+        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.08em 0.18em 0.30em; margin-bottom: -0.17em; }
       .i-line em, .o-line em { font-style: italic; color: #37bdf8; }
       .i-sub, .o-sub { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 40px; line-height: 1.22;
         letter-spacing: -0.01em; color: rgba(209,220,232,0.82); max-width: 1180px; }
@@ -82,7 +85,7 @@
       .mtext { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
       .tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 19px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--a); }
-      .tag::before { content: ""; width: 28px; height: 2px; background: var(--a); }
+      /* no ::before marker line — live-asset directives */
       .name { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 86px; line-height: 0.96; letter-spacing: -0.03em; color: #fff; }
       .role { font-family: var(--font-mono); font-weight: 600; font-size: 19px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(209,220,232,0.72); }
       .quote { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 42px; line-height: 1.2; letter-spacing: -0.015em; color: #fff; max-width: 720px; }
@@ -90,7 +93,7 @@
       .built { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
         border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 11px 20px; }
-      .built::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--a); box-shadow: 0 0 10px var(--a); }
+      /* no ::before dot in the built chip — live-asset directives */
       .metricwrap { display: flex; align-items: baseline; gap: 20px; }
       .metric { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 116px; line-height: 0.9; letter-spacing: -0.04em; color: var(--a); text-shadow: 0 0 60px rgba(255,255,255,0.12); }
       .msub { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(209,220,232,0.74); }
@@ -111,142 +114,191 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="cmp-testi-building" data-start="0" data-duration="63.92" data-width="1920" data-height="1080">
-      <div id="bg" class="clip" data-start="0" data-duration="63.92" data-track-index="0">
-        <div class="grid"></div>
-        <div class="glow"></div>
-        <div class="vignette"></div>
+    <div data-hf-id="hf-73no" id="root" data-composition-id="cmp-testi-earning" data-start="0" data-duration="69.9" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-wqml" id="bg" class="clip" data-start="0" data-duration="69.9" data-track-index="0">
+        <div data-hf-id="hf-kxq8" class="grid"></div>
+        <div data-hf-id="hf-2s7n" class="glow"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
       </div>
-      <div id="scene" class="clip" data-start="0" data-duration="63.92" data-track-index="1">
-        <div class="chrome">
-          <div class="eyebrow-fixed">Real Members · Real Builds</div>
-          <div class="markbug"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
-          <div class="botbar"><span class="tagchip">AIS LIVE · July 11–12, 2026</span></div>
+      <div data-hf-id="hf-s1ar" id="scene" class="clip" data-start="0" data-duration="69.9" data-track-index="1">
+        <div data-hf-id="hf-6ex2" class="chrome">
+          <div data-hf-id="hf-gkvm" class="eyebrow-fixed">Real Members · Real Revenue</div>
+          <div data-hf-id="hf-r5bf" class="markbug"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-ohjn" class="ring"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+          <div data-hf-id="hf-jk1y" class="botbar"><span data-hf-id="hf-gaed" class="tagchip">AIS LIVE · July 11–12, 2026</span></div>
         </div>
 
-        <div id="intro" class="panel center">
-          <div class="i-kicker">Community Testimonials</div>
-          <div class="i-line">What They <em>Built</em></div>
-          <div class="i-sub">AIS members on what shifted the moment they stopped watching and started shipping.</div>
+        <div data-hf-id="hf-neab" id="intro" class="panel center">
+          <div data-hf-id="hf-b2f6" class="i-kicker">Community Testimonials</div>
+          <div data-hf-id="hf-93xo" class="i-line">What They <em data-hf-id="hf-cfzc">Earned</em></div>
+          <div data-hf-id="hf-4lty" class="i-sub">Members who turned the skill into income, and the numbers to prove it.</div>
         </div>
 
-      <div id="m0" class="panel mslide" style="--a:#37bdf8">
-        <div class="vid">
-          <div class="vgrid"></div>
-          <div class="scan"></div>
+      <div data-hf-id="hf-0ie7" id="m0" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-a665" class="vid">
+          <div data-hf-id="hf-sv0e" class="vgrid"></div>
+          <div data-hf-id="hf-az1f" class="scan"></div>
           
         </div>
-        <div class="mtext">
-          <div class="tag">Building</div>
-          <div class="name">Frank Priboy</div>
-          <div class="role">AIS+ Member</div>
-          <div class="quote"><span class="qm">&ldquo;</span>I have yet to find something I can't build.&rdquo;</div>
-          <div class="built">Built — AI consultancy</div>
-          <div class="counter">01 / 05</div>
+        <div data-hf-id="hf-ufo8" class="mtext">
+          <div data-hf-id="hf-cnt2" class="tag">Earning</div>
+          <div data-hf-id="hf-6cow" class="metricwrap"><div data-hf-id="hf-ygnj" class="metric">$60K</div><div data-hf-id="hf-kgy5" class="msub">one signed contract</div></div>
+          <div data-hf-id="hf-ha7i" class="quote"><span data-hf-id="hf-gyex" class="qm">“</span>Yesterday we just signed a $60,000 contract.”</div>
+          <div data-hf-id="hf-h8ln" class="nameline"><span data-hf-id="hf-6riu" class="name-sm">Glenn Marcus</span><span data-hf-id="hf-rpch" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-8erm" class="counter">01 / 08</div>
         </div>
       </div>
-      <div id="m1" class="panel mslide" style="--a:#ff8a5c">
-        <div class="vid">
-          <div class="vgrid"></div>
-          <div class="scan"></div>
+      <div data-hf-id="hf-kquy" id="m1" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-t0pd" class="vid">
+          <div data-hf-id="hf-vdnm" class="vgrid"></div>
+          <div data-hf-id="hf-51b7" class="scan"></div>
           
         </div>
-        <div class="mtext">
-          <div class="tag">Building</div>
-          <div class="name">Amy Simpson</div>
-          <div class="role">AIS+ Member</div>
-          <div class="quote"><span class="qm">&ldquo;</span>I swore I'd never design a website. Now it comes naturally to me.&rdquo;</div>
-          <div class="built">Built — Websites & code</div>
-          <div class="counter">02 / 05</div>
+        <div data-hf-id="hf-7vao" class="mtext">
+          <div data-hf-id="hf-s0p6" class="tag">Earning</div>
+          <div data-hf-id="hf-q7js" class="metricwrap"><div data-hf-id="hf-iuf7" class="metric">$6K</div><div data-hf-id="hf-5ghw" class="msub">first client quote</div></div>
+          <div data-hf-id="hf-2h5k" class="quote"><span data-hf-id="hf-8avh" class="qm">“</span>I was able to quote him out at $6K.”</div>
+          <div data-hf-id="hf-nwh7" class="nameline"><span data-hf-id="hf-jnxw" class="name-sm">Mike Aheirwe</span><span data-hf-id="hf-nfk5" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-eag9" class="counter">02 / 08</div>
         </div>
       </div>
-      <div id="m2" class="panel mslide" style="--a:#f5d82a">
-        <div class="vid">
-          <div class="vgrid"></div>
-          <div class="scan"></div>
+      <div data-hf-id="hf-s39t" id="m2" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-u7mg" class="vid">
+          <div data-hf-id="hf-vryn" class="vgrid"></div>
+          <div data-hf-id="hf-4n06" class="scan"></div>
           
         </div>
-        <div class="mtext">
-          <div class="tag">Building</div>
-          <div class="name">Balaji Iyer</div>
-          <div class="role">AIS+ Member</div>
-          <div class="quote"><span class="qm">&ldquo;</span>I spun up a workflow I never thought I would build.&rdquo;</div>
-          <div class="built">Built — Self-hosted n8n system</div>
-          <div class="counter">03 / 05</div>
+        <div data-hf-id="hf-6odl" class="mtext">
+          <div data-hf-id="hf-sf07" class="tag">Earning</div>
+          <div data-hf-id="hf-p0mp" class="metricwrap"><div data-hf-id="hf-6a81" class="metric">$8K</div><div data-hf-id="hf-8nwq" class="msub">earned from AIS+</div></div>
+          <div data-hf-id="hf-0bxp" class="quote"><span data-hf-id="hf-9hsk" class="qm">“</span>I calculated it. I made $8,000 from AIS+.”</div>
+          <div data-hf-id="hf-ni66" class="nameline"><span data-hf-id="hf-9cm4" class="name-sm">Abdurrahman Ibrahim</span><span data-hf-id="hf-omh8" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-bxyo" class="counter">03 / 08</div>
         </div>
       </div>
-      <div id="m3" class="panel mslide" style="--a:#37bdf8">
-        <div class="vid">
-          <div class="vgrid"></div>
-          <div class="scan"></div>
+      <div data-hf-id="hf-cqbo" id="m3" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-ttbf" class="vid">
+          <div data-hf-id="hf-w69o" class="vgrid"></div>
+          <div data-hf-id="hf-48p5" class="scan"></div>
           
         </div>
-        <div class="mtext">
-          <div class="tag">Building</div>
-          <div class="name">Miguel Zamarripa</div>
-          <div class="role">AIS+ Member</div>
-          <div class="quote"><span class="qm">&ldquo;</span>I deliver real projects now, not just nice demos.&rdquo;</div>
-          <div class="built">Built — Real client projects</div>
-          <div class="counter">04 / 05</div>
+        <div data-hf-id="hf-72om" class="mtext">
+          <div data-hf-id="hf-stb8" class="tag">Earning</div>
+          <div data-hf-id="hf-pexq" class="metricwrap"><div data-hf-id="hf-0s1u" class="metric">$8.5K</div><div data-hf-id="hf-e7e5" class="msub">across two deals</div></div>
+          <div data-hf-id="hf-hq2a" class="quote"><span data-hf-id="hf-93hj" class="qm">“</span>Two contracts: $3,300 and $5,200.”</div>
+          <div data-hf-id="hf-n3v5" class="nameline"><span data-hf-id="hf-weqd" class="name-sm">Maciej Wesolowski</span><span data-hf-id="hf-o867" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-4zsv" class="counter">04 / 08</div>
         </div>
       </div>
-      <div id="m4" class="panel mslide" style="--a:#ff8a5c">
-        <div class="vid">
-          <div class="vgrid"></div>
-          <div class="scan"></div>
+      <div data-hf-id="hf-02kb" id="m4" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-rtsa" class="vid">
+          <div data-hf-id="hf-wkkp" class="vgrid"></div>
+          <div data-hf-id="hf-3ue4" class="scan"></div>
           
         </div>
-        <div class="mtext">
-          <div class="tag">Building</div>
-          <div class="name">Griffin Maklansky</div>
-          <div class="role">AIS+ Member</div>
-          <div class="quote"><span class="qm">&ldquo;</span>A month and a half from laid off to hired.&rdquo;</div>
-          <div class="built">Built — First app + a job</div>
-          <div class="counter">05 / 05</div>
+        <div data-hf-id="hf-5vrj" class="mtext">
+          <div data-hf-id="hf-t7m9" class="tag">Earning</div>
+          <div data-hf-id="hf-o80n" class="metricwrap"><div data-hf-id="hf-52b2" class="metric">$10K</div><div data-hf-id="hf-h6xa" class="msub">new project rate</div></div>
+          <div data-hf-id="hf-owjc" class="quote"><span data-hf-id="hf-aaem" class="qm">“</span>Two months ago I'd never have charged this much.”</div>
+          <div data-hf-id="hf-mpk4" class="nameline"><span data-hf-id="hf-0ia6" class="name-sm">Sven Loeffler</span><span data-hf-id="hf-pf3a" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-e3uu" class="counter">05 / 08</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-pul2" id="m5" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-rfh9" class="vid">
+          <div data-hf-id="hf-wyvq" class="vgrid"></div>
+          <div data-hf-id="hf-3g33" class="scan"></div>
+          
+        </div>
+        <div data-hf-id="hf-6a2k" class="mtext">
+          <div data-hf-id="hf-tlxa" class="tag">Earning</div>
+          <div data-hf-id="hf-ombo" class="metricwrap"><div data-hf-id="hf-m1i8" class="metric">$12K</div><div data-hf-id="hf-hzox" class="msub">per system</div></div>
+          <div data-hf-id="hf-iken" class="quote"><span data-hf-id="hf-9w3l" class="qm">“</span>Now I can charge $12K for this.”</div>
+          <div data-hf-id="hf-mb93" class="nameline"><span data-hf-id="hf-9fjq" class="name-sm">Jose M Lopes</span><span data-hf-id="hf-p0s9" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-3zq5" class="counter">06 / 08</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-a0z1" id="m6" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-smec" class="vid">
+          <div data-hf-id="hf-xd6r" class="vgrid"></div>
+          <div data-hf-id="hf-31s2" class="scan"></div>
+          
+        </div>
+        <div data-hf-id="hf-535h" class="mtext">
+          <div data-hf-id="hf-u08b" class="tag">Earning</div>
+          <div data-hf-id="hf-nfel" class="metricwrap"><div data-hf-id="hf-gpgi" class="metric">$14K</div><div data-hf-id="hf-rbwh" class="msub">consulting contract</div></div>
+          <div data-hf-id="hf-1zhh" class="quote"><span data-hf-id="hf-b30o" class="qm">“</span>We landed a $14,000 contract.”</div>
+          <div data-hf-id="hf-lwy2" class="nameline"><span data-hf-id="hf-wlyk" class="name-sm">Aidan Finnegan</span><span data-hf-id="hf-q7pc" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-sc10" class="counter">07 / 08</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-qlqo" id="m7" class="panel mslide" style="--a:#37bdf8">
+        <div data-hf-id="hf-s83b" class="vid">
+          <div data-hf-id="hf-xrhs" class="vgrid"></div>
+          <div data-hf-id="hf-2nh1" class="scan"></div>
+          
+        </div>
+        <div data-hf-id="hf-5hgi" class="mtext">
+          <div data-hf-id="hf-uejc" class="tag">Earning</div>
+          <div data-hf-id="hf-ntpm" class="metricwrap"><div data-hf-id="hf-47q7" class="metric">$24K</div><div data-hf-id="hf-tx49" class="msub">client engagement</div></div>
+          <div data-hf-id="hf-nh8j" class="quote"><span data-hf-id="hf-aopn" class="qm">“</span>I closed a client for a $24,000 engagement.”</div>
+          <div data-hf-id="hf-lin1" class="nameline"><span data-hf-id="hf-w1pb" class="name-sm">Latoya Robinson</span><span data-hf-id="hf-pteb" class="role">AIS+ Member</span></div>
+          <div data-hf-id="hf-y7tv" class="counter">08 / 08</div>
         </div>
       </div>
 
-        <div id="outro" class="panel center">
-          <div class="o-line">You're <em>Next</em>.</div>
-          <div class="o-sub">Real projects start inside AIS+.</div>
-          <div class="o-cta">AIS LIVE · July 11–12, 2026</div>
+        <div data-hf-id="hf-63fk" id="outro" class="panel center">
+          <div data-hf-id="hf-op5z" class="o-line">Your Turn to <em data-hf-id="hf-zek5">Get Paid</em>.</div>
+          <div data-hf-id="hf-7cw4" class="o-sub">Build it. Price it. Close it. Inside AIS+.</div>
+          <div data-hf-id="hf-pa5w" class="o-cta">AIS LIVE · July 11–12, 2026</div>
         </div>
       </div>
-      <div id="rv-m0" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
-        <video id="vid-m0" src="assets/builder/frank-priboy.mp4" muted playsinline data-has-audio="false" data-start="6.4" data-duration="15.32" data-track-index="10"></video>
+      <div data-hf-id="hf-deec" id="rv-m0" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-kimr" id="vid-m0" src="assets/earning/glenn-marcus.mp4" muted playsinline data-has-audio="false" data-start="6.4" data-duration="3.83" data-track-index="10"></video>
       </div>
-      <audio id="aud-m0" src="assets/builder/frank-priboy.mp4" data-start="6.4" data-duration="14.72" data-track-index="20" data-volume="1"></audio>
-      <div id="rv-m1" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
-        <video id="vid-m1" src="assets/builder/amy-simpson.mp4" muted playsinline data-has-audio="false" data-start="21.12" data-duration="11.70" data-track-index="11"></video>
+      <audio data-hf-id="hf-zdpe" id="aud-m0" src="assets/earning/glenn-marcus.mp4" data-start="6.4" data-duration="3.23" data-track-index="20" data-volume="1"></audio>
+      <div data-hf-id="hf-flkz" id="rv-m1" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-ptk1" id="vid-m1" src="assets/earning/mike-aheirwe.mp4" muted playsinline data-has-audio="false" data-start="9.63" data-duration="3.43" data-track-index="11"></video>
       </div>
-      <audio id="aud-m1" src="assets/builder/amy-simpson.mp4" data-start="21.12" data-duration="11.10" data-track-index="21" data-volume="1"></audio>
-      <div id="rv-m2" class="realvid" style="--a:#f5d82a; left:112px; top:298px; width:900px; height:506px;">
-        <video id="vid-m2" src="assets/builder/balaji-iyer.mp4" muted playsinline data-has-audio="false" data-start="32.22" data-duration="10.84" data-track-index="12"></video>
+      <audio data-hf-id="hf-bknb" id="aud-m1" src="assets/earning/mike-aheirwe.mp4" data-start="9.63" data-duration="2.83" data-track-index="21" data-volume="1"></audio>
+      <div data-hf-id="hf-g06i" id="rv-m2" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-ldpv" id="vid-m2" src="assets/earning/abdurrahman-ibrahim.mp4" muted playsinline data-has-audio="false" data-start="12.46" data-duration="11.65" data-track-index="12"></video>
       </div>
-      <audio id="aud-m2" src="assets/builder/balaji-iyer.mp4" data-start="32.22" data-duration="10.24" data-track-index="22" data-volume="1"></audio>
-      <div id="rv-m3" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
-        <video id="vid-m3" src="assets/builder/miguel-zamarripa.mp4" muted playsinline data-has-audio="false" data-start="42.46" data-duration="9.56" data-track-index="13"></video>
+      <audio data-hf-id="hf-q3ik" id="aud-m2" src="assets/earning/abdurrahman-ibrahim.mp4" data-start="12.46" data-duration="11.05" data-track-index="22" data-volume="1"></audio>
+      <div data-hf-id="hf-6kgx" id="rv-m3" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-k6ar" id="vid-m3" src="assets/earning/maciej-wesolowski.mp4" muted playsinline data-has-audio="false" data-start="23.51" data-duration="14.50" data-track-index="13"></video>
       </div>
-      <audio id="aud-m3" src="assets/builder/miguel-zamarripa.mp4" data-start="42.46" data-duration="8.96" data-track-index="23" data-volume="1"></audio>
-      <div id="rv-m4" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
-        <video id="vid-m4" src="assets/builder/griffin-maklansky.mp4" muted playsinline data-has-audio="false" data-start="51.42" data-duration="5.10" data-track-index="14"></video>
+      <audio data-hf-id="hf-mrk1" id="aud-m3" src="assets/earning/maciej-wesolowski.mp4" data-start="23.51" data-duration="13.90" data-track-index="23" data-volume="1"></audio>
+      <div data-hf-id="hf-1xuw" id="rv-m4" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-dl8v" id="vid-m4" src="assets/earning/sven-loeffler.mp4" muted playsinline data-has-audio="false" data-start="37.41" data-duration="10.20" data-track-index="14"></video>
       </div>
-      <audio id="aud-m4" src="assets/builder/griffin-maklansky.mp4" data-start="51.42" data-duration="4.50" data-track-index="24" data-volume="1"></audio>
+      <audio data-hf-id="hf-4eyw" id="aud-m4" src="assets/earning/sven-loeffler.mp4" data-start="37.41" data-duration="9.60" data-track-index="24" data-volume="1"></audio>
+      <div data-hf-id="hf-mss7" id="rv-m5" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-vuq7" id="vid-m5" src="assets/earning/jose-lopes.mp4" muted playsinline data-has-audio="false" data-start="47.01" data-duration="4.03" data-track-index="15"></video>
+      </div>
+      <audio data-hf-id="hf-1k0p" id="aud-m5" src="assets/earning/jose-lopes.mp4" data-start="47.01" data-duration="3.43" data-track-index="25" data-volume="1"></audio>
+      <div data-hf-id="hf-11bm" id="rv-m6" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-mvir" id="vid-m6" src="assets/earning/aidan-finnegan.mp4" muted playsinline data-has-audio="false" data-start="50.44" data-duration="5.66" data-track-index="16"></video>
+      </div>
+      <audio data-hf-id="hf-c0ic" id="aud-m6" src="assets/earning/aidan-finnegan.mp4" data-start="50.44" data-duration="5.06" data-track-index="26" data-volume="1"></audio>
+      <div data-hf-id="hf-poat" id="rv-m7" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
+        <video data-hf-id="hf-nlko" id="vid-m7" src="assets/earning/latoya-robinson.mp4" muted playsinline data-has-audio="false" data-start="55.5" data-duration="7.00" data-track-index="17"></video>
+      </div>
+      <audio data-hf-id="hf-b85w" id="aud-m7" src="assets/earning/latoya-robinson.mp4" data-start="55.5" data-duration="6.40" data-track-index="27" data-volume="1"></audio>
     </div>
 
     <script>
       window.__timelines = window.__timelines || {};
-      const D = 63.92;
+      const D = 69.9;
       const tl = gsap.timeline({ paused: true });
 
       /* AMBIENT — phase-locked to the 1.6s brand beat */
-      tl.to(".dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 79, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+      tl.to(".dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 86, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
       tl.fromTo(".ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
         { autoAlpha: 0.5, scale: 1, duration: 0.001 },
         { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
         { autoAlpha: 0, scale: 1, duration: 0.6 }
-      ], repeat: 39, ease: "none" }, 0);
-      tl.to(".glow", { x: 40, y: -22, duration: 31.96, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      ], repeat: 43, ease: "none" }, 0);
+      tl.to(".glow", { x: 40, y: -22, duration: 34.95, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
       tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
 
       /* INTRO */
@@ -258,7 +310,7 @@
       tl.set("#intro .i-sub", { autoAlpha: 0, y: 16 }, 0);
       tl.to ("#intro .i-sub", { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.9);
 
-      /* MEMBER 1 @ 6.4s (14.72s) — crossfade from #intro */
+      /* MEMBER 1 @ 6.4s (3.23s) — crossfade from #intro */
       tl.to ("#intro", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 6.4);
       tl.set("#m0", { autoAlpha: 1 }, 6.4);
       tl.set("#m0 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 6.4);
@@ -267,64 +319,97 @@
       tl.to ("#m0 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 6.70);
       tl.set("#rv-m0", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
       tl.to ("#rv-m0", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 6.45);
-      tl.to ("#rv-m0", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 21.12);
+      tl.to ("#rv-m0", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 9.63);
 
-      /* MEMBER 2 @ 21.12s (11.1s) — crossfade from #m0 */
-      tl.to ("#m0", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 21.12);
-      tl.set("#m1", { autoAlpha: 1 }, 21.12);
-      tl.set("#m1 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 21.12);
-      tl.to ("#m1 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 21.17);
-      tl.set("#m1 .mtext > *", { autoAlpha: 0, x: 36 }, 21.12);
-      tl.to ("#m1 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 21.42);
+      /* MEMBER 2 @ 9.63s (2.83s) — crossfade from #m0 */
+      tl.to ("#m0", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 9.63);
+      tl.set("#m1", { autoAlpha: 1 }, 9.63);
+      tl.set("#m1 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 9.63);
+      tl.to ("#m1 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 9.68);
+      tl.set("#m1 .mtext > *", { autoAlpha: 0, x: 36 }, 9.63);
+      tl.to ("#m1 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 9.93);
       tl.set("#rv-m1", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
-      tl.to ("#rv-m1", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 21.17);
-      tl.to ("#rv-m1", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 32.22);
+      tl.to ("#rv-m1", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 9.68);
+      tl.to ("#rv-m1", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 12.46);
 
-      /* MEMBER 3 @ 32.22s (10.24s) — crossfade from #m1 */
-      tl.to ("#m1", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 32.22);
-      tl.set("#m2", { autoAlpha: 1 }, 32.22);
-      tl.set("#m2 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 32.22);
-      tl.to ("#m2 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 32.27);
-      tl.set("#m2 .mtext > *", { autoAlpha: 0, x: 36 }, 32.22);
-      tl.to ("#m2 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 32.52);
+      /* MEMBER 3 @ 12.46s (11.05s) — crossfade from #m1 */
+      tl.to ("#m1", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 12.46);
+      tl.set("#m2", { autoAlpha: 1 }, 12.46);
+      tl.set("#m2 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 12.46);
+      tl.to ("#m2 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 12.51);
+      tl.set("#m2 .mtext > *", { autoAlpha: 0, x: 36 }, 12.46);
+      tl.to ("#m2 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 12.76);
       tl.set("#rv-m2", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
-      tl.to ("#rv-m2", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 32.27);
-      tl.to ("#rv-m2", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 42.46);
+      tl.to ("#rv-m2", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 12.51);
+      tl.to ("#rv-m2", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 23.51);
 
-      /* MEMBER 4 @ 42.46s (8.96s) — crossfade from #m2 */
-      tl.to ("#m2", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 42.46);
-      tl.set("#m3", { autoAlpha: 1 }, 42.46);
-      tl.set("#m3 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 42.46);
-      tl.to ("#m3 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 42.51);
-      tl.set("#m3 .mtext > *", { autoAlpha: 0, x: 36 }, 42.46);
-      tl.to ("#m3 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 42.76);
+      /* MEMBER 4 @ 23.51s (13.9s) — crossfade from #m2 */
+      tl.to ("#m2", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 23.51);
+      tl.set("#m3", { autoAlpha: 1 }, 23.51);
+      tl.set("#m3 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 23.51);
+      tl.to ("#m3 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 23.56);
+      tl.set("#m3 .mtext > *", { autoAlpha: 0, x: 36 }, 23.51);
+      tl.to ("#m3 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 23.81);
       tl.set("#rv-m3", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
-      tl.to ("#rv-m3", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 42.51);
-      tl.to ("#rv-m3", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 51.42);
+      tl.to ("#rv-m3", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 23.56);
+      tl.to ("#rv-m3", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 37.41);
 
-      /* MEMBER 5 @ 51.42s (4.5s) — crossfade from #m3 */
-      tl.to ("#m3", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 51.42);
-      tl.set("#m4", { autoAlpha: 1 }, 51.42);
-      tl.set("#m4 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 51.42);
-      tl.to ("#m4 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 51.47);
-      tl.set("#m4 .mtext > *", { autoAlpha: 0, x: 36 }, 51.42);
-      tl.to ("#m4 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 51.72);
+      /* MEMBER 5 @ 37.41s (9.6s) — crossfade from #m3 */
+      tl.to ("#m3", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 37.41);
+      tl.set("#m4", { autoAlpha: 1 }, 37.41);
+      tl.set("#m4 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 37.41);
+      tl.to ("#m4 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 37.46);
+      tl.set("#m4 .mtext > *", { autoAlpha: 0, x: 36 }, 37.41);
+      tl.to ("#m4 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 37.71);
       tl.set("#rv-m4", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
-      tl.to ("#rv-m4", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 51.47);
-      tl.to ("#rv-m4", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 55.92);
+      tl.to ("#rv-m4", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 37.46);
+      tl.to ("#rv-m4", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 47.01);
 
-      /* OUTRO @ 55.92s */
-      tl.to ("#m4", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 55.92);
-      tl.set("#outro", { autoAlpha: 1 }, 55.92);
-      tl.set("#outro .o-line", { clipPath: "inset(0 100% 0 0)" }, 55.92);
-      tl.to ("#outro .o-line", { clipPath: "inset(0 0% 0 0)", duration: 0.72, ease: "power3.out" }, 56.12);
-      tl.set("#outro .o-sub", { autoAlpha: 0, y: 16 }, 55.92);
-      tl.to ("#outro .o-sub", { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 56.62);
-      tl.set("#outro .o-cta", { autoAlpha: 0, scale: 0.9 }, 55.92);
-      tl.to ("#outro .o-cta", { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(1.4)" }, 56.87);
+      /* MEMBER 6 @ 47.01s (3.43s) — crossfade from #m4 */
+      tl.to ("#m4", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 47.01);
+      tl.set("#m5", { autoAlpha: 1 }, 47.01);
+      tl.set("#m5 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 47.01);
+      tl.to ("#m5 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 47.06);
+      tl.set("#m5 .mtext > *", { autoAlpha: 0, x: 36 }, 47.01);
+      tl.to ("#m5 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 47.31);
+      tl.set("#rv-m5", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m5", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 47.06);
+      tl.to ("#rv-m5", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 50.44);
+
+      /* MEMBER 7 @ 50.44s (5.06s) — crossfade from #m5 */
+      tl.to ("#m5", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 50.44);
+      tl.set("#m6", { autoAlpha: 1 }, 50.44);
+      tl.set("#m6 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 50.44);
+      tl.to ("#m6 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 50.49);
+      tl.set("#m6 .mtext > *", { autoAlpha: 0, x: 36 }, 50.44);
+      tl.to ("#m6 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 50.74);
+      tl.set("#rv-m6", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m6", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 50.49);
+      tl.to ("#rv-m6", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 55.50);
+
+      /* MEMBER 8 @ 55.5s (6.4s) — crossfade from #m6 */
+      tl.to ("#m6", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 55.5);
+      tl.set("#m7", { autoAlpha: 1 }, 55.5);
+      tl.set("#m7 .vid", { autoAlpha: 0, x: -34, scale: 0.96 }, 55.5);
+      tl.to ("#m7 .vid", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 55.55);
+      tl.set("#m7 .mtext > *", { autoAlpha: 0, x: 36 }, 55.5);
+      tl.to ("#m7 .mtext > *", { autoAlpha: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }, 55.80);
+      tl.set("#rv-m7", { autoAlpha: 0, x: -34, scale: 0.96 }, 0);
+      tl.to ("#rv-m7", { autoAlpha: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out" }, 55.55);
+      tl.to ("#rv-m7", { autoAlpha: 0, duration: 0.5, ease: "power2.in" }, 61.90);
+
+      /* OUTRO @ 61.9s */
+      tl.to ("#m7", { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 61.9);
+      tl.set("#outro", { autoAlpha: 1 }, 61.9);
+      tl.set("#outro .o-line", { clipPath: "inset(0 100% 0 0)" }, 61.9);
+      tl.to ("#outro .o-line", { clipPath: "inset(0 0% 0 0)", duration: 0.72, ease: "power3.out" }, 62.10);
+      tl.set("#outro .o-sub", { autoAlpha: 0, y: 16 }, 61.9);
+      tl.to ("#outro .o-sub", { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 62.60);
+      tl.set("#outro .o-cta", { autoAlpha: 0, scale: 0.9 }, 61.9);
+      tl.to ("#outro .o-cta", { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(1.4)" }, 62.85);
 
       tl.set({}, {}, D); // Law #11 — fill the slot
-      window.__timelines["cmp-testi-building"] = tl;
+      window.__timelines["cmp-testi-earning"] = tl;
     </script>
   </body>
 </html>

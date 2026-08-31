@@ -1,0 +1,189 @@
+// AIS LIVE — Sponsor Announcement Cards (#19). 16:9 motion reveal cards, one per sponsor.
+//   Logo-anchored, centered: tier eyebrow + sponsor LOGO + tagline + sponsored-session meta, on the
+//   locked AIS LIVE brand (onyx, grid, blue glow, vignette, official fat logo + pulsing live-dot).
+//   LOGO IS A PLACEHOLDER wordmark (on-brand Montserrat 900 italic in the .logo-zone). To finalize:
+//   drop the real logo art as <img> inside .logo-zone and delete the .wordmark span. Per Schedule v6.1
+//   the presenting sponsor is HyperAgent; Glaido + Hostinger are sponsored-session sponsors.
+//
+//   node _gen.mjs            -> write all cards to cards/<slug>.html
+//   node _gen.mjs <slug>     -> write all cards AND copy <slug> to index.html (preview/render)
+
+import { writeFileSync, copyFileSync, mkdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
+const DIR = dirname(fileURLToPath(import.meta.url));
+const CARDS = join(DIR, "cards");
+mkdirSync(CARDS, { recursive: true });
+
+const DUR = 6.4; // 4 × 1.6s brand beat
+
+const ACCENT = {
+  blue:   { hex: "#37bdf8", glow: "rgba(55,189,248,0.55)", blob: "rgba(55,189,248,0.20)" },
+  coral:  { hex: "#ff8a5c", glow: "rgba(255,138,92,0.55)", blob: "rgba(255,138,92,0.20)" },
+  yellow: { hex: "#f5d82a", glow: "rgba(245,216,42,0.50)", blob: "rgba(245,216,42,0.16)" },
+};
+
+// Real logos dropped in 2026-06-30 (Hostinger removed — no longer a sponsor).
+// logo = transparent PNG in assets/logos/; logoH = render height in px (wordmark vs icon differ).
+const SPONSORS = [
+  { slug: "hyperagent", name: "HyperAgent", accentColor: "blue", tier: "PRESENTING SPONSOR",
+    logo: "sponsor-hyperagent.png", logoH: 120,
+    tagline: "A fleet of always-on agents", ses: "Keynote + Hands-On Workshop", meta: "SAT JUL 11 · SUN JUL 12 · CT" },
+  { slug: "glaido", name: "Glaido", accentColor: "coral", tier: "OFFICIAL SPONSOR",
+    logo: "sponsor-glaido.png", wordmark: "Glaido", iconH: 132, wmSize: 108, gap: 34,
+    tagline: "Voice-enabled client work, billable", ses: "Sponsored Session", meta: "SAT · JUL 11 · 12:00 PM CT" },
+];
+
+function logoSize(str) {
+  const n = str.length;
+  return n <= 7 ? 168 : n <= 10 ? 150 : n <= 13 ? 124 : 104;
+}
+
+function cardHTML(s) {
+  const D = DUR;
+  const a = ACCENT[s.accentColor] || ACCENT.blue;
+  const lfs = logoSize(s.name);
+  // logo lockup: icon + recreated wordmark when `wordmark` set (icon-only sponsors), else the logo image alone
+  const logoMarkup = s.wordmark
+    ? `<span class="lockup"><img class="logo-ico" src="assets/logos/${s.logo}" crossorigin="anonymous" alt="${s.name}" /><span class="logo-wm">${s.wordmark}</span></span>`
+    : `<img class="logo-img" src="assets/logos/${s.logo}" crossorigin="anonymous" alt="${s.name}" />`;
+  const dotRepeat = Math.round(D / 0.8) - 1;
+  const ringRepeat = Math.round(D / 1.6) - 1;
+  const glowDur = D / 2;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — Sponsor · ${s.slug}</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"><\/script>
+    <style>
+      :root {
+        --onyx: #07121c; --blue: #37bdf8; --red-live: #ff3b30; --accent: ${a.hex};
+        --paper-soft: rgba(209,220,232,0.82); --paper-mute: rgba(209,220,232,0.52);
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--onyx); isolation: isolate; }
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- background ---------- */
+      .grid { position: absolute; inset: -48px;
+        background-image:
+          linear-gradient(rgba(55,189,248,0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55,189,248,0.065) 1px, transparent 1px);
+        background-size: 24px 24px; }
+      .glow { position: absolute; top: -200px; left: 50%; width: 900px; height: 900px; margin-left: -450px;
+        border-radius: 50%; background: ${a.blob}; filter: blur(160px); }
+      .vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 44%, rgba(0,0,0,0.60) 95%); }
+
+      /* ---------- centered stack ---------- */
+      .wrap { position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 0; padding: 150px 160px 120px; text-align: center; }
+      .eyebrow { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.36em;
+        text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 13px; margin-bottom: 44px; }
+      .eyebrow .dotw { position: relative; width: 11px; height: 11px; }
+      .eyebrow .dot { position: absolute; inset: 0; border-radius: 2px; background: var(--red-live); box-shadow: 0 0 10px var(--red-live); }
+
+      /* logo zone — real sponsor logo art */
+      .logo-zone { position: relative; display: inline-flex; align-items: center; justify-content: center;
+        min-height: 200px; margin-bottom: 30px; }
+      .logo-zone::after { content: ""; position: absolute; left: 50%; top: 50%; width: 520px; height: 320px;
+        transform: translate(-50%,-50%); background: ${a.blob}; filter: blur(120px); border-radius: 50%; z-index: -1; }
+      .logo-content { display: inline-flex; align-items: center; justify-content: center;
+        filter: drop-shadow(0 0 60px ${a.glow}); }
+      .logo-img { display: block; height: ${s.logoH || 120}px; width: auto; max-width: 1180px; }
+      .lockup { display: inline-flex; align-items: center; gap: ${s.gap || 34}px; }
+      .lockup .logo-ico { display: block; height: ${s.iconH || 132}px; width: auto; }
+      .lockup .logo-wm { font-family: var(--font-display); font-weight: 800; font-size: ${s.wmSize || 108}px;
+        letter-spacing: -0.02em; line-height: 1; color: #fff; }
+
+      .tagline { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 40px;
+        letter-spacing: -0.01em; color: var(--paper-soft); margin-bottom: 60px; }
+      .ses { font-family: var(--font-display); font-style: italic; font-weight: 900; letter-spacing: -0.03em;
+        font-size: 46px; color: #fff; margin-bottom: 18px; }
+      .meta { font-family: var(--font-mono); font-weight: 600; font-size: 21px; letter-spacing: 0.24em;
+        text-transform: uppercase; color: var(--paper-mute); }
+
+      /* ---------- chrome ---------- */
+      .chrome { position: absolute; top: 60px; left: 90px; right: 120px; display: flex; align-items: center; justify-content: space-between; }
+      .logo { position: relative; display: inline-flex; }
+      .logo img { height: 52px; display: block; filter: drop-shadow(0 0 40px rgba(55,189,248,0.45)); }
+      .logo .ring { position: absolute; top: 12px; right: 13px; width: 7px; height: 7px;
+        border-radius: 50%; background: rgba(255,59,48,0.6); opacity: 0; transform-origin: 50% 50%; }
+      .tag { font-family: var(--font-mono); font-weight: 700; font-size: 18px; letter-spacing: 0.30em;
+        text-transform: uppercase; color: var(--paper-mute); }
+      .tag b { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="cmp-${s.slug}" data-start="0" data-duration="${D}" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="${D}" data-track-index="0">
+        <div class="grid"></div>
+        <div class="glow"></div>
+        <div class="vignette"></div>
+      </div>
+      <div id="scene" class="clip" data-start="0" data-duration="${D}" data-track-index="1">
+        <div class="wrap">
+          <div class="eyebrow"><span class="dotw"><span class="dot"></span></span>${s.tier}</div>
+          <div class="logo-zone"><span class="logo-content">${logoMarkup}</span></div>
+          <div class="tagline">${s.tagline}</div>
+          <div class="ses">${s.ses}</div>
+          <div class="meta">${s.meta}</div>
+        </div>
+        <div class="chrome">
+          <span class="logo"><img src="assets/logos/AIS-LIVE-with-dot.png" crossorigin="anonymous" alt="AIS LIVE" /><span class="ring"></span></span>
+          <span class="tag">REAL PROJECTS · <b>REAL REVENUE</b></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = ${D};
+      const tl = gsap.timeline({ paused: true });
+
+      /* AMBIENT — phase-locked to the 1.6s brand beat */
+      tl.fromTo(".ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
+        { autoAlpha: 0.5, scale: 1, duration: 0.001 },
+        { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
+        { autoAlpha: 0, scale: 1, duration: 0.6 }
+      ], repeat: ${ringRepeat}, ease: "none" }, 0);
+      tl.to(".glow", { y: -24, duration: ${glowDur}, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
+      tl.fromTo(".logo-content", { filter: "drop-shadow(0 0 40px ${a.blob})" }, { filter: "drop-shadow(0 0 85px ${a.glow})", duration: 2.4, yoyo: true, repeat: ${Math.round(D / 2.4) - 1}, ease: "sine.inOut" }, 0);
+
+      /* ENTRANCE — settle to the rest pose, then hold (single held card) */
+      tl.from(".logo", { autoAlpha: 0, y: -14, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.from(".tag", { autoAlpha: 0, x: 14, duration: 0.5, ease: "power2.out" }, 0.3);
+      tl.from(".eyebrow", { autoAlpha: 0, y: -12, duration: 0.5, ease: "power2.out" }, 0.5);
+      tl.from(".logo-zone", { autoAlpha: 0, scale: 0.9, y: 10, duration: 0.62, ease: "back.out(1.4)", transformOrigin: "50% 50%" }, 0.66);
+      tl.from(".tagline", { autoAlpha: 0, y: 16, duration: 0.5, ease: "power2.out" }, 1.04);
+      tl.from(".ses", { autoAlpha: 0, y: 16, duration: 0.52, ease: "back.out(1.3)" }, 1.3);
+      tl.from(".meta", { autoAlpha: 0, y: 10, duration: 0.45, ease: "power2.out" }, 1.5);
+
+      tl.set({}, {}, D); // Law #11 — fill the slot
+      window.__timelines["cmp-${s.slug}"] = tl;
+    <\/script>
+  </body>
+</html>
+`;
+}
+
+const only = process.argv[2];
+for (const s of SPONSORS) {
+  writeFileSync(join(CARDS, `${s.slug}.html`), cardHTML(s));
+  console.log("card ->", `cards/${s.slug}.html`);
+}
+if (only) {
+  const m = SPONSORS.find((s) => s.slug === only);
+  if (!m) { console.error(`no sponsor matching "${only}"`); process.exit(1); }
+  copyFileSync(join(CARDS, `${only}.html`), join(DIR, "index.html"));
+  console.log(`\nindex.html <- cards/${only}.html`);
+}
+console.log(`\ndone — ${SPONSORS.length} card(s)`);

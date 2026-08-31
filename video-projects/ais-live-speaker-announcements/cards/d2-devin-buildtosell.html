@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — d2-devin-buildtosell</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c; --blue: #37bdf8; --red-live: #ff3b30;
+        --paper-soft: rgba(209,220,232,0.82); --paper-mute: rgba(209,220,232,0.55);
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--onyx); isolation: isolate; }
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- background ---------- */
+      .grid { position: absolute; inset: -48px;
+        background-image:
+          linear-gradient(rgba(55,189,248,0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55,189,248,0.065) 1px, transparent 1px);
+        background-size: 24px 24px; }
+      .glow { position: absolute; top: -180px; left: 20%; width: 760px; height: 760px; margin-left: -380px;
+        border-radius: 50%; background: var(--blue); filter: blur(150px); opacity: 0.16; }
+      .pedestal { position: absolute; left: 40px; bottom: -280px; width: 760px; height: 760px;
+        border-radius: 50%; background: var(--blue); filter: blur(150px); opacity: 0.20; }
+      .vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.58) 95%); }
+
+      /* ---------- portrait (solo, full-color cutout) ---------- */
+      .portrait { position: absolute; left: 10px; bottom: 0; width: 900px; height: 1000px;
+        display: flex; align-items: flex-end; justify-content: center; }
+      .portrait img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: bottom center;
+        transform: scale(1.08); transform-origin: bottom center;
+        filter: drop-shadow(0 26px 54px rgba(0,0,0,0.55));
+        -webkit-mask-image:
+          linear-gradient(to bottom, #000 80%, transparent 100%),
+          linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-image:
+          linear-gradient(to bottom, #000 80%, transparent 100%),
+          linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        mask-composite: intersect; }
+
+      /* ---------- profile pics (multi: left column, vertically centered, left-aligned) ---------- */
+      .pics { position: absolute; left: 130px; top: 0; bottom: 0; width: 380px;
+        display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0px; }
+      .pic { width: 380px; height: 380px; display: block;
+        filter: drop-shadow(0 18px 36px rgba(0,0,0,0.55)); }
+
+      /* ---------- content (right) ---------- */
+      .content { position: absolute; left: 928px; right: 110px; top: 0; bottom: 0;
+        display: flex; flex-direction: column; justify-content: center; }
+      .ses-title { font-family: var(--font-display); font-style: italic; font-weight: 900; letter-spacing: -0.03em;
+        line-height: 1.08; font-size: 116px; color: #fff; max-width: 1180px;
+        padding: 0.06em 0.42em 0.16em 0; clip-path: inset(-0.16em -0.44em -0.30em -0.08em);
+        text-shadow: 0 0 60px rgba(55,189,248,0.20); }
+      .divider { width: 128px; height: 2px; background: var(--blue); margin: 34px 0 30px;
+        box-shadow: 0 0 16px rgba(55,189,248,0.6); transform-origin: left center; }
+      .speakers { display: flex; flex-direction: column; gap: 18px; }
+      .sp-name { font-family: var(--font-display); font-style: italic; font-weight: 800; letter-spacing: -0.02em;
+        font-size: 42px; color: #fff; line-height: 1.02; }
+      .sp-role { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 27px;
+        letter-spacing: -0.01em; color: var(--paper-soft); margin-top: 4px; }
+      .ses-meta { font-family: var(--font-mono); font-weight: 500; font-size: 21px; letter-spacing: 0.22em;
+        text-transform: uppercase; color: var(--paper-mute); margin-top: 34px; }
+
+      /* ---------- chrome ---------- */
+      .chrome { position: absolute; top: 60px; left: 90px; right: 110px;
+        display: flex; align-items: center; justify-content: space-between; }
+      .logo { position: relative; display: inline-flex; }
+      .logo img { height: 52px; display: block; filter: drop-shadow(0 0 40px rgba(55,189,248,0.45)); }
+      .logo .ring { position: absolute; top: 12px; right: 13px; width: 7px; height: 7px;
+        border-radius: 50%; background: rgba(255,59,48,0.6); opacity: 0; transform-origin: 50% 50%; }
+      .day { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.26em;
+        text-transform: uppercase; color: var(--paper-mute); text-align: right; }
+      .day b { color: var(--blue); }
+
+      /* ---------- confetti ---------- */
+      .confetti { position: absolute; left: 960px; top: 430px; z-index: 7; pointer-events: none; }
+      .cf { position: absolute; left: 0; top: 0; display: block; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="cmp-d2-devin-buildtosell" data-start="0" data-duration="6.4" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="6.4" data-track-index="0">
+        <div class="grid"></div>
+        <div class="glow"></div>
+        <div class="pedestal"></div>
+        <div class="vignette"></div>
+      </div>
+      <div id="scene" class="clip" data-start="0" data-duration="6.4" data-track-index="1">
+        <div class="portrait"><img src="assets/cutouts-clean/devin-kearns.png" crossorigin="anonymous" alt="Devin Kearns" /></div>
+        <div class="content">
+          <div class="ses-title">Build to Sell</div>
+          <div class="divider"></div>
+          <div class="speakers">
+            <div class="sp"><div class="sp-name">Devin Kearns</div><div class="sp-role">Founder · Custom AI Studio</div></div>
+          </div>
+          <div class="ses-meta">SUN · JUL 12 · 5:15 PM CT</div>
+        </div>
+        <div class="chrome">
+          <span class="logo"><img src="assets/logos/AIS-LIVE-with-dot.png" crossorigin="anonymous" alt="AIS LIVE" /><span class="ring"></span></span>
+          <span class="day"><b>SUN</b> · JUL 12</span>
+        </div>
+        
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 6.4;
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(".ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
+        { autoAlpha: 0.5, scale: 1, duration: 0.001 },
+        { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
+        { autoAlpha: 0, scale: 1, duration: 0.6 }
+      ], repeat: 3, ease: "none" }, 0);
+      tl.to(".glow", { x: 40, y: -20, duration: 3.2, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      tl.to(".pedestal", { scale: 1.06, duration: 3.2, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+      tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
+      tl.fromTo(".ses-title", { textShadow: "0 0 50px rgba(55,189,248,0.14)" }, { textShadow: "0 0 92px rgba(55,189,248,0.32)", duration: 2.4, yoyo: true, repeat: 2, ease: "sine.inOut" }, 0);
+
+      tl.from(".logo", { autoAlpha: 0, y: -14, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.from(".day", { autoAlpha: 0, x: 14, duration: 0.5, ease: "power2.out" }, 0.3);
+      tl.from(".portrait", { autoAlpha: 0, x: -60, scale: 0.97, filter: "blur(14px)", duration: 0.9, ease: "power3.out", transformOrigin: "50% 100%" }, 0.2);
+      tl.from(".ses-title", { clipPath: "inset(-0.16em 100% -0.30em -0.08em)", duration: 0.66, ease: "power3.out" }, 0.6);
+      tl.from(".divider", { scaleX: 0, duration: 0.5, ease: "power3.inOut" }, 0.98);
+      tl.from(".sp", { autoAlpha: 0, y: 18, duration: 0.5, ease: "power2.out", stagger: 0.12 }, 1.08);
+      tl.from(".ses-meta", { autoAlpha: 0, y: 10, duration: 0.45, ease: "power2.out" }, 1.5);
+
+      /* confetti pop -> fall + fade (deterministic, baked positions) */
+      const CF = null;
+      if (CF) {
+        tl.set(".cf", { x: 0, y: 0, scale: 0, autoAlpha: 0 }, 0);
+        tl.to(".cf", { x: (i) => CF[i].tx, y: (i) => CF[i].ty, rotation: (i) => CF[i].rot, scale: 1, autoAlpha: 1,
+          duration: 0.72, ease: "back.out(1.7)", stagger: (i) => CF[i].d }, 1.7);
+        tl.to(".cf", { y: (i) => CF[i].ty + CF[i].fall, rotation: (i) => CF[i].rot + 220, autoAlpha: 0,
+          duration: 2.1, ease: "power1.in", stagger: (i) => CF[i].d }, 2.55);
+      }
+
+      tl.set({}, {}, D);
+      window.__timelines["cmp-d2-devin-buildtosell"] = tl;
+    </script>
+  </body>
+</html>

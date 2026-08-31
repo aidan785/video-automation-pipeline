@@ -24,6 +24,23 @@ A word-level transcript JSON. Either the ElevenLabs Scribe shape
 node scripts/transcribe-elevenlabs.mjs path/to/raw.mp4    # -> path/to/raw.json
 ```
 
+**MANDATORY pre-pass — clamp stretched tokens.** Scribe stretches word tokens
+across silent screen-recording waits (observed from 1.4s up to 115s), and since
+this agent only trims *between* words, every stretched token hides real dead
+air that then survives the render (a 39-min raw take had 14 of them). Always
+run the clamp before planning:
+
+```bash
+node .claude/skills/cut-silences/scripts/clamp-stretched-tokens.mjs \
+  <transcript.json> <source-video>        # add --dry to preview
+```
+
+It silencedetects the whole source once (-30dB, d=0.6), clamps any token
+> 1.2s whose span overlaps a detected silence (end pulled to silence start /
+start pushed to silence end), leaves legit long words (spoken URLs) alone, and
+writes in place with an `.orig.json` backup. Tune `--min` / `--noise` /
+`--sil-min` for high-noise-floor recordings.
+
 ## Usage
 
 ```bash
@@ -78,6 +95,26 @@ The JSON summary printed to stdout includes `removed`, `removedPct`, range count
 - Talking-head YouTube default (`--gap 0.55`) removes roughly 15-20% of a typical raw take as pure silence. Lower `--gap` for a punchier, faster cut; raise it to preserve more natural breathing room.
 - If a cut feels too aggressive at sentence boundaries, raise the sentence-break breath, or raise `--gap`.
 
+## If verify finds residual dead air (post-render patch)
+
+When the verify-cuts silence sweep FAILs on a rendered cut (stretched tokens
+the clamp's threshold missed, or transcript jitter), do NOT fix from the
+rendered timeline — concat accrues ~5.4ms/join frame padding (≈0.9s over 160
+joins) that would shift cuts into speech. Patch from source-audio ground truth:
+
+```bash
+node .claude/skills/cut-silences/scripts/patch-residual-silences.mjs \
+  <union-edl.json> <source-video> <output.mp4> [--flubs flubs.json] [--apply]
+```
+
+It silencedetects the SOURCE, trims any keep range still holding >= 0.6s of
+continuous silence down to a ~0.22s breath (0.30s tail pad on the last range),
+optionally folds in word-anchored flub cuts (`[{start, end, reason}]` in source
+seconds), updates the union EDL in place, and re-renders from the original in
+one encode. Dry-run first (no `--apply` = nothing written). The union EDL comes
+from cut-mistakes' `build-combined-cut.mjs`. After the patch: re-transcribe and
+restart verify-cuts from pass 1 (the three-pass count resets).
+
 ## Hand-off to the next agent
 
-Pass `<stem>.silence-transcript.json` (and the `silenced.mp4` if rendered) to the **cut-mistakes** agent. Because timestamps are already on the edited timeline, downstream beat timing and `scripts/validate-beat-sync.mjs` work without further adjustment.
+Pass `<stem>.silence-transcript.json` (and the `silenced.mp4` if rendered) to the **cut-mistakes** agent. Because timestamps are already on the edited timeline, downstream beat timing and `scripts/validate-beat-sync.mjs` work without further adjustment. Keep the `<stem>.silence-edl.json` around — the **verify-cuts** passing agent needs it for its ledger sweep after the final render.

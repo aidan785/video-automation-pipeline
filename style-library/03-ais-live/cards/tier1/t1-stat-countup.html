@@ -75,6 +75,13 @@
         background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
       .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
         background:rgba(var(--red-rgb),.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+
+      /* Official AIS+ PRODUCT mark (distinct from the AIS/LIVE event mark above):
+         ALL WHITE, italic-900 Montserrat, the + included. Inline it in copy with
+         <span class="plus">AIS<span class="p">+</span></span>. Never tint the +. */
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);letter-spacing:var(--track-tight);
+        display:inline-block;color:var(--white);text-shadow:0 0 34px rgba(255,255,255,.28);}
+      .plus .p{color:var(--white);text-shadow:0 0 34px rgba(255,255,255,.28);}
       .statwrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
       .kicker{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:var(--size-label);letter-spacing:var(--track-wide);text-transform:uppercase;color:var(--white);}
       .num{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:var(--size-mega);line-height:1.0;
@@ -154,15 +161,18 @@
         tl.fromTo(".whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
         tl.to(".whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
       }
-      function countUp(sel, at, target, d, suffix){
-        var o={v:0};
-        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+      function countUp(sel, at, target, d, suffix, prefix){
+        var p=prefix||"", o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent=p+"0"+(suffix||"");}, null, at-0.001);
         tl.to(o,{v:target,duration:d,ease:"power2.out",onUpdate:function(){
-          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+          var el=document.querySelector(sel); if(el) el.textContent=p+Math.round(o.v)+(suffix||"");}},at);
       }
 
-      /* AMBIENT — camera never sleeps; finite, deterministic, scaled to DUR */
-      tl.to(".camera", { scale:1.03, y:-14, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      /* AMBIENT — the camera never sleeps, but it rides the BACKGROUND ONLY.
+         Scaling/translating the text layer (.camera/.inner) rasterizes it once
+         then interpolates, which SOFTENS the type as it moves. Move .bg instead
+         so the depth tunnel/glow push in for camera-feel while text stays sharp. */
+      tl.to(".bg", { scale:1.06, y:-14, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
       tl.to(".grid-floor",   { backgroundPositionY:"+=330px", duration:DUR, ease:"none" }, 0);
       tl.to(".grid-ceiling", { backgroundPositionY:"-=330px", duration:DUR, ease:"none" }, 0);
       tl.to(".beam", { rotation:8, duration:DUR, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Higgsfield Intro — Vox pass</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<script src="assets/gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+
+  /* camera wrapper — zoom only (pure transform, GPU-composited), never on the <video> */
+  #camera { position: absolute; inset: 0; will-change: transform; }
+  #camera video { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+
+  /* blur veil — constant-radius backdrop blur, we fade the VEIL, not the radius.
+     Animating opacity is composited; animating blur() re-rasterizes and chops. */
+  #blur-veil { position: absolute; inset: 0; pointer-events: none;
+    -webkit-backdrop-filter: blur(26px); backdrop-filter: blur(26px); }
+
+  /* ---- popup shared ---- */
+  .pu { position: absolute; }
+  .grain-fill {
+    position: absolute; inset: 0; background: var(--tex-grain);
+    background-size: 180px 180px; mix-blend-mode: multiply; opacity: 0.35;
+    pointer-events: none; border-radius: inherit;
+  }
+
+  /* prompt card */
+  .prompt { position: relative; display: inline-block;
+    background: var(--paper); border: 5px solid var(--ink);
+    padding: 26px 38px 30px; box-shadow: 10px 10px 0 rgba(23,19,14,0.18);
+    transform: rotate(-0.6deg);
+  }
+  .prompt .small {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 24px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); margin-bottom: 16px;
+  }
+  .prompt .row { display: flex; align-items: center; gap: 6px; }
+  .prompt .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 56px; line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--ink); white-space: nowrap;
+  }
+  .prompt .txt .ch { display: inline-block; }
+  .prompt .cursor { width: 28px; height: 54px; background: var(--yellow);
+    box-shadow: 3px 3px 0 rgba(23,19,14,0.2); }
+
+  /* pipeline chips — flex-centered row, can't overflow the frame */
+  #pu-chips { display: flex; justify-content: center; align-items: flex-end; gap: 38px; }
+  .chip { position: relative;
+    background: var(--ink); padding: 14px 28px 10px;
+    box-shadow: 6px 6px 0 rgba(23,19,14,0.16);
+  }
+  .chip .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 42px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--paper); line-height: 1.0; white-space: nowrap;
+  }
+  .chip.paper { background: var(--paper); border: 4px solid var(--ink); }
+  .chip.paper .txt { color: var(--ink); }
+  .c1 { transform: rotate(-1.4deg); }
+  .c2 { transform: rotate(1.0deg); }
+  .c3 { transform: rotate(-0.6deg); }
+  .c4 { transform: rotate(1.4deg); }
+
+</style>
+</head>
+<body>
+<div data-hf-id="hf-t5ae" id="stage" data-composition-id="higgsfield-intro" data-start="0" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-kwiw" id="camera">
+    <video data-hf-id="hf-mim6" id="vid" src="assets/INTRO.mp4" data-has-audio="true" data-start="0" data-duration="100.24" data-track-index="0"></video>
+  </div>
+  <div data-hf-id="hf-r6bn" id="blur-veil" class="clip" data-start="0" data-duration="1.4" data-track-index="4"></div>
+
+  <!-- /explainerstudio card — "I created a Claude skill…" -->
+  <div data-hf-id="hf-zutr" class="pu clip" id="pu-prompt" style="left: 60px; top: 730px;" data-start="1.35" data-duration="3.25" data-track-index="2">
+    <div data-hf-id="hf-2vrh" class="pop">
+      <div data-hf-id="hf-3k5u" class="prompt">
+        <div data-hf-id="hf-k6lj" class="small">Just one prompt.</div>
+        <div data-hf-id="hf-thy4" class="row">
+          <div data-hf-id="hf-kvio" class="txt"><span data-hf-id="hf-r4kx" class="ch">/</span><span data-hf-id="hf-ol83" class="ch">e</span><span data-hf-id="hf-9sz8" class="ch">x</span><span data-hf-id="hf-czfg" class="ch">p</span><span data-hf-id="hf-hr3s" class="ch">l</span><span data-hf-id="hf-mzzz" class="ch">a</span><span data-hf-id="hf-frkn" class="ch">i</span><span data-hf-id="hf-gyhq" class="ch">n</span><span data-hf-id="hf-7x77" class="ch">e</span><span data-hf-id="hf-c6te" class="ch">r</span><span data-hf-id="hf-bsid" class="ch">s</span><span data-hf-id="hf-eknk" class="ch">t</span><span data-hf-id="hf-e6cj" class="ch">u</span><span data-hf-id="hf-ozj4" class="ch">d</span><span data-hf-id="hf-fo0n" class="ch">i</span><span data-hf-id="hf-gk6p" class="ch">o</span></div>
+          <div data-hf-id="hf-tuza" class="cursor"></div>
+        </div>
+        <div data-hf-id="hf-7uxp" class="grain-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- pipeline chips — "You can create explainer videos just like this as well." -->
+  <div data-hf-id="hf-0nsw" class="pu clip" id="pu-chips" style="left: 0; top: 0; width: 1920px; height: 960px;" data-start="37.6" data-duration="2.65" data-track-index="3">
+    <div data-hf-id="hf-q9ni" class="chip c1"><div data-hf-id="hf-l59h" class="txt">Scripting</div><div data-hf-id="hf-4pkh" class="grain-fill"></div></div>
+    <div data-hf-id="hf-9x5f" class="chip paper c2"><div data-hf-id="hf-akys" class="txt">Editing</div><div data-hf-id="hf-5whk" class="grain-fill"></div></div>
+    <div data-hf-id="hf-jc9w" class="chip c3"><div data-hf-id="hf-alao" class="txt">Animating</div><div data-hf-id="hf-5i6j" class="grain-fill"></div></div>
+    <div data-hf-id="hf-pexh" class="chip paper c4"><div data-hf-id="hf-vhco" class="txt">Generating</div><div data-hf-id="hf-3ine" class="grain-fill"></div></div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const DUR = 100.24;
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+
+  /* ============ CAMERA ============ */
+  // cold open: fast smooth pull-out (transform only), camera then sits still
+  gsap.set("#camera", { transformOrigin: "50% 30%" });
+  tl.fromTo("#camera",
+    { scale: 2.0 },
+    { scale: 1.0, duration: 1.3, ease: "power3.out", immediateRender: true }, 0);
+  // gaussian veil fades out — constant blur radius, opacity-only (buttery)
+  tl.fromTo("#blur-veil", { autoAlpha: 1 }, { autoAlpha: 0, duration: 1.15, ease: "power2.out", immediateRender: true }, 0);
+  // NO push while talking — camera only moves at section transitions.
+  // zoom emphasis on "Check it out." leading into the demo cut
+  tl.to("#camera", { scale: 1.08, duration: 0.4, ease: "power2.inOut" }, 4.55);
+  // hard reset as the power-grid demo cuts in (reads as a cut)
+  tl.set("#camera", { scale: 1.0 }, 4.98);
+  // transition punch into the second talking block, then hold still
+  tl.to("#camera", { scale: 1.05, duration: 0.4, ease: "power2.out" }, 35.1);
+  // clean for the Alcatraz demo
+  tl.set("#camera", { scale: 1.0 }, 40.25);
+
+  /* ============ PROMPT CARD (1.35–4.9) ============ */
+  tl.from("#pu-prompt .pop", { autoAlpha: 0, scale: 0, rotation: -5, transformOrigin: "50% 60%", duration: 0.42, ease: "back.out(2.2)" }, 1.4)
+    .from("#pu-prompt .small", { autoAlpha: 0, duration: 0.16, ease: "steps(2)" }, 1.85)
+    .fromTo("#pu-prompt .ch", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: 0.055, immediateRender: true }, 2.0);
+  for (let t = 2.0; t < 4.2; t += 0.4) {          // cursor blink
+    tl.set("#pu-prompt .cursor", { autoAlpha: 0 }, t + 0.2);
+    tl.set("#pu-prompt .cursor", { autoAlpha: 1 }, t + 0.4);
+  }
+  // stop-motion jitter hold (deterministic)
+  for (let t = 3.1, i = 0; t < 4.2; t += 0.24, i++) {
+    tl.set("#pu-prompt .pop", { rotation: 0.5 * Math.sin(i * 1.7 + 5.1), x: 1.2 * Math.sin(i * 2.3), y: 1.2 * Math.cos(i * 1.9) }, t);
+  }
+  // exit BEFORE the "Check it out" zoom so it never rides over the face
+  tl.to("#pu-prompt .pop", { autoAlpha: 0, scale: 0.85, y: 24, duration: 0.18, ease: "steps(3)" }, 4.35);
+
+  /* ============ CHIPS (37.6–40.25) ============ */
+  [".c1", ".c2", ".c3", ".c4"].forEach((c, i) => {
+    tl.from("#pu-chips " + c, { autoAlpha: 0, scale: 0, rotation: -7, transformOrigin: "50% 60%", duration: 0.4, ease: "back.out(2.2)" }, 37.7 + i * 0.35);
+    for (let t = 38.15 + i * 0.35, k = 0; t < 39.9; t += 0.24, k++) {   // jitter
+      tl.set("#pu-chips " + c, { rotation: 0.5 * Math.sin(k * 1.7 + i * 2.1), x: 1.2 * Math.sin(k * 2.3 + i), y: 1.2 * Math.cos(k * 1.9 + i) }, t);
+    }
+    tl.to("#pu-chips " + c, { autoAlpha: 0, y: 26, duration: 0.15, ease: "steps(3)" }, 39.95 + i * 0.05);
+  });
+
+  /* grain flicker on both popups, stepped */
+  for (let t = 1.4, i = 0; t < 4.9; t += 0.2, i++) {
+    tl.set("#pu-prompt .grain-fill", { backgroundPosition: (40 + 120 * Math.abs(Math.sin(i * 0.9 + 0.4))) + "px " + (30 + 110 * Math.abs(Math.cos(i * 1.3))) + "px" }, t);
+  }
+  for (let t = 37.7, i = 0; t < 40.2; t += 0.2, i++) {
+    tl.set("#pu-chips .grain-fill", { backgroundPosition: (40 + 120 * Math.abs(Math.sin(i * 0.9 + 0.4))) + "px " + (30 + 110 * Math.abs(Math.cos(i * 1.3))) + "px" }, t);
+  }
+
+  tl.to({}, { duration: DUR }, 0);   // Law #11 — timeline fills the slot
+  window.__timelines["higgsfield-intro"] = tl;
+})();
+</script>
+</body>
+</html>

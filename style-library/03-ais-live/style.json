@@ -20,8 +20,8 @@
     "mono": "JetBrains Mono",
     "notes": "Montserrat italic-900 is the headline / big-number / mark voice; Inter (300-500, italic sub) is body/captions; JetBrains Mono is eyebrows/kickers/units/timestamps. No serif."
   },
-  "motion": "Snappy + kinetic + broadcast. Headlines reveal word-by-word (blur+rise, expo.out); stat numbers pop (back.out) and count up; speaker cards 3D-flip and drift; agenda/track rows slide in from the left; the mark blooms with a blur+brightness pop. The camera never sleeps — a slow continuous dolly, grid scroll, beam rock, glow drift, and breathing vignette run under every card, with a pulsing live-dot. Deterministic (no random / no Date.now).",
-  "transitions": "A motion-blur whip + light streak fires on every cut (never a hard cut). Exits whip up + blur, or dolly-through-type on punchlines. Entrances blur-in.",
+  "motion": "Snappy + kinetic + broadcast. Headlines reveal word-by-word (blur+rise, expo.out); stat numbers pop (back.out) and count up; speaker cards 3D-flip and drift; agenda/track rows slide in from the left; the mark blooms with a blur+brightness pop. The camera never sleeps, but it rides the BACKGROUND ONLY (depth tunnel/glow push in + parallax drift) so the text layer never scales/translates and stays pin-sharp. Real member clips sit dead still — NEVER digitally zoom a <video> (frame-seek shake); the footage's own motion carries it. Deterministic (no random / no Date.now).",
+  "transitions": "A fast motion-blur whip (~0.22s) + light streak fires on every cut (never a hard cut). When SEQUENCING beats, OVERLAP them so the incoming beat enters as the outgoing whips out — the screen never fades to black between sections. To swap same-format panels (e.g. a testimonial chain: stat-left + clip-right), use a SIDE-SWIPE MATCH CUT (~0.24s): swipe the whole block with blur+scale, swap content while blurred, land the next SHARP as it ends. Trimmed clips: hide any black head frame under the swipe (start the clip a hair early, move its audio with it).",
   "cards": [
     {
       "id": "ais-live.t1.thesis.chrome",
@@ -288,6 +288,49 @@
       "preview": {
         "mp4": "preview/ais-live.custom.sponsor.mp4",
         "poster": "preview/ais-live.custom.sponsor.png"
+      }
+    },
+    {
+      "id": "ais-live.custom.testimonial",
+      "tier": "custom",
+      "purpose": "testimonial",
+      "treatment": "split",
+      "file": "cards/custom/custom-testimonial.html",
+      "slots": [
+        {
+          "name": "eyebrow",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "stat",
+          "type": "text",
+          "maxChars": 8,
+          "note": "count-up target; use #tnum + countUp('#tnum',at,60,1.1,'K','$')"
+        },
+        {
+          "name": "unit",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "clip",
+          "type": "video",
+          "note": "swap .clipph for a root-level <video muted data-has-audio=false> + sibling <audio>; frame is 784x441 @ left1006/top320"
+        }
+      ],
+      "duration": {
+        "min": 4,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/ais-live.custom.testimonial.mp4",
+        "poster": "preview/ais-live.custom.testimonial.png"
       }
     }
   ]

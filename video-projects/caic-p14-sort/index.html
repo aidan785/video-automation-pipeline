@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p14 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  /* ---------- persistent background ---------- */
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  /* ---------- video ---------- */
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  /* screen-fixed left scrim (z between video and over-plane). It SLIDES in from
+     off-screen left in sync with the video shift (never fades in place), so it only
+     covers ground the video has vacated and the cut edge rides under its black zone. */
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit (P1.0-1.3 conventions) ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .chipx b { color: var(--white); }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx b { color: var(--alert); }
+  .blue   { color: var(--accent);  text-shadow: var(--textglow-accent); }
+  .yellow { color: var(--accent-2); text-shadow: 0 0 18px rgba(var(--accent2-rgb), .55); }
+  /* NO will-change on gradient text (background-clip:text + will-change chops
+     descenders in renders) and padding-bottom so descenders stay in the paint box */
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.done { color: var(--text-dim); }
+  .mpill.done .mn { color: rgba(var(--accent-rgb), .7); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+  .qn { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+
+  /* ---------- B1 cold open (takeover) ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 118px; line-height: 1.06; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  #b1 .l2 { margin-top: 30px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 42px; color: var(--text); }
+
+  /* ---------- B2 deterministic flow (over, FULL) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 400px; display: flex; flex-direction: column; gap: 18px; }
+  #b2 .stack > div { align-self: flex-start; max-width: 740px; }
+  #b2 .row { display: flex; gap: 14px; }
+  #b2 .mini { padding: 12px 24px; border-radius: 999px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text); background: rgba(12,17,27,.94); border: 1px solid rgba(var(--accent-rgb), .5); box-shadow: var(--glow-accent-sm); }
+
+  /* ---------- B3 sort intro (under, PIP) ---------- */
+  #b3 .head { position: absolute; left: 110px; top: 130px; }
+  #b3 .head .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 100px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b3 .sub { position: absolute; left: 110px; top: 400px; max-width: 1000px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 34px; color: var(--text-dim); }
+  #b3 .sub b { color: var(--white); }
+  #b3 .fork { position: absolute; left: 110px; top: 540px; display: flex; flex-direction: column; gap: 16px; }
+  #b3 .fork > div { align-self: flex-start; }
+
+  /* ---------- B4 three buckets (under, PIP) ---------- */
+  #b4 .head { position: absolute; left: 110px; top: 88px; }
+  #b4 .buckets { position: absolute; left: 110px; top: 190px; width: 1080px; display: flex; flex-direction: column; gap: 22px; }
+  #b4 .bk { padding: 26px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b4 .bk .bl { display: flex; align-items: baseline; gap: 18px; }
+  #b4 .bk .bt { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 44px; color: var(--white); text-shadow: var(--textglow); }
+  #b4 .bk .bd { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 25px; color: var(--text-dim); }
+  #b4 .bk .items { margin-top: 14px; display: flex; gap: 14px; flex-wrap: wrap; }
+  #b4 .pill { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px; border-radius: 999px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 25px; color: var(--white); background: rgba(12,17,27,.94); border: 1.5px solid rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); white-space: nowrap; }
+  #b4 .pill .sc { font-family: var(--font-mono); font-size: 22px; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b4 .pill.warn { border-color: rgba(var(--alert-rgb), .6); box-shadow: 0 0 16px rgba(var(--alert-rgb), .25); }
+  #b4 .pill.warn .sc { color: var(--alert); text-shadow: none; }
+  #b4 .bk.now { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  #b4 .bk.now .bt { color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b4 .rule { margin-top: 14px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 24px; color: var(--text-dim); }
+  #b4 .rule b { color: var(--white); }
+
+  /* ---------- B5 refuse + ranked list (over, FULL) ---------- */
+  #b5a { position: absolute; left: 80px; top: 430px; max-width: 720px; }
+  #b5a .punchx { font-size: 40px; line-height: 1.3; }
+  #b5b { position: absolute; left: 80px; top: 480px; max-width: 760px; }
+
+  /* ---------- B6 the bridge (over, FULL) ---------- */
+  #b6 .stack { position: absolute; left: 80px; top: 360px; display: flex; flex-direction: column; gap: 18px; }
+  #b6 .stack > div { align-self: flex-start; max-width: 780px; }
+  #b6 .quote { padding: 26px 36px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 31px; font-style: italic; line-height: 1.4; color: var(--text); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b6 .quote b { color: var(--white); font-style: normal; }
+
+  /* ---------- B7 doctor analogy (under, PIP) ---------- */
+  #b7 .head { position: absolute; left: 110px; top: 96px; }
+  #b7 .quote { position: absolute; left: 110px; top: 190px; padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 30px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b7 .asks { position: absolute; left: 110px; top: 320px; display: flex; flex-direction: column; gap: 14px; }
+  #b7 .asks .chipx { align-self: flex-start; font-size: 27px; padding: 13px 26px; }
+  #b7 .asks .chipx .qm { color: var(--accent); font-weight: var(--wt-black); margin-right: 10px; }
+  #b7 .rx { position: absolute; left: 110px; top: 620px; max-width: 1050px; }
+  #b7 .rx .punchx { font-size: 36px; line-height: 1.35; }
+  #b7 .jobs { position: absolute; left: 110px; top: 800px; display: flex; gap: 16px; }
+  #b7 .jobs .chipx { font-size: 27px; }
+  #b7 .jobs .chipx b { color: var(--accent); }
+
+  /* ---------- B8 pushback (over, FULL) ---------- */
+  #b8 .stack { position: absolute; left: 80px; top: 380px; display: flex; flex-direction: column; gap: 18px; }
+  #b8 .stack > div { align-self: flex-start; max-width: 760px; }
+
+  /* ---------- B9 deliverable (under, PIP) ---------- */
+  #b9 .head { position: absolute; left: 110px; top: 96px; }
+  #b9 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 68px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b9 .list { position: absolute; left: 110px; top: 280px; width: 1080px; display: flex; flex-direction: column; gap: 20px; }
+  #b9 .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 22px 30px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b9 .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white); }
+  #b9 .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 24px; color: var(--text-dim); margin-top: 6px; }
+
+  /* ---------- B10 spine (under, PIP) ---------- */
+  #b10 .stack { position: absolute; left: 110px; top: 300px; display: flex; flex-direction: column; gap: 20px; max-width: 1080px; }
+  #b10 .stack > div { align-self: flex-start; }
+  #b10 .punchx { font-size: 38px; }
+
+  /* ---------- B11 twelve agents (under, PIP) ---------- */
+  #b11 .head { position: absolute; left: 110px; top: 96px; }
+  #b11 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 62px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b11 .flow { position: absolute; left: 110px; top: 330px; display: flex; align-items: center; gap: 20px; }
+  #b11 .fnode { padding: 22px 30px; border-radius: var(--radius-sm); font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 31px; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  #b11 .fnode.hot { color: var(--white); border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); }
+  #b11 .farr { font-size: 32px; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b11 .verdict { position: absolute; left: 110px; top: 520px; max-width: 1000px; }
+  #b11 .verdict .punchx { font-size: 36px; }
+
+  /* ---------- B12 vague vs specific + ship one (over, FULL) ---------- */
+  #b12 .pair { position: absolute; left: 80px; top: 380px; display: flex; flex-direction: column; gap: 18px; max-width: 780px; }
+  #b12 .pc { padding: 22px 30px; border-radius: var(--radius-sm); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b12 .pc .pl { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; margin-bottom: 10px; color: var(--text-faint); }
+  #b12 .pc .pv { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; color: var(--text-dim); font-style: italic; }
+  #b12 .pc.spec { border-color: rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  #b12 .pc.spec .pl { color: var(--accent); }
+  #b12 .pc.spec .pv { color: var(--text); }
+  #b12ship { position: absolute; left: 80px; top: 460px; max-width: 720px; }
+  #b12ship .punchx { font-size: 40px; line-height: 1.3; }
+
+  /* ---------- B13 handoff (under, PIP) ---------- */
+  #b13 .head { position: absolute; left: 110px; top: 96px; }
+  #b13 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 64px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b13 .rows { position: absolute; left: 110px; top: 300px; width: 1080px; display: flex; flex-direction: column; gap: 20px; }
+  #b13 .hrow { display: flex; align-items: center; gap: 20px; }
+  #b13 .hrow .hn { flex: 0 0 300px; padding: 18px 26px; border-radius: var(--radius-sm); font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 30px; text-align: center; color: var(--white); background: rgba(12,17,27,.94); border: 1.5px solid rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); }
+  #b13 .hrow .farr { font-size: 30px; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b13 .hrow .hv { flex: 1; padding: 18px 26px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 27px; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b13 .hrow .hv b { color: var(--white); }
+
+  /* ---------- B14 outro ---------- */
+  #b14 { display: grid; place-items: center; text-align: center; }
+  #b14 .rail { display: flex; align-items: center; justify-content: center; }
+  #b14 .nx { margin-top: 70px; }
+  #b14 .nx .kick { margin-bottom: 20px; }
+  #b14 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 104px; color: var(--white); text-shadow: var(--textglow); }
+</style>
+</head>
+<body>
+
+<div id="p14" data-composition-id="p14" data-start="0" data-width="1920" data-height="1080">
+
+  <div id="bg" class="clip" data-start="0" data-duration="530" data-track-index="2">
+    <div class="base"></div><div class="dots"></div><div class="bloom"></div><div class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE ============ -->
+
+  <!-- B1 cold open takeover (0-11.6) -->
+  <div id="b1" class="under clip" data-start="0" data-duration="11.6" data-track-index="4">
+    <div class="inner">
+      <div class="kick">Move Four · Sort</div>
+      <div class="l1"><span class="word w1">Let's</span> <span class="word w2">Not</span> <span class="word w3">Automate</span> <span class="word w4">It</span><br>
+        <span class="word w5 grad">This</span> <span class="word w6 grad">Way</span></div>
+      <div class="l2"><span class="word w7">"Don't</span> <span class="word w8">automate</span> <span class="word w9">this"?</span> <span class="word w10 blue">Almost</span> <span class="word w11 blue">never.</span></div>
+    </div>
+  </div>
+
+  <!-- B3 sort intro (34.5-49.2, PIP) -->
+  <div id="b3" class="under clip" data-start="34.5" data-duration="14.7" data-track-index="4">
+    <div class="head">
+      <div class="kick">The last move of the audit</div>
+      <div class="t">Sort</div>
+    </div>
+    <div class="sub">A pile of scored automations becomes <b>one clear recommendation</b> the owner can act on.</div>
+    <div class="fork">
+      <div class="warnx f1">This audit becomes a project, <b>or a PDF nobody opens again</b>.</div>
+    </div>
+  </div>
+
+  <!-- B4 three buckets (49.2-138.5, PIP) -->
+  <div id="b4" class="under clip" data-start="49.2" data-duration="89.3" data-track-index="4">
+    <div class="head"><div class="kick">Every opportunity gets exactly one of three calls</div></div>
+    <div class="buckets">
+      <div class="bk now bk1">
+        <div class="bl"><div class="bt">Do now</div><div class="bd">high IF score, nothing blocking</div></div>
+        <div class="items">
+          <div class="pill p1">Appointment reminders <span class="sc">25</span></div>
+          <div class="pill p2">Post-visit follow-ups <span class="sc">15</span></div>
+        </div>
+        <div class="rule r1">Rule: a do now that needs <b>no AI at all</b> goes to the top of the list.</div>
+      </div>
+      <div class="bk bk2">
+        <div class="bl"><div class="bt">Do later</div><div class="bd">real impact, feasibility low for a fixable reason</div></div>
+        <div class="items">
+          <div class="pill p3">Insurance questions <span class="sc">8</span></div>
+          <div class="pill" style="border-color: var(--glass-border); box-shadow: none; color: var(--text-dim);">practice software connects first</div>
+        </div>
+        <div class="rule r2">Not rejected. <b>The next project</b> after the quick wins.</div>
+      </div>
+      <div class="bk bk3">
+        <div class="bl"><div class="bt">Leave it</div><div class="bd">wrong for automation, at least for now</div></div>
+        <div class="items">
+          <div class="pill warn p4">Emergency triage <span class="sc">5</span></div>
+          <div class="pill" style="border-color: var(--glass-border); box-shadow: none; color: var(--text-dim);">a wrong call by AI is dangerous</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B7 doctor analogy (182.8-217.8, PIP) -->
+  <div id="b7" class="under clip" data-start="182.8" data-duration="35" data-track-index="4">
+    <div class="head"><div class="kick">How a doctor handles it</div></div>
+    <div class="quote q0">"Hey, I think I've got a hernia."</div>
+    <div class="asks">
+      <div class="chipx a1"><span class="qm">?</span>Why do you think that?</div>
+      <div class="chipx a2"><span class="qm">?</span>When did the pain start?</div>
+      <div class="chipx a3"><span class="qm">?</span>What's changed?</div>
+    </div>
+    <div class="rx">
+      <div class="punchx">A <span class="blue">diagnosis</span> and a treatment plan, not the prescription they wrote for themselves.</div>
+    </div>
+    <div class="jobs">
+      <div class="chipx j1">Your job: <b>listen</b> · <b>diagnose</b> · <b>prescribe</b></div>
+    </div>
+  </div>
+
+  <!-- B9 deliverable (258.5-349.2, PIP) -->
+  <div id="b9" class="under clip" data-start="258.5" data-duration="90.7" data-track-index="4">
+    <div class="head">
+      <div class="kick">What you actually hand them</div>
+      <div class="t">The Audit Deliverable</div>
+    </div>
+    <div class="list">
+      <div class="qrow d1"><div class="qn">01</div><div class="tx">AI automation primer<span class="sub">Standard vs AI automation. A couple of slides that educate up front.</span></div></div>
+      <div class="qrow d2"><div class="qn">02</div><div class="tx">The processes<span class="sub">Where automation solves it, where AI solves it, where neither does.</span></div></div>
+      <div class="qrow d3"><div class="qn">03</div><div class="tx">The red flags<span class="sub">Compliance, regulation, PII: where it sits, what touches it.</span></div></div>
+      <div class="qrow d4"><div class="qn">04</div><div class="tx">Per recommended project<span class="sub">What we need from you, how long it takes, what success looks like.</span></div></div>
+    </div>
+  </div>
+
+  <!-- B10 spine (349.2-380.8, PIP) -->
+  <div id="b10" class="under clip" data-start="349.2" data-duration="31.6" data-track-index="4">
+    <div class="stack">
+      <div class="chipx s1">The spine is the <b>ranked list</b>. The conversation happens at the <b>top three</b>.</div>
+      <div class="chipx s2">This deck is more than an audit. <b>It's sales material.</b></div>
+      <div class="punchx s3">You're not pitching. You're <span class="blue">prescribing</span>.</div>
+    </div>
+  </div>
+
+  <!-- B11 twelve agents (380.8-423.6, PIP) -->
+  <div id="b11" class="under clip" data-start="380.8" data-duration="42.8" data-track-index="4">
+    <div class="head">
+      <div class="kick">A situation you will absolutely face</div>
+      <div class="t">The list of twelve agents</div>
+    </div>
+    <div class="flow">
+      <div class="fnode f1">12 ideas</div>
+      <div class="farr fa1">→</div>
+      <div class="fnode hot f2">Fast IF pass, gut numbers</div>
+      <div class="farr fa2">→</div>
+      <div class="fnode f3">3–4 worth a real conversation</div>
+    </div>
+    <div class="verdict">
+      <div class="punchx">The <span class="blue">IF score</span> does the cutting, not your opinion.</div>
+    </div>
+  </div>
+
+  <!-- B13 handoff (462.0-491.0, PIP) -->
+  <div id="b13" class="under clip" data-start="462" data-duration="29" data-track-index="4">
+    <div class="head">
+      <div class="kick">Not the finish line</div>
+      <div class="t">The Handoff to Engagement Design</div>
+    </div>
+    <div class="rows">
+      <div class="hrow h1"><div class="hn">Do nows</div><div class="farr">→</div><div class="hv">A scoped first project: <b>signed SOW</b> or <b>internal charter</b></div></div>
+      <div class="hrow h2"><div class="hn">Do laters</div><div class="farr">→</div><div class="hv">Written into the proposal as <b>the named next phase</b></div></div>
+      <div class="hrow h3"><div class="hn">Leave its</div><div class="farr">→</div><div class="hv">Explicit exclusions: <b>off the table, in writing</b></div></div>
+    </div>
+  </div>
+
+  <!-- B14 outro (512.9-530) -->
+  <div id="b14" class="under clip" data-start="512.9" data-duration="17.1" data-track-index="4">
+    <div class="inner">
+      <div class="rail">
+        <div class="mpill done o1"><span class="mn">✓</span>Reframe</div>
+        <div class="mconn oc1"></div>
+        <div class="mpill done o2"><span class="mn">✓</span>Map</div>
+        <div class="mconn oc2"></div>
+        <div class="mpill done o3"><span class="mn">✓</span>Score</div>
+        <div class="mconn oc3"></div>
+        <div class="mpill lit o4"><span class="mn">✓</span>Sort</div>
+      </div>
+      <div class="nx">
+        <div class="kick">Next pillar</div>
+        <div class="t"><span class="grad">Engagement Design</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div id="vidwrap">
+    <div id="vidframe">
+      <video id="p14-video" src="assets/clean.mp4" muted data-start="0" data-duration="520.49" data-track-index="0"></video>
+      <div id="vidrim"></div>
+    </div>
+  </div>
+  <div id="vidshade"></div>
+  <audio id="p14-audio" src="assets/audio.m4a" data-start="0" data-duration="520.49" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE ============ -->
+
+  <!-- B2 deterministic flow (over FULL, 17.8-34.5) -->
+  <div id="b2" class="over clip" data-start="17.8" data-duration="16" data-track-index="6">
+    <div class="stack">
+      <div class="punchx n1">You don't need an agent. You need a <span class="blue">deterministic flow</span>.</div>
+      <div class="row">
+        <div class="mini m1">cheaper</div>
+        <div class="mini m2">faster</div>
+        <div class="mini m3">won't surprise you</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B5 refuse + ranked list (over FULL, 138.5-149.8) -->
+  <div id="b5a" class="over self clip" data-start="138.5" data-duration="5.6" data-track-index="6">
+    <div class="punchx">What you <span class="blue">refuse to build</span> is part of the value.</div>
+  </div>
+  <div id="b5b" class="over self clip" data-start="144.1" data-duration="5.7" data-track-index="6">
+    <div class="chipx">One ranked list: every item gets <b>a call, an owner, a success metric</b>.</div>
+  </div>
+
+  <!-- B6 the bridge (over FULL, 159.4-182.8) -->
+  <div id="b6" class="over clip" data-start="159.4" data-duration="23.4" data-track-index="6">
+    <div class="stack">
+      <div class="quote q1">"You came to us because of <b>this pain</b>, and we can solve it in a way that's <b>cheaper and faster</b> than what you asked for."</div>
+      <div class="chipx q2">Not a rejection of their idea. <b>A better path to the outcome.</b></div>
+    </div>
+  </div>
+
+  <!-- B8 pushback (over FULL, 222.2-243.5) -->
+  <div id="b8" class="over clip" data-start="222.2" data-duration="21.3" data-track-index="6">
+    <div class="stack">
+      <div class="warnx w1">The dev-shop client: <b>"Here's the spec. Build it or I'll find someone who will."</b></div>
+      <div class="chipx w2">Sometimes they're right. Sometimes it's not the fit. <b>Trust your gut.</b></div>
+    </div>
+  </div>
+
+  <!-- B12 vague vs specific (over FULL, 423.6-440.5) + ship one (447.8-459.5) -->
+  <div id="b12" class="over clip" data-start="423.6" data-duration="16.9" data-track-index="6">
+    <div class="pair">
+      <div class="pc vag"><div class="pl">Vague</div><div class="pv">"Our CEO wants an AI strategy."</div></div>
+      <div class="pc spec"><div class="pl">The real pain</div><div class="pv">"Two vacations stacked, and the whole business bottlenecked."</div></div>
+    </div>
+  </div>
+  <div id="b12ship" class="over self clip" data-start="447.8" data-duration="11.7" data-track-index="6">
+    <div class="punchx">Ship <span class="blue">one thing</span> that works. The do laters will still be there.</div>
+  </div>
+
+  <div id="vig" class="clip" data-start="0" data-duration="530" data-track-index="10"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="530" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 530;
+  const tl = gsap.timeline({ paused: true });
+  /* PIP: square-ish crop (sides pulled in 420px pre-scale -> 1080x1080 box) at a
+     bigger scale so the face reads clearly. Crop animates on #vidframe (the wrapper),
+     never on the <video> itself. */
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+
+  /* shot plan: takeover 0-11.6 -> FULL -> PIP 34.5 -> FULL 138.5 -> PIP 182.8
+     -> FULL 217.8 -> PIP 258.5 (deliverable+spine+twelve) -> FULL 423.6
+     -> PIP 462.0 -> FULL 491.0 -> fade out 512.9 (outro) */
+  tl.set(wrap, { opacity: 0, scale: 1.06, x: -57, y: -32, filter: 'blur(22px)' }, 0);
+  tl.to(wrap, { opacity: 1, scale: 1, x: 0, y: 0, duration: 1.0, ease: 'power3.out' }, 10.7);
+  tl.to(wrap, { filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 10.9);
+  /* FULL-shot left-clear (EXPERIMENT — pre-shift version saved at index.html.no-shift.bak):
+     while over-plane cards enter from the left, the video drifts right and a left
+     gradient scrim keeps the card zone clean. Arrivals straight into a card beat land
+     shifted (move to x:SHIFT_X) instead of shifting after. */
+  const SHIFT_X = 380;
+  const toFULLR = (t) => move(t, { x: SHIFT_X, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const SHADE_OFF_X = -1150; // parks the whole gradient off-screen left
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  /* scrim slides WITH the video (leads slightly and travels ~3x the distance, so its
+     black zone stays over the cut edge) — simultaneous, no pre/post left-half cover */
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeIn  = (t) => tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+  const shadeOff = (t) => tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t);
+
+  toPIP(34.5);
+  toFULLR(138.5); shadeIn(138.5);        // arrive shifted: B5a/B5b land immediately
+  unclearLeft(150.0);                    // breathe back to center between card runs
+  clearLeft(159.2);                      // B6 bridge quote
+  shadeOff(183.2);                       // lifts mid-PIP-move, edge already blurred away
+  toPIP(182.8);
+  toFULL(217.8);
+  clearLeft(221.9);  unclearLeft(243.0); // B8 pushback
+  toPIP(258.5);
+  toFULLR(423.6); shadeIn(423.6);        // arrive shifted: B12 vague/specific + B12ship
+  unclearLeft(459.0);                    // returns before toPIP 462
+  toPIP(462.0);
+  toFULL(491.0);
+  tl.to(wrap, { opacity: 0, filter: 'blur(20px)', scale: 1.04, duration: 1.0, ease: 'power2.in' }, 512.9);
+  clearLeft(17.6); unclearLeft(33.5);    // B2 deterministic-flow (after cold-open entry)
+
+  /* ambient (finite repeats sized to DUR) */
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 131, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 105, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 131, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open (0-11.6) — hook 0.3 · "this way" 14ish (post-reveal) */
+  inUp(0.4, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.13 }, 0.7);
+  tl.fromTo('#b1 .l2 .word', { y: 26, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.13 }, 3.4);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 1.0, ease: 'power2.in' }, 10.6);
+
+  /* B2 deterministic flow (over FULL) — "don't need an agent" 20.3 · cheaper/faster 29.5 */
+  spring(20.5, '#b2 .n1', 0.8);
+  inUp(29.5, '#b2 .m1', 0.5, 18);
+  inUp(30.0, '#b2 .m2', 0.5, 18);
+  inUp(30.6, '#b2 .m3', 0.5, 18);
+  outBlur(33.6, '#b2 .stack', 0.45);
+
+  /* B3 sort intro (34.5-49.2) — sorting 36 · recommendation 40 · PDF 44 */
+  inUp(35.5, '#b3 .head .kick', 0.6, 20);
+  tl.fromTo('#b3 .head .t', { scale: 0.92, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 36.0);
+  inUp(38.0, '#b3 .sub', 0.7, 26);
+  inLeft(44.1, '#b3 .f1', 0.7);
+  outBlur(48.4, '#b3 .head', 0.5);
+  outBlur(48.45, '#b3 .sub', 0.5);
+  outBlur(48.5, '#b3 .fork', 0.5);
+
+  /* B4 three buckets (49.2-138.5) — three calls 49.2 · do now 57.9 · 25 62.3 · rule 68.5 ·
+     do later 79.8 · insurance 87.1 · not rejected 96.3 · leave it 112.4 · triage 117.6 */
+  inUp(50.2, '#b4 .head', 0.7, 24);
+  inUp(58.0, '#b4 .bk1', 0.8, 36);
+  spring(62.5, '#b4 .p1', 0.6);
+  spring(65.0, '#b4 .p2', 0.6);
+  inUp(68.7, '#b4 .r1', 0.6, 18);
+  inUp(80.0, '#b4 .bk2', 0.8, 36);
+  spring(87.3, '#b4 .p3', 0.6);
+  inUp(92.2, '#b4 .bk2 .items .pill:last-child', 0.6, 16);
+  inUp(96.5, '#b4 .r2', 0.6, 18);
+  inUp(112.5, '#b4 .bk3', 0.8, 36);
+  spring(117.8, '#b4 .p4', 0.6);
+  inUp(121.0, '#b4 .bk3 .items .pill:last-child', 0.6, 16);
+  tl.fromTo('#b4 .p4', { boxShadow: '0 0 16px rgba(255,59,48,0.25)' },
+    { boxShadow: '0 0 30px rgba(255,59,48,0.55)', duration: 0.7, ease: 'sine.inOut', repeat: 3, yoyo: true }, 122.0);
+  outBlur(137.6, '#b4 .buckets', 0.55);
+  outBlur(137.65, '#b4 .head', 0.5);
+
+  /* B5 refuse + list (over FULL) — refuse 138.7 · ranked list 142.9 */
+  spring(138.8, '#b5a .punchx', 0.7);
+  tl.to('#b5a', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.4, ease: 'power2.in' }, 143.6);
+  inUp(144.3, '#b5b', 0.7, 24);
+  tl.to('#b5b', { opacity: 0, filter: 'blur(10px)', duration: 0.4, ease: 'power2.in' }, 149.3);
+
+  /* B6 bridge (over FULL) — anchor 159.4 · framing quote 162.6 · better path 177.8 */
+  spring(163.0, '#b6 .q1', 0.8);
+  inUp(178.0, '#b6 .q2', 0.7, 24);
+  outBlur(182.0, '#b6 .stack', 0.45);
+
+  /* B7 doctor (182.8-217.8) — doctor 182.8 · hernia 186.1 · asks 194.2/196.3/197.4 ·
+     diagnosis 203.2 · listen/diagnose/prescribe 214.3 */
+  inUp(183.8, '#b7 .head', 0.6, 22);
+  spring(186.3, '#b7 .q0', 0.7);
+  inLeft(194.2, '#b7 .a1', 0.6);
+  inLeft(196.3, '#b7 .a2', 0.6);
+  inLeft(197.4, '#b7 .a3', 0.6);
+  spring(203.6, '#b7 .rx .punchx', 0.8);
+  inUp(214.4, '#b7 .j1', 0.6, 22);
+  outBlur(217.0, '#b7 .quote', 0.5);
+  outBlur(217.02, '#b7 .asks', 0.5);
+  outBlur(217.06, '#b7 .rx', 0.5);
+  outBlur(217.1, '#b7 .jobs', 0.5);
+  outBlur(217.14, '#b7 .head', 0.5);
+
+  /* B8 pushback (over FULL) — dev shop 227.3 · spec 227.3-231 · trust gut 239-240 */
+  inLeft(225.6, '#b8 .w1', 0.7);
+  inUp(235.2, '#b8 .w2', 0.7, 24);
+  outBlur(242.8, '#b8 .stack', 0.45);
+
+  /* B9 deliverable (258.5-349.2) — deliverable 258.5 · primer 269.5 · processes 294.7 ·
+     red flags 302.5 · fourth 329.3 */
+  inUp(259.5, '#b9 .head', 0.8, 30);
+  inLeft(269.7, '#b9 .d1', 0.8);
+  inLeft(294.8, '#b9 .d2', 0.8);
+  inLeft(302.6, '#b9 .d3', 0.8);
+  inLeft(329.4, '#b9 .d4', 0.8);
+  outBlur(348.3, '#b9 .list', 0.55);
+  outBlur(348.35, '#b9 .head', 0.5);
+
+  /* B10 spine (349.2-380.8) — spine 349.2 · top three 351.9 · sales material 366.4 · prescribing 377.9 */
+  inLeft(350.0, '#b10 .s1', 0.7);
+  inLeft(366.5, '#b10 .s2', 0.7);
+  spring(377.9, '#b10 .s3', 0.7);
+  outBlur(380.0, '#b10 .stack', 0.5);
+
+  /* B11 twelve agents (380.8-423.6) — twelve 383.4 · IF pass 400.8 · 3-4 413.3 · cutting 417 */
+  inUp(381.8, '#b11 .head', 0.8, 28);
+  spring(383.6, '#b11 .f1', 0.6);
+  inUp(400.9, '#b11 .fa1', 0.3, 8);
+  spring(401.2, '#b11 .f2', 0.6);
+  inUp(413.2, '#b11 .fa2', 0.3, 8);
+  spring(413.5, '#b11 .f3', 0.6);
+  spring(417.5, '#b11 .verdict .punchx', 0.7);
+  outBlur(422.7, '#b11 .head', 0.5);
+  outBlur(422.75, '#b11 .flow', 0.5);
+  outBlur(422.8, '#b11 .verdict', 0.5);
+
+  /* B12 vague vs specific (over FULL) — vague 428.8 · precise 431.5 */
+  inUp(428.6, '#b12 .vag', 0.7, 26);
+  inUp(431.6, '#b12 .spec', 0.7, 26);
+  outBlur(439.6, '#b12 .pair', 0.5);
+  /* ship one — 452.9 */
+  spring(453.0, '#b12ship .punchx', 0.7);
+  tl.to('#b12ship', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 458.9);
+
+  /* B13 handoff (462.0-491.0) — handoff 462.0 · do nows 469.9 · SOW 473.4 · charter 479.5 ·
+     do laters 482.0 · leave its 486.0 */
+  inUp(463.0, '#b13 .head', 0.7, 26);
+  inLeft(469.9, '#b13 .h1', 0.7);
+  inLeft(482.0, '#b13 .h2', 0.7);
+  inLeft(486.0, '#b13 .h3', 0.7);
+  outBlur(490.1, '#b13 .rows', 0.5);
+  outBlur(490.15, '#b13 .head', 0.5);
+
+  /* B14 outro (512.9-530) — VO ends 520.5 */
+  spring(513.7, '#b14 .o1', 0.5);
+  tl.fromTo('#b14 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 514.05);
+  spring(514.25, '#b14 .o2', 0.5);
+  tl.fromTo('#b14 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 514.55);
+  spring(514.75, '#b14 .o3', 0.5);
+  tl.fromTo('#b14 .oc3', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 515.05);
+  spring(515.25, '#b14 .o4', 0.5);
+  tl.fromTo('#b14 .o4', { boxShadow: '0 0 22px rgba(55,189,248,0.55), 0 0 56px rgba(55,189,248,0.3), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 40px rgba(55,189,248,0.7), 0 0 110px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 515.8);
+  inUp(516.1, '#b14 .nx .kick', 0.6, 20);
+  tl.fromTo('#b14 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 516.4);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p14'] = tl;
+})();
+</script>
+</body>
+</html>

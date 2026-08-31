@@ -41,8 +41,11 @@
     color:var(--blue);display:inline-flex;align-items:center;gap:12px;}
   .eyebrow::before{content:"";width:9px;height:9px;border-radius:2px;background:currentColor;box-shadow:0 0 10px currentColor;}
   .eyebrow.orange{color:var(--orange);}
-  .ln{font-family:var(--fd);font-style:italic;font-weight:900;line-height:.96;letter-spacing:-.035em;
-    color:#fff;max-width:1620px;clip-path:inset(0 0 0 0);overflow:hidden;}
+  /* clip-path masks the wipe reveal; only the RIGHT inset animates. generous
+     negative top/bottom insets keep italic-900 ascenders + descenders (y, g, comma)
+     from ever being sliced. line-height gives the tails room; overflow stays visible. */
+  .ln{font-family:var(--fd);font-style:italic;font-weight:900;line-height:1.12;letter-spacing:-.035em;
+    color:#fff;max-width:1620px;clip-path:inset(-0.22em 0 -0.55em 0);overflow:visible;}
   .ln .ac{color:var(--blue);} .ln .aco{color:var(--orange);}
   .ln.h1{font-size:132px;} .ln.h2{font-size:100px;}
   .sub{font-family:var(--fb);font-weight:300;font-style:italic;font-size:38px;color:rgba(209,220,232,.85);max-width:1300px;}
@@ -139,7 +142,7 @@
     tl.fromTo(sel, Object.assign({autoAlpha:0}, from||{}),
       {autoAlpha:1,x:0,y:0,scale:1, duration:d||.55, ease:e||"power2.out"}, t);
   }
-  function wipe(sel,t,d,e){ tl.fromTo(sel,{clipPath:"inset(0 100% 0 0)"},{clipPath:"inset(0 0% 0 0)",duration:d||.62,ease:e||"power3.out"}, t); }
+  function wipe(sel,t,d,e){ tl.fromTo(sel,{clipPath:"inset(-0.22em 100% -0.55em 0)"},{clipPath:"inset(-0.22em 0% -0.55em 0)",duration:d||.62,ease:e||"power3.out"}, t); }
   function out(sel,t){ tl.to(sel,{autoAlpha:0,duration:.35,ease:"power2.in"}, t); }
 
   tl.to("#markbug .dot",{scale:1.15,duration:.8,yoyo:true,repeat:Math.round(D/0.8)-1,ease:"sine.inOut",transformOrigin:"50% 50%"},0);

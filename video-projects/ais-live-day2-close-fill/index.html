@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>AIS LIVE — Block 8: Closing Stage Loop (10.0 min loop)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --red-live:#ff3b30; /* coral = ambient bg glow only */
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;z-index:30;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:34px;padding:96px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:0 0 16px rgba(55,189,248,.45);}
+      /* no ::before marker chip, no coral variant — live-asset directives */
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:122px;line-height:1.16;
+        letter-spacing:-.03em;max-width:1600px;}
+      .ln.hero{font-size:176px;}
+      /* generous padding so italic-900 ascenders/descenders never clip out of the
+         background-clip:text box (paint box = padding box). Sides need extra room
+         for italic descender tails (the 'y' in "they" clips at .15em) — pad wide
+         and pull word spacing back with negative margins so the visual inter-word
+         gap stays the original .15em */
+      .ln .wd{display:inline-block;padding:.16em .26em .38em;margin:0 -.11em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .ln.quoteln{font-size:78px;line-height:1.28;max-width:1500px;}
+      .quoteln{position:relative;}
+      .quoteln::before{content:"\201C";color:var(--blue);margin-right:.04em;}
+      .quoteln::after{content:"\201D";color:var(--blue);margin-left:.04em;}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:41px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+      .attrib{font-style:normal;font-family:var(--font-mono);font-weight:500;font-size:27px;letter-spacing:.06em;color:rgba(180,214,238,.82);}
+
+      /* AIS+ product mark — ALL WHITE incl. the +, never tinted (directives) */
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:900;color:#fff;letter-spacing:-.02em;}
+      .plus .p{color:#fff;}
+
+      /* stat */
+      .statwrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
+      .kicker{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.30em;text-transform:uppercase;color:#fff;}
+      .num{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:320px;line-height:1.0;
+        letter-spacing:-.04em;padding:.08em .14em .26em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 90px rgba(55,189,248,.6);}
+      .unit{font-family:var(--font-mono);font-weight:700;font-size:28px;letter-spacing:.30em;text-transform:uppercase;color:var(--blue);}
+
+      /* sponsor logos (white on transparent) */
+      .logorow{display:flex;gap:110px;justify-content:center;align-items:flex-start;}
+      .logo{display:flex;flex-direction:column;align-items:center;gap:44px;will-change:transform,opacity;}
+      .logobox{height:180px;display:flex;align-items:center;justify-content:center;}
+      .logo img{width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 36px rgba(55,189,248,.28));}
+      .logorole{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);}
+
+      /* agenda / two-day highlights */
+      .agenda{display:flex;flex-direction:column;gap:14px;width:max-content;max-width:1680px;will-change:transform;}
+      .agrow{display:flex;align-items:baseline;gap:26px;font-family:var(--font-body);font-weight:700;font-size:38px;color:#fff;text-align:left;will-change:transform,opacity;}
+      .agt{font-family:var(--font-mono);font-weight:700;font-size:22px;color:var(--blue);min-width:130px;letter-spacing:.04em;}
+
+      /* mounted finished pieces — full-frame, above the camera scenes */
+      .mount{position:absolute;inset:0;background:#000;will-change:transform,opacity,filter;z-index:20;}
+      .mfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+      /* community voice cards — real member clip over the live ambient background */
+      .vcard{position:absolute;inset:0;z-index:20;display:flex;align-items:center;gap:84px;
+        padding:0 120px;will-change:transform,opacity,filter;}
+      .vbox{position:relative;width:980px;height:551px;border-radius:26px;overflow:hidden;flex:none;
+        background:#000;border:1px solid rgba(55,189,248,.35);
+        box-shadow:0 0 90px rgba(55,189,248,.22), 0 30px 80px rgba(0,0,0,.55);will-change:transform,opacity;}
+      .vfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+      .vmeta{display:flex;flex-direction:column;align-items:flex-start;gap:24px;text-align:left;max-width:620px;}
+      .vlabel{font-family:var(--font-mono);font-weight:700;font-size:24px;letter-spacing:.32em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 16px rgba(55,189,248,.45);will-change:transform,opacity;}
+      .vname{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:64px;line-height:1.08;
+        letter-spacing:-.02em;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.2);padding:0 .1em .08em 0;will-change:transform,opacity;}
+      .vrole{font-family:var(--font-mono);font-weight:700;font-size:23px;letter-spacing:.24em;text-transform:uppercase;
+        color:rgba(180,214,238,.85);will-change:transform,opacity;}
+      .vrole .plus{font-size:26px;}
+      .vquote{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:38px;line-height:1.3;
+        color:rgba(209,220,232,.88);will-change:transform,opacity;}
+      .vquote::before{content:"\201C";color:var(--blue);margin-right:.04em;}
+      .vquote::after{content:"\201D";color:var(--blue);margin-left:.04em;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-kcgr" id="stage" data-composition-id="cmp-day2-close-fill" data-start="0" data-duration="598.4" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-a6jx" id="bg" class="clip" data-start="0" data-duration="598.4" data-track-index="0">
+        <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+        <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+        <div data-hf-id="hf-hqud" class="beam"></div>
+        <div data-hf-id="hf-uo31" class="glow blue"></div>
+        <div data-hf-id="hf-jtmg" class="glow coral"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-h60x" class="grain"></div>
+      </div>
+      <div data-hf-id="hf-q7ed" class="whip clip" id="whip" data-start="0" data-duration="598.4" data-track-index="1"></div>
+      <div data-hf-id="hf-ojvt" id="markbug" class="clip" data-start="0" data-duration="598.4" data-track-index="2">
+        <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-ohjn" class="ring"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+      </div>
+
+      <div data-hf-id="hf-kwiw" id="camera">
+      <section data-hf-id="hf-qmm1" id="sc0" class="scene clip" data-start="0" data-duration="6.4" data-track-index="12">
+        <div data-hf-id="hf-lm34" class="inner">
+        <div data-hf-id="hf-a3vl" class="eyebrow">AIS LIVE · JULY 11-12</div><div data-hf-id="hf-7jiu" class="ln hero"><span data-hf-id="hf-st2v" class="wd">That's</span><span data-hf-id="hf-fghr" class="wd">a</span><span data-hf-id="hf-168g" class="wd">wrap</span><span data-hf-id="hf-onbh" class="wd">on</span><span data-hf-id="hf-7jpv" class="wd ac">AIS</span><span data-hf-id="hf-sckg" class="wd ac">LIVE.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-k37u" id="sc1" class="scene clip" data-start="6" data-duration="9.4" data-track-index="13">
+        <div data-hf-id="hf-bug8" class="inner">
+        <div data-hf-id="hf-mn7k" class="eyebrow">TWO DAYS · ONE COMMUNITY</div><div data-hf-id="hf-gmyq" class="ln"><span data-hf-id="hf-7l93" class="wd">You</span><span data-hf-id="hf-ir2c" class="wd">built</span><span data-hf-id="hf-cqvp" class="wd">it.</span><span data-hf-id="hf-t4rr" class="wd ac">You</span><span data-hf-id="hf-988n" class="wd ac">earned</span><span data-hf-id="hf-92th" class="wd ac">it.</span></div><div data-hf-id="hf-9tzx" class="sub">Build Day and Earn Day, in the books.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-8kwk" id="sc2" class="scene clip" data-start="15" data-duration="7.4" data-track-index="14">
+        <div data-hf-id="hf-anj5" class="inner">
+        
+        <div data-hf-id="hf-vn0i" class="statwrap">
+          <div data-hf-id="hf-3k74" class="kicker">THIS WEEKEND, TOGETHER</div>
+          <div data-hf-id="hf-u2ep" class="num">0+</div>
+          <div data-hf-id="hf-cihu" class="unit">BUILDERS</div>
+        </div><div data-hf-id="hf-hy4g" class="sub">Thank you for showing up.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-7rl6" id="sc3" class="scene clip" data-start="22" data-duration="9.4" data-track-index="15">
+        <div data-hf-id="hf-b1u6" class="inner">
+        <div data-hf-id="hf-b0jv" class="eyebrow"><span data-hf-id="hf-taa8" class="plus">AIS<span data-hf-id="hf-0gsk" class="p">+</span></span> · NEW MEMBERS</div><div data-hf-id="hf-ru7a" class="ln"><span data-hf-id="hf-l8wa" class="wd">Just</span><span data-hf-id="hf-vv9a" class="wd">joined?</span><span data-hf-id="hf-3wz4" class="wd ac">Welcome</span><span data-hf-id="hf-zzuv" class="wd ac">home.</span></div><div data-hf-id="hf-2mrx" class="sub">To everyone who became an <span data-hf-id="hf-6b6w" class="plus">AIS<span data-hf-id="hf-41to" class="p">+</span></span> member this weekend: this is your community now.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-r8xw" id="sc5" class="scene clip" data-start="97.4" data-duration="5.4" data-track-index="17">
+        <div data-hf-id="hf-9ux3" class="inner">
+        <div data-hf-id="hf-d32s" class="eyebrow">THANK YOU</div><div data-hf-id="hf-o4fu" class="ln hero"><span data-hf-id="hf-hb87" class="wd">The</span><span data-hf-id="hf-miob" class="wd">sponsors</span><span data-hf-id="hf-hxpk" class="wd ac">behind</span><span data-hf-id="hf-yx9v" class="wd ac">AIS</span><span data-hf-id="hf-6y6w" class="wd ac">LIVE.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-3rb2" id="sc6" class="scene clip" data-start="102.4" data-duration="60.4" data-track-index="18">
+        <div data-hf-id="hf-a984" class="inner">
+        <div data-hf-id="hf-glhw" class="eyebrow">OUR SPONSORS</div><div data-hf-id="hf-vg67" class="logorow"><div data-hf-id="hf-e319" class="logo"><div data-hf-id="hf-c120" class="logobox"><img data-hf-id="hf-bqzq" src="assets/sponsors/hyperagent-white-big.png" alt="" style="height:130px"></div><div data-hf-id="hf-vm3i" class="logorole">PRESENTING SPONSOR</div></div></div><div data-hf-id="hf-y60i" class="sub">Thank you for powering AIS LIVE.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-w22l" id="sc7" class="scene clip" data-start="162.4" data-duration="12.4" data-track-index="19">
+        <div data-hf-id="hf-92b1" class="inner">
+        <div data-hf-id="hf-fox8" class="eyebrow">OUR SPONSORS</div><div data-hf-id="hf-5ycf" class="logorow"><div data-hf-id="hf-rugh" class="logo"><div data-hf-id="hf-kka8" class="logobox"><img data-hf-id="hf-n03g" src="assets/sponsors/glaido-white.png" alt="" style="height:150px"></div><div data-hf-id="hf-2ko5" class="logorole">SPONSOR</div></div></div><div data-hf-id="hf-s6nq" class="sub">Thank you for powering AIS LIVE.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-x58p" id="sc8" class="scene clip" data-start="174.4" data-duration="5.4" data-track-index="20">
+        <div data-hf-id="hf-9gm2" class="inner">
+        <div data-hf-id="hf-470p" class="eyebrow">THE WEEKEND</div><div data-hf-id="hf-oiqv" class="ln hero"><span data-hf-id="hf-er3z" class="wd">Look</span><span data-hf-id="hf-rshy" class="wd">what</span><span data-hf-id="hf-qt6s" class="wd">we</span><span data-hf-id="hf-ctyo" class="wd ac">covered.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-uuu2" id="sc9" class="scene clip" data-start="179.4" data-duration="36.4" data-track-index="21">
+        <div data-hf-id="hf-emlf" class="inner">
+        <div data-hf-id="hf-sz5c" class="eyebrow">TWO DAYS AT AIS LIVE</div><div data-hf-id="hf-qqow" class="agenda"><div data-hf-id="hf-z2vs" class="agrow"><span data-hf-id="hf-pb10" class="agt">DAY 1</span><span data-hf-id="hf-jjr0" class="agl">Anatomy of Three Real Deals</span></div><div data-hf-id="hf-huwg" class="agrow"><span data-hf-id="hf-sa3w" class="agt">DAY 1</span><span data-hf-id="hf-2328" class="agl">The New Standard: A Fleet of Always-On Agents</span></div><div data-hf-id="hf-gnzd" class="agrow"><span data-hf-id="hf-r36t" class="agt">DAY 1</span><span data-hf-id="hf-g4mg" class="agl">Evals, Live</span></div><div data-hf-id="hf-h2ae" class="agrow"><span data-hf-id="hf-rhhu" class="agt">DAY 1</span><span data-hf-id="hf-0vpu" class="agl">Run an Entire AI Agency Using Claude Code</span></div><div data-hf-id="hf-fvdb" class="agrow"><span data-hf-id="hf-th0z" class="agt">DAY 1</span><span data-hf-id="hf-vkei" class="agl">Get <span data-hf-id="hf-549t" class="plus">AIS<span data-hf-id="hf-2uwl" class="p">+</span></span> Certified</span></div><div data-hf-id="hf-g9oc" class="agrow"><span data-hf-id="hf-o43x" class="agt">DAY 2</span><span data-hf-id="hf-2zci" class="agl">Turn This Into Money</span></div><div data-hf-id="hf-f2r9" class="agrow"><span data-hf-id="hf-oqv5" class="agt">DAY 2</span><span data-hf-id="hf-svxc" class="agl">The Tool War Panel</span></div><div data-hf-id="hf-fh2a" class="agrow"><span data-hf-id="hf-pxs8" class="agt">DAY 2</span><span data-hf-id="hf-2e4o" class="agl">The Sales Arc, LIVE</span></div><div data-hf-id="hf-ea57" class="agrow"><span data-hf-id="hf-pjh7" class="agt">DAY 2</span><span data-hf-id="hf-qgs1" class="agl">Ditching Hourly: The Pricing Mindset</span></div><div data-hf-id="hf-eog8" class="agrow"><span data-hf-id="hf-njy2" class="agt">DAY 2</span><span data-hf-id="hf-el2m" class="agl">Closing Keynote: Build to Sell</span></div></div><div data-hf-id="hf-7p14" class="sub">Build Day + Earn Day highlights</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-p36v" id="sc10" class="scene clip" data-start="215.4" data-duration="6.4" data-track-index="22">
+        <div data-hf-id="hf-f0wg" class="inner">
+        <div data-hf-id="hf-iyy4" class="eyebrow">FROM THE STAGE</div><div data-hf-id="hf-s8ib" class="ln"><span data-hf-id="hf-6ste" class="wd">Straight</span><span data-hf-id="hf-t7cc" class="wd">from</span><span data-hf-id="hf-dd2m" class="wd ac">Day</span><span data-hf-id="hf-d5pf" class="wd ac">1.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-r13i" id="sc15" class="scene clip" data-start="320.7" data-duration="7.4" data-track-index="27">
+        <div data-hf-id="hf-kvm0" class="inner">
+        
+        <div data-hf-id="hf-chba" class="statwrap">
+          <div data-hf-id="hf-m2h5" class="kicker">ON STAGE THIS WEEKEND</div>
+          <div data-hf-id="hf-i3l1" class="num">0+</div>
+          <div data-hf-id="hf-7328" class="unit">SPEAKERS</div>
+        </div><div data-hf-id="hf-qqgu" class="sub">Founders, operators, and closers. Thank you.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-4r8b" id="sc16" class="scene clip" data-start="327.7" data-duration="5.4" data-track-index="28">
+        <div data-hf-id="hf-khaz" class="inner">
+        <div data-hf-id="hf-p89z" class="eyebrow">FROM THE COMMUNITY</div><div data-hf-id="hf-ox1w" class="ln hero"><span data-hf-id="hf-uxq8" class="wd">Real</span><span data-hf-id="hf-abu9" class="wd">builds.</span><span data-hf-id="hf-ttu8" class="wd ac">Real</span><span data-hf-id="hf-id7o" class="wd ac">numbers.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-gq3j" id="sc18" class="scene clip" data-start="397.033" data-duration="6.4" data-track-index="30">
+        <div data-hf-id="hf-k2zy" class="inner">
+        <div data-hf-id="hf-wixf" class="eyebrow">IN THEIR WORDS</div><div data-hf-id="hf-smtc" class="ln"><span data-hf-id="hf-p8m6" class="wd">Why</span><span data-hf-id="hf-ha8a" class="wd">they</span><span data-hf-id="hf-2izd" class="wd ac">stay.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-fm4v" id="sc22" class="scene clip" data-start="429.767" data-duration="7.4" data-track-index="34">
+        <div data-hf-id="hf-joox" class="inner">
+        
+        <div data-hf-id="hf-cvmb" class="statwrap">
+          <div data-hf-id="hf-2ndt" class="kicker">SHIPPED BY THE COMMUNITY</div>
+          <div data-hf-id="hf-67gu" class="num">0K+</div>
+          <div data-hf-id="hf-dcnp" class="unit">AUTOMATIONS SHIPPED</div>
+        </div><div data-hf-id="hf-nxy6" class="sub">Real workflows. Real businesses.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-rk39" id="sc23" class="scene clip" data-start="436.767" data-duration="5.4" data-track-index="35">
+        <div data-hf-id="hf-jadw" class="inner">
+        <div data-hf-id="hf-vq2v" class="eyebrow">FROM THE COMMUNITY</div><div data-hf-id="hf-pbcx" class="ln hero"><span data-hf-id="hf-vnso" class="wd">Real</span><span data-hf-id="hf-s8rx" class="wd">work.</span><span data-hf-id="hf-ajoo" class="wd ac">Real</span><span data-hf-id="hf-0lql" class="wd ac">paydays.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-xv24" id="sc28" class="scene clip" data-start="546.933" data-duration="8.4" data-track-index="40">
+        <div data-hf-id="hf-iw2v" class="inner">
+        <div data-hf-id="hf-a9h5" class="eyebrow">MEMBER WIN</div><div data-hf-id="hf-4oj4" class="ln quoteln"><span data-hf-id="hf-dex0" class="wd">Six</span><span data-hf-id="hf-xi4r" class="wd">months</span><span data-hf-id="hf-rtrp" class="wd">of</span><span data-hf-id="hf-fa6f" class="wd">engineering</span><span data-hf-id="hf-t1dz" class="wd">work,</span><span data-hf-id="hf-snzt" class="wd">compressed</span><span data-hf-id="hf-w2wm" class="wd">into</span><span data-hf-id="hf-z16g" class="wd">one</span><span data-hf-id="hf-39hu" class="wd">afternoon.</span></div><div data-hf-id="hf-9l7e" class="sub attrib">Duy Nguyen</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-vywh" id="sc29" class="scene clip" data-start="554.933" data-duration="8.4" data-track-index="41">
+        <div data-hf-id="hf-ihru" class="inner">
+        <div data-hf-id="hf-vbru" class="eyebrow">FROM THE COMMUNITY</div><div data-hf-id="hf-40eg" class="ln quoteln"><span data-hf-id="hf-8djj" class="wd">Afterwards,</span><span data-hf-id="hf-h6bv" class="wd">it's</span><span data-hf-id="hf-ke5c" class="wd">this</span><span data-hf-id="hf-yh9w" class="wd">village</span><span data-hf-id="hf-ehex" class="wd">of</span><span data-hf-id="hf-tmrr" class="wd">people</span><span data-hf-id="hf-4a1a" class="wd">there</span><span data-hf-id="hf-70q5" class="wd">to</span><span data-hf-id="hf-ou13" class="wd">help</span><span data-hf-id="hf-xqe3" class="wd">you.</span></div><div data-hf-id="hf-dz75" class="sub attrib">Lutfiya Miller</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-og2o" id="sc30" class="scene clip" data-start="562.933" data-duration="9.4" data-track-index="42">
+        <div data-hf-id="hf-i3gt" class="inner">
+        <div data-hf-id="hf-v6rw" class="eyebrow">AIS LIVE 2026</div><div data-hf-id="hf-puo5" class="ln"><span data-hf-id="hf-hpz4" class="wd">This</span><span data-hf-id="hf-3ar0" class="wd">is</span><span data-hf-id="hf-0ld6" class="wd">just</span><span data-hf-id="hf-k9k7" class="wd ac">the</span><span data-hf-id="hf-w4zz" class="wd ac">beginning.</span></div><div data-hf-id="hf-nxp3" class="sub">Stay building. Stay connected. The community does not stop when the stream does.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-rxvo" id="sc31" class="scene clip" data-start="571.933" data-duration="9.4" data-track-index="43">
+        <div data-hf-id="hf-o228" class="inner">
+        <div data-hf-id="hf-1fry" class="eyebrow">TONIGHT</div><div data-hf-id="hf-q8z6" class="ln"><span data-hf-id="hf-90rb" class="wd">The</span><span data-hf-id="hf-j2hf" class="wd">conversation</span><span data-hf-id="hf-cyic" class="wd ac">continues.</span></div><div data-hf-id="hf-6dxt" class="sub">Keep the wins coming. See you in the community.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-1ex8" id="sc32" class="scene clip" data-start="580.933" data-duration="17.467" data-track-index="44">
+        <div data-hf-id="hf-nnr7" class="inner">
+        <div data-hf-id="hf-qqsd" class="bigmark"><span data-hf-id="hf-kh9c" class="mark big"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-qib7" class="ring"></span><span data-hf-id="hf-zcc2" class="dot"></span></span></span></div><div data-hf-id="hf-wzq3" class="sub">That's a wrap on AIS LIVE. Thank you.</div>
+        </div>
+      </section>
+      </div>
+      <div data-hf-id="hf-dr00" id="mnt0" class="mount">
+        <img data-hf-id="hf-4q2e" id="mnt0-poster" class="mfill" src="assets/video/ais-plus-membership-poster.jpg" alt="">
+        <video data-hf-id="hf-9so8" id="mnt0-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/ais-plus-membership.mp4" data-start="31" data-duration="66" data-track-index="501"></video>
+        <img data-hf-id="hf-sx2n" id="mnt0-last" class="mfill" src="assets/video/ais-plus-membership-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-l6bo" id="vc1" class="vcard">
+        <div data-hf-id="hf-d391" class="vbox">
+          <img data-hf-id="hf-428s" id="vc1-poster" class="vfill" src="assets/recap/recap-dave-no-code-6mo-poster.jpg" alt="">
+          <video data-hf-id="hf-oddn" id="vc1-v" class="vfill" muted playsinline data-has-audio="false" src="assets/recap/recap-dave-no-code-6mo.mp4" data-start="222" data-duration="30.1" data-track-index="502"></video>
+          <img data-hf-id="hf-85kb" id="vc1-last" class="vfill" src="assets/recap/recap-dave-no-code-6mo-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-n28t" class="vmeta">
+          <div data-hf-id="hf-8d10" class="vlabel">DAY 1 · LOW-CODE TO FULL-CODE</div>
+          <div data-hf-id="hf-ssbt" class="vname">Dave Ebbelaar</div>
+          <div data-hf-id="hf-177k" class="vrole">AI ENGINEER · DATALUMINA</div>
+          <div data-hf-id="hf-tl6m" class="vquote">I haven't written a single line of code in over six months.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-w1tb" id="vc2" class="vcard">
+        <div data-hf-id="hf-c6ax" class="vbox">
+          <img data-hf-id="hf-wys0" id="vc2-poster" class="vfill" src="assets/recap/recap-liberty-tribe-poster.jpg" alt="">
+          <video data-hf-id="hf-0mh5" id="vc2-v" class="vfill" muted playsinline data-has-audio="false" src="assets/recap/recap-liberty-tribe.mp4" data-start="253.5" data-duration="36.9" data-track-index="503"></video>
+          <img data-hf-id="hf-v2nx" id="vc2-last" class="vfill" src="assets/recap/recap-liberty-tribe-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-eg4x" class="vmeta">
+          <div data-hf-id="hf-kybi" class="vlabel">DAY 1 · FIRST 30 DAYS IN AI AUTOMATION</div>
+          <div data-hf-id="hf-r42n" class="vname">Liberty White</div>
+          <div data-hf-id="hf-a3nx" class="vrole">FOUNDER · SHE LEARNS AI</div>
+          <div data-hf-id="hf-d9yh" class="vquote">People are waiting for your opinion. Your tribe will find you.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-pw3i" id="vc3" class="vcard">
+        <div data-hf-id="hf-dd80" class="vbox">
+          <img data-hf-id="hf-qg4y" id="vc3-poster" class="vfill" src="assets/recap/recap-sabrina-zero-edits-poster.jpg" alt="">
+          <video data-hf-id="hf-n1gc" id="vc3-v" class="vfill" muted playsinline data-has-audio="false" src="assets/recap/recap-sabrina-zero-edits.mp4" data-start="291.8" data-duration="13.3" data-track-index="504"></video>
+          <img data-hf-id="hf-x3ep" id="vc3-last" class="vfill" src="assets/recap/recap-sabrina-zero-edits-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-fn20" class="vmeta">
+          <div data-hf-id="hf-9e86" class="vlabel">DAY 1 · YOUR FIRST AI CONTENT ENGINE</div>
+          <div data-hf-id="hf-5qar" class="vname">Sabrina Ramonov</div>
+          <div data-hf-id="hf-wmlx" class="vrole">FOUNDER · BLOTATO</div>
+          <div data-hf-id="hf-bqmr" class="vquote">Zero edits. And the post is going viral.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-0rl5" id="vc4" class="vcard">
+        <div data-hf-id="hf-cywz" class="vbox">
+          <img data-hf-id="hf-cgzt" id="vc4-poster" class="vfill" src="assets/recap/recap-mustafa-value-poster.jpg" alt="">
+          <video data-hf-id="hf-kte3" id="vc4-v" class="vfill" muted playsinline data-has-audio="false" src="assets/recap/recap-mustafa-value.mp4" data-start="306.5" data-duration="13.4" data-track-index="505"></video>
+          <img data-hf-id="hf-2vye" id="vc4-last" class="vfill" src="assets/recap/recap-mustafa-value-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-f8qz" class="vmeta">
+          <div data-hf-id="hf-6kx2" class="vlabel">DAY 1 · VIP: SCOPE TO SHIP</div>
+          <div data-hf-id="hf-7jn0" class="vname">Mustafa Tawfiq</div>
+          <div data-hf-id="hf-1fcu" class="vrole">AIS LIVE EVENT TEAM</div>
+          <div data-hf-id="hf-ld8o" class="vquote">What matters is the value you deliver.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-zp25" id="mnt5" class="mount">
+        <img data-hf-id="hf-sl00" id="mnt5-poster" class="mfill" src="assets/video/testi-building-poster.jpg" alt="">
+        <video data-hf-id="hf-t25r" id="mnt5-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-building.mp4" data-start="332.7" data-duration="63.93333333333333" data-track-index="506"></video>
+        <img data-hf-id="hf-w07f" id="mnt5-last" class="mfill" src="assets/video/testi-building-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-8nt7" id="vc6" class="vcard">
+        <div data-hf-id="hf-azdu" class="vbox">
+          <img data-hf-id="hf-ds4i" id="vc6-poster" class="vfill" src="assets/voices/tonia-hardeman-poster.jpg" alt="">
+          <video data-hf-id="hf-26hn" id="vc6-v" class="vfill" muted playsinline data-has-audio="false" src="assets/voices/tonia-hardeman.mp4" data-start="403.633" data-duration="4.4" data-track-index="507"></video>
+          <img data-hf-id="hf-7nrj" id="vc6-last" class="vfill" src="assets/voices/tonia-hardeman-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-d97u" class="vmeta">
+          <div data-hf-id="hf-si6i" class="vlabel">FROM THE COMMUNITY</div>
+          <div data-hf-id="hf-z4i6" class="vname">Tonia Hardeman</div>
+          <div data-hf-id="hf-vdd4" class="vrole"><span data-hf-id="hf-5iku" class="plus">AIS<span data-hf-id="hf-397m" class="p">+</span></span> MEMBER</div>
+          <div data-hf-id="hf-ap6t" class="vquote">I found my home. I found my tribe.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-4pp6" id="vc7" class="vcard">
+        <div data-hf-id="hf-al2t" class="vbox">
+          <img data-hf-id="hf-9bpn" id="vc7-poster" class="vfill" src="assets/voices/marvin-martinez-poster.jpg" alt="">
+          <video data-hf-id="hf-6wwn" id="vc7-v" class="vfill" muted playsinline data-has-audio="false" src="assets/voices/marvin-martinez.mp4" data-start="409.433" data-duration="12.466666666666667" data-track-index="508"></video>
+          <img data-hf-id="hf-htg2" id="vc7-last" class="vfill" src="assets/voices/marvin-martinez-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-cuwt" class="vmeta">
+          <div data-hf-id="hf-emry" class="vlabel">FROM THE COMMUNITY</div>
+          <div data-hf-id="hf-vwye" class="vname">Marvin Martinez</div>
+          <div data-hf-id="hf-sxgg" class="vrole"><span data-hf-id="hf-4bnr" class="plus">AIS<span data-hf-id="hf-58qr" class="p">+</span></span> MEMBER</div>
+          <div data-hf-id="hf-c8r5" class="vquote">People with your same mindset push you to be better.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-ddl1" id="vc8" class="vcard">
+        <div data-hf-id="hf-brzw" class="vbox">
+          <img data-hf-id="hf-48ly" id="vc8-poster" class="vfill" src="assets/voices/jan-goergen-makinson-poster.jpg" alt="">
+          <video data-hf-id="hf-zi6k" id="vc8-v" class="vfill" muted playsinline data-has-audio="false" src="assets/voices/jan-goergen-makinson.mp4" data-start="423.3" data-duration="5.666666666666667" data-track-index="509"></video>
+          <img data-hf-id="hf-r2yf" id="vc8-last" class="vfill" src="assets/voices/jan-goergen-makinson-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-e1tw" class="vmeta">
+          <div data-hf-id="hf-f12z" class="vlabel">FROM THE COMMUNITY</div>
+          <div data-hf-id="hf-3d87" class="vname">Jan Goergen Makinson</div>
+          <div data-hf-id="hf-rqjd" class="vrole"><span data-hf-id="hf-4pys" class="plus">AIS<span data-hf-id="hf-5n1s" class="p">+</span></span> MEMBER</div>
+          <div data-hf-id="hf-vwbj" class="vquote">My backup team is just the keyboard away.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-5y9d" id="mnt9" class="mount">
+        <img data-hf-id="hf-mkls" id="mnt9-poster" class="mfill" src="assets/video/testi-earning-poster.jpg" alt="">
+        <video data-hf-id="hf-pa3f" id="mnt9-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-earning.mp4" data-start="441.767" data-duration="69.9" data-track-index="510"></video>
+        <img data-hf-id="hf-cv8p" id="mnt9-last" class="mfill" src="assets/video/testi-earning-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-86vo" id="vc10" class="vcard">
+        <div data-hf-id="hf-bdov" class="vbox">
+          <img data-hf-id="hf-owac" id="vc10-poster" class="vfill" src="assets/voices/usman-mohammed-poster.jpg" alt="">
+          <video data-hf-id="hf-yd2k" id="vc10-v" class="vfill" muted playsinline data-has-audio="false" src="assets/voices/usman-mohammed.mp4" data-start="512.667" data-duration="9.7" data-track-index="511"></video>
+          <img data-hf-id="hf-nblt" id="vc10-last" class="vfill" src="assets/voices/usman-mohammed-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-dniv" class="vmeta">
+          <div data-hf-id="hf-ffe0" class="vlabel">FROM THE COMMUNITY</div>
+          <div data-hf-id="hf-flin" class="vname">Usman Mohammed</div>
+          <div data-hf-id="hf-s4ue" class="vrole"><span data-hf-id="hf-3j1p" class="plus">AIS<span data-hf-id="hf-4g4p" class="p">+</span></span> MEMBER</div>
+          <div data-hf-id="hf-6kio" class="vquote">Join for the community. That will remain with you for life.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-8yjh" id="vc11" class="vcard">
+        <div data-hf-id="hf-9e5q" class="vbox">
+          <img data-hf-id="hf-newj" id="vc11-poster" class="vfill" src="assets/voices/nick-mohler-poster.jpg" alt="">
+          <video data-hf-id="hf-vjug" id="vc11-v" class="vfill" muted playsinline data-has-audio="false" src="assets/voices/nick-mohler.mp4" data-start="523.767" data-duration="8.533333333333333" data-track-index="512"></video>
+          <img data-hf-id="hf-yc8i" id="vc11-last" class="vfill" src="assets/voices/nick-mohler-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-i0w6" class="vmeta">
+          <div data-hf-id="hf-cn8t" class="vlabel">FROM THE COMMUNITY</div>
+          <div data-hf-id="hf-qqsj" class="vname">Nick Mohler</div>
+          <div data-hf-id="hf-qxxb" class="vrole"><span data-hf-id="hf-3xcq" class="plus">AIS<span data-hf-id="hf-4ufq" class="p">+</span></span> MEMBER</div>
+          <div data-hf-id="hf-kxhi" class="vquote">That's how I met my business partner.</div>
+        </div>
+      </div>
+      <div data-hf-id="hf-cwni" id="vc12" class="vcard">
+        <div data-hf-id="hf-8zup" class="vbox">
+          <img data-hf-id="hf-b921" id="vc12-poster" class="vfill" src="assets/voices/maria-somana-poster.jpg" alt="">
+          <video data-hf-id="hf-mefq" id="vc12-v" class="vfill" muted playsinline data-has-audio="false" src="assets/voices/maria-somana.mp4" data-start="533.7" data-duration="12.433333333333334" data-track-index="513"></video>
+          <img data-hf-id="hf-v7lm" id="vc12-last" class="vfill" src="assets/voices/maria-somana-lastframe.jpg" alt="">
+        </div>
+        <div data-hf-id="hf-hml5" class="vmeta">
+          <div data-hf-id="hf-d1ju" class="vlabel">FROM THE COMMUNITY</div>
+          <div data-hf-id="hf-g5k4" class="vname">Maria Somana</div>
+          <div data-hf-id="hf-rc8c" class="vrole"><span data-hf-id="hf-93c3" class="plus">AIS<span data-hf-id="hf-0h2f" class="p">+</span></span> MEMBER</div>
+          <div data-hf-id="hf-jvfk" class="vquote">Put a question and you'll receive ten answers.</div>
+        </div>
+      </div>
+      <audio data-hf-id="hf-50t3" id="mnt0-a" src="assets/video/ais-plus-membership.mp4" data-start="31" data-duration="66" data-track-index="561" data-volume="1"></audio>
+      <audio data-hf-id="hf-gb31" id="vc1-a" src="assets/recap/recap-dave-no-code-6mo.mp4" data-start="222" data-duration="30.1" data-track-index="562" data-volume="1"></audio>
+      <audio data-hf-id="hf-iu2f" id="vc2-a" src="assets/recap/recap-liberty-tribe.mp4" data-start="253.5" data-duration="36.9" data-track-index="563" data-volume="1"></audio>
+      <audio data-hf-id="hf-tg1k" id="vc3-a" src="assets/recap/recap-sabrina-zero-edits.mp4" data-start="291.8" data-duration="13.3" data-track-index="564" data-volume="1"></audio>
+      <audio data-hf-id="hf-5ond" id="vc4-a" src="assets/recap/recap-mustafa-value.mp4" data-start="306.5" data-duration="13.4" data-track-index="565" data-volume="1"></audio>
+      <audio data-hf-id="hf-kzco" id="mnt5-a" src="assets/video/testi-building.mp4" data-start="332.7" data-duration="63.93333333333333" data-track-index="566" data-volume="1"></audio>
+      <audio data-hf-id="hf-c3bb" id="vc6-a" src="assets/voices/tonia-hardeman.mp4" data-start="403.633" data-duration="4.4" data-track-index="567" data-volume="1"></audio>
+      <audio data-hf-id="hf-6zyl" id="vc7-a" src="assets/voices/marvin-martinez.mp4" data-start="409.433" data-duration="12.466666666666667" data-track-index="568" data-volume="1"></audio>
+      <audio data-hf-id="hf-kdag" id="vc8-a" src="assets/voices/jan-goergen-makinson.mp4" data-start="423.3" data-duration="5.666666666666667" data-track-index="569" data-volume="1"></audio>
+      <audio data-hf-id="hf-ny7c" id="mnt9-a" src="assets/video/testi-earning.mp4" data-start="441.767" data-duration="69.9" data-track-index="570" data-volume="1"></audio>
+      <audio data-hf-id="hf-t6g4" id="vc10-a" src="assets/voices/usman-mohammed.mp4" data-start="512.667" data-duration="9.7" data-track-index="571" data-volume="1"></audio>
+      <audio data-hf-id="hf-pra2" id="vc11-a" src="assets/voices/nick-mohler.mp4" data-start="523.767" data-duration="8.533333333333333" data-track-index="572" data-volume="1"></audio>
+      <audio data-hf-id="hf-thqc" id="vc12-a" src="assets/voices/maria-somana.mp4" data-start="533.7" data-duration="12.433333333333334" data-track-index="573" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 598.4;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers (all fromTo so nothing is left invisible) ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      // transform+opacity only — NO filter on text (a filter region clips italic edges + glow)
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%"},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function slideFrom(sel, at, x){ tl.fromTo(sel,{autoAlpha:0,x:x,scale:.96},
+        {autoAlpha:1,x:0,scale:1,duration:.55,ease:"power3.out"},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function glowIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"power2.out",stagger:step||.12,transformOrigin:"50% 50%"},at); }
+      // gentle float during long signage holds — lists only, never headline type
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.8,ease:"power2.in"},at); }
+      function mountIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:1.045,filter:"blur(14px)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px)",duration:.5,ease:"power2.out",transformOrigin:"50% 50%"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+      function countUp(sel, at, target, dur, suffix){
+        var o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+        tl.to(o,{v:target,duration:dur,ease:"power2.out",onUpdate:function(){
+          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+      }
+
+      /* ---- AMBIENT — camera never sleeps; short fixed cycles, even segment counts
+             so yoyo motion starts AND ends at rest (loop-clean); dot/ring tile
+             because D is a multiple of their 1.6s cycle ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/20, yoyo:true, repeat:19, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/24, yoyo:true, repeat:23, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/100, yoyo:true, repeat:99, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/20, yoyo:true, repeat:19, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral",{ x:-36, y:22, duration:D/20, yoyo:true, repeat:19, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/72, yoyo:true, repeat:71, ease:"sine.inOut" }, 0);
+      // live-dot pulse — the only ambient motion on the SOLID mark (brand)
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:747, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:373, ease:"none" }, 0);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (6s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.24);
+      whipOut("#sc0 .inner", 5.7);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 6);
+
+      // sc1 · tagline  (9s)
+      streak(6);
+      drop("#sc1 .eyebrow", 6.12);
+      words("#sc1 .ln .wd", 6.24);
+      drop("#sc1 .sub", 6.82);
+      whipOut("#sc1 .inner", 14.7);
+      tl.set("#sc1 .inner", { autoAlpha: 0 }, 15);
+
+      // sc2 · stat  (7s)
+      streak(15);
+      drop("#sc2 .kicker", 15.28);
+      pop("#sc2 .num", 15.42);
+      countUp("#sc2 .num", 15.48, 1600, 1.1, "+");
+      drop("#sc2 .unit", 15.78);
+      drop("#sc2 .sub", 15.82);
+      whipOut("#sc2 .inner", 21.7);
+      tl.set("#sc2 .inner", { autoAlpha: 0 }, 22);
+
+      // sc3 · tagline  (9s)
+      streak(22);
+      drop("#sc3 .eyebrow", 22.12);
+      words("#sc3 .ln .wd", 22.24);
+      drop("#sc3 .sub", 22.82);
+      whipOut("#sc3 .inner", 30.7);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 31);
+
+      // sc4 · mount ais-plus-membership  (66.4s, voice audio)
+      streak(31);
+      tl.set("#mnt0", { autoAlpha: 0 }, 0);
+      tl.set("#mnt0-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt0", 31);
+      tl.set("#mnt0-poster", { autoAlpha: 0 }, 31.2);
+      tl.set("#mnt0-last", { autoAlpha: 1 }, 96.96);
+      whipOut("#mnt0", 97.1);
+      tl.set("#mnt0", { autoAlpha: 0 }, 97.4);
+
+      // sc5 · hero  (5s)
+      streak(97.4);
+      drop("#sc5 .eyebrow", 97.52);
+      words("#sc5 .ln .wd", 97.64);
+      whipOut("#sc5 .inner", 102.1);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 102.4);
+
+      // sc6 · sponsor  (60s)
+      streak(102.4);
+      drop("#sc6 .eyebrow", 102.52);
+      glowIn("#sc6 .logo", 102.74, 0.14);
+      drop("#sc6 .sub", 103.22);
+      drift("#sc6 .logorow", 104.4, 11.88);
+      whipOut("#sc6 .inner", 162.1);
+      tl.set("#sc6 .inner", { autoAlpha: 0 }, 162.4);
+
+      // sc7 · sponsor  (12s)
+      streak(162.4);
+      drop("#sc7 .eyebrow", 162.52);
+      glowIn("#sc7 .logo", 162.74, 0.14);
+      drop("#sc7 .sub", 163.22);
+      whipOut("#sc7 .inner", 174.1);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 174.4);
+
+      // sc8 · hero  (5s)
+      streak(174.4);
+      drop("#sc8 .eyebrow", 174.52);
+      words("#sc8 .ln .wd", 174.64);
+      whipOut("#sc8 .inner", 179.1);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 179.4);
+
+      // sc9 · agenda  (36s)
+      streak(179.4);
+      drop("#sc9 .eyebrow", 179.52);
+      slideX("#sc9 .agrow", 179.7, 0.07);
+      drop("#sc9 .sub", 180.22);
+      drift("#sc9 .agenda", 181.4, 6.88);
+      whipOut("#sc9 .inner", 215.1);
+      tl.set("#sc9 .inner", { autoAlpha: 0 }, 215.4);
+
+      // sc10 · tagline  (6s)
+      streak(215.4);
+      drop("#sc10 .eyebrow", 215.52);
+      words("#sc10 .ln .wd", 215.64);
+      whipOut("#sc10 .inner", 221.1);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 221.4);
+
+      // sc11 · voice recap-dave-no-code-6mo  (31.5s, voice audio)
+      streak(221.4);
+      tl.set("#vc1", { autoAlpha: 0 }, 0);
+      tl.set("#vc1-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc1", { autoAlpha: 1 }, 221.4);
+      slideFrom("#vc1 .vbox", 221.5, -70);
+      drop("#vc1 .vlabel", 221.7);
+      slideFrom("#vc1 .vname", 221.8, 70);
+      drop("#vc1 .vrole", 221.98);
+      drop("#vc1 .vquote", 222.12);
+      tl.set("#vc1-poster", { autoAlpha: 0 }, 222.2);
+      tl.set("#vc1-last", { autoAlpha: 1 }, 252.06);
+      whipOut("#vc1", 252.6);
+      tl.set("#vc1", { autoAlpha: 0 }, 252.9);
+
+      // sc12 · voice recap-liberty-tribe  (38.3s, voice audio)
+      streak(252.9);
+      tl.set("#vc2", { autoAlpha: 0 }, 0);
+      tl.set("#vc2-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc2", { autoAlpha: 1 }, 252.9);
+      slideFrom("#vc2 .vbox", 253, -70);
+      drop("#vc2 .vlabel", 253.2);
+      slideFrom("#vc2 .vname", 253.3, 70);
+      drop("#vc2 .vrole", 253.48);
+      drop("#vc2 .vquote", 253.62);
+      tl.set("#vc2-poster", { autoAlpha: 0 }, 253.7);
+      tl.set("#vc2-last", { autoAlpha: 1 }, 290.36);
+      whipOut("#vc2", 290.9);
+      tl.set("#vc2", { autoAlpha: 0 }, 291.2);
+
+      // sc13 · voice recap-sabrina-zero-edits  (14.7s, voice audio)
+      streak(291.2);
+      tl.set("#vc3", { autoAlpha: 0 }, 0);
+      tl.set("#vc3-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc3", { autoAlpha: 1 }, 291.2);
+      slideFrom("#vc3 .vbox", 291.3, -70);
+      drop("#vc3 .vlabel", 291.5);
+      slideFrom("#vc3 .vname", 291.6, 70);
+      drop("#vc3 .vrole", 291.78);
+      drop("#vc3 .vquote", 291.92);
+      tl.set("#vc3-poster", { autoAlpha: 0 }, 292);
+      tl.set("#vc3-last", { autoAlpha: 1 }, 305.06);
+      whipOut("#vc3", 305.6);
+      tl.set("#vc3", { autoAlpha: 0 }, 305.9);
+
+      // sc14 · voice recap-mustafa-value  (14.8s, voice audio)
+      streak(305.9);
+      tl.set("#vc4", { autoAlpha: 0 }, 0);
+      tl.set("#vc4-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc4", { autoAlpha: 1 }, 305.9);
+      slideFrom("#vc4 .vbox", 306, -70);
+      drop("#vc4 .vlabel", 306.2);
+      slideFrom("#vc4 .vname", 306.3, 70);
+      drop("#vc4 .vrole", 306.48);
+      drop("#vc4 .vquote", 306.62);
+      tl.set("#vc4-poster", { autoAlpha: 0 }, 306.7);
+      tl.set("#vc4-last", { autoAlpha: 1 }, 319.86);
+      whipOut("#vc4", 320.4);
+      tl.set("#vc4", { autoAlpha: 0 }, 320.7);
+
+      // sc15 · stat  (7s)
+      streak(320.7);
+      drop("#sc15 .kicker", 320.98);
+      pop("#sc15 .num", 321.12);
+      countUp("#sc15 .num", 321.18, 25, 1.1, "+");
+      drop("#sc15 .unit", 321.48);
+      drop("#sc15 .sub", 321.52);
+      whipOut("#sc15 .inner", 327.4);
+      tl.set("#sc15 .inner", { autoAlpha: 0 }, 327.7);
+
+      // sc16 · hero  (5s)
+      streak(327.7);
+      drop("#sc16 .eyebrow", 327.82);
+      words("#sc16 .ln .wd", 327.94);
+      whipOut("#sc16 .inner", 332.4);
+      tl.set("#sc16 .inner", { autoAlpha: 0 }, 332.7);
+
+      // sc17 · mount testi-building  (64.333s, voice audio)
+      streak(332.7);
+      tl.set("#mnt5", { autoAlpha: 0 }, 0);
+      tl.set("#mnt5-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt5", 332.7);
+      tl.set("#mnt5-poster", { autoAlpha: 0 }, 332.9);
+      tl.set("#mnt5-last", { autoAlpha: 1 }, 396.593);
+      whipOut("#mnt5", 396.733);
+      tl.set("#mnt5", { autoAlpha: 0 }, 397.033);
+
+      // sc18 · tagline  (6s)
+      streak(397.033);
+      drop("#sc18 .eyebrow", 397.153);
+      words("#sc18 .ln .wd", 397.273);
+      whipOut("#sc18 .inner", 402.733);
+      tl.set("#sc18 .inner", { autoAlpha: 0 }, 403.033);
+
+      // sc19 · voice tonia-hardeman  (5.8s, voice audio)
+      streak(403.033);
+      tl.set("#vc6", { autoAlpha: 0 }, 0);
+      tl.set("#vc6-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc6", { autoAlpha: 1 }, 403.033);
+      slideFrom("#vc6 .vbox", 403.133, -70);
+      drop("#vc6 .vlabel", 403.333);
+      slideFrom("#vc6 .vname", 403.433, 70);
+      drop("#vc6 .vrole", 403.613);
+      drop("#vc6 .vquote", 403.753);
+      tl.set("#vc6-poster", { autoAlpha: 0 }, 403.833);
+      tl.set("#vc6-last", { autoAlpha: 1 }, 407.993);
+      whipOut("#vc6", 408.533);
+      tl.set("#vc6", { autoAlpha: 0 }, 408.833);
+
+      // sc20 · voice marvin-martinez  (13.867s, voice audio)
+      streak(408.833);
+      tl.set("#vc7", { autoAlpha: 0 }, 0);
+      tl.set("#vc7-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc7", { autoAlpha: 1 }, 408.833);
+      slideFrom("#vc7 .vbox", 408.933, -70);
+      drop("#vc7 .vlabel", 409.133);
+      slideFrom("#vc7 .vname", 409.233, 70);
+      drop("#vc7 .vrole", 409.413);
+      drop("#vc7 .vquote", 409.553);
+      tl.set("#vc7-poster", { autoAlpha: 0 }, 409.633);
+      tl.set("#vc7-last", { autoAlpha: 1 }, 421.86);
+      whipOut("#vc7", 422.4);
+      tl.set("#vc7", { autoAlpha: 0 }, 422.7);
+
+      // sc21 · voice jan-goergen-makinson  (7.067s, voice audio)
+      streak(422.7);
+      tl.set("#vc8", { autoAlpha: 0 }, 0);
+      tl.set("#vc8-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc8", { autoAlpha: 1 }, 422.7);
+      slideFrom("#vc8 .vbox", 422.8, -70);
+      drop("#vc8 .vlabel", 423);
+      slideFrom("#vc8 .vname", 423.1, 70);
+      drop("#vc8 .vrole", 423.28);
+      drop("#vc8 .vquote", 423.42);
+      tl.set("#vc8-poster", { autoAlpha: 0 }, 423.5);
+      tl.set("#vc8-last", { autoAlpha: 1 }, 428.927);
+      whipOut("#vc8", 429.467);
+      tl.set("#vc8", { autoAlpha: 0 }, 429.767);
+
+      // sc22 · stat  (7s)
+      streak(429.767);
+      drop("#sc22 .kicker", 430.047);
+      pop("#sc22 .num", 430.187);
+      countUp("#sc22 .num", 430.247, 100, 1.0, "K+");
+      drop("#sc22 .unit", 430.547);
+      drop("#sc22 .sub", 430.587);
+      whipOut("#sc22 .inner", 436.467);
+      tl.set("#sc22 .inner", { autoAlpha: 0 }, 436.767);
+
+      // sc23 · hero  (5s)
+      streak(436.767);
+      drop("#sc23 .eyebrow", 436.887);
+      words("#sc23 .ln .wd", 437.007);
+      whipOut("#sc23 .inner", 441.467);
+      tl.set("#sc23 .inner", { autoAlpha: 0 }, 441.767);
+
+      // sc24 · mount testi-earning  (70.3s, voice audio)
+      streak(441.767);
+      tl.set("#mnt9", { autoAlpha: 0 }, 0);
+      tl.set("#mnt9-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt9", 441.767);
+      tl.set("#mnt9-poster", { autoAlpha: 0 }, 441.967);
+      tl.set("#mnt9-last", { autoAlpha: 1 }, 511.627);
+      whipOut("#mnt9", 511.767);
+      tl.set("#mnt9", { autoAlpha: 0 }, 512.067);
+
+      // sc25 · voice usman-mohammed  (11.1s, voice audio)
+      streak(512.067);
+      tl.set("#vc10", { autoAlpha: 0 }, 0);
+      tl.set("#vc10-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc10", { autoAlpha: 1 }, 512.067);
+      slideFrom("#vc10 .vbox", 512.167, -70);
+      drop("#vc10 .vlabel", 512.367);
+      slideFrom("#vc10 .vname", 512.467, 70);
+      drop("#vc10 .vrole", 512.647);
+      drop("#vc10 .vquote", 512.787);
+      tl.set("#vc10-poster", { autoAlpha: 0 }, 512.867);
+      tl.set("#vc10-last", { autoAlpha: 1 }, 522.327);
+      whipOut("#vc10", 522.867);
+      tl.set("#vc10", { autoAlpha: 0 }, 523.167);
+
+      // sc26 · voice nick-mohler  (9.933s, voice audio)
+      streak(523.167);
+      tl.set("#vc11", { autoAlpha: 0 }, 0);
+      tl.set("#vc11-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc11", { autoAlpha: 1 }, 523.167);
+      slideFrom("#vc11 .vbox", 523.267, -70);
+      drop("#vc11 .vlabel", 523.467);
+      slideFrom("#vc11 .vname", 523.567, 70);
+      drop("#vc11 .vrole", 523.747);
+      drop("#vc11 .vquote", 523.887);
+      tl.set("#vc11-poster", { autoAlpha: 0 }, 523.967);
+      tl.set("#vc11-last", { autoAlpha: 1 }, 532.26);
+      whipOut("#vc11", 532.8);
+      tl.set("#vc11", { autoAlpha: 0 }, 533.1);
+
+      // sc27 · voice maria-somana  (13.833s, voice audio)
+      streak(533.1);
+      tl.set("#vc12", { autoAlpha: 0 }, 0);
+      tl.set("#vc12-last", { autoAlpha: 0 }, 0);
+      tl.set("#vc12", { autoAlpha: 1 }, 533.1);
+      slideFrom("#vc12 .vbox", 533.2, -70);
+      drop("#vc12 .vlabel", 533.4);
+      slideFrom("#vc12 .vname", 533.5, 70);
+      drop("#vc12 .vrole", 533.68);
+      drop("#vc12 .vquote", 533.82);
+      tl.set("#vc12-poster", { autoAlpha: 0 }, 533.9);
+      tl.set("#vc12-last", { autoAlpha: 1 }, 546.093);
+      whipOut("#vc12", 546.633);
+      tl.set("#vc12", { autoAlpha: 0 }, 546.933);
+
+      // sc28 · quote  (8s)
+      streak(546.933);
+      drop("#sc28 .eyebrow", 547.053);
+      words("#sc28 .quoteln .wd", 547.193);
+      drop("#sc28 .attrib", 547.883);
+      whipOut("#sc28 .inner", 554.633);
+      tl.set("#sc28 .inner", { autoAlpha: 0 }, 554.933);
+
+      // sc29 · quote  (8s)
+      streak(554.933);
+      drop("#sc29 .eyebrow", 555.053);
+      words("#sc29 .quoteln .wd", 555.193);
+      drop("#sc29 .attrib", 555.883);
+      whipOut("#sc29 .inner", 562.633);
+      tl.set("#sc29 .inner", { autoAlpha: 0 }, 562.933);
+
+      // sc30 · tagline  (9s)
+      streak(562.933);
+      drop("#sc30 .eyebrow", 563.053);
+      words("#sc30 .ln .wd", 563.173);
+      drop("#sc30 .sub", 563.753);
+      whipOut("#sc30 .inner", 571.633);
+      tl.set("#sc30 .inner", { autoAlpha: 0 }, 571.933);
+
+      // sc31 · action  (9s)
+      streak(571.933);
+      drop("#sc31 .eyebrow", 572.053);
+      words("#sc31 .ln .wd", 572.173);
+      drop("#sc31 .sub", 572.753);
+      whipOut("#sc31 .inner", 580.633);
+      tl.set("#sc31 .inner", { autoAlpha: 0 }, 580.933);
+
+      // sc32 · markflash  (17.467s)
+      streak(580.933);
+      markPop("#sc32 .bigmark", 581.153);
+      drop("#sc32 .sub", 581.753);
+      settleOut("#sc32 .inner", 597.5);
+
+      tl.to({}, { duration: D }, 0); // Law #11 — fill the slot
+      window.__timelines["cmp-day2-close-fill"] = tl;
+    </script>
+  </body>
+</html>

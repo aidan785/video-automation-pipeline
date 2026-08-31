@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>AIS LIVE — VIP Q&A Live Now (34s)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --red-live:#ff3b30;
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.blue2{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--blue);filter:blur(165px);opacity:.08;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;}
+
+      /* ---------- LIVE NOW pill (persistent, top-left) ---------- */
+      .pillwrap{position:absolute;left:150px;top:64px;display:inline-flex;align-items:center;gap:16px;
+        font-family:var(--font-mono);font-weight:700;font-size:24px;letter-spacing:.32em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 16px rgba(55,189,248,.45);will-change:transform,opacity;}
+      .pdot{position:relative;width:14px;height:14px;border-radius:50%;background:var(--red-live);
+        box-shadow:0 0 14px #ff3b30,0 0 5px #ff3b30;}
+      .pring{position:absolute;left:150px;top:64px;margin-top:5px;margin-left:0;width:14px;height:14px;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:26px;padding:96px 120px 150px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.32em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;text-shadow:0 0 16px rgba(55,189,248,.45);}
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:104px;line-height:1.16;
+        letter-spacing:-.03em;max-width:1640px;}
+      .ln.hero{font-size:138px;}
+      .ln .wd,.ptitle .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:39px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+
+      /* ---------- portrait scene ---------- */
+      .scene-portrait .inner{display:block;padding:0;text-align:left;}
+      .portrait{position:absolute;left:30px;bottom:0;width:860px;height:960px;
+        display:flex;align-items:flex-end;justify-content:center;will-change:transform,opacity;}
+      .portrait img{max-width:100%;max-height:100%;object-fit:contain;object-position:bottom center;
+        filter:drop-shadow(0 26px 54px rgba(0,0,0,.55));
+        -webkit-mask-image:
+          linear-gradient(to bottom,#000 80%,transparent 100%),
+          linear-gradient(to right,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        -webkit-mask-composite:source-in;
+        mask-image:
+          linear-gradient(to bottom,#000 80%,transparent 100%),
+          linear-gradient(to right,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        mask-composite:intersect;}
+      .pcontent{position:absolute;left:930px;right:110px;top:0;bottom:40px;
+        display:flex;flex-direction:column;align-items:flex-start;justify-content:center;}
+      .pcontent .eyebrow{margin-bottom:26px;}
+      .ptitle{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;
+        line-height:1.1;font-size:94px;color:#fff;max-width:660px;margin-left:-.15em;}
+      .divider{width:128px;height:2px;background:var(--blue);margin:26px 0 28px;
+        box-shadow:0 0 16px rgba(55,189,248,.6);transform-origin:left center;will-change:transform,opacity;}
+      .pname{font-family:var(--font-display);font-style:italic;font-weight:800;letter-spacing:-.02em;
+        font-size:46px;color:#fff;line-height:1.02;will-change:transform,opacity;}
+      .prole{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:29px;
+        letter-spacing:-.01em;color:rgba(209,220,232,.85);margin-top:8px;will-change:transform,opacity;}
+      .pmeta{font-family:var(--font-mono);font-weight:500;font-size:23px;letter-spacing:.22em;
+        text-transform:uppercase;color:var(--blue);margin-top:36px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+
+      /* checklist rows */
+      .viplist{display:flex;flex-direction:column;gap:24px;width:max-content;max-width:1560px;}
+      .vrow{display:flex;align-items:baseline;gap:24px;text-align:left;will-change:transform,opacity;}
+      .varr{font-family:var(--font-display);font-weight:900;font-size:44px;color:var(--blue);
+        text-shadow:0 0 22px rgba(55,189,248,.55);}
+      .vtitle{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:54px;letter-spacing:-.02em;
+        color:#fff;text-shadow:0 0 26px rgba(255,255,255,.16);white-space:nowrap;padding-right:.14em;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-ld5e" id="stage" data-composition-id="cmp-vip-qa-live" data-start="0" data-duration="34" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-1k6o" id="bg" class="clip" data-start="0" data-duration="34" data-track-index="0">
+        <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+        <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+        <div data-hf-id="hf-hqud" class="beam"></div>
+        <div data-hf-id="hf-uo31" class="glow blue"></div>
+        <div data-hf-id="hf-9x59" class="glow blue2"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-h60x" class="grain"></div>
+      </div>
+      <div data-hf-id="hf-o4b8" class="whip clip" id="whip" data-start="0" data-duration="34" data-track-index="1"></div>
+      <div data-hf-id="hf-ekcy" id="markbug" class="clip" data-start="0" data-duration="34" data-track-index="2">
+        <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-ohjn" class="ring"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+      </div>
+      <div data-hf-id="hf-iwc1" id="livepill" class="clip" data-start="0" data-duration="34" data-track-index="3">
+        <div data-hf-id="hf-s09l" class="pillwrap"><span data-hf-id="hf-cms0" class="pdot"></span>LIVE NOW · VIP</div>
+      </div>
+
+      <div data-hf-id="hf-kwiw" id="camera">
+      <section data-hf-id="hf-qmm1" id="sc0" class="scene clip" data-start="0" data-duration="6.4" data-track-index="12">
+        <div data-hf-id="hf-lm34" class="inner">
+        <div data-hf-id="hf-60tl" class="eyebrow">VIP · HAPPENING NOW</div><div data-hf-id="hf-sicm" class="ln hero" style="max-width:1330px"><span data-hf-id="hf-mfy7" class="wd">Your</span><span data-hf-id="hf-65mm" class="wd">Q&amp;A</span><span data-hf-id="hf-qhrw" class="wd">with</span><span data-hf-id="hf-ir0a" class="wd">Nate</span><span data-hf-id="hf-wmyk" class="wd ac">is</span><span data-hf-id="hf-f4m8" class="wd ac">live.</span></div><div data-hf-id="hf-yrx0" class="sub">Right now, in the VIP room.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-gwun" id="sc1" class="scene clip scene-portrait" data-start="6" data-duration="8.4" data-track-index="13">
+        <div data-hf-id="hf-bug8" class="inner">
+        <div data-hf-id="hf-83zl" class="portrait"><img data-hf-id="hf-al68" src="assets/nate-herk.png" alt=""></div>
+        <div data-hf-id="hf-7x9j" class="pcontent">
+          <div data-hf-id="hf-oazy" class="eyebrow">LIVE NOW · VIP ROOM ONLY</div>
+          <div data-hf-id="hf-nq3e" class="ptitle"><span data-hf-id="hf-y7fr" class="wd">VIP</span><span data-hf-id="hf-cele" class="wd">Q&amp;A</span><span data-hf-id="hf-gt84" class="wd">with</span><span data-hf-id="hf-6ndq" class="wd">Nate</span></div>
+          <div data-hf-id="hf-jk23" class="divider"></div>
+          <div data-hf-id="hf-2kt1" class="pname">Nate Herk</div>
+          <div data-hf-id="hf-dzlj" class="prole">Founder · Uppit AI &amp; AIS</div>
+          <div data-hf-id="hf-ixt7" class="pmeta">9:30 AM CT · 45 MIN · VIP ROOM</div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-57nu" id="sc2" class="scene clip" data-start="14" data-duration="8.4" data-track-index="14">
+        <div data-hf-id="hf-anj5" class="inner">
+        <div data-hf-id="hf-qd9o" class="eyebrow">HOW IT WORKS</div><div data-hf-id="hf-72gh" class="viplist"><div data-hf-id="hf-03yy" class="vrow"><span data-hf-id="hf-hrws" class="varr">›</span><span data-hf-id="hf-cadn" class="vtitle">Bring the question you've been mulling over</span></div><div data-hf-id="hf-nbr2" class="vrow"><span data-hf-id="hf-o6g4" class="varr">›</span><span data-hf-id="hf-i4va" class="vtitle">Pre-submitted questions get worked through first</span></div><div data-hf-id="hf-nq23" class="vrow"><span data-hf-id="hf-mzj1" class="varr">›</span><span data-hf-id="hf-6mli" class="vtitle">Live questions from the room woven in</span></div></div><div data-hf-id="hf-7484" class="sub">Forty-five minutes with Nate before the cameras turn on.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-iq3v" id="sc3" class="scene clip" data-start="22" data-duration="6.4" data-track-index="15">
+        <div data-hf-id="hf-b1u6" class="inner">
+        <div data-hf-id="hf-rij4" class="eyebrow">DON'T MISS IT</div><div data-hf-id="hf-7jiu" class="ln hero"><span data-hf-id="hf-djrq" class="wd">Head</span><span data-hf-id="hf-70q5" class="wd">to</span><span data-hf-id="hf-89rr" class="wd">the</span><span data-hf-id="hf-2zqv" class="wd ac">VIP</span><span data-hf-id="hf-pavn" class="wd ac">room.</span></div><div data-hf-id="hf-ty6b" class="sub">The session is live now.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-kic7" id="sc4" class="scene clip" data-start="28" data-duration="6.4" data-track-index="16">
+        <div data-hf-id="hf-9ux3" class="inner">
+        <div data-hf-id="hf-qqsd" class="bigmark"><span data-hf-id="hf-kh9c" class="mark big"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-qib7" class="ring"></span><span data-hf-id="hf-zcc2" class="dot"></span></span></span></div><div data-hf-id="hf-dls0" class="sub">VIP Q&amp;A with Nate · Live now in the VIP room</div>
+        </div>
+      </section>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 34;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function rise(sel, at){ tl.fromTo(sel,{autoAlpha:0,y:110,filter:"blur(10px)"},
+        {autoAlpha:1,y:0,filter:"blur(0px)",duration:.7,ease:"power3.out"},at); }
+      function wipe(sel, at){ tl.fromTo(sel,{autoAlpha:0,scaleX:0},{autoAlpha:1,scaleX:1,duration:.55,ease:"power2.out"},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.6,ease:"power2.in"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+
+      /* ---- AMBIENT ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=660px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=660px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue2",{ x:-36, y:22, duration:D/2, yoyo:true, repeat:1, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/8, yoyo:true, repeat:7, ease:"sine.inOut" }, 0);
+      tl.to(".dot, .pdot", { scale:1.1, duration:.8, yoyo:true, repeat:42, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:20, ease:"none" }, 0);
+      drop(".pillwrap", 0.35, .7);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (6s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.26);
+      drop("#sc0 .sub", 0.85);
+      whipOut("#sc0 .inner", 5.7);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 6);
+
+      // sc1 · portrait  (8s)
+      streak(6);
+      rise("#sc1 .portrait", 6.16);
+      drop("#sc1 .eyebrow", 6.22);
+      words("#sc1 .ptitle .wd", 6.34);
+      wipe("#sc1 .divider", 6.7);
+      drop("#sc1 .pname", 6.85);
+      drop("#sc1 .prole", 6.98);
+      drop("#sc1 .pmeta", 7.15);
+      whipOut("#sc1 .inner", 13.7);
+      tl.set("#sc1 .inner", { autoAlpha: 0 }, 14);
+
+      // sc2 · rows  (8s)
+      streak(14);
+      drop("#sc2 .eyebrow", 14.12);
+      slideX("#sc2 .vrow", 14.34, 0.18);
+      drift("#sc2 .vrow", 15.8, 1.17);
+      drop("#sc2 .sub", 14.85);
+      whipOut("#sc2 .inner", 21.7);
+      tl.set("#sc2 .inner", { autoAlpha: 0 }, 22);
+
+      // sc3 · hero  (6s)
+      streak(22);
+      drop("#sc3 .eyebrow", 22.12);
+      words("#sc3 .ln .wd", 22.26);
+      drop("#sc3 .sub", 22.85);
+      whipOut("#sc3 .inner", 27.7);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 28);
+
+      // sc4 · markflash  (6s)
+      streak(28);
+      markPop("#sc4 .bigmark", 28.22);
+      drop("#sc4 .sub", 28.85);
+      settleOut("#sc4 .inner", 33.3);
+
+      tl.to({}, { duration: D }, 0); // fill the slot
+      window.__timelines["cmp-vip-qa-live"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+import puppeteer from "/Users/aidanstanik/.npm/_npx/702923228c2ce1e6/node_modules/puppeteer-core/lib/esm/puppeteer/puppeteer-core.js";
+const fileUrl="file://"+encodeURI(process.cwd()+"/index.html");
+const b=await puppeteer.launch({executablePath:"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",headless:"new",args:["--no-sandbox","--autoplay-policy=no-user-gesture-required"]});
+const p=await b.newPage(); await p.setViewport({width:1920,height:1080,deviceScaleFactor:1});
+await p.goto(fileUrl,{waitUntil:"domcontentloaded",timeout:60000});
+await p.evaluate(async()=>{if(document.fonts)await document.fonts.ready});
+await p.evaluate(()=>new Promise(r=>setTimeout(r,800)));
+await p.evaluate(()=>{const v=document.getElementById("bg-video");if(v){try{v.pause()}catch(e){}v.currentTime=6;}const tl=window.__timelines["ais-live-body"];tl.pause();tl.time(6,false);});
+const rect=await p.evaluate(()=>{const r=document.querySelector('#bug .aismark').getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height};});
+const clip={x:Math.max(0,Math.round(rect.x-20)),y:Math.max(0,Math.round(rect.y-50)),width:Math.round(rect.w+140),height:Math.round(rect.h+100)};
+await p.screenshot({path:"assets/shots/real_bug_try1.png",clip});
+await b.close(); console.log("bug shot done");

@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS Live — Ad 1 Intro (16x9)</title>
+    <!-- Self-hosted fonts (Montserrat / Inter / JetBrains Mono) — offline, deterministic render -->
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c;
+        --charcoal: #0a0e14;
+        --cream: #f0eee9;
+        --paper: #ffffff;
+        --blue: #37bdf8;
+        --yellow: #f5d82a;
+        --coral: #ff8a5c;
+        --red-live: #ff3b30;
+        --paper-soft: rgba(209, 220, 232, 0.82);
+        --paper-mute: rgba(209, 220, 232, 0.55);
+        --font-display: "Montserrat", sans-serif;
+        --font-body: "Inter", sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #000; color: #fff;
+        font-family: var(--font-body);
+      }
+
+      #root {
+        position: relative; width: 1920px; height: 1080px;
+        overflow: hidden; background: #000; isolation: isolate;
+      }
+
+      /* Background talking-head — same reframe as the body so the speaker sits in
+         the identical right-side spot across the seam (push right + down, zoom 1.45). */
+      #bg-wrap {
+        position: absolute; inset: 0; width: 1920px; height: 1080px;
+        transform: translate(400px, 238px) scale(1.45);
+        transform-origin: center center;
+      }
+      #bg-video {
+        position: absolute; inset: 0;
+        width: 1920px; height: 1080px; object-fit: cover;
+      }
+
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* Persistent left panel — onyx scrim + AIS Live grid squares, held the whole
+         intro (never animated), oversized so no edge is ever cut. Fades to clear
+         before it reaches the speaker on the right. */
+      #panel .scrim {
+        position: absolute; inset: -80px;
+        background: linear-gradient(90deg,
+          rgba(7, 18, 28, 0.9) 0%,
+          rgba(7, 18, 28, 0.7) 28%,
+          rgba(7, 18, 28, 0.0) 56%);
+      }
+      #panel .grid {
+        position: absolute; inset: -80px;
+        background-image:
+          linear-gradient(rgba(55, 189, 248, 0.11) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55, 189, 248, 0.11) 1px, transparent 1px);
+        background-size: 46px 46px;
+        -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 50%);
+        mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 50%);
+      }
+
+      /* AIS Live box card — onyx fill, blue hairline border, grid texture */
+      .card {
+        position: relative; overflow: hidden; border-radius: 5px;
+        background: linear-gradient(135deg, rgba(7, 18, 28, 0.93), rgba(10, 14, 20, 0.86));
+        border: 1px solid rgba(55, 189, 248, 0.32);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .card::before {
+        content: ""; position: absolute; inset: 0; pointer-events: none;
+        background-image:
+          linear-gradient(rgba(55, 189, 248, 0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55, 189, 248, 0.07) 1px, transparent 1px);
+        background-size: 28px 28px;
+      }
+
+      /* ---------- shared bits ---------- */
+      /* kicker chip — boxed mono tag, no dot */
+      .kick {
+        display: inline-block; font-family: var(--font-mono); font-weight: 700;
+        font-size: 26px; letter-spacing: 0.26em; text-transform: uppercase;
+        color: var(--blue); white-space: nowrap;
+        padding: 12px 20px; border-radius: 4px;
+        border: 1.5px solid rgba(55, 189, 248, 0.55);
+        background: rgba(7, 18, 28, 0.55);
+      }
+
+      /* ---------- A · "the AI person / not making money yet" ---------- */
+      #beatA .inner { position: absolute; left: 80px; top: 384px; width: 840px; }
+      #beatA .kick { margin-bottom: 26px; }
+      #beatA .line {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        font-size: 94px; line-height: 1.0; letter-spacing: -0.035em; color: #fff;
+        text-shadow: 0 3px 26px rgba(0, 0, 0, 0.55);
+      }
+      #beatA .yet {
+        display: inline-block; background: var(--blue); color: var(--onyx);
+        font-style: italic; padding: 2px 20px 8px; border-radius: 5px;
+        box-shadow: 0 0 40px rgba(55, 189, 248, 0.4);
+      }
+
+      /* ---------- B · the quiet gap (two phrases split by a gap) ---------- */
+      #beatB .inner { position: absolute; left: 80px; top: 250px; width: 760px; }
+      #beatB .kick { margin-bottom: 28px; }
+      #beatB .gbox { padding: 28px 36px; width: 100%; }
+      #beatB .gtext {
+        font-family: var(--font-body); font-weight: 600; font-size: 46px;
+        line-height: 1.02; color: #fff; letter-spacing: -0.012em;
+      }
+      #beatB .bottom .gtext { color: var(--paper-soft); }
+      /* the gap is the actual empty space between the two boxes */
+      #beatB .gaplabel {
+        display: flex; align-items: center; gap: 16px; margin: 22px 0 22px 4px;
+        font-family: var(--font-mono); font-weight: 700; font-size: 22px;
+        letter-spacing: 0.3em; text-transform: uppercase; color: var(--coral);
+      }
+      #beatB .gaplabel::after {
+        content: ""; flex: 1; height: 2px;
+        background: linear-gradient(90deg, rgba(255, 138, 92, 0.7), rgba(255, 138, 92, 0));
+      }
+
+      /* ---------- C · here's the truth ---------- */
+      #beatC .inner { position: absolute; left: 80px; top: 436px; width: 900px; }
+      #beatC .truth {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        font-size: 112px; line-height: 0.92; letter-spacing: -0.04em; color: #fff;
+        text-shadow: 0 3px 30px rgba(0, 0, 0, 0.6);
+      }
+      #beatC .truth em { color: var(--blue); font-style: italic; }
+
+      /* ---------- D · nobody films that part -> UNTIL NOW ---------- */
+      #beatD .inner { position: absolute; left: 80px; top: 360px; width: 980px; }
+      #beatD .sub {
+        font-family: var(--font-body); font-weight: 600; font-size: 50px;
+        color: var(--paper-soft); letter-spacing: -0.01em; margin-bottom: 24px;
+        text-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
+      }
+      #beatD .big {
+        font-family: var(--font-display); font-style: italic; font-weight: 900;
+        font-size: 150px; line-height: 0.86; letter-spacing: -0.045em; color: #fff;
+        text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6);
+      }
+      #beatD .big em { color: var(--blue); font-style: italic; }
+
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="ais-live-intro1"
+      data-start="0"
+      data-duration="15.96"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- track 0: hook footage (muted; audio is the sibling below) -->
+      <div id="bg-wrap">
+        <video id="bg-video" src="assets/intro1-source.mp4"
+               data-start="0" data-duration="15.96" data-track-index="0" data-has-audio="false" muted></video>
+      </div>
+      <!-- track 1: hook voiceover for the mixer -->
+      <audio id="bg-audio" src="assets/intro1-audio.m4a"
+             data-start="0" data-duration="15.96" data-track-index="1"></audio>
+
+      <!-- persistent left panel: onyx scrim + AIS Live grid squares (static, held whole intro) -->
+      <div id="panel" class="clip" data-start="0" data-duration="15.96" data-track-index="2">
+        <div class="scrim"></div>
+        <div class="grid"></div>
+      </div>
+
+      <!-- A · the AI person / not making money yet -->
+      <div id="beatA" class="clip" data-start="0.4" data-duration="4.2" data-track-index="3">
+        <div class="inner">
+          <div class="kick">The AI person</div>
+          <div class="line">Not making money<br />from it. <span class="yet">yet.</span></div>
+        </div>
+      </div>
+
+      <!-- B · the quiet gap -->
+      <div id="beatB" class="clip" data-start="5.0" data-duration="6.6" data-track-index="4">
+        <div class="inner">
+          <div class="kick">The quiet gap</div>
+          <div class="card gbox top"><span class="gtext">How you talk about AI</span></div>
+          <div class="gaplabel">The gap</div>
+          <div class="card gbox bottom"><span class="gtext">What&rsquo;s in your bank account</span></div>
+        </div>
+      </div>
+
+      <!-- C · here's the truth -->
+      <div id="beatC" class="clip" data-start="11.2" data-duration="1.5" data-track-index="5">
+        <div class="inner">
+          <div class="truth">Here&rsquo;s the <em>truth.</em></div>
+        </div>
+      </div>
+
+      <!-- D · nobody films that part -> UNTIL NOW -->
+      <div id="beatD" class="clip" data-start="12.4" data-duration="3.56" data-track-index="6">
+        <div class="inner">
+          <div class="sub">Nobody films that part&hellip;</div>
+          <div class="big">Until <em>now.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DURATION = 15.96;
+      const tl = gsap.timeline({ paused: true });
+
+      /* A — "the AI person", not making money yet (anchor "money...yet" 2.7-3.2) */
+      tl.fromTo("#beatA",
+        { autoAlpha: 0, x: -40, filter: "blur(10px)" },
+        { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.7);
+      tl.from("#beatA .kick", { autoAlpha: 0, y: -10, duration: 0.4, ease: "power2.out" }, 0.9);
+      tl.from("#beatA .line", { autoAlpha: 0, y: 16, duration: 0.45, ease: "power2.out" }, 1.05);
+      // "yet." lands on the word (3.2)
+      tl.fromTo("#beatA .yet",
+        { scale: 0.6, autoAlpha: 0, y: 8 },
+        { scale: 1, autoAlpha: 1, y: 0, duration: 0.4, ease: "back.out(2)", transformOrigin: "left center" }, 3.0);
+      tl.to("#beatA", { autoAlpha: 0, x: -36, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 4.05);
+
+      /* B — the quiet gap. "how you talk about AI" (8.1) vs "bank account" (9.8); anchor "quiet gap" 6.6 */
+      tl.fromTo("#beatB",
+        { autoAlpha: 0, x: -40, filter: "blur(10px)" },
+        { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 5.4);
+      tl.from("#beatB .kick", { autoAlpha: 0, y: -10, duration: 0.4, ease: "power2.out" }, 5.6);
+      // top box on "how you talk about AI" (8.1)
+      tl.fromTo("#beatB .top",
+        { autoAlpha: 0, scale: 0.94, y: -10 },
+        { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out", transformOrigin: "left center" }, 7.7);
+      tl.from("#beatB .gaplabel", { autoAlpha: 0, duration: 0.4, ease: "power1.out" }, 8.7);
+      // bottom box drops in below the gap on "bank account" (9.8)
+      tl.fromTo("#beatB .bottom",
+        { autoAlpha: 0, scale: 0.94, y: 34 },
+        { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out", transformOrigin: "left center" }, 9.2);
+      tl.to("#beatB", { autoAlpha: 0, x: -34, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 11.0);
+
+      /* C — "here's the truth" (anchor "truth" 11.7) */
+      tl.fromTo("#beatC",
+        { autoAlpha: 0, scale: 0.8, filter: "blur(10px)" },
+        { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "back.out(1.6)", transformOrigin: "left center" }, 11.4);
+      tl.to("#beatC", { autoAlpha: 0, scale: 0.94, filter: "blur(8px)", duration: 0.35, ease: "power2.in" }, 12.35);
+
+      /* D — "nobody films that part" (13.96) -> punch "UNTIL NOW" on "until now" (15.36) */
+      tl.fromTo("#beatD .sub",
+        { autoAlpha: 0, y: 18, filter: "blur(8px)" },
+        { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" }, 13.0);
+      tl.fromTo("#beatD .big",
+        { autoAlpha: 0, scale: 0.7, y: 14 },
+        { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.8)", transformOrigin: "left center" }, 14.85);
+      tl.to("#beatD .sub", { autoAlpha: 0.35, duration: 0.4, ease: "power1.out" }, 14.95);
+
+      tl.set({}, {}, DURATION); // Law #11 — fill the slot
+      window.__timelines["ais-live-intro1"] = tl;
+    </script>
+  </body>
+</html>

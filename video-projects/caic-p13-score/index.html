@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p13 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  /* ---------- persistent background ---------- */
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  /* ---------- video ---------- */
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  /* screen-fixed left scrim (z between video and over-plane). It SLIDES in from
+     off-screen left in sync with the video shift (never fades in place), so it only
+     covers ground the video has vacated and the cut edge rides under its black zone. */
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit (P1.0-1.2 conventions) ---------- */
+  .glassd {
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .blue   { color: var(--accent);  text-shadow: var(--textglow-accent); }
+  .yellow { color: var(--accent-2); text-shadow: 0 0 18px rgba(var(--accent2-rgb), .55); }
+  /* NO will-change on gradient text (background-clip:text + will-change chops
+     descenders in renders) and padding-bottom so descenders stay in the paint box */
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.done { color: var(--text-dim); }
+  .mpill.done .mn { color: rgba(var(--accent-rgb), .7); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* ---------- B1 cold open (takeover) ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 124px; line-height: 1.06; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  #b1 .l2 { margin-top: 30px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 42px; color: var(--text); }
+
+  /* ---------- B2 extent chips (over, FULL) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 340px; display: flex; flex-direction: column; gap: 18px; }
+  #b2 .stack > div { align-self: flex-start; }
+  #b2 .chipx b { color: var(--white); }
+
+  /* ---------- B3 wrong-direction warns (over, FULL) ---------- */
+  #b3 .stack { position: absolute; left: 80px; top: 420px; display: flex; flex-direction: column; gap: 18px; }
+  #b3 .stack > div { align-self: flex-start; max-width: 760px; }
+  #b3 .warnx b { color: var(--alert); }
+  #b3 .warnx .dim b { color: var(--white); }
+
+  /* ---------- B4 three checks (under, PIP) ---------- */
+  #b4 .head { position: absolute; left: 110px; top: 100px; }
+  #b4 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 72px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b4 .checks { position: absolute; left: 110px; top: 300px; width: 1060px; display: flex; flex-direction: column; gap: 24px; }
+  #b4 .qrow { display: flex; align-items: center; gap: 22px; padding: 26px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 40px; color: var(--white); }
+  #b4 .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b4 .qrow .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 26px; color: var(--text-dim); margin-top: 8px; }
+
+  /* ---------- B5 two killers (under, PIP) ---------- */
+  #b5 .head { position: absolute; left: 110px; top: 96px; }
+  #b5 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 66px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  #b5 .cards { position: absolute; left: 110px; top: 280px; width: 1060px; display: flex; flex-direction: column; gap: 24px; }
+  #b5 .kc { padding: 30px 36px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b5 .kc .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 12px; }
+  #b5 .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 40px; color: var(--white); }
+  #b5 .kc .pair { margin-top: 18px; display: flex; gap: 16px; }
+  #b5 .kc .pc { flex: 1; padding: 16px 22px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-med); font-size: 25px; color: var(--text-dim); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); }
+  #b5 .kc .pc.ok { border-color: rgba(var(--accent-rgb), .5); color: var(--text); }
+  #b5 .kc .pc.bad { border-color: rgba(var(--alert-rgb), .55); }
+  #b5 .kc .pc.bad b { color: var(--alert); }
+  #b5 .kc .pc.ok b { color: var(--accent); }
+
+  /* ---------- B6 2x2 grid (under, GFX takeover) ---------- */
+  .gridwrap { position: relative; width: 1240px; height: 800px; }
+  .gridwrap .axisy { position: absolute; left: 0; top: 50%; transform: rotate(-90deg) translateX(50%); transform-origin: 0 50%; font-family: var(--font-mono); font-size: 22px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-dim); }
+  .gridwrap .axisx { position: absolute; left: 50%; bottom: -50px; transform: translateX(-50%); font-family: var(--font-mono); font-size: 22px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-dim); }
+  .gridwrap .cells { position: absolute; left: 70px; top: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 18px; }
+  .gridwrap .cell { border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); display: grid; place-items: center; position: relative; }
+  .gridwrap .cell .cl { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 46px; color: var(--white); text-shadow: var(--textglow); }
+  .gridwrap .cell.hot { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); }
+  .gridwrap .cell.cold .cl { color: var(--text-dim); text-shadow: none; }
+  .gridwrap .cell .proj { position: absolute; padding: 12px 22px; border-radius: 999px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 24px; color: var(--white); background: rgba(12,17,27,.94); border: 1.5px solid rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); white-space: nowrap; }
+  .gridwrap .cell .proj.warn { border-color: rgba(var(--alert-rgb), .6); box-shadow: 0 0 16px rgba(var(--alert-rgb), .25); }
+  #b6 { display: grid; place-items: center; }
+  #b6 .kicker { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); }
+
+  /* ---------- B7 per-step newsletter (under, PIP) ---------- */
+  #b7 .head { position: absolute; left: 110px; top: 96px; max-width: 1080px; }
+  #b7 .steps { position: absolute; left: 110px; top: 300px; width: 1080px; display: flex; flex-direction: column; gap: 20px; }
+  #b7 .srow { display: flex; align-items: center; gap: 20px; }
+  #b7 .srow .st { flex: 1; padding: 20px 28px; border-radius: var(--radius-sm); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 29px; color: var(--text); }
+  #b7 .srow .sv { flex: 0 0 400px; padding: 20px 26px; border-radius: var(--radius-sm); font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 27px; text-align: center; background: rgba(12,17,27,.94); border: 1.5px solid rgba(var(--accent-rgb), .6); color: var(--white); box-shadow: var(--glow-accent-sm); }
+  #b7 .srow .sv.human { border-color: rgba(var(--accent2-rgb), .6); box-shadow: 0 0 16px rgba(var(--accent2-rgb), .25); }
+  #b7 .sum { position: absolute; left: 110px; top: 800px; }
+
+  /* ---------- B9 simplest solution (over, FULL) ---------- */
+  #b9a { position: absolute; left: 80px; top: 430px; max-width: 720px; }
+  #b9a .punchx { font-size: 42px; line-height: 1.3; }
+  #b9b { position: absolute; left: 80px; top: 470px; max-width: 740px; }
+
+  /* ---------- B10 airbnb story (under, PIP) ---------- */
+  #b10 .head { position: absolute; left: 110px; top: 96px; }
+  #b10 .story { position: absolute; left: 110px; top: 250px; width: 1060px; display: flex; flex-direction: column; gap: 18px; }
+  #b10 .story > div { align-self: flex-start; }
+  #b10 .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 29px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); max-width: 900px; }
+  #b10 .redesign { position: absolute; left: 110px; top: 560px; width: 1060px; }
+  #b10 .flow { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+  #b10 .fnode { padding: 18px 26px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  #b10 .fnode.ai { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); color: var(--white); }
+  #b10 .farr { font-size: 30px; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b10 .verdicts { position: absolute; left: 110px; top: 800px; display: flex; flex-direction: column; gap: 16px; }
+  #b10 .verdicts > div { align-self: flex-start; }
+
+  /* ---------- B11 IF score (under, GFX takeover) ---------- */
+  #b11 { display: grid; place-items: center; }
+  #b11 .wrap { position: relative; width: 1420px; }
+  #b11 .formula { text-align: center; margin-bottom: 46px; }
+  #b11 .formula .f { display: inline-flex; align-items: center; gap: 26px; padding: 26px 46px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-display); font-weight: var(--wt-black); font-size: 56px; color: var(--white); text-shadow: var(--textglow); }
+  #b11 .formula .f .x { display: inline-block; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b11 .formula .f .rng { font-family: var(--font-mono); font-size: 24px; color: var(--text-dim); text-shadow: none; }
+  /* the two 1-5 scales he actually walks through here */
+  #b11 .scales { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+  #b11 .sc { padding: 34px 38px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b11 .sc .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b11 .sc .lab .rg { color: var(--text-faint); text-shadow: none; margin-left: 12px; }
+  #b11 .sc .q { margin-top: 16px; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 36px; line-height: 1.24; color: var(--white); }
+  #b11 .sc .note { margin-top: 20px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 25px; line-height: 1.35; color: var(--text-dim); }
+  #b11 .sc .note b { color: var(--white); }
+  #b11 .anchors { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; }
+  #b11 .an { display: flex; align-items: center; gap: 20px; padding: 16px 24px; border-radius: var(--radius-sm); background: rgba(12,17,27,.94); border: 1px solid var(--glass-border); }
+  #b11 .an .nv { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--text-faint); border: 1.5px solid var(--glass-border); }
+  #b11 .an .tx { font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 28px; color: var(--text); }
+  #b11 .an.hi { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); }
+  #b11 .an.hi .nv { color: var(--accent); border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm); }
+  #b11 .an.hi .tx { color: var(--white); }
+  #b11 .fivecap { margin-top: 22px; font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-faint); }
+  #b11 .fivelist { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+  #b11 .fi { display: flex; align-items: center; gap: 16px; padding: 12px 22px; border-radius: var(--radius-sm); background: rgba(12,17,27,.94); border: 1px solid rgba(var(--accent-rgb), .32); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text); }
+  #b11 .fi::before { content: "✓"; font-family: var(--font-mono); font-size: 20px; color: var(--accent); text-shadow: var(--glow-accent-sm); }
+  #b11 .mapfirst { margin-top: 34px; display: flex; justify-content: center; }
+  #b11 .mapfirst .warnx { font-size: 28px; text-align: center; }
+
+  /* ---------- B11b Brightwater worked scores (under, PIP) ---------- */
+  #b11b .head { position: absolute; left: 110px; top: 92px; }
+  #b11b .head .t { margin-top: 12px; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 64px; color: var(--white); text-shadow: var(--textglow); }
+  #b11b .wtable { position: absolute; left: 110px; top: 288px; width: 1120px; display: flex; flex-direction: column; gap: 16px; }
+  #b11b .wrow, #b11b .whead { display: grid; grid-template-columns: 1fr 120px 46px 120px 46px 172px; align-items: center; gap: 0; }
+  #b11b .whead { padding: 0 28px 2px; }
+  #b11b .whead span { font-family: var(--font-mono); font-size: 17px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--text-faint); text-align: center; white-space: nowrap; }
+  #b11b .whead .hn { text-align: left; }
+  #b11b .wrow { position: relative; padding: 20px 28px; border-radius: var(--radius-sm); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); overflow: hidden; }
+  #b11b .bar { position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px; border-radius: 0 4px 4px 0; background: rgba(var(--alert-rgb), .9); box-shadow: 0 0 16px rgba(var(--alert-rgb), .5); opacity: 0; transform-origin: 50% 0; }
+  #b11b .wname { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white); }
+  #b11b .wname .sub { display: block; margin-top: 6px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: var(--text-dim); }
+  #b11b .wv { font-family: var(--font-mono); font-size: 38px; text-align: center; color: var(--white); }
+  #b11b .wv.mid { color: var(--accent-2); text-shadow: 0 0 16px rgba(var(--accent2-rgb), .5); }
+  #b11b .wv.low { color: var(--alert); text-shadow: 0 0 16px rgba(var(--alert-rgb), .55); }
+  #b11b .wop { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 26px; text-align: center; color: var(--text-faint); }
+  #b11b .wsc { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 50px; text-align: center; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b11b .wrow.dead .wsc { color: var(--alert); text-shadow: 0 0 18px rgba(var(--alert-rgb), .55); }
+  #b11b .verdict { position: absolute; left: 110px; top: 866px; width: 1120px; }
+  #b11b .verdict > div { position: absolute; left: 0; top: 0; max-width: 1060px; }
+  #b11b .verdict .warnx { font-size: 30px; }
+  #b11b .verdict .punchx { font-size: 32px; }
+
+  /* ---------- B12 score argues (over, FULL) ---------- */
+  #b12x { position: absolute; left: 80px; top: 450px; max-width: 720px; }
+  #b12x .punchx { font-size: 42px; line-height: 1.3; }
+
+  /* ---------- B13 three mistakes (under, PIP) ---------- */
+  #b13 .head { position: absolute; left: 110px; top: 100px; }
+  #b13 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 70px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b13 .list { position: absolute; left: 110px; top: 300px; width: 1080px; display: flex; flex-direction: column; gap: 24px; }
+  #b13 .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 26px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b13 .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--alert); border: 1.5px solid rgba(var(--alert-rgb), .55); box-shadow: 0 0 14px rgba(var(--alert-rgb), .25); }
+  #b13 .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 37px; color: var(--white); }
+  #b13 .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 26px; color: var(--text-dim); margin-top: 8px; }
+  #b13 .qrow .tx .sub b { color: var(--text); }
+
+  /* ---------- B14 outro ---------- */
+  #b14 { display: grid; place-items: center; text-align: center; }
+  #b14 .rail { display: flex; align-items: center; justify-content: center; }
+  #b14 .nx { margin-top: 70px; }
+  #b14 .nx .kick { margin-bottom: 20px; }
+  #b14 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; color: var(--white); text-shadow: var(--textglow); }
+</style>
+</head>
+<body>
+
+<div id="p13" data-composition-id="p13" data-start="0" data-width="1920" data-height="1080">
+
+  <div id="bg" class="clip" data-start="0" data-duration="566.74" data-track-index="2">
+    <div class="base"></div><div class="dots"></div><div class="bloom"></div><div class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE ============ -->
+
+  <!-- B1 cold open takeover (0-9.8) -->
+  <div id="b1" class="under clip" data-start="0" data-duration="9.8" data-track-index="4">
+    <div class="inner">
+      <div class="kick">Move Three · Score</div>
+      <div class="l1"><span class="word w1">To</span> <span class="word w2">What</span> <span class="word w3 grad">Extent</span><br>
+        <span class="word w4">Can</span> <span class="word w5">AI</span> <span class="word w6">Do</span> <span class="word w7">It?</span></div>
+      <div class="l2"><span class="word w8">The</span> <span class="word w9">answer</span> <span class="word w10">is</span> <span class="word w11">never</span> <span class="word w12 blue">yes</span> <span class="word w13">or</span> <span class="word w14 blue">no.</span></div>
+    </div>
+  </div>
+
+  <!-- B4 three checks (48.8-150.4, PIP) -->
+  <div id="b4" class="under clip" data-start="48.8" data-duration="101.6" data-track-index="4">
+    <div class="head">
+      <div class="kick">Before anyone spends money</div>
+      <div class="t">The Three Checks</div>
+    </div>
+    <div class="checks">
+      <div class="qrow c1"><div class="n">01</div><div>Can they explain it?<span class="sub">Could they train an intern to do this? If not, you can't train an AI.</span></div></div>
+      <div class="qrow c2"><div class="n">02</div><div>Can AI touch it?<span class="sub">Is there an API? Do we have access to the data? Where does it live?</span></div></div>
+      <div class="qrow c3"><div class="n">03</div><div>What does "works" actually mean?<span class="sub">The most practical of the three. It's where most projects secretly die.</span></div></div>
+    </div>
+  </div>
+
+  <!-- B5 two killers (103.6 would overlap b4; killers live inside b4's span as a swap: separate clip on track 5 -->
+  <div id="b5" class="under clip" data-start="107.5" data-duration="42.9" data-track-index="5">
+    <div class="cards">
+      <div class="kc k1">
+        <div class="lab">Killer 1 · Error tolerance</div>
+        <div class="val">How bad is it if the AI gets one wrong?</div>
+        <div class="pair">
+          <div class="pc ok o1"><b>Wrong reminder:</b> someone calls in. Fixed.</div>
+          <div class="pc bad o2"><b>Wrong triage call:</b> a disaster.</div>
+        </div>
+      </div>
+      <div class="kc k2">
+        <div class="lab">Killer 2 · Ground truth</div>
+        <div class="val">Is there one clear right answer to check against?</div>
+        <div class="pair">
+          <div class="pc ok o3"><b>"Covered for a cleaning?"</b> Yes or no. Checkable.</div>
+          <div class="pc bad o4"><b>"Reassure a nervous patient."</b> No single right answer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B6 2x2 grid takeover (150.4-166.2) -->
+  <div id="b6" class="under clip" data-start="150.4" data-duration="15.7" data-track-index="4">
+    <div class="kicker kick">The first scoring tool</div>
+    <div class="gridwrap">
+      <div class="axisy">Value ↑</div>
+      <div class="axisx">Can AI do it well →</div>
+      <div class="cells">
+        <div class="cell cold q2"><div class="cl">Do later</div></div>
+        <div class="cell hot q1"><div class="cl">Do now</div></div>
+        <div class="cell cold q3"><div class="cl">Leave it</div></div>
+        <div class="cell cold q4"><div class="cl">Let AI assist</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B7 per-step newsletter (166.2-207.9, PIP) -->
+  <div id="b7" class="under clip" data-start="166.2" data-duration="41.7" data-track-index="4">
+    <div class="head">
+      <div class="kick">The correction that separates professionals from amateurs</div>
+      <div class="punchx" style="margin-top:16px; display:inline-block;">Run this per step, not per workflow.</div>
+    </div>
+    <div class="steps">
+      <div class="srow s1"><div class="st">Pulling the links from last week's newsletter</div><div class="sv">Automation, no AI</div></div>
+      <div class="srow s2"><div class="st">Drafting the intro in your voice</div><div class="sv">AI + human review</div></div>
+      <div class="srow s3"><div class="st">Company stance on a controversial issue</div><div class="sv human">All human</div></div>
+    </div>
+    <div class="sum chipx">Drill to micro actions. That's where the answer gets <b>binary</b>.</div>
+  </div>
+
+  <!-- B8 Brightwater on the grid takeover (207.9-239.2) — callback to B6 -->
+  <div id="b8" class="under clip" data-start="207.9" data-duration="31.3" data-track-index="4">
+    <div class="kicker kick" style="position:absolute; left:50%; top:64px; transform:translateX(-50%);">Brightwater Dental · four projects land</div>
+    <div style="display:grid; place-items:center; position:absolute; inset:0;">
+    <div class="gridwrap">
+      <div class="axisy">Value ↑</div>
+      <div class="axisx">Can AI do it well →</div>
+      <div class="cells">
+        <div class="cell cold"><div class="cl">Do later</div><div class="proj p3" style="bottom:24px; left:24px;">Insurance questions</div></div>
+        <div class="cell hot"><div class="cl">Do now</div><div class="proj p1" style="top:24px; left:24px;">Appointment reminders</div><div class="proj p2" style="bottom:24px; right:24px;">Post-visit follow-ups</div></div>
+        <div class="cell cold"><div class="cl">Leave it</div><div class="proj warn p4" style="top:24px; right:24px;">Emergency triage</div></div>
+        <div class="cell cold"><div class="cl">Let AI assist</div></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- B10 airbnb story (290.2-381.6, PIP) -->
+  <div id="b10" class="under clip" data-start="290.2" data-duration="91.4" data-track-index="4">
+    <div class="head"><div class="kick">Where scoring gets subtle · how much AI?</div></div>
+    <div class="story">
+      <div class="chipx s1">An SMS agent for a few Airbnb properties: answers, availability, quotes, bookings</div>
+      <div class="quote s2">"We have four Airbnb properties. Here's one, here's two..."</div>
+      <div class="warnx s3">The owner didn't like it. Not wrong, just <b>uncontrolled</b>.</div>
+    </div>
+    <div class="redesign">
+      <div class="kick rk">The redesign</div>
+      <div class="flow">
+        <div class="fnode f1">Incoming message</div>
+        <div class="farr a1">→</div>
+        <div class="fnode ai f2">AI picks a tag, 1–20</div>
+        <div class="farr a2">→</div>
+        <div class="fnode f3">Pre-approved template</div>
+        <div class="farr a3">→</div>
+        <div class="fnode f4">Variables filled in</div>
+      </div>
+    </div>
+    <div class="verdicts">
+      <div class="punchx v1">We limited AI's range instead of killing AI from the process.</div>
+      <div class="punchx v2">Feasibility is a <span class="yellow">dial</span>, not a switch.</div>
+    </div>
+  </div>
+
+  <!-- B11 IF score takeover (402.1-447.2) -->
+  <div id="b11" class="under clip" data-start="402.1" data-duration="45.1" data-track-index="4">
+    <div class="wrap">
+      <div class="formula">
+        <div class="f"><span class="grad">IF</span> <span>=</span> <span>Impact</span> <span class="rng">1–5</span> <span class="x">×</span> <span>Feasibility</span> <span class="rng">1–5</span></div>
+      </div>
+      <div class="scales">
+        <div class="sc si">
+          <div class="lab">I · Impact <span class="rg">1–5</span></div>
+          <div class="q">How much does this move the number the owner actually wants to move?</div>
+          <div class="anchors">
+            <div class="an hi a5"><span class="nv">5</span><span class="tx">Strangling the business</span></div>
+            <div class="an a1"><span class="nv">1</span><span class="tx">Nice to have</span></div>
+          </div>
+          <div class="note inote">Be honest here. A cool project that moves nothing is still a <b>1</b>.</div>
+        </div>
+        <div class="sc sf">
+          <div class="lab">F · Feasibility <span class="rg">1–5</span></div>
+          <div class="q">How cleanly can this be done?</div>
+          <div class="note fnote">Your <b>three checks</b> and <b>two killers</b>, rolled into one honest number.</div>
+          <div class="fivecap">What a <span class="blue">5</span> looks like</div>
+          <div class="fivelist">
+            <div class="fi f1">Documented process</div>
+            <div class="fi f2">Clean ground truth</div>
+            <div class="fi f3">Low stakes if it makes a mistake</div>
+            <div class="fi f4">Accessible data</div>
+            <div class="fi f5">AI-friendly tech stack</div>
+          </div>
+        </div>
+      </div>
+      <div class="mapfirst">
+        <div class="warnx">Skip a question in the map and you can't score feasibility. <b>That's why Map comes before Score.</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B11b Brightwater worked scores (447.2-480.4, PIP) — the numbers land as he says them -->
+  <div id="b11b" class="under clip" data-start="447.2" data-duration="33.2" data-track-index="4">
+    <div class="head">
+      <div class="kick">Brightwater Dental · multiply and rank</div>
+      <div class="t">The four projects, scored</div>
+    </div>
+    <div class="wtable">
+      <div class="whead"><span class="hn">Project</span><span>Impact</span><span></span><span>Feas.</span><span></span><span>IF Score</span></div>
+      <div class="wrow w1"><i class="bar"></i>
+        <span class="wname">Appointment reminders</span>
+        <span class="wv wi">5</span><span class="wop opx">×</span><span class="wv wf">5</span><span class="wop opeq">=</span><span class="wsc">25</span>
+      </div>
+      <div class="wrow w2"><i class="bar"></i>
+        <span class="wname">Post-visit follow-ups</span>
+        <span class="wv wi">3</span><span class="wop opx">×</span><span class="wv wf">5</span><span class="wop opeq">=</span><span class="wsc">15</span>
+      </div>
+      <div class="wrow w3"><i class="bar"></i>
+        <span class="wname">Insurance questions<span class="sub">until their software is connected</span></span>
+        <span class="wv wi">4</span><span class="wop opx">×</span><span class="wv wf mid">2</span><span class="wop opeq">=</span><span class="wsc">8</span>
+      </div>
+      <div class="wrow w4 dead"><i class="bar"></i>
+        <span class="wname">Emergency triage<span class="sub">the highest pain on the board</span></span>
+        <span class="wv wi">5</span><span class="wop opx">×</span><span class="wv wf low">1</span><span class="wop opeq">=</span><span class="wsc">5</span>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="warnx v1">The score just <b>killed</b> the highest-impact project on the list.</div>
+      <div class="punchx v2">Same 2×2 grid from a minute ago, with the <span class="blue">math</span> on it.</div>
+    </div>
+  </div>
+
+  <!-- B13 three mistakes (493.3-553.44, PIP) -->
+  <div id="b13" class="under clip" data-start="493.3" data-duration="60.14" data-track-index="4">
+    <div class="head">
+      <div class="kick">Where people go wrong</div>
+      <div class="t">Three Scoring Mistakes</div>
+    </div>
+    <div class="list">
+      <div class="qrow m1"><div class="n">01</div><div class="tx">Treating feasibility as a checkbox<span class="sub">"They have the data" is not diligence. <b>Where does it live? How much? What format? Who maintains it?</b></span></div></div>
+      <div class="qrow m2"><div class="n">02</div><div class="tx">Scoring the whole workflow as one thing<span class="sub">You get a mush answer. The truth lives at the <b>step level</b>.</span></div></div>
+      <div class="qrow m3"><div class="n">03</div><div class="tx">Forgetting the question after "can it"<span class="sub"><b>Should it?</b> Some things are feasible and still wrong to automate.</span></div></div>
+    </div>
+  </div>
+
+  <!-- B14 outro (553.44-566.74) -->
+  <div id="b14" class="under clip" data-start="553.44" data-duration="13.3" data-track-index="4">
+    <div class="inner">
+      <div class="rail">
+        <div class="mpill done o1"><span class="mn">✓</span>Reframe</div>
+        <div class="mconn oc1"></div>
+        <div class="mpill done o2"><span class="mn">✓</span>Map</div>
+        <div class="mconn oc2"></div>
+        <div class="mpill lit o3"><span class="mn">✓</span>Score</div>
+        <div class="mconn oc3"></div>
+        <div class="mpill o4"><span class="mn">04</span>Sort</div>
+      </div>
+      <div class="nx">
+        <div class="kick">Up next</div>
+        <div class="t">Move Four: <span class="grad">Sort</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div id="vidwrap">
+    <div id="vidframe">
+      <video id="p13-video" src="assets/clean.v2.mp4" muted data-start="0" data-duration="562.66" data-track-index="0"></video>
+      <div id="vidrim"></div>
+    </div>
+  </div>
+  <div id="vidshade"></div>
+  <audio id="p13-audio" src="assets/audio.v2.m4a" data-start="0" data-duration="562.66" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE ============ -->
+
+  <!-- B2 extent chips (over FULL, 10.9-32.8) -->
+  <div id="b2" class="over clip" data-start="13.5" data-duration="18" data-track-index="6">
+    <div class="stack">
+      <div class="chipx e1">AI does <b>20%</b>, the human does 80</div>
+      <div class="chipx e2">AI does <b>95%</b>, a human checks the last 5</div>
+      <div class="chipx e3">AI genuinely does <b>all of it</b></div>
+      <div class="punchx e4">Every one is a great project, scoped as what it is</div>
+    </div>
+  </div>
+
+  <!-- B3 wrong-direction warns (over FULL, 40.4-48.8) -->
+  <div id="b3" class="over clip" data-start="40.2" data-duration="8.4" data-track-index="6">
+    <div class="stack">
+      <div class="warnx d1">Too <b>optimistic</b>: ship something dangerous or broken</div>
+      <div class="warnx d2">Too <b>timid</b>: <span class="dim">leave the best opportunity <b>on the table</b></span></div>
+    </div>
+  </div>
+
+  <!-- B9 simplest solution (over FULL, 257.9-290.2) -->
+  <div id="b9a" class="over self clip" data-start="258.5" data-duration="13.5" data-track-index="6">
+    <div class="punchx">Build the <span class="blue">simplest</span> solution possible.</div>
+  </div>
+  <div id="b9b" class="over self clip" data-start="281.4" data-duration="8.2" data-track-index="6">
+    <div class="chipx">Sell them the <b>layer the problem actually needs</b>.</div>
+  </div>
+
+  <!-- B12 score argues (over FULL, 480.4-493.3) -->
+  <div id="b12x" class="over self clip" data-start="486.9" data-duration="6" data-track-index="6">
+    <div class="punchx">The score makes the argument, so you don't have to.</div>
+  </div>
+
+  <div id="vig" class="clip" data-start="0" data-duration="566.74" data-track-index="10"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="566.74" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 566.74;
+  const tl = gsap.timeline({ paused: true });
+  /* PIP: square-ish crop (sides pulled in 420px pre-scale -> 1080x1080 box) at a
+     bigger scale so the face reads clearly. Crop animates on #vidframe (the wrapper),
+     never on the <video> itself. */
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* ---- shot plan ----
+     0-9.8 takeover (video hidden) -> FULL 9.8
+     48.8 PIP (three checks + killers) -> FULL... killers end 150.4
+     150.4 OFF (2x2 takeover) -> 166.2 back FULL? b7 is PIP -> fromOFF to PIP
+     207.9 OFF (brightwater grid takeover) -> 239.2 FULL
+     290.2 PIP (airbnb) -> 381.6 FULL
+     402.1 OFF (IF scales takeover, b11) -> 447.6 PIP for the worked Brightwater table
+     (b11b) so the numbers are on screen while he rattles them off -> FULL 480.4 in time
+     for the b12x over-card at 486.9
+     493.3 PIP (mistakes) -> 553.44 OFF (outro) */
+  tl.set(wrap, { opacity: 0, scale: 1.06, x: -57, y: -32, filter: 'blur(22px)' }, 0);
+  tl.to(wrap, { opacity: 1, scale: 1, x: 0, y: 0, duration: 1.0, ease: 'power3.out' }, 8.9);
+  tl.to(wrap, { filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 9.1);
+  toPIP(48.8);
+  toOFF(150.4);
+  fromOFF(166.2, { x: PIP.x, y: PIP.y, scale: PIP.scale }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  toOFF(207.9);
+  fromOFF(239.2, { x: 0, y: 0, scale: 1 });
+  toPIP(290.2);
+  toFULL(381.6);
+  toOFF(402.1);
+  fromOFF(446.9, { x: PIP.x, y: PIP.y, scale: PIP.scale }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  toFULL(480.4);
+  toPIP(493.3);
+  tl.to(wrap, { opacity: 0, filter: 'blur(20px)', scale: 1.04, duration: 1.0, ease: 'power2.in' }, 553.44);
+
+  /* FULL-shot left-clear (EXPERIMENT — pre-shift version saved at index.html.no-shift.bak):
+     while over-plane cards enter from the left, the video drifts right and a left
+     gradient scrim keeps the card zone clean. */
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150; // parks the whole gradient off-screen left
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  /* scrim slides WITH the video (leads slightly and travels ~3x the distance, so its
+     black zone stays over the cut edge) — simultaneous, no pre/post left-half cover */
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  clearLeft(13.3);  unclearLeft(30.9);   // B2 extent chips
+  clearLeft(40.0);  unclearLeft(48.0);   // B3 wrong-direction warns (returns before toPIP 48.8)
+  clearLeft(258.3); unclearLeft(288.9);  // B9a+B9b simplest-solution stretch
+  clearLeft(486.7); unclearLeft(492.4);  // B12x score-argues (returns before toPIP 493.3)
+
+  /* ambient (finite repeats sized to DUR) */
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 140, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 112, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 140, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open (0-9.8) — "can AI even do this" 0.3 · "real question" 10.9 */
+  inUp(0.4, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.13 }, 0.7);
+  tl.fromTo('#b1 .l2 .word', { y: 26, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.13 }, 3.6);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 1.0, ease: 'power2.in' }, 8.8);
+
+  /* B2 extent chips (over FULL) — 20% 14.4 · 95% 18.8 · all 22.7 · great project 25.1 */
+  inLeft(14.3, '#b2 .e1', 0.7);
+  inLeft(18.7, '#b2 .e2', 0.7);
+  inLeft(22.6, '#b2 .e3', 0.7);
+  spring(25.1, '#b2 .e4', 0.7);
+  outBlur(30.9, '#b2 .stack');
+
+  /* B3 wrong-direction warns — optimistic 40.4 · timid 44.6 */
+  inLeft(40.4, '#b3 .d1', 0.7);
+  inLeft(44.6, '#b3 .d2', 0.7);
+  outBlur(48.1, '#b3 .stack', 0.45);
+
+  /* B4 three checks (48.8-150.4) — check one 53.8 · check two 77.0 · check three 94.2 */
+  inUp(49.8, '#b4 .head', 0.8, 30);
+  inLeft(53.8, '#b4 .c1', 0.8);
+  inLeft(77.0, '#b4 .c2', 0.8);
+  inLeft(94.2, '#b4 .c3', 0.8);
+  /* checks list compresses up + fades when killers arrive */
+  tl.to('#b4 .checks', { y: -40, opacity: 0, filter: 'blur(12px)', duration: 0.6, ease: 'power2.in' }, 106.9);
+  tl.to('#b4 .head .t', { opacity: 0, y: -24, filter: 'blur(10px)', duration: 0.5, ease: 'power2.in' }, 106.9);
+  tl.to('#b4 .head .kick', { opacity: 0, duration: 0.4 }, 106.9);
+  tl.set('#b4 .checks', { opacity: 0 }, 107.55);
+  tl.set('#b4 .head .t', { opacity: 0 }, 107.55);
+  tl.set('#b4 .head .kick', { opacity: 0 }, 107.55);
+
+  /* B5 two killers (107.5-150.4) — error tolerance 109.3 · brightwater 113.9 · disaster 121.2 · ground truth 126.9 · cleaning 130.5 · note 133.4 */
+  inUp(109.2, '#b5 .k1', 0.8, 36);
+  inUp(114.0, '#b5 .k1 .o1', 0.6, 20);
+  inUp(121.2, '#b5 .k1 .o2', 0.6, 20);
+  inUp(126.9, '#b5 .k2', 0.8, 36);
+  inUp(130.4, '#b5 .k2 .o3', 0.6, 20);
+  inUp(133.5, '#b5 .k2 .o4', 0.6, 20);
+  outBlur(149.5, '#b5 .cards', 0.55);
+
+  /* B6 2x2 takeover (150.4-166.2) — grid 150.4 · value 155.6 · how well 161.2 · gut 165.1 */
+  inUp(151.0, '#b6 .kicker', 0.6, 20);
+  tl.fromTo('#b6 .cell', { scale: 0.88, opacity: 0, filter: 'blur(10px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.7, ease: 'back.out(1.3)', stagger: 0.12 }, 151.6);
+  inUp(155.6, '#b6 .axisy', 0.6, 14);
+  inUp(161.2, '#b6 .axisx', 0.6, 14);
+  tl.fromTo('#b6 .cell.hot', { boxShadow: '0 0 22px rgba(55,189,248,0.45), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 44px rgba(55,189,248,0.75), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 162.0);
+  outBlur(165.4, '#b6 .gridwrap', 0.6, -70);
+  tl.to('#b6 .kicker', { opacity: 0, duration: 0.4 }, 165.4);
+
+  /* B7 per-step (166.2-207.9) — per step 168.9 · newsletter 171.6 · links 184.9 · draft 189.7 · stance 193.3 · binary 197.4 */
+  inUp(167.2, '#b7 .head .kick', 0.6, 20);
+  spring(168.9, '#b7 .head .punchx', 0.7);
+  inLeft(184.9, '#b7 .s1', 0.7);
+  inLeft(189.7, '#b7 .s2', 0.7);
+  inLeft(193.3, '#b7 .s3', 0.7);
+  spring(197.6, '#b7 .sum', 0.7);
+  outBlur(207.0, '#b7 .head', 0.5);
+  outBlur(207.05, '#b7 .steps', 0.5);
+  outBlur(207.1, '#b7 .sum', 0.5);
+
+  /* B8 brightwater grid (207.9-239.2) — reminders 210.9 · follow-ups 217.2 · insurance 221.9 · triage 232.8 */
+  inUp(208.6, '#b8 .kicker', 0.6, 20);
+  tl.fromTo('#b8 .cell', { scale: 0.9, opacity: 0, filter: 'blur(10px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.6, ease: 'power3.out', stagger: 0.08 }, 208.9);
+  inUp(209.4, '#b8 .axisy', 0.5, 12);
+  inUp(209.6, '#b8 .axisx', 0.5, 12);
+  spring(210.9, '#b8 .p1', 0.6);
+  spring(217.2, '#b8 .p2', 0.6);
+  spring(221.9, '#b8 .p3', 0.6);
+  spring(232.8, '#b8 .p4', 0.6);
+  tl.fromTo('#b8 .p4', { boxShadow: '0 0 16px rgba(255,59,48,0.25)' },
+    { boxShadow: '0 0 30px rgba(255,59,48,0.55)', duration: 0.7, ease: 'sine.inOut', repeat: 3, yoyo: true }, 233.9);
+  outBlur(238.4, '#b8 .gridwrap', 0.6, -70);
+  tl.to('#b8 .kicker', { opacity: 0, duration: 0.4 }, 238.4);
+
+  /* B9 simplest solution (over FULL) — methodology 257.9-262 · sell layer 281.2 */
+  spring(258.9, '#b9a .punchx', 0.8);
+  tl.to('#b9a', { opacity: 0, y: -34, filter: 'blur(12px)', duration: 0.5, ease: 'power2.in' }, 271.4);
+  inUp(281.6, '#b9b', 0.7, 26);
+  tl.to('#b9b', { opacity: 0, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 289.0);
+
+  /* B10 airbnb (290.2-381.6) — SMS agent 293.3 · four properties 311.5 · didn't like 307/327.8 · redesigned 332.3 · tag 334.3 · template 340.0 · limited 349.6 · dial 370.6 */
+  inUp(291.2, '#b10 .head', 0.6, 22);
+  inLeft(293.5, '#b10 .s1', 0.7);
+  spring(311.8, '#b10 .s2', 0.7);
+  inLeft(327.8, '#b10 .s3', 0.7);
+  inUp(332.5, '#b10 .rk', 0.6, 18);
+  spring(334.4, '#b10 .f1', 0.5);
+  inUp(335.6, '#b10 .a1', 0.3, 8);
+  spring(336.0, '#b10 .f2', 0.5);
+  inUp(340.0, '#b10 .a2', 0.3, 8);
+  spring(340.4, '#b10 .f3', 0.5);
+  inUp(342.4, '#b10 .a3', 0.3, 8);
+  spring(342.8, '#b10 .f4', 0.5);
+  spring(349.8, '#b10 .v1', 0.7);
+  spring(370.6, '#b10 .v2', 0.7);
+  outBlur(380.7, '#b10 .story', 0.5);
+  outBlur(380.75, '#b10 .redesign', 0.5);
+  outBlur(380.8, '#b10 .verdicts', 0.5);
+  outBlur(380.85, '#b10 .head', 0.5);
+
+  /* B11 IF scales takeover (402.1-447.2) — this segment is him DEFINING the two axes,
+     so the card teaches the scales; the worked Brightwater numbers live in B11b.
+     IF score 404.2 · impact 1-5 408.1 · a five 413.5 · a one 416.5 · be honest 418.1 ·
+     F feasibility 422.2 · checks+killers 425.7 · documented 429.4 · ground truth 431.2 ·
+     low stakes 432.4 · accessible data 434.0 · tech stack 435.0 · if you skipped 437.3 ·
+     map before score 443.4 · multiply and rank 445.6 */
+  inUp(402.6, '#b11 .formula', 0.9, 40);
+  spring(408.1, '#b11 .si', 0.7);
+  inLeft(413.5, '#b11 .si .a5', 0.6);
+  inLeft(416.5, '#b11 .si .a1', 0.6);
+  inUp(418.1, '#b11 .inote', 0.6, 18);
+  spring(422.2, '#b11 .sf', 0.7);
+  inUp(425.7, '#b11 .fnote', 0.6, 18);
+  inUp(428.6, '#b11 .fivecap', 0.5, 14);
+  inLeft(429.4, '#b11 .f1', 0.5, -34);
+  inLeft(431.2, '#b11 .f2', 0.5, -34);
+  inLeft(432.4, '#b11 .f3', 0.5, -34);
+  inLeft(434.0, '#b11 .f4', 0.5, -34);
+  inLeft(435.0, '#b11 .f5', 0.5, -34);
+  spring(437.3, '#b11 .mapfirst', 0.7);
+  /* "multiply them and rank" — the operator itself gets the beat */
+  tl.fromTo('#b11 .formula .x', { scale: 1, textShadow: '0 0 18px rgba(55,189,248,0.65)' },
+    { scale: 1.35, textShadow: '0 0 40px rgba(55,189,248,0.95)', duration: 0.5, ease: 'sine.inOut', repeat: 3, yoyo: true }, 445.5);
+  outBlur(446.2, '#b11 .wrap', 0.55, -70);
+
+  /* B11b Brightwater worked scores (447.2-480.4, PIP) — every value lands on its word.
+     watch this work 447.2 · reminders 448.5 · I5 450.1 · F5 451.3 · =25 452.4 · 5x5=25 453.6 ·
+     follow-ups 454.9 · I3 456.2 · F5 457.4 · =15 458.4 · insurance 459.1 · I4 460.8 ·
+     F2 462.3 · until software connected 462.7 · =8 464.5 · triage 465.0 · I5 466.5 ·
+     highest pain 467.2 · F1 469.6 · =5 471.2 · score killed it 473.1 · 2x2 with math 477.7 */
+  inUp(447.25, '#b11b .head', 0.7, 26);
+  tl.fromTo('#b11b .whead span', { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 447.8);
+
+  /* every number starts hidden; each punches in on its own word */
+  tl.set('#b11b .wv, #b11b .wop, #b11b .wsc, #b11b .wname .sub, #b11b .bar', { opacity: 0 }, 447.2);
+  const wrow  = (t, n)   => tl.fromTo(`#b11b .w${n}`, { x: -40, opacity: 0, filter: 'blur(8px)' },
+                              { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.55, ease: 'power4.out' }, t);
+  const wval  = (t, sel) => tl.fromTo(sel, { scale: 0.6, opacity: 0 },
+                              { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)' }, t);
+  const wsub  = (t, n)   => tl.fromTo(`#b11b .w${n} .sub`, { opacity: 0, y: 10 },
+                              { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, t);
+  const wscore= (t, n, c) => { tl.fromTo(`#b11b .w${n} .opeq`, { opacity: 0 }, { opacity: 1, duration: 0.25 }, t);
+                               tl.fromTo(`#b11b .w${n} .wsc`, { scale: 0.55, opacity: 0 },
+                                 { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2.2)' }, t);
+                               tl.fromTo(`#b11b .w${n} .wsc`, { textShadow: `0 0 14px rgba(${c},0.45)` },
+                                 { textShadow: `0 0 34px rgba(${c},0.9)`, duration: 0.55, ease: 'sine.inOut', repeat: 3, yoyo: true }, t + 0.35); };
+  const BLUE = '55,189,248', RED = '255,59,48';
+
+  wrow(448.50, 1);
+  wval(450.15, '#b11b .w1 .wi'); wval(450.45, '#b11b .w1 .opx');
+  wval(451.30, '#b11b .w1 .wf');
+  wscore(452.45, 1, BLUE);
+
+  wrow(454.90, 2);
+  wval(456.25, '#b11b .w2 .wi'); wval(456.45, '#b11b .w2 .opx');
+  wval(457.40, '#b11b .w2 .wf');
+  wscore(458.50, 2, BLUE);
+
+  wrow(459.15, 3);
+  wval(460.90, '#b11b .w3 .wi'); wval(461.10, '#b11b .w3 .opx');
+  wval(462.30, '#b11b .w3 .wf');
+  wsub(462.80, 3);
+  wscore(464.60, 3, BLUE);
+
+  wrow(465.00, 4);
+  wval(466.55, '#b11b .w4 .wi'); wval(466.75, '#b11b .w4 .opx');
+  wsub(467.20, 4);
+  wval(469.60, '#b11b .w4 .wf');
+  wscore(471.20, 4, RED);
+
+  /* "the score just killed the highest impact product on the list" */
+  tl.fromTo('#b11b .w4 .bar', { opacity: 0, scaleY: 0 },
+    { opacity: 1, scaleY: 1, duration: 0.45, ease: 'power3.out' }, 473.10);
+  tl.fromTo('#b11b .w4', { boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.22), 0 24px 70px rgba(0,0,0,0.50)' },
+    { boxShadow: '0 0 30px rgba(255,59,48,0.45), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.7, ease: 'sine.inOut', repeat: 3, yoyo: true }, 473.10);
+  tl.to('#b11b .w4 .wname', { opacity: 0.62, duration: 0.5, ease: 'power2.out' }, 473.10);
+  spring(473.30, '#b11b .verdict .v1', 0.7);
+  tl.to('#b11b .verdict .v1', { opacity: 0, y: -26, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 477.20);
+  spring(477.70, '#b11b .verdict .v2', 0.7);
+  outBlur(479.50, '#b11b .head', 0.55);
+  outBlur(479.55, '#b11b .wtable', 0.55);
+  outBlur(479.60, '#b11b .verdict', 0.55);
+
+  /* B12 score argues (over FULL, after fromOFF 447.6) — favorite idea 481.6 · score argues 490.9 */
+  spring(487.2, '#b12x .punchx', 0.7);
+  tl.to('#b12x', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 492.4);
+
+  /* B13 three mistakes (493.3-553.44) — three mistakes 495.3 · m1 497.3 · m2 513.74 · m3 524.74  [all anchors past 502.4 shifted -1.26s by the "Have the data" retake cut] */
+  inUp(494.3, '#b13 .head', 0.8, 30);
+  inLeft(497.3, '#b13 .m1', 0.8);
+  inLeft(513.74, '#b13 .m2', 0.8);
+  inLeft(524.74, '#b13 .m3', 0.8);
+  outBlur(552.54, '#b13 .head', 0.5);
+  outBlur(552.59, '#b13 .list', 0.5);
+
+  /* B14 outro (553.44-566.74) — VO ends 562.66 */
+  spring(554.24, '#b14 .o1', 0.5);
+  tl.fromTo('#b14 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 554.59);
+  spring(554.79, '#b14 .o2', 0.5);
+  tl.fromTo('#b14 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 555.09);
+  spring(555.29, '#b14 .o3', 0.5);
+  tl.fromTo('#b14 .oc3', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 555.59);
+  spring(555.79, '#b14 .o4', 0.5);
+  tl.fromTo('#b14 .o3', { boxShadow: '0 0 22px rgba(55,189,248,0.55), 0 0 56px rgba(55,189,248,0.3), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 40px rgba(55,189,248,0.7), 0 0 110px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 556.34);
+  inUp(556.64, '#b14 .nx .kick', 0.6, 20);
+  tl.fromTo('#b14 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 556.94);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p13'] = tl;
+})();
+</script>
+</body>
+</html>

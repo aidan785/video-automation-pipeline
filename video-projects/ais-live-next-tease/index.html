@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>AIS LIVE — What's Next Tease (#24) — 30s</title>
+<link href="assets/fonts/fonts.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  :root{
+    --onyx:#07121c; --blue:#37bdf8; --red-live:#ff3b30;
+    --blue-rgb:55,189,248; --red-rgb:255,59,48;
+    --fd:"Montserrat",sans-serif; --fb:"Inter",sans-serif; --fm:"JetBrains Mono",monospace;
+    --grad-chrome:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+    --grad-blue:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--fb);}
+  #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);isolation:isolate;}
+  #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+
+  /* ---------- depth background ---------- */
+  #bg{overflow:hidden;}
+  .depth{position:absolute;left:-40%;right:-40%;height:78%;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(var(--blue-rgb),.16) 0 1px, transparent 1px 66px),
+      repeating-linear-gradient(90deg, rgba(var(--blue-rgb),.09) 0 1px, transparent 1px 66px);
+    will-change:background-position;}
+  .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+    -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+    mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+  .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+    -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+    mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+  .glow{position:absolute;border-radius:50%;will-change:transform;}
+  .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+  .vignette{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);}
+  .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(var(--blue-rgb),.8),transparent);
+    filter:blur(7px);will-change:transform,opacity;}
+
+  /* ---------- scene ---------- */
+  .scene{display:flex;align-items:center;justify-content:center;}
+  .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:30px;padding:92px 120px;text-align:center;will-change:transform,opacity;}
+  .eyebrow{font-family:var(--fm);font-weight:700;font-size:26px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--blue);text-shadow:0 0 16px rgba(var(--blue-rgb),.45);}
+  .ln{font-family:var(--fd);font-style:italic;font-weight:900;font-size:104px;line-height:1.12;
+    letter-spacing:-.03em;max-width:1560px;}
+  .ln .wd{display:inline-block;padding:.08em .13em .24em;will-change:transform,opacity;
+    background:var(--grad-chrome);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 34px rgba(255,255,255,.22);}
+  .ln .wd.ac{background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 48px rgba(var(--blue-rgb),.62);}
+  .sub{font-family:var(--fb);font-weight:300;font-style:italic;font-size:40px;line-height:1.25;
+    color:rgba(209,220,232,.85);max-width:1400px;will-change:transform,opacity;}
+
+  /* stat pair */
+  .stattrio{display:flex;gap:120px;justify-content:center;align-items:flex-start;}
+  .st{display:flex;flex-direction:column;align-items:center;gap:8px;will-change:transform,opacity;}
+  .st .num{font-family:var(--fd);font-style:italic;font-weight:900;font-size:180px;line-height:.95;letter-spacing:-.04em;padding:.02em .1em .12em;
+    background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:0 0 90px rgba(var(--blue-rgb),.6);}
+  .st .lab{font-family:var(--fm);font-weight:700;font-size:26px;letter-spacing:.24em;text-transform:uppercase;color:#fff;}
+
+  /* footage strip (root-level mounts, freeze-safe) */
+  .vgrid{position:absolute;inset:0;pointer-events:none;}
+  .vslot{position:absolute;width:536px;height:300px;top:390px;border-radius:20px;overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,.5);border:1px solid rgba(var(--blue-rgb),.28);
+    will-change:transform,opacity;background:#04090f;}
+  .vslot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  #s3 .ebwrap{position:absolute;top:250px;left:0;right:0;display:flex;justify-content:center;}
+
+  /* mark */
+  .mark{font-family:var(--fd);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+    font-size:230px;display:inline-flex;align-items:baseline;position:relative;}
+  .mark .ais{color:#fff;}
+  .mark .gap{display:inline-block;width:.08em;}
+  .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(var(--blue-rgb),.55);padding-right:.28em;}
+  .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+    background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
+  .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+    background:rgba(var(--red-rgb),.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+  .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+</style>
+</head>
+<body>
+<div data-hf-id="hf-jzyl" id="stage" data-composition-id="ais-live-next-tease" data-start="0" data-duration="30" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-qyic" id="bg" class="clip" data-start="0" data-duration="30" data-track-index="0">
+    <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+    <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+    <div data-hf-id="hf-uo31" class="glow blue"></div>
+    <div data-hf-id="hf-q7bi" class="vignette"></div>
+    <div data-hf-id="hf-h60x" class="grain"></div>
+  </div>
+  <div data-hf-id="hf-wfds" class="whip clip" id="whip" data-start="0" data-duration="30" data-track-index="1"></div>
+
+  <!-- S1 · WRAP OPEN (0-5) -->
+  <section data-hf-id="hf-cw1u" id="s1" class="scene clip" data-start="0" data-duration="5.4" data-track-index="10">
+    <div data-hf-id="hf-lm34" class="inner">
+      <div data-hf-id="hf-qqsd" class="bigmark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-j37c" class="ring" id="ring1"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+      <div data-hf-id="hf-77ep" class="eyebrow" style="margin-top:12px">2026 · THAT'S A WRAP</div>
+    </div>
+  </section>
+
+  <!-- S2 · STATS (5-11) -->
+  <section data-hf-id="hf-jwv0" id="s2" class="scene clip" data-start="5" data-duration="6.4" data-track-index="11">
+    <div data-hf-id="hf-bug8" class="inner">
+      <div data-hf-id="hf-rd2t" class="eyebrow">BY THE NUMBERS</div>
+      <div data-hf-id="hf-i7os" class="stattrio">
+        <div data-hf-id="hf-fs85" class="st"><div data-hf-id="hf-owlj" class="num" id="n1">0</div><div data-hf-id="hf-f50x" class="lab">BUILDERS</div></div>
+        <div data-hf-id="hf-v6k9" class="st"><div data-hf-id="hf-0zvo" class="num" id="n2">2</div><div data-hf-id="hf-l49u" class="lab">DAYS</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S3 · FOOTAGE STRIP (11-18) — mounts live at stage root -->
+  <section data-hf-id="hf-gok0" id="s3" class="scene clip" data-start="11" data-duration="7.4" data-track-index="12">
+    <div data-hf-id="hf-awv9" class="ebwrap"><div data-hf-id="hf-da8l" class="eyebrow">THE MOMENTS KEEP COMING</div></div>
+  </section>
+
+  <!-- S4 · THE TEASE (18-24) -->
+  <section data-hf-id="hf-utkq" id="s4" class="scene clip" data-start="18" data-duration="6.4" data-track-index="13">
+    <div data-hf-id="hf-anj5" class="inner">
+      <div data-hf-id="hf-7t2e" class="eyebrow">WHAT'S NEXT</div>
+      <div data-hf-id="hf-4tfw" class="ln">This was just the <em data-hf-id="hf-66fi" class="wd-em">beginning.</em></div>
+    </div>
+  </section>
+
+  <!-- S5 · OUTRO (24-30) -->
+  <section data-hf-id="hf-0gen" id="s5" class="scene clip" data-start="24" data-duration="6" data-track-index="14">
+    <div data-hf-id="hf-b1u6" class="inner">
+      <div data-hf-id="hf-ogtt" class="bigmark"><span data-hf-id="hf-b4zu" class="mark"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-tyoz" class="ring" id="ring2"></span><span data-hf-id="hf-zcc2" class="dot"></span></span></span></div>
+      <div data-hf-id="hf-zmns" class="sub" style="margin-top:10px">More to build. More to earn. Stay close.</div>
+    </div>
+  </section>
+
+  <!-- footage mounts (each <video> is its own timed element; wrappers are NON-timed) -->
+  <div data-hf-id="hf-3jji" id="s3grid" class="vgrid">
+    <div data-hf-id="hf-c5cr" class="vslot" style="left:130px"><video data-hf-id="hf-yxkk" id="v-panel" src="assets/clips/d1-panel.mp4" muted playsinline data-start="11.1" data-duration="7.2" data-track-index="30"></video></div>
+    <div data-hf-id="hf-yvuc" class="vslot" style="left:692px"><video data-hf-id="hf-72wg" id="v-toolwar" src="assets/clips/d2-toolwar.mp4" muted playsinline data-start="11.1" data-duration="7.2" data-track-index="31"></video></div>
+    <div data-hf-id="hf-7w8b" class="vslot" style="left:1254px"><video data-hf-id="hf-ziwu" id="v-natematt" src="assets/clips/d2-nate-matt.mp4" muted playsinline data-start="11.1" data-duration="7.2" data-track-index="32"></video></div>
+  </div>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const D = 30;
+  const tl = gsap.timeline({ paused: true });
+
+  function splitWords(ln){
+    const frag = document.createDocumentFragment();
+    ln.childNodes.forEach(node => {
+      const el = node.nodeType === 1;
+      const em = el && node.classList.contains("wd-em");
+      (node.textContent || "").trim().split(/\s+/).forEach(w => {
+        if (!w) return;
+        const s = document.createElement("span");
+        s.className = "wd" + (em ? " ac" : "");
+        s.textContent = w;
+        frag.appendChild(s);
+      });
+    });
+    ln.textContent = "";
+    ln.appendChild(frag);
+  }
+  document.querySelectorAll(".ln").forEach(splitWords);
+
+  function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-10},{autoAlpha:1,y:0,duration:d||.85,ease:"power2.out"},at); }
+  function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:44,scale:.985},
+    {autoAlpha:1,yPercent:0,scale:1,duration:.95,ease:"power3.out",stagger:.085,transformOrigin:"50% 100%"},at); }
+  function popZ(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.9},{autoAlpha:1,scale:1,duration:1.1,ease:"power3.out",stagger:step||.12},at); }
+  function flipIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,y:22},{autoAlpha:1,y:0,duration:1.0,ease:"power3.out",stagger:step||.12},at); }
+  function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+    {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.9,ease:"back.out(1.4)",transformOrigin:"50% 50%"},at); }
+  function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-58,filter:"blur(12px)",duration:.22,ease:"power2.in"},at); }
+  function streak(at){
+    tl.fromTo("#whip",{xPercent:-130,scaleX:.6,autoAlpha:0},{autoAlpha:.72,duration:.14,ease:"sine.out",immediateRender:false,overwrite:"auto"},at-0.08);
+    tl.to("#whip",{xPercent:250,scaleX:1.5,autoAlpha:0,duration:.3,ease:"sine.in",overwrite:"auto"},at);
+    tl.set("#whip",{autoAlpha:0},at+0.32);
+  }
+  function countUp(sel, at, target, dur, suffix){
+    var o={v:0};
+    tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+    tl.to(o,{v:target,duration:dur,ease:"power2.out",onUpdate:function(){
+      var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+  }
+
+  /* ambient */
+  tl.to("#bg", { scale:1.1, duration:D, ease:"none", transformOrigin:"50% 50%" }, 0);
+  tl.to(".grid-floor",   { backgroundPositionY:"+=320px", duration:D, ease:"none" }, 0);
+  tl.to(".grid-ceiling", { backgroundPositionY:"-=320px", duration:D, ease:"none" }, 0);
+  tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:Math.round(D/0.8)-1, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+  tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+    { autoAlpha:.5, scale:1, duration:.001 },
+    { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+    { autoAlpha:0, scale:1, duration:.6 }
+  ], repeat:Math.round(D/1.6)-1, ease:"none" }, 0);
+
+  /* scenes */
+  markPop("#s1 .bigmark", 0.3);
+  drop("#s1 .eyebrow", 1.2);
+  whipOut("#s1 .inner", 5.0); streak(5.05);
+
+  drop("#s2 .eyebrow", 5.2);
+  popZ("#s2 .st", 5.5, 0.14);
+  countUp("#n1", 5.7, 1600, 1.3, "+");
+  whipOut("#s2 .inner", 10.6); streak(10.65);
+
+  tl.set("#s3grid .vslot", { autoAlpha: 0 }, 0);
+  drop("#s3 .eyebrow", 11.2);
+  flipIn("#s3grid .vslot", 11.5, 0.09);
+  whipOut("#s3 .eyebrow", 17.6);
+  tl.to("#s3grid .vslot", {autoAlpha:0, y:-58, filter:"blur(12px)", duration:.22, ease:"power2.in"}, 17.6);
+  tl.set("#s3grid .vslot", {autoAlpha:0}, 17.85);
+  streak(17.65);
+
+  drop("#s4 .eyebrow", 18.2);
+  words("#s4 .ln .wd", 18.5);
+  whipOut("#s4 .inner", 23.6); streak(23.65);
+
+  markPop("#s5 .bigmark", 24.1);
+  drop("#s5 .sub", 25.1);
+
+  tl.to({}, { duration: D }, 0);
+  window.__timelines["ais-live-next-tease"] = tl;
+</script>
+</body>
+</html>

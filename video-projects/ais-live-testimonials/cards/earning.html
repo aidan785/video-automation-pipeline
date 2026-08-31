@@ -23,7 +23,7 @@
           linear-gradient(90deg, rgba(55,189,248,0.06) 1px, transparent 1px);
         background-size: 24px 24px; }
       .glow { position: absolute; top: -180px; left: 50%; width: 820px; height: 820px; margin-left: -410px;
-        border-radius: 50%; background: #f5d82a; filter: blur(155px); opacity: 0.16; }
+        border-radius: 50%; background: #37bdf8; filter: blur(155px); opacity: 0.16; }
       .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 44%, rgba(0,0,0,0.58) 96%); }
 
       /* ---------- persistent chrome ---------- */
@@ -31,7 +31,7 @@
       .eyebrow-fixed { position: absolute; top: 62px; left: 112px; font-family: var(--font-mono); font-weight: 700;
         font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(209,220,232,0.62);
         display: inline-flex; align-items: center; gap: 13px; }
-      .eyebrow-fixed::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: #f5d82a; box-shadow: 0 0 10px #f5d82a; }
+      /* no ::before marker chip — live-asset directives */
       .markbug { position: absolute; top: 52px; right: 108px; }
       .botbar { position: absolute; bottom: 56px; left: 112px; right: 108px; display: flex; justify-content: flex-end; align-items: center; }
       .tagchip { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase;
@@ -42,12 +42,15 @@
       /* ---------- panels ---------- */
       .panel { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
       .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 34px; padding: 200px 240px; }
-      .i-kicker { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: #f5d82a;
+      .i-kicker { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: #37bdf8;
         display: inline-flex; align-items: center; gap: 13px; }
-      .i-kicker::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: #f5d82a; box-shadow: 0 0 10px #f5d82a; }
-      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 0.95;
-        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.05em 0.18em; }
-      .i-line em, .o-line em { font-style: italic; color: #f5d82a; }
+      /* the wipe-reveal clip-path clips at the BORDER box, so italic-900 descenders
+         (the y in "They") need generous room inside it — 0.16em bottom still clipped
+         at 128px (Aidan 2026-07-08); 0.30em clears the full descender. Negative
+         margin returns the extra padding so the sub line doesn't drift down. */
+      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 1.1;
+        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.08em 0.18em 0.30em; margin-bottom: -0.17em; }
+      .i-line em, .o-line em { font-style: italic; color: #37bdf8; }
       .i-sub, .o-sub { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 40px; line-height: 1.22;
         letter-spacing: -0.01em; color: rgba(209,220,232,0.82); max-width: 1180px; }
       .o-cta { font-family: var(--font-mono); font-weight: 700; font-size: 22px; letter-spacing: 0.26em; text-transform: uppercase;
@@ -82,7 +85,7 @@
       .mtext { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
       .tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 19px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--a); }
-      .tag::before { content: ""; width: 28px; height: 2px; background: var(--a); }
+      /* no ::before marker line — live-asset directives */
       .name { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 86px; line-height: 0.96; letter-spacing: -0.03em; color: #fff; }
       .role { font-family: var(--font-mono); font-weight: 600; font-size: 19px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(209,220,232,0.72); }
       .quote { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 42px; line-height: 1.2; letter-spacing: -0.015em; color: #fff; max-width: 720px; }
@@ -90,7 +93,7 @@
       .built { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
         border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 11px 20px; }
-      .built::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--a); box-shadow: 0 0 10px var(--a); }
+      /* no ::before dot in the built chip — live-asset directives */
       .metricwrap { display: flex; align-items: baseline; gap: 20px; }
       .metric { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 116px; line-height: 0.9; letter-spacing: -0.04em; color: var(--a); text-shadow: 0 0 60px rgba(255,255,255,0.12); }
       .msub { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(209,220,232,0.74); }
@@ -127,10 +130,10 @@
         <div id="intro" class="panel center">
           <div class="i-kicker">Community Testimonials</div>
           <div class="i-line">What They <em>Earned</em></div>
-          <div class="i-sub">Members who turned the skill into income — and the numbers to prove it.</div>
+          <div class="i-sub">Members who turned the skill into income, and the numbers to prove it.</div>
         </div>
 
-      <div id="m0" class="panel mslide" style="--a:#f5d82a">
+      <div id="m0" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -158,7 +161,7 @@
           <div class="counter">02 / 08</div>
         </div>
       </div>
-      <div id="m2" class="panel mslide" style="--a:#ff8a5c">
+      <div id="m2" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -172,7 +175,7 @@
           <div class="counter">03 / 08</div>
         </div>
       </div>
-      <div id="m3" class="panel mslide" style="--a:#f5d82a">
+      <div id="m3" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -200,7 +203,7 @@
           <div class="counter">05 / 08</div>
         </div>
       </div>
-      <div id="m5" class="panel mslide" style="--a:#ff8a5c">
+      <div id="m5" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -214,7 +217,7 @@
           <div class="counter">06 / 08</div>
         </div>
       </div>
-      <div id="m6" class="panel mslide" style="--a:#f5d82a">
+      <div id="m6" class="panel mslide" style="--a:#37bdf8">
         <div class="vid">
           <div class="vgrid"></div>
           <div class="scan"></div>
@@ -249,7 +252,7 @@
           <div class="o-cta">AIS LIVE · July 11–12, 2026</div>
         </div>
       </div>
-      <div id="rv-m0" class="realvid" style="--a:#f5d82a; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m0" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m0" src="assets/earning/glenn-marcus.mp4" muted playsinline data-has-audio="false" data-start="6.4" data-duration="3.83" data-track-index="10"></video>
       </div>
       <audio id="aud-m0" src="assets/earning/glenn-marcus.mp4" data-start="6.4" data-duration="3.23" data-track-index="20" data-volume="1"></audio>
@@ -257,11 +260,11 @@
         <video id="vid-m1" src="assets/earning/mike-aheirwe.mp4" muted playsinline data-has-audio="false" data-start="9.63" data-duration="3.43" data-track-index="11"></video>
       </div>
       <audio id="aud-m1" src="assets/earning/mike-aheirwe.mp4" data-start="9.63" data-duration="2.83" data-track-index="21" data-volume="1"></audio>
-      <div id="rv-m2" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m2" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m2" src="assets/earning/abdurrahman-ibrahim.mp4" muted playsinline data-has-audio="false" data-start="12.46" data-duration="11.65" data-track-index="12"></video>
       </div>
       <audio id="aud-m2" src="assets/earning/abdurrahman-ibrahim.mp4" data-start="12.46" data-duration="11.05" data-track-index="22" data-volume="1"></audio>
-      <div id="rv-m3" class="realvid" style="--a:#f5d82a; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m3" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m3" src="assets/earning/maciej-wesolowski.mp4" muted playsinline data-has-audio="false" data-start="23.51" data-duration="14.50" data-track-index="13"></video>
       </div>
       <audio id="aud-m3" src="assets/earning/maciej-wesolowski.mp4" data-start="23.51" data-duration="13.90" data-track-index="23" data-volume="1"></audio>
@@ -269,11 +272,11 @@
         <video id="vid-m4" src="assets/earning/sven-loeffler.mp4" muted playsinline data-has-audio="false" data-start="37.41" data-duration="10.20" data-track-index="14"></video>
       </div>
       <audio id="aud-m4" src="assets/earning/sven-loeffler.mp4" data-start="37.41" data-duration="9.60" data-track-index="24" data-volume="1"></audio>
-      <div id="rv-m5" class="realvid" style="--a:#ff8a5c; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m5" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m5" src="assets/earning/jose-lopes.mp4" muted playsinline data-has-audio="false" data-start="47.01" data-duration="4.03" data-track-index="15"></video>
       </div>
       <audio id="aud-m5" src="assets/earning/jose-lopes.mp4" data-start="47.01" data-duration="3.43" data-track-index="25" data-volume="1"></audio>
-      <div id="rv-m6" class="realvid" style="--a:#f5d82a; left:112px; top:298px; width:900px; height:506px;">
+      <div id="rv-m6" class="realvid" style="--a:#37bdf8; left:112px; top:298px; width:900px; height:506px;">
         <video id="vid-m6" src="assets/earning/aidan-finnegan.mp4" muted playsinline data-has-audio="false" data-start="50.44" data-duration="5.66" data-track-index="16"></video>
       </div>
       <audio id="aud-m6" src="assets/earning/aidan-finnegan.mp4" data-start="50.44" data-duration="5.06" data-track-index="26" data-volume="1"></audio>

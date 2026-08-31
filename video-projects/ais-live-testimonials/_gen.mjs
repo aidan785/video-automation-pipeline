@@ -25,11 +25,10 @@ const INTRO = 6.4, MEMBER = 9.6, OUTRO = 8.0;
 // rounded 16:9 clip box geometry inside .mslide (padding 178/112/156, align center).
 const VID_W = 900, VID_H = 506, VID_LEFT = 112, VID_TOP = 298, VID_RADIUS = 26;
 
-const ACCENT = {
-  blue:   { hex: "#37bdf8", glow: "rgba(55,189,248,0.55)" },
-  coral:  { hex: "#ff8a5c", glow: "rgba(255,138,92,0.55)" },
-  yellow: { hex: "#f5d82a", glow: "rgba(245,216,42,0.45)" },
-};
+// Live-asset directives (DESIGN.md): ALL accents are brand blue — coral/yellow
+// keys retained so member data reads unchanged, but every key resolves to blue.
+const BLUE = { hex: "#37bdf8", glow: "rgba(55,189,248,0.55)" };
+const ACCENT = { blue: BLUE, coral: BLUE, yellow: BLUE };
 
 const REELS = [
   {
@@ -55,7 +54,7 @@ const REELS = [
     eyebrow: "Real Members · Real Revenue",
     introKicker: "Community Testimonials",
     introLine: `What They <em>Earned</em>`,
-    introSub: "Members who turned the skill into income — and the numbers to prove it.",
+    introSub: "Members who turned the skill into income, and the numbers to prove it.",
     outroLine: `Your Turn to <em>Get Paid</em>.`,
     outroSub: "Build it. Price it. Close it. Inside AIS+.",
     members: [
@@ -120,7 +119,7 @@ function memberHTML(m, i, n, k) {
           <div class="name">${m.name}</div>
           <div class="role">${m.role}</div>
           <div class="quote"><span class="qm">&ldquo;</span>${m.quote}&rdquo;</div>
-          <div class="built">Built — ${m.built}</div>
+          <div class="built">Built · ${m.built}</div>
           <div class="counter">${counter}</div>
         </div>`;
   return `<div id="m${i}" class="panel mslide" style="--a:${a}">
@@ -270,7 +269,7 @@ function buildReel(reel) {
       .eyebrow-fixed { position: absolute; top: 62px; left: 112px; font-family: var(--font-mono); font-weight: 700;
         font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(209,220,232,0.62);
         display: inline-flex; align-items: center; gap: 13px; }
-      .eyebrow-fixed::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: ${ca}; box-shadow: 0 0 10px ${ca}; }
+      /* no ::before marker chip — live-asset directives */
       .markbug { position: absolute; top: 52px; right: 108px; }
       .botbar { position: absolute; bottom: 56px; left: 112px; right: 108px; display: flex; justify-content: flex-end; align-items: center; }
       .tagchip { font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.24em; text-transform: uppercase;
@@ -283,9 +282,12 @@ function buildReel(reel) {
       .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 34px; padding: 200px 240px; }
       .i-kicker { font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: 0.34em; text-transform: uppercase; color: ${ca};
         display: inline-flex; align-items: center; gap: 13px; }
-      .i-kicker::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: ${ca}; box-shadow: 0 0 10px ${ca}; }
-      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 0.95;
-        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.05em 0.18em; }
+      /* the wipe-reveal clip-path clips at the BORDER box, so italic-900 descenders
+         (the y in "They") need generous room inside it — 0.16em bottom still clipped
+         at 128px (Aidan 2026-07-08); 0.30em clears the full descender. Negative
+         margin returns the extra padding so the sub line doesn't drift down. */
+      .i-line, .o-line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 128px; line-height: 1.1;
+        letter-spacing: -0.035em; color: #fff; clip-path: inset(0 0% 0 0); padding: 0.08em 0.18em 0.30em; margin-bottom: -0.17em; }
       .i-line em, .o-line em { font-style: italic; color: ${ca}; }
       .i-sub, .o-sub { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 40px; line-height: 1.22;
         letter-spacing: -0.01em; color: rgba(209,220,232,0.82); max-width: 1180px; }
@@ -321,7 +323,7 @@ function buildReel(reel) {
       .mtext { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
       .tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 19px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--a); }
-      .tag::before { content: ""; width: 28px; height: 2px; background: var(--a); }
+      /* no ::before marker line — live-asset directives */
       .name { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 86px; line-height: 0.96; letter-spacing: -0.03em; color: #fff; }
       .role { font-family: var(--font-mono); font-weight: 600; font-size: 19px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(209,220,232,0.72); }
       .quote { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 42px; line-height: 1.2; letter-spacing: -0.015em; color: #fff; max-width: 720px; }
@@ -329,7 +331,7 @@ function buildReel(reel) {
       .built { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-mono);
         font-weight: 700; font-size: 18px; letter-spacing: 0.14em; text-transform: uppercase; color: #fff;
         border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 11px 20px; }
-      .built::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--a); box-shadow: 0 0 10px var(--a); }
+      /* no ::before dot in the built chip — live-asset directives */
       .metricwrap { display: flex; align-items: baseline; gap: 20px; }
       .metric { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 116px; line-height: 0.9; letter-spacing: -0.04em; color: var(--a); text-shadow: 0 0 60px rgba(255,255,255,0.12); }
       .msub { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(209,220,232,0.74); }

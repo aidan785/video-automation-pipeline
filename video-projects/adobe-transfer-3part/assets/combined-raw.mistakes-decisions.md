@@ -1,0 +1,72 @@
+# Cut-Mistakes Decisions (applied)
+
+Input duration: 11:31.23 (691.23s)
+Output duration: 09:23.60 (563.60s)
+Removed: 127.63s across 66 cuts
+
+- 00:00.20–00:06.82 (6.62s): double false-start opening, keep 3rd take
+- 00:15.24–00:15.54 (0.30s): flub
+- 00:18.94–00:20.16 (1.22s): abandoned start
+- 00:31.59–00:32.61 (1.02s): stutter
+- 00:49.67–00:51.75 (2.08s): restart
+- 00:54.01–00:54.97 (0.96s): stutter
+- 01:08.05–01:10.93 (2.88s): trailing word + false start
+- 01:13.91–01:14.28 (0.37s): stutter
+- 01:30.46–01:31.14 (0.68s): stutter
+- 01:36.72–01:37.42 (0.70s): abandoned word
+- 01:40.51–01:41.73 (1.22s): triple stutter
+- 01:43.31–01:44.46 (1.15s): false start (c001)
+- 01:45.61–01:45.77 (0.16s): stray so after 'again,'
+- 01:48.89–01:52.71 (3.82s): triple restart
+- 01:55.61–01:56.76 (1.15s): stutter
+- 02:03.03–02:04.71 (1.68s): restart (c002)
+- 02:07.37–02:08.69 (1.32s): restart
+- 02:10.15–02:17.12 (6.97s): multi false-start, keep final take
+- 02:34.62–02:35.66 (1.04s): restart
+- 02:45.00–02:45.31 (0.32s): restart
+- 02:50.53–02:53.12 (2.58s): restart, keep corrected
+- 02:55.06–02:56.46 (1.40s): restart, keep fuller take
+- 03:10.28–03:11.54 (1.26s): restart
+- 03:28.00–03:32.79 (4.80s): quad false start (c003)
+- 03:40.68–03:43.53 (2.86s): restart
+- 03:56.59–03:59.31 (2.72s): restart
+- 04:08.94–04:11.89 (2.96s): double restart
+- 04:18.99–04:19.69 (0.70s): false start
+- 04:22.69–04:31.17 (8.48s): 5x restart, keep final take
+- 04:52.37–04:54.21 (1.85s): restart
+- 04:57.52–04:58.03 (0.51s): stutter
+- 04:59.06–05:00.44 (1.38s): restart
+- 05:04.94–05:07.52 (2.58s): doubled sentence, keep 2nd
+- 05:23.06–05:24.33 (1.28s): restart
+- 05:27.04–05:31.10 (4.06s): abandoned attempt, retaken
+- 05:37.33–05:37.71 (0.38s): false start
+- 05:49.74–05:50.34 (0.60s): restart
+- 05:55.58–05:56.68 (1.10s): stutter
+- 06:03.10–06:03.50 (0.40s): abandoned clause
+- 06:06.78–06:11.50 (4.72s): double restart
+- 06:17.25–06:17.67 (0.42s): stutter (c004)
+- 06:20.01–06:22.36 (2.35s): keep corrected take
+- 06:25.10–06:32.73 (7.63s): spoken edit instruction: 'Delete that last part' — aborted demo
+- 06:46.91–06:47.30 (0.39s): stutter
+- 06:52.24–06:55.00 (2.76s): restart
+- 07:09.48–07:09.67 (0.19s): stutter
+- 07:12.30–07:15.28 (2.98s): restart
+- 08:27.39–08:29.99 (2.60s): keep fuller take
+- 08:31.43–08:33.29 (1.86s): restart
+- 08:42.17–08:42.35 (0.18s): abandoned word
+- 08:49.47–08:50.26 (0.79s): stutter
+- 08:53.70–08:55.56 (1.86s): restart + wrong word
+- 09:03.06–09:04.94 (1.88s): stutter
+- 09:24.64–09:26.40 (1.76s): abandoned
+- 09:26.76–09:26.96 (0.20s): correction mid-word
+- 09:31.72–09:32.86 (1.14s): restart
+- 09:48.54–09:50.89 (2.35s): restart
+- 09:55.21–09:56.37 (1.16s): restart
+- 10:04.37–10:06.25 (1.88s): restart
+- 10:12.03–10:12.53 (0.50s): stutter
+- 10:16.37–10:17.69 (1.32s): restart
+- 10:27.31–10:29.07 (1.76s): restart
+- 10:38.24–10:40.26 (2.02s): restart
+- 10:43.50–10:46.18 (2.68s): double restart
+- 10:54.94–10:55.96 (1.02s): restart
+- 11:17.82–11:19.49 (1.67s): correction

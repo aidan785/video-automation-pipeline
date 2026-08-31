@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Arcads Intro — Green Vox Showcase</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=Fraunces:ital,opsz,wght@1,9..144,600;1,9..144,900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green:#22E36B;
+    --green-line:rgba(34,227,107,.55);
+    --glow:0 0 22px rgba(34,227,107,.55);
+    --glass:rgba(9,12,10,.74);
+    --font-label:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --font-display:"Fraunces",Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#000;
+    font-family:var(--font-label);}
+  #introVid{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+
+  #dim{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 45%,rgba(3,6,4,.35),rgba(2,4,3,.86));opacity:0;}
+
+  /* --- full-screen opening takeover --- */
+  #takeover{position:absolute;inset:0;background:#05070a;overflow:hidden;transform-origin:50% 45%;}
+  .tk-grid{position:absolute;inset:-20% -20% -40% -20%;
+    background-image:linear-gradient(rgba(34,227,107,.10) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(34,227,107,.10) 1px,transparent 1px);
+    background-size:120px 120px;transform:perspective(760px) rotateX(58deg) translateY(28%);
+    mask-image:radial-gradient(70% 60% at 50% 30%,#000 30%,transparent 78%);
+    -webkit-mask-image:radial-gradient(70% 60% at 50% 30%,#000 30%,transparent 78%);}
+  .tk-grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .tk-vig{position:absolute;inset:0;background:radial-gradient(110% 90% at 50% 42%,transparent 42%,rgba(0,0,0,.72) 100%);}
+  .tk-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:0 60px;}
+  .tk-kicker{font-weight:900;font-size:26px;letter-spacing:.5em;text-transform:uppercase;
+    color:var(--green);text-shadow:var(--glow);opacity:0;padding-left:.5em;}
+  .tk-eq{display:flex;align-items:baseline;gap:26px;}
+  .tk-word{font-weight:900;font-size:58px;letter-spacing:-.01em;color:#fff;opacity:0;}
+  .tk-word b{color:var(--green);text-shadow:var(--glow);font-weight:900;}
+  .tk-plus{font-weight:900;font-size:46px;color:rgba(255,255,255,.5);opacity:0;}
+  .tk-mega{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:280px;line-height:.82;
+    color:var(--green);text-shadow:0 0 60px rgba(34,227,107,.55),0 6px 0 rgba(0,0,0,.25);
+    padding:0 .12em;opacity:0;text-transform:lowercase;}
+  .tk-sub{font-weight:900;font-size:42px;letter-spacing:.22em;text-transform:uppercase;color:#fff;opacity:0;}
+
+  /* --- bottom captions (kept left of the face-cam) --- */
+  .cap{position:absolute;left:88px;bottom:104px;max-width:1120px;
+    background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.10);border-left:4px solid var(--green);
+    border-radius:14px;padding:20px 30px;opacity:0;box-shadow:0 18px 50px rgba(0,0,0,.5);}
+  .cap span{font-weight:900;font-size:44px;line-height:1.12;letter-spacing:-.01em;color:#fff;display:block;}
+  .cap em{font-style:normal;color:var(--green);text-shadow:var(--glow);}
+
+  /* --- stat equation row (top band) --- */
+  #statrow{position:absolute;top:104px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:16px;opacity:0;}
+  .chip{background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid var(--green-line);border-radius:999px;padding:14px 26px;
+    display:flex;align-items:baseline;gap:10px;opacity:0;box-shadow:0 10px 34px rgba(0,0,0,.45);}
+  .chip b{font-weight:900;font-size:34px;color:var(--green);text-shadow:var(--glow);line-height:1;}
+  .chip small{font-weight:700;font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82);}
+  .chip.solid{background:var(--green);border-color:var(--green);box-shadow:0 12px 40px rgba(34,227,107,.4);}
+  .chip.solid b,.chip.solid small{color:#04160b;text-shadow:none;}
+  .arrow{font-weight:900;font-size:30px;color:var(--green);opacity:0;text-shadow:var(--glow);}
+
+  /* --- showcase kicker (top-left) --- */
+  #kicker{position:absolute;top:112px;left:96px;opacity:0;display:flex;align-items:center;gap:14px;}
+  #kicker .dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:var(--glow);}
+  #kicker .txt{font-weight:900;font-size:22px;letter-spacing:.34em;text-transform:uppercase;color:#fff;}
+
+  /* --- big center variations label --- */
+  #varLabel{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);opacity:0;text-align:center;}
+  #varLabel .num{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:150px;
+    color:var(--green);text-shadow:var(--glow);line-height:.9;}
+  #varLabel .sub{font-weight:900;font-size:34px;letter-spacing:.28em;text-transform:uppercase;color:#fff;margin-top:8px;}
+
+  /* --- feature phone clips (video is positioned directly) --- */
+  .phone{position:absolute;top:250px;width:300px;height:534px;object-fit:cover;border-radius:20px;
+    border:3px solid var(--green);box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 30px rgba(34,227,107,.35);}
+  #phone1{left:470px;} #phone2{left:810px;} #phone3{left:1150px;}
+  .plabel{position:absolute;top:800px;transform:translateX(-50%);opacity:0;
+    background:var(--green);color:#04160b;font-weight:900;font-size:19px;letter-spacing:.14em;
+    text-transform:uppercase;padding:9px 20px;border-radius:999px;white-space:nowrap;
+    box-shadow:0 10px 30px rgba(34,227,107,.4);}
+  #plabel1{left:620px;} #plabel2{left:960px;} #plabel3{left:1300px;}
+
+  /* --- final wall --- */
+  #wallVid{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+    width:1417px;height:1000px;object-fit:cover;border-radius:16px;
+    border:2px solid var(--green-line);box-shadow:0 30px 80px rgba(0,0,0,.7);}
+  #wallKicker{position:absolute;top:34px;left:50%;transform:translateX(-50%);opacity:0;z-index:5;
+    background:var(--glass);border:1px solid var(--green-line);border-radius:999px;padding:12px 30px;
+    font-weight:900;font-size:24px;letter-spacing:.22em;text-transform:uppercase;color:#fff;
+    display:flex;align-items:center;gap:12px;}
+  #wallKicker i{width:11px;height:11px;border-radius:50%;background:var(--green);box-shadow:var(--glow);font-style:normal;}
+  #endTag{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);opacity:0;z-index:5;
+    background:var(--green);color:#04160b;font-weight:900;font-size:30px;letter-spacing:.06em;
+    padding:16px 40px;border-radius:14px;box-shadow:0 16px 50px rgba(34,227,107,.45);}
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="arcads-intro-showcase" data-start="0" data-width="1920" data-height="1080">
+
+  <!-- base screen recording (muted) + its own audio on a sibling track -->
+  <video id="introVid" src="assets/intro.mp4" muted data-start="0" data-duration="15.14" data-track-index="0"></video>
+  <audio id="introAud" src="assets/intro.mp4" data-start="0" data-duration="15.14" data-track-index="1"></audio>
+
+  <div id="dim" class="clip" data-start="6.85" data-duration="8.29" data-track-index="2"></div>
+
+  <!-- FULL-SCREEN TAKEOVER (opening) -->
+  <div id="takeover" class="clip" data-start="0" data-duration="6.6" data-track-index="3">
+    <div class="tk-grid"></div>
+    <div class="tk-grain"></div>
+    <div class="tk-vig"></div>
+    <div class="tk-inner">
+      <div class="tk-kicker" id="tkKicker">How I made</div>
+      <div class="tk-eq">
+        <span class="tk-word" id="tkSkill"><b>1</b> skill</span>
+        <span class="tk-plus" id="tkPlus">+</span>
+        <span class="tk-word" id="tkMd"><b>1</b> .md file</span>
+      </div>
+      <div class="tk-mega" id="tkMega">40&nbsp;ads</div>
+      <div class="tk-sub" id="tkSub">in under an hour</div>
+    </div>
+  </div>
+
+  <!-- showcase -->
+  <div id="kicker" class="clip" data-start="6.95" data-duration="4.50" data-track-index="7">
+    <span class="dot"></span><span class="txt">The Variations</span></div>
+
+  <div id="varLabel" class="clip" data-start="6.95" data-duration="1.80" data-track-index="8">
+    <div class="num">40</div><div class="sub">Variations</div></div>
+
+  <video class="phone" id="phone1" src="assets/feat_characters.mp4" muted data-start="8.60" data-duration="2.90" data-track-index="9"></video>
+  <video class="phone" id="phone2" src="assets/feat_scripts.mp4" muted data-start="9.50" data-duration="2.00" data-track-index="10"></video>
+  <video class="phone" id="phone3" src="assets/feat_hooks.mp4" muted data-start="10.40" data-duration="1.10" data-track-index="11"></video>
+  <div class="plabel clip" id="plabel1" data-start="8.60" data-duration="2.90" data-track-index="12">Characters</div>
+  <div class="plabel clip" id="plabel2" data-start="9.50" data-duration="2.00" data-track-index="13">Scripts</div>
+  <div class="plabel clip" id="plabel3" data-start="10.40" data-duration="1.10" data-track-index="14">Hooks</div>
+
+  <!-- final wall -->
+  <video id="wallVid" src="assets/wall.mp4" muted data-start="11.45" data-duration="3.69" data-track-index="15"></video>
+  <div id="wallKicker" class="clip" data-start="11.60" data-duration="3.54" data-track-index="16">
+    <i></i>Plenty to pick from</div>
+  <div id="endTag" class="clip" data-start="12.80" data-duration="2.34" data-track-index="17">
+    40 ads &middot; 1 skill &middot; 1 hour</div>
+
+</div>
+
+<script>
+(function(){
+  const tl = gsap.timeline({paused:true});
+  // explicit reveal: fromTo hidden->visible so CSS opacity:0 defaults never trap the end state
+  function inn(sel,t,from,d,e){
+    tl.fromTo(sel,
+      Object.assign({autoAlpha:0,x:0,y:0,scale:1}, from||{}),
+      {autoAlpha:1,x:0,y:0,scale:1, duration:d||.42, ease:e||"back.out(1.8)"}, t);
+  }
+  const out = (sel,t,extra)=>tl.to(sel, Object.assign({autoAlpha:0, duration:.3, ease:"power2.in"}, extra||{}), t);
+
+  // opening takeover — builds in sync with the VO, then wipes away
+  inn("#tkKicker", 0.20, {y:20}, .5, "power2.out");
+  inn("#tkSkill", 1.74, {y:26, scale:.9});
+  inn("#tkPlus",  2.60, {scale:.4}, .3);
+  inn("#tkMd",    2.90, {y:26, scale:.9});
+  inn("#tkMega",  4.48, {y:34, scale:.72}, .5, "back.out(2.2)");
+  inn("#tkSub",   5.82, {y:22, scale:.9});
+  // whip the whole card up + away to reveal the demo underneath
+  tl.to("#takeover", {autoAlpha:0, y:-70, scale:1.07, duration:.5, ease:"power2.inOut"}, 5.98);
+
+  // showcase overlays
+  tl.fromTo("#dim", {autoAlpha:0}, {autoAlpha:1, duration:.5, ease:"power2.out"}, 6.85);
+  inn("#kicker", 6.95, {x:-20});
+  inn("#varLabel", 6.98, {scale:.6}, .42, "back.out(2.2)");
+  out("#varLabel", 8.50, {scale:1.1, duration:.35});
+
+  // phone videos: transform-only (framework owns their opacity + windowing)
+  tl.from("#phone1", {scale:.9, x:-40, duration:.45, ease:"back.out(1.6)"}, 8.60);
+  tl.from("#phone2", {scale:.9, x:-40, duration:.45, ease:"back.out(1.6)"}, 9.50);
+  tl.from("#phone3", {scale:.9, x:-40, duration:.45, ease:"back.out(1.6)"}, 10.40);
+  inn("#plabel1", 8.75, {y:14, scale:.8});
+  inn("#plabel2", 9.65, {y:14, scale:.8});
+  inn("#plabel3", 10.55, {y:14, scale:.8});
+  out("#kicker", 11.15);
+
+  // final wall
+  tl.from("#wallVid", {scale:.82, duration:.55, ease:"back.out(1.5)"}, 11.45);
+  inn("#wallKicker", 11.65, {y:-18});
+  inn("#endTag", 12.80, {y:22, scale:.9}, .42, "back.out(2)");
+
+  tl.set({}, {}, 15.14); // pad to full intro length
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines["arcads-intro-showcase"] = tl;
+})();
+</script>
+</body>
+</html>

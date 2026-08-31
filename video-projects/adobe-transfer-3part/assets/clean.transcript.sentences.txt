@@ -1,0 +1,117 @@
+0:00.1  Claude is really good at geometry nodes.
+0:02.3  For example, this image right here was completely generated, crafted, modeled.
+0:07.2  Every single sugar cube, the gumdrop, the transparency, everything was built by Claude.
+0:11.8  And today I'm gonna show you exactly how I taught Claude how to understand geometry nodes, build a scene in real time, and then also give you a free skill so you can skip over the entire ideation process, the entire
+0:23.5  education, the entire teaching process with Claude.
+0:26.5  Essentially, you just will upload a skill into your Claude session, and it will analyze how it's supposed to utilize geometry nodes.
+0:33.7  But as you can see, it built this little scene for me, even added a camera, and rendered out an image of this gumdrop with a bunch of little sugar cubes on it.
+0:42.3  If you are interested in learning geometry nodes yourself, which I think is a very important skill inside of Blender, you shouldn't utilize Claude for the full thing.
+0:50.7  But it is cool to have Claude kind of be your assistant when it comes to building in-- Now, I'm not gonna be teaching you how geometry nodes work in this video, so I highly recommend that you go to Blender
+1:02.2  Guru and watch his Geometry Node for Beginners Part One and Part Two.
+1:06.5  Now, it's really cool to have Claude take over your Blender sessions, build out geometry nodes, build out scenes, but you shouldn't utilize it for everything.
+1:14.5  If you're a 3D artist, you are still the director.
+1:16.8  Claude is just essentially a agent or a tutor or an extra person on your team that can help you out with building inside of Blender.
+1:25.0  So, so again, so it's still important to understand the fundamentals of Blender.
+1:28.9  Don't jump into it blindly, having Claude direct all of your animations, your 3D modeling, your geometry nodes, anything, everything in Blender.
+1:36.5  You still need to act as the director.
+1:38.4  So I highly recommend you watch Blender Guru's video.
+1:40.9  It's super informative.
+1:42.4  So very quick, the workflow of this process.
+1:45.5  So firstly, you're gonna use a Skill MD file which contains knowledge on geometry nodes inside of Blender.
+1:52.2  You will then feed that Skill MD into a Claude Code session.
+1:55.7  I will show you how to set this up.
+1:57.2  Claude Code then analyzes that Skill MD, and it becomes part of Claude's skills.
+2:02.1  So if you prompt Claude completely blind, saying, you know, "Create this gumdrop with me using geometry nodes inside of Blender via the connection," it's going to turn out terrible.
+2:10.4  It will not work.
+2:11.3  And that's just because Claude doesn't have any knowledge on this geometry node skill inside of Blender.
+2:16.2  Claude is going to use Python based on the Skill MD.
+2:19.3  So the Skill MD has Python scripts, instructions that Claude can read to then execute inside of Blender.
+2:24.8  It's going to execute Blender Python code.
+2:27.9  Because Blender is an open source platform, it, it can be easily manipulated by Claude to create things like this.
+2:33.2  Claude Code and Blender will then generate an output for you like this.
+2:36.6  So this is a super simple version that I just drew up in Excalidraw just to get a basic understanding of how skills, Claude Code, and Blender work together to create outputs just like this.
+2:46.3  So you're going to need access to Claude Code for this to work, or Codex.
+2:49.8  You could definitely use Codex.
+2:51.1  We're sticking with Claude Code in this video though today.
+2:54.0  In the description below, you will find a link to a file called Geometry Nodes.
+2:58.4  Inside of Geometry Nodes, there are examples, so a Gumdrop Reference and a Gumdrop MD file.
+3:03.4  This is how Claude created that gumdrop with geometry nodes.
+3:07.3  Some references that Claude can pull to execute code inside of Blender.
+3:11.5  For example, this is the node receipts, so this is how it's controlling geometry nodes inside of your Blender session.
+3:16.5  And then the most important file, which is the skill.md file.
+3:19.4  So this is essentially just an instruction guide for Claude to read to execute, and it takes it through the steps of the best practices.
+3:26.5  And to create this geometry node skill that we can use in Blender with Claude, I analyzed hundreds of different videos of people setting up geometry nodes different ways.
+3:35.7  Blender Guru just has, like, the ultimate best tutorials, in my opinion, when it comes to very basic beginner Blender workflows.
+3:43.5  And so I took all of that text and pretty much summarized it in a way where Claude could understand and fed it into a skill specifically for geometry nodes.
+3:51.1  So what you're gonna need to do, you're going to find that zip file, Geometry Nodes, inside of the link in the description below, and then you're going to open up a Claude session.
+3:58.5  I'm working inside of a Blender project folder that I always work inside of Blender with.
+4:03.7  I'll have my bypass permissions on.
+4:05.1  I'm using Fable 5, but we're gonna be careful about what we're using here to save some cash and tokens, which I will walk through in a second.
+4:12.0  And then I'm going to be sticking on high effort.
+4:14.4  So what you're gonna need to do next is upload the zip file into your Claude session.
+4:18.2  As you can see, we have geometry nodes loaded in.
+4:20.8  Now, for Claude to actually analyze this file, all you need to do is prompt run/init on the geometry nodes folder with the skill.
+4:32.5  This will prompt Claude to go and understand the skill and download it into your project direct.
+4:37.5  So then eventually in the future, we can just type in a slash command, so slash and then geometry nodes, and it will pop up for us, and we can run that process when we need to use geometry nodes.
+4:47.4  Now that we have the /init ran on the geometry nodes folder, we can see that Claude knows that-- it knows what it is, the actual structure, and then the conversions that must survive edits.
+4:57.8  Now, next, we need to make sure that Blender is connected, and if you are on the Claude desktop app, all you need to do is go to your Customized tab and then your Connectors, and then just search up Blender
+5:08.8  and make sure that Blender is installed and running.
+5:11.8  If you are having any problems with setting up Blender, please let me know in the comments below.
+5:15.3  I can help walk you through that.
+5:16.6  So next, we need to open up a blank Blender session just like this.
+5:19.9  So I'm just going to close out of this old session that I had loaded up for the intro, and then I'm going to open up a new Blender session for us, and then I'm just going to A-X-D.
+5:31.4  And now we have a completely blank workspace.
+5:33.5  Now I'm just gonna go with the exact same way.
+5:36.3  Now, with Blender and Claude both...
+5:38.3  Okay, so now I have Claude on the left and Blender on the right.
+5:41.3  All I need to do now is just prompt Claude to start creating via geometry nodes.
+5:47.4  I want you to create a gumdrop with a bunch of little transparent sugar cubes on it on a white table with a light shining on it.
+5:56.5  Set up a camera.
+5:57.6  Make sure that there's transparency in the gumdrop.
+6:00.6  Make the gumdrop blue, and add a blue hue to the white- shiny table to show light passing through the gumdrop.
+6:08.8  You could also upload, like, reference images if you want to.
+6:11.5  I'm gonna test it out without a reference image, but if we are going off track, we can upload a reference image.
+6:17.2  Now, this is the most important part when it comes to prompting.
+6:20.1  This is what I always do to save context, to save money when working inside a Claude.
+6:25.7  I want you to use Fable 5 as the director of a bunch of sub-agents that work inside of Blender.
+6:31.8  Fable 5 never executes any code inside of Blender.
+6:35.5  Opus, Haiku, and Sonnet are the workers that will generate this scene inside of Blender.
+6:41.7  Fable 5 is just the director of the entire operation.
+6:45.5  This is a framework by Nate Herk on how to set up efficient systems and agents inside of one session.
+6:51.1  Instead of letting one model do all of the work, have multiple models work together and have Fable be the director of those models.
+6:58.5  So that's all I'm going to prompt inside of this chat box, and I'm gonna shoot that off, and I will come back to you when it's done.
+7:05.0  I will open up the geometry nodes, and then we'll get a final output and take a look at it.
+7:08.8  Okay.
+7:09.2  So it just finished up, and it took about, uh, six minutes to generate this for me.
+7:13.8  If we just zoom in here, you can see it created the gumdrop.
+7:16.2  It added the light.
+7:17.4  If we turn the rendered view on, you can see it added the nice transparent glow.
+7:22.2  But the one thing I am noticing is we are missing a lot of sugar cubes.
+7:25.5  I want more sugar cubes.
+7:26.4  So if we go into our geometry nodes and we click on our gumdrop, we can see that it created our geometry nodes for us, where we can multiply the density.
+7:35.1  This is where we can use the randomized scale and rotation.
+7:38.5  Also, one thing I want to note is when this was building out, it assigned tasks or roles to each of the agents.
+7:45.1  So Sonnet was for scene objects.
+7:47.6  Opus was for the g- actual geometry nodes.
+7:49.7  Sonnet also was for the materials.
+7:51.6  Haiku was the just render pass.
+7:54.0  Because we don't need Fable to render out one image for us, we can use Haiku, which uses much less tokens to do this for us.
+8:01.1  So that's the point of spinning up agent teams and using Fable 5 as the director.
+8:06.1  Okay.
+8:06.5  My screen is doing the wheel of death, so I'm gonna come back when this is done, and then we can go over adding more variety of sugar cubes to the actual gumdrop.
+8:15.6  So now if I wanted to add more sugar cubes to the gumdrop, all I have to do is go into my modifiers, look at my sugar density right down here in the geometry nodes, and I can just scale this
+8:26.2  up to as many as I want.
+8:27.8  So maybe let's do two hundred and fifty.
+8:29.6  Uh, let's do a little bit more.
+8:30.4  Let's do three hundred.
+8:31.8  Then we can go into our rendered viewport again.
+8:34.3  And now we have an insane amount of sugar cubes on our gumdrop.
+8:37.3  If I wanted to change the colors of anything, you can just go into your shading, and say we wanted to make this more of like a green gumdrop.
+8:43.8  It's gonna be green gumdrop with a bunch of blue, and now it's a green gumdrop again.
+8:48.4  So this is how you can set up a skill for geometry nodes inside of a Claude session that executes in Blender for you.
+8:56.3  If you found this video useful, I highly recommend that you join the Creative AI Network and get really active in there.
+9:02.0  Meet some people in the creative AI space, showcase your portfolio, get feedback, and just stay constantly updated in, in the constantly changing space of creative AI.
+9:11.3  I'm gonna leave you guys with that.
+9:13.2  Please drop a like and subscribe if you found this video resourceful.
+9:17.0  As always, I will see you guys in the next one.
+9:19.0  Thanks.

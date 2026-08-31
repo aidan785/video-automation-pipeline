@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Opus 5 x Blender — lottie-motion-design Premium pass</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,900&family=Archivo:wght@400;700;900&display=swap");
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage video { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+
+  :root {
+    --ink: #101214;
+    --coral: #D97757;
+    --slate: #8A97A0;
+  }
+
+  .chrome {
+    background: linear-gradient(180deg, #ffffff 0%, #b9bec4 68%, #e6e9ec 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+
+  /* ---------- cold open takeover ---------- */
+  #veil { position: absolute; inset: 0;
+    background: rgba(6, 7, 8, 0.78);
+    -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); }
+  #open { position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 26px; }
+  #open .kicker {
+    font: 700 26px/1 "Archivo", "Helvetica Neue", sans-serif;
+    letter-spacing: 0.34em; text-transform: uppercase; color: var(--coral); }
+  #open h1 {
+    font: 300 176px/1.02 "Fraunces", Georgia, serif;
+    letter-spacing: -0.015em; text-align: center;
+    text-shadow: 0 0 60px rgba(255,255,255,0.12); }
+  #open h1 b { font-weight: 900; font-style: normal; }
+  #open .rule { width: 340px; height: 2px; background: var(--coral); transform-origin: 50% 50%; }
+
+  /* ---------- glass cards ---------- */
+  .card { position: absolute;
+    background: linear-gradient(135deg, rgba(16,18,20,0.90), rgba(16,18,20,0.80));
+    -webkit-backdrop-filter: blur(14px) saturate(1.1); backdrop-filter: blur(14px) saturate(1.1);
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.20), 0 24px 60px rgba(0,0,0,0.35);
+    border-radius: 14px; overflow: hidden; }
+  .card .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--coral); transform-origin: 50% 0%; }
+  .card .lbl {
+    font: 700 22px/1 "Archivo", sans-serif; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--slate); }
+
+  #lower3 { left: 72px; bottom: 84px; padding: 30px 44px 34px; }
+  #lower3 .big { margin-top: 14px; font: 600 58px/1.05 "Fraunces", serif; }
+
+  #banner { left: 72px; top: 380px; padding: 32px 46px 36px; max-width: 780px; }
+  #banner .big { margin-top: 14px; font: 300 62px/1.15 "Fraunces", serif; }
+  #banner .big em { font-style: normal; font-weight: 900; color: var(--coral);
+    -webkit-text-fill-color: var(--coral); }
+
+  .stat { left: 72px; bottom: 84px; padding: 30px 46px 34px; min-width: 560px; }
+  .stat .num { margin-top: 10px; display: flex; align-items: baseline; gap: 8px; }
+  .stat .val { font: 900 118px/1 "Fraunces", serif; color: var(--coral);
+    font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .stat .pct { font: 600 54px/1 "Fraunces", serif; color: var(--coral); }
+  .stat .vs { margin-top: 12px; font: 400 30px/1 "Archivo", sans-serif; color: var(--slate);
+    font-variant-numeric: tabular-nums; }
+  .stat .vs b { font-weight: 700; }
+
+  /* ---------- ambient layer ---------- */
+  #vig { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,0.55) 100%);
+    opacity: 0.35; }
+  #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 240px 240px; }
+
+  #endfade { position: absolute; inset: 0; background: #000; }
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="lottie-intro-opus5-blender" data-start="0" data-width="1920" data-height="1080">
+
+  <video id="vid" src="assets/intro.mp4" data-has-audio="true" data-start="0" data-duration="54.6" data-track-index="0"></video>
+
+  <!-- ambient layer: vignette + grain, whole piece -->
+  <div id="vig"   class="clip" data-start="0" data-duration="54.6" data-track-index="9"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="54.6" data-track-index="10"></div>
+
+  <!-- beat 1 — cold-open takeover: "So introducing Claude Opus 5" (0.08s) -->
+  <div id="veil" class="clip" data-start="0" data-duration="4.4" data-track-index="2"></div>
+  <div id="open" class="clip" data-start="0" data-duration="4.4" data-track-index="3">
+    <div class="kicker">Tested in Blender</div>
+    <h1 class="chrome">Claude <b>Opus&nbsp;5</b></h1>
+    <div class="rule"></div>
+  </div>
+
+  <!-- beat 2 — lower third: "test it inside of Blender" (6.28s) -->
+  <div id="lower3" class="card clip" data-start="5.9" data-duration="5.4" data-track-index="4">
+    <div class="bar"></div>
+    <div class="lbl">The full test</div>
+    <div class="big chrome">Opus 5 &times; Blender</div>
+  </div>
+
+  <!-- beat 3 — emphasis banner: "huge jump from Opus 4.8" (26.06s) -->
+  <div id="banner" class="card clip" data-start="25.7" data-duration="4.3" data-track-index="4">
+    <div class="bar"></div>
+    <div class="lbl">Versus Opus 4.8</div>
+    <div class="big chrome">A <em>huge jump</em> from 4.8</div>
+  </div>
+
+  <!-- beat 4 — stat: agentic terminal coding 43.3 vs 21.1 (40.54s) -->
+  <div id="statA" class="card stat clip" data-start="40.2" data-duration="6.4" data-track-index="4">
+    <div class="bar"></div>
+    <div class="lbl">Agentic terminal coding</div>
+    <div class="num"><span class="val" id="valA">0.0</span><span class="pct">%</span></div>
+    <div class="vs" id="vsA">Opus 4.8 &middot; <b>21.1%</b></div>
+  </div>
+
+  <!-- beat 5 — stat: agentic search 90.8 vs 84.3 (46.92s) -->
+  <div id="statB" class="card stat clip" data-start="46.7" data-duration="7.5" data-track-index="5">
+    <div class="bar"></div>
+    <div class="lbl">Agentic search</div>
+    <div class="num"><span class="val" id="valB">0.0</span><span class="pct">%</span></div>
+    <div class="vs" id="vsB">Opus 4.8 &middot; <b>84.3%</b></div>
+  </div>
+
+  <div id="endfade" class="clip" data-start="54.1" data-duration="0.5" data-track-index="11"></div>
+</div>
+
+<script>
+(() => {
+  const DUR = 54.6;
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+
+  /* Premium archetype (lottie-motion-design):
+     entrances power2/power3.out 0.35-0.6s, exits power2.in 0.25-0.35s,
+     0% overshoot, stagger 0.08-0.10s, counters 1.2s. */
+
+  /* ===== ambient: vignette breath (sine, 4s) ===== */
+  tl.fromTo("#vig", { opacity: 0.28 }, { opacity: 0.40, duration: 4, ease: "sine.inOut", repeat: 12, yoyo: true, immediateRender: true }, 0);
+  for (let t = 0, i = 0; t < DUR; t += 0.25, i++) {   // grain shimmer, stepped + deterministic
+    tl.set("#grain", { backgroundPosition:
+      (120 * Math.abs(Math.sin(i * 0.83 + 0.4))).toFixed(1) + "px " +
+      (120 * Math.abs(Math.cos(i * 1.31 + 0.2))).toFixed(1) + "px" }, t);
+  }
+
+  /* ===== beat 1 — cold open (0 - 4.4) ===== */
+  tl.from("#open h1",      { y: 44, autoAlpha: 0, duration: 0.60, ease: "power3.out", immediateRender: true }, 0.15);
+  tl.from("#open .kicker", { y: 24, autoAlpha: 0, duration: 0.50, ease: "power2.out" }, 0.25);
+  tl.from("#open .rule",   { scaleX: 0, duration: 0.55, ease: "power2.out" }, 0.35);
+  // exit: accelerate, 40% shorter than entrance
+  tl.to("#open .rule",   { scaleX: 0, autoAlpha: 0, duration: 0.28, ease: "power2.in" }, 3.55);
+  tl.to("#open .kicker", { y: -20, autoAlpha: 0, duration: 0.30, ease: "power2.in" }, 3.60);
+  tl.to("#open h1",      { y: -34, autoAlpha: 0, duration: 0.34, ease: "power2.in" }, 3.66);
+  tl.fromTo("#veil", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.55, ease: "power2.inOut", immediateRender: true }, 3.75);
+
+  /* ===== beat 2 — lower third (5.9 - 11.3) ===== */
+  tl.from("#lower3", { y: 60, autoAlpha: 0, duration: 0.50, ease: "power3.out" }, 5.95);
+  tl.from("#lower3 .bar", { scaleY: 0, duration: 0.45, ease: "power2.out" }, 6.15);   // secondary
+  tl.from("#lower3 .lbl", { autoAlpha: 0, x: -14, duration: 0.40, ease: "power2.out" }, 6.20);
+  tl.from("#lower3 .big", { autoAlpha: 0, x: -14, duration: 0.40, ease: "power2.out" }, 6.28);
+  tl.to("#lower3", { y: 40, autoAlpha: 0, duration: 0.32, ease: "power2.in" }, 10.9);
+
+  /* ===== beat 3 — emphasis banner (25.7 - 30.0) ===== */
+  tl.from("#banner", { y: 50, autoAlpha: 0, duration: 0.50, ease: "power3.out" }, 25.75);
+  tl.from("#banner .bar", { scaleY: 0, duration: 0.45, ease: "power2.out" }, 25.95);
+  tl.from("#banner .lbl", { autoAlpha: 0, x: -14, duration: 0.40, ease: "power2.out" }, 26.00);
+  tl.from("#banner .big", { autoAlpha: 0, x: -14, duration: 0.40, ease: "power2.out" }, 26.08);
+  tl.to("#banner", { y: -36, autoAlpha: 0, duration: 0.32, ease: "power2.in" }, 29.6);
+
+  /* ===== beat 4 — stat A (40.2 - 46.6) ===== */
+  tl.from("#statA", { y: 60, autoAlpha: 0, duration: 0.50, ease: "power3.out" }, 40.25);
+  tl.from("#statA .bar", { scaleY: 0, duration: 0.45, ease: "power2.out" }, 40.45);
+  tl.from("#statA .lbl", { autoAlpha: 0, x: -14, duration: 0.40, ease: "power2.out" }, 40.50);
+  const a = { v: 0 };
+  tl.to(a, { v: 43.3, duration: 1.2, ease: "power2.out",
+    onUpdate: () => { document.getElementById("valA").textContent = a.v.toFixed(1); } }, 42.6);
+  tl.from("#statA .vs", { autoAlpha: 0, y: 14, duration: 0.45, ease: "power2.out" }, 45.2);
+  tl.to("#statA", { y: 40, autoAlpha: 0, duration: 0.30, ease: "power2.in" }, 46.25);
+
+  /* ===== beat 5 — stat B (46.7 - 54.2) ===== */
+  tl.from("#statB", { y: 60, autoAlpha: 0, duration: 0.50, ease: "power3.out" }, 46.75);
+  tl.from("#statB .bar", { scaleY: 0, duration: 0.45, ease: "power2.out" }, 46.95);
+  tl.from("#statB .lbl", { autoAlpha: 0, x: -14, duration: 0.40, ease: "power2.out" }, 47.00);
+  const b = { v: 0 };
+  tl.to(b, { v: 90.8, duration: 1.2, ease: "power2.out",
+    onUpdate: () => { document.getElementById("valB").textContent = b.v.toFixed(1); } }, 48.3);
+  tl.from("#statB .vs", { autoAlpha: 0, y: 14, duration: 0.45, ease: "power2.out" }, 52.1);
+  tl.to("#statB", { y: 40, autoAlpha: 0, duration: 0.30, ease: "power2.in" }, 53.8);
+  tl.set("#statB", { autoAlpha: 0 }, 54.10);   // hard kill for non-linear seeks
+
+  /* ===== end fade ===== */
+  tl.fromTo("#endfade", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45, ease: "power2.in", immediateRender: true }, 54.12);
+
+  tl.to({}, { duration: DUR }, 0);   // Law #11 — timeline fills the slot
+  window.__timelines["lottie-intro-opus5-blender"] = tl;
+})();
+</script>
+</body>
+</html>

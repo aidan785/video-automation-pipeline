@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>AIS Live — Body (9x16)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c; --charcoal: #0a0e14; --cream: #f0eee9; --paper: #ffffff;
+        --blue: #37bdf8; --yellow: #f5d82a; --coral: #ff8a5c; --red-live: #ff3b30;
+        --paper-soft: rgba(209, 220, 232, 0.82); --paper-mute: rgba(209, 220, 232, 0.55);
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #000; isolation: isolate; }
+
+      /* Background talking-head — full frame, IN PLACE (no reframe/scale). */
+      #bg-wrap { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+      #bg-video { position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }
+
+      #root .clip { position: absolute; inset: 0; width: 1080px; height: 1920px; pointer-events: none; }
+
+      /* Persistent BOTTOM panel — onyx scrim rising from the bottom + grid texture,
+         darkens the lower half so the overlay cards read over the speaker's torso. */
+      #panel .grid {
+        position: absolute; left: -40px; right: -40px; bottom: -40px; height: 880px;
+        background-image: linear-gradient(rgba(55,189,248,0.11) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.11) 1px, transparent 1px);
+        background-size: 46px 46px;
+        -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 62%, transparent 100%); mask-image: linear-gradient(0deg, #000 0%, #000 62%, transparent 100%);
+      }
+      #panel .scrim {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 860px;
+        background: linear-gradient(0deg, rgba(7,18,28,0.97) 0%, rgba(7,18,28,0.93) 40%, rgba(7,18,28,0.62) 72%, rgba(7,18,28,0.0) 100%);
+      }
+
+      /* ---------- shared glass card ---------- */
+      .glass {
+        position: relative; background: linear-gradient(135deg, rgba(7,18,28,0.86), rgba(10,14,20,0.74));
+        border: 1px solid rgba(55,189,248,0.22); border-radius: 6px;
+        backdrop-filter: blur(14px) saturate(1.12); -webkit-backdrop-filter: blur(14px) saturate(1.12);
+        box-shadow: 0 28px 70px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+      }
+      .glass::before {
+        content: ""; position: absolute; inset: 0; border-radius: 6px;
+        background-image: linear-gradient(rgba(55,189,248,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.05) 1px, transparent 1px);
+        background-size: 24px 24px; pointer-events: none;
+      }
+      .accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--blue); border-radius: 6px 0 0 6px; box-shadow: 0 0 18px rgba(55,189,248,0.6); }
+      .eyebrow {
+        font-family: var(--font-mono); font-weight: 700; font-size: 26px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--blue);
+        display: inline-flex; align-items: center; gap: 13px; white-space: nowrap;
+      }
+      .eyebrow::before { content: ""; width: 11px; height: 11px; border-radius: 2px; background: currentColor; box-shadow: 0 0 10px currentColor; }
+
+      /* ---------- AIS LIVE mark ---------- */
+      .aismark {
+        font-family: var(--font-display); font-style: italic; font-weight: 900; letter-spacing: -0.03em; line-height: 0.9;
+        display: inline-flex; align-items: baseline; position: relative; filter: drop-shadow(0 3px 18px rgba(0,0,0,0.55));
+      }
+      .aismark .ais {
+        padding: 0.04em 0.05em 0.10em 0.16em;
+        background: linear-gradient(180deg, #ffffff 0%, #e9eff4 40%, #b7c6d2 100%);
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+      }
+      .aismark .gap { display: inline-block; width: 0; }
+      .aismark .live {
+        position: relative; padding: 0.04em 0.40em 0.10em 0.05em;
+        background: linear-gradient(180deg, #b3e4ff 0%, #37bdf8 52%, #1b93d6 100%);
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+        filter: drop-shadow(0 0 28px rgba(55,189,248,0.5));
+      }
+      .aismark .dot { position: absolute; border-radius: 50%; background: var(--red-live); box-shadow: 0 0 0 0 rgba(255,59,48,0.7), 0 0 0.3em var(--red-live), 0 0 0.12em var(--red-live); }
+      /* per-instance PIXEL placement — verify/adjust via screenshot before render */
+      #bug .dot { left: 195px; top: 13px; width: 12px; height: 12px; }
+      #cta .dot { left: 408px; top: 27px; width: 25px; height: 25px; }
+
+      /* ---------- 1 · logo bug (centered, top of the lower band) ---------- */
+      #bug .bug-inner { position: absolute; left: 50%; transform: translateX(-50%); bottom: 556px; }
+      #bug .aismark { font-size: 80px; filter: drop-shadow(0 3px 16px rgba(0,0,0,0.5)) drop-shadow(0 0 30px rgba(55,189,248,0.32)); }
+
+      /* ---------- 2 · value-stack card (bottom-anchored) ---------- */
+      #vcard .vinner { position: absolute; left: 56px; bottom: 104px; width: 968px; padding: 34px 40px 38px; }
+      #vcard .kicker { margin-bottom: 20px; }
+      #vcard .vrule { height: 2px; width: 100%; background: linear-gradient(90deg, var(--blue), rgba(55,189,248,0)); margin: 0 0 24px; transform-origin: left center; }
+      #vcard .row { display: flex; align-items: center; gap: 24px; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+      #vcard .row:last-child { border-bottom: 0; }
+      #vcard .idx { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 62px; line-height: 0.9; letter-spacing: -0.04em; color: var(--blue); width: 84px; flex: none; text-shadow: 0 0 40px rgba(55,189,248,0.4); }
+      #vcard .label { font-family: var(--font-body); font-weight: 700; font-size: 38px; line-height: 1.1; color: #fff; letter-spacing: -0.01em; }
+
+      /* ---------- 3 · credibility — two stacked cards (bottom-anchored) ---------- */
+      #cred .cinner { position: absolute; left: 56px; bottom: 104px; width: 968px; display: flex; flex-direction: column; gap: 24px; }
+      #cred .ccard { position: relative; padding: 32px 40px; border-radius: 6px; }
+      #cred .ck { font-family: var(--font-mono); font-weight: 700; font-size: 23px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--blue); display: inline-flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+      #cred .ck::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: currentColor; box-shadow: 0 0 10px currentColor; }
+      #cred .cbig { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 72px; line-height: 0.92; letter-spacing: -0.035em; color: #fff; }
+      #cred .cbig em { font-style: italic; color: var(--blue); }
+
+      /* ---------- 4 · payoff (bottom-anchored, boxed) ---------- */
+      #payoff .pinner { position: absolute; left: 56px; bottom: 104px; width: 860px; padding: 36px 42px 42px; }
+      #payoff .pk { font-family: var(--font-mono); font-weight: 700; font-size: 23px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--blue); display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+      #payoff .pk::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: currentColor; box-shadow: 0 0 10px currentColor; }
+      #payoff .pline { font-family: var(--font-body); font-weight: 600; font-size: 46px; color: #fff; line-height: 1.05; margin-bottom: 24px; letter-spacing: -0.01em; }
+      #payoff .paid { display: inline-block; background: var(--yellow); color: var(--onyx); font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 104px; line-height: 0.9; letter-spacing: -0.04em; padding: 14px 32px 18px; border-radius: 5px; box-shadow: 0 0 50px rgba(245,216,42,0.4), 0 14px 40px rgba(0,0,0,0.5); }
+
+      /* ---------- 5 · CTA full-screen card ---------- */
+      #cta {
+        inset: 0; width: 1080px; height: 1920px;
+        background: radial-gradient(ellipse 900px 900px at 50% 32%, rgba(55,189,248,0.13), transparent 60%), var(--onyx);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+      }
+      #cta .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(55,189,248,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.07) 1px, transparent 1px); background-size: 24px 24px; }
+      #cta .glow { position: absolute; top: 360px; left: 50%; transform: translateX(-50%); width: 620px; height: 620px; border-radius: 50%; background: var(--blue); filter: blur(150px); opacity: 0.22; }
+      #cta .vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 94%); }
+      #cta .inner { position: relative; text-align: center; padding: 0 60px; }
+      #cta .aismark { font-size: 168px; }
+      #cta .tag { font-family: var(--font-body); font-style: italic; font-weight: 400; font-size: 52px; color: #fff; margin-top: 40px; letter-spacing: 0.005em; }
+      #cta .tag em { font-style: italic; font-weight: 500; color: var(--blue); }
+      #cta .pill {
+        display: inline-flex; align-items: center; gap: 16px; margin-top: 56px; padding: 26px 44px; border-radius: 999px;
+        background: var(--blue); color: var(--onyx); font-family: var(--font-mono); font-weight: 700; font-size: 30px; letter-spacing: 0.14em; text-transform: uppercase;
+        box-shadow: 0 0 50px rgba(55,189,248,0.45);
+      }
+      #cta .pill .arrow { display: inline-flex; align-items: center; justify-content: center; width: 0.72em; height: 0.72em; }
+      #cta .pill .arrow svg { display: block; width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-d6cq" id="root" data-composition-id="ais-live-body-9x16" data-start="0" data-duration="25.73" data-width="1080" data-height="1920">
+      <!-- track 0: background talking-head video (muted; audio is the sibling) -->
+      <div data-hf-id="hf-2tgd" id="bg-wrap">
+        <video data-hf-id="hf-g3wn" id="bg-video" src="assets/body-source.mp4" data-start="0" data-duration="25.73" data-track-index="0" data-has-audio="false" muted></video>
+      </div>
+      <!-- track 1: clean voiceover for the mixer -->
+      <audio data-hf-id="hf-ofde" id="bg-audio" src="assets/body-audio.m4a" data-start="0" data-duration="25.73" data-track-index="1"></audio>
+
+      <!-- persistent bottom panel -->
+      <div data-hf-id="hf-2evr" id="panel" class="clip" data-start="0" data-duration="20.85" data-track-index="2">
+        <div data-hf-id="hf-261e" class="scrim"></div>
+        <div data-hf-id="hf-kxq8" class="grid"></div>
+      </div>
+
+      <!-- 1 · logo bug -->
+      <div data-hf-id="hf-hke6" id="bug" class="clip" data-start="1.1" data-duration="19.5" data-track-index="3">
+        <div data-hf-id="hf-o3dx" class="bug-inner">
+          <span data-hf-id="hf-n11x" class="aismark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-9gry" class="dot"></span></span></span>
+        </div>
+      </div>
+
+      <!-- 2 · value-stack card -->
+      <div data-hf-id="hf-1bxs" id="vcard" class="clip" data-start="3.0" data-duration="7.6" data-track-index="4">
+        <div data-hf-id="hf-bpd2" class="vinner glass">
+          <div data-hf-id="hf-ty56" class="accent-bar"></div>
+          <div data-hf-id="hf-lwmi" class="kicker eyebrow">What you'll learn</div>
+          <div data-hf-id="hf-7fxo" class="vrule"></div>
+          <div data-hf-id="hf-m3bn" id="row1" class="row"><span data-hf-id="hf-3mph" class="idx">01</span><span data-hf-id="hf-8t0p" class="label">Start an agency &amp; sign your first clients</span></div>
+          <div data-hf-id="hf-dffs" id="row2" class="row"><span data-hf-id="hf-4tmk" class="idx">02</span><span data-hf-id="hf-jfra" class="label">What to charge per project</span></div>
+          <div data-hf-id="hf-e73l" id="row3" class="row"><span data-hf-id="hf-4fbj" class="idx">03</span><span data-hf-id="hf-oz7c" class="label">Which industries are buying AI</span></div>
+        </div>
+      </div>
+
+      <!-- 3 · credibility -->
+      <div data-hf-id="hf-pgq0" id="cred" class="clip" data-start="11.2" data-duration="4.3" data-track-index="5">
+        <div data-hf-id="hf-q1qx" class="cinner">
+          <div data-hf-id="hf-3828" id="cred1" class="ccard glass">
+            <div data-hf-id="hf-07y6" class="accent-bar"></div>
+            <div data-hf-id="hf-gbi9" class="ck">Who you learn from</div>
+            <div data-hf-id="hf-2oeb" class="cbig">Real <em data-hf-id="hf-fef8">practitioners</em></div>
+          </div>
+          <div data-hf-id="hf-e3jv" id="cred2" class="ccard glass">
+            <div data-hf-id="hf-0m97" class="accent-bar"></div>
+            <div data-hf-id="hf-a7vb" class="ck">What they show</div>
+            <div data-hf-id="hf-3ypv" class="cbig">Real <em data-hf-id="hf-k933">numbers</em></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 · payoff -->
+      <div data-hf-id="hf-f8io" id="payoff" class="clip" data-start="17.6" data-duration="2.9" data-track-index="6">
+        <div data-hf-id="hf-4pt0" class="pinner glass">
+          <div data-hf-id="hf-10k8" class="accent-bar"></div>
+          <div data-hf-id="hf-pwes" class="pk">When it's over</div>
+          <div data-hf-id="hf-3630" class="pline">Know exactly how to</div>
+          <div data-hf-id="hf-yeow"><span data-hf-id="hf-zvpt" class="paid">GET PAID</span></div>
+        </div>
+      </div>
+
+      <!-- 5 · CTA full-screen card -->
+      <div data-hf-id="hf-aq9k" id="cta" class="clip" data-start="20.85" data-duration="4.88" data-track-index="7">
+        <div data-hf-id="hf-6qwo" class="grid"></div>
+        <div data-hf-id="hf-2s7n" class="glow"></div>
+        <div data-hf-id="hf-lm34" class="inner">
+          <span data-hf-id="hf-ku2x" class="aismark"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-zcc2" class="dot"></span></span></span>
+          <div data-hf-id="hf-qeew" class="tag">Real Projects. <em data-hf-id="hf-n2gb">Real Revenue.</em></div>
+          <div data-hf-id="hf-4prz" class="pill">Click to see what's covered<span data-hf-id="hf-uxvl" class="arrow" aria-hidden="true"><svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-s5i1" d="M8 4 L16 12 L8 20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" /></svg></span></div>
+        </div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DURATION = 25.73;
+      const tl = gsap.timeline({ paused: true });
+
+      /* 1 · LOGO BUG — enters on "AIS Live" (~1.1) */
+      tl.fromTo("#bug", { autoAlpha: 0, y: 18, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" }, 1.1);
+      tl.to("#bug .dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 22, ease: "sine.inOut", transformOrigin: "50% 50%" }, 1.3);
+      tl.to("#bug", { autoAlpha: 0, y: 14, filter: "blur(6px)", duration: 0.4, ease: "power2.in" }, 20.5);
+
+      /* 2 · VALUE STACK — rows on "start an AI agency" (3.76), "what to charge" (6.28), "which industries" (8.14) */
+      tl.fromTo("#vcard", { autoAlpha: 0, y: 44, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 3.0);
+      tl.from("#vcard .kicker", { autoAlpha: 0, y: -10, duration: 0.4, ease: "power2.out" }, 3.2);
+      tl.fromTo("#vcard .vrule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.out" }, 3.35);
+      tl.from("#row1", { autoAlpha: 0, x: -30, duration: 0.45, ease: "power2.out" }, 3.6);
+      tl.from("#row2", { autoAlpha: 0, x: -30, duration: 0.45, ease: "power2.out" }, 6.1);
+      tl.from("#row3", { autoAlpha: 0, x: -30, duration: 0.45, ease: "power2.out" }, 7.95);
+      tl.to("#vcard", { autoAlpha: 0, y: 44, filter: "blur(8px)", duration: 0.45, ease: "power2.in" }, 10.25);
+
+      /* 3 · CREDIBILITY — "practitioners" (12.06), "real numbers" (14.18) */
+      tl.fromTo("#cred1", { autoAlpha: 0, y: 32, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 11.4);
+      tl.fromTo("#cred2", { autoAlpha: 0, y: 32, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 13.9);
+      tl.to("#cred", { autoAlpha: 0, y: 32, filter: "blur(6px)", duration: 0.4, ease: "power2.in" }, 15.0);
+
+      /* 4 · PAYOFF — "know exactly how to get paid"; box pops on "paid" (18.58) */
+      tl.fromTo("#payoff", { autoAlpha: 0, y: 44, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 17.6);
+      tl.from("#payoff .pk", { autoAlpha: 0, y: -8, duration: 0.35, ease: "power2.out" }, 17.8);
+      tl.from("#payoff .pline", { autoAlpha: 0, y: 12, duration: 0.4, ease: "power2.out" }, 17.95);
+      tl.fromTo("#payoff .paid", { autoAlpha: 0, scale: 0.7, y: 10 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.7)", transformOrigin: "left center" }, 18.5);
+      tl.to("#payoff .paid", { boxShadow: "0 0 84px rgba(245,216,42,0.7), 0 14px 40px rgba(0,0,0,0.5)", duration: 0.7, yoyo: true, repeat: 2, ease: "sine.inOut" }, 19.1);
+      tl.to("#payoff", { autoAlpha: 0, y: 44, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 20.4);
+
+      /* 5 · CTA — full-screen brand close (20.85 -> end) */
+      tl.fromTo("#cta", { autoAlpha: 0, y: 140, filter: "blur(24px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 20.85);
+      tl.from("#cta .aismark", { autoAlpha: 0, scale: 0.92, duration: 0.5, ease: "back.out(1.5)" }, 21.2);
+      tl.to("#cta .dot", { scale: 1.1, duration: 0.8, yoyo: true, repeat: 4, ease: "sine.inOut", transformOrigin: "50% 50%" }, 21.6);
+      tl.from("#cta .tag", { autoAlpha: 0, y: 20, duration: 0.45, ease: "power2.out" }, 21.7);
+      tl.from("#cta .pill", { autoAlpha: 0, y: 18, duration: 0.4, ease: "power2.out" }, 22.4);
+      tl.to("#cta .grid", { backgroundPosition: "24px 24px", duration: 4.7, ease: "none" }, 20.85);
+      tl.to("#cta .glow", { opacity: 0.3, duration: 2.3, yoyo: true, repeat: 1, ease: "sine.inOut" }, 20.85);
+      tl.to("#cta .pill", { scale: 1.06, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.inOut" }, 24.0);
+
+      /* hard-kills — keep non-linear scrubbing in Studio deterministic */
+      tl.set("#vcard", { autoAlpha: 0 }, 10.75);
+      tl.set("#cred", { autoAlpha: 0 }, 15.45);
+      tl.set("#payoff", { autoAlpha: 0 }, 20.85);
+      tl.set("#bug", { autoAlpha: 0 }, 20.95);
+
+      tl.set({}, {}, DURATION);
+      window.__timelines["ais-live-body-9x16"] = tl;
+    </script>
+  </body>
+</html>

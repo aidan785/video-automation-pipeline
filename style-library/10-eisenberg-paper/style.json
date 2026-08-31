@@ -1,0 +1,712 @@
+{
+  "$schema": "../registry.schema.json",
+  "id": "eisenberg-paper",
+  "name": "Eisenberg Paper",
+  "number": "10",
+  "status": "draft",
+  "inspiration": "Greg Isenberg explainer reels (five reference reels frame-analyzed 8/18/26, frames in references/). Tactile paper editorial: software UI printed onto matte cardstock on a warm paper desk, shot top-down with a macro lens. Warm greige canvas with faint graph grid fading at edges, film grain, vignette + gaussian edge defocus. Charcoal terminal windows and pills as physical cards with dual shadows and a 1px top bevel; chunky serif kinetic type stacked with ragged offsets, roman+italic mixed, coral/sage emphasis words; white paper price tags; dashed hand-drawn connectors.",
+  "summary": "VERTICAL 1080x1920 (Reels/TikTok) \u2014 deviates from the library 1920x1080 default on purpose. The 'looks like a Greg Isenberg video' style. Use for AI-tool explainers, plugin/product walkthroughs, and founder-brain content where a warm, tactile, editorial look should make software feel physical.",
+  "palette": {
+    "bg": "#E2DDD6",
+    "fg": "#1B1A19",
+    "accent": "#DF6B4F",
+    "sage": "#93BFA7",
+    "mint": "#9FD6B4",
+    "tag": "#F6F4F0",
+    "paperEdge": "#C9C3BC",
+    "lime": "#A8E05F",
+    "notes": "Every neutral is warm; no pure black or white. Coral = hot emphasis (type + mascot), sage = calm emphasis, mint = highlighted mono inside dark cards only, lime = icon-sticker accent only (never type). Max one coral + one sage word per screen. Mirrored in tokens.css."
+  },
+  "fonts": {
+    "display": "DM Serif Display",
+    "body": "IBM Plex Mono",
+    "mono": "IBM Plex Mono",
+    "notes": "DM Serif Display (roman+italic MIXED in one phrase, stacked words with ragged offsets) is the only headline voice; Instrument Serif is the approved lighter alternate. IBM Plex Mono is everything printed on a card - uppercase + 0.08em tracking in pills/tags with a '> ' prompt prefix. No sans-serif anywhere."
+  },
+  "motion": "Physical and never still. A camera wrapper (.ep-cam) pushes the whole scene in ~5% per card with handheld sine drift \u2014 the realism layer. Every element carries a baked 0.3-1deg static rotation. Every element drifts constantly (5px sine float, 2.8-4.2s periods, mulberry32-seeded phases per element). Text builds word by word (stagger ~0.12s, blur(4px)/+10px to sharp). Cards slide up from below frame with motion blur (14px to 0) settling back.out(1.4) in ~0.55s; stickers scale-pop 0.6 to 1 with overshoot. Outgoing elements GHOST - blur to 5px + fade to 20% opacity - never a hard vanish. Dashed connectors draw on via strokeDashoffset. Beats every 1.5-2.5s; cards end on a breathing hold (drift continues).",
+  "transitions": "Rack-focus pulls (blur + ghost the outgoing layer while the new one builds) and slide-up-with-motion-blur entrances. No hard cuts, no dissolve-to-black, no whip pans.",
+  "texture": "Five mandatory tier1 layers (shared .ep-* classes in tokens.css): paper gradient + 88px graph grid masked at edges, radial-masked backdrop-filter edge defocus (.ep-lens), warm vignette (.ep-vig), seeded SVG-turbulence grain at 5% multiply (.ep-grain). Dual warm shadows (contact + ambient + far spill) on every physical element, 1px top bevel highlight on dark cards. tier2 overlays are transparent: element shadows only.",
+  "cards": [
+    {
+      "id": "eisenberg-paper.t1.thesis.stack",
+      "tier": "tier1",
+      "purpose": "thesis",
+      "treatment": "stack",
+      "file": "cards/tier1/t1-thesis-stack.html",
+      "slots": [
+        {
+          "name": "a1",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "a2",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "a3",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "a4",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "b1",
+          "type": "text",
+          "maxChars": 12
+        },
+        {
+          "name": "b2",
+          "type": "text",
+          "maxChars": 12
+        },
+        {
+          "name": "b3",
+          "type": "text",
+          "maxChars": 12
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.thesis.stack.mp4",
+        "poster": "preview/eisenberg-paper.t1.thesis.stack.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.overview.terminal-hero",
+      "tier": "tier1",
+      "purpose": "overview",
+      "treatment": "terminal-hero",
+      "file": "cards/tier1/t1-terminal-hero.html",
+      "slots": [
+        {
+          "name": "l1",
+          "type": "text",
+          "maxChars": 60
+        },
+        {
+          "name": "l2",
+          "type": "text",
+          "maxChars": 90
+        },
+        {
+          "name": "prompt",
+          "type": "text",
+          "maxChars": 40
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "maxChars": 30
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.overview.terminal-hero.mp4",
+        "poster": "preview/eisenberg-paper.t1.overview.terminal-hero.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.stat.tag",
+      "tier": "tier1",
+      "purpose": "stat",
+      "treatment": "tag",
+      "file": "cards/tier1/t1-stat-tag.html",
+      "slots": [
+        {
+          "name": "k1",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "k2",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "k3",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "stat",
+          "type": "number",
+          "maxChars": 10
+        },
+        {
+          "name": "sub",
+          "type": "text",
+          "maxChars": 24
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.stat.tag.mp4",
+        "poster": "preview/eisenberg-paper.t1.stat.tag.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.overview.pills",
+      "tier": "tier1",
+      "purpose": "overview",
+      "treatment": "pills",
+      "file": "cards/tier1/t1-overview-pills.html",
+      "slots": [
+        {
+          "name": "l1",
+          "type": "text",
+          "maxChars": 60
+        },
+        {
+          "name": "l2",
+          "type": "text",
+          "maxChars": 90
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "pill1",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "pill2",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "pill3",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "pill4",
+          "type": "text",
+          "maxChars": 18
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.overview.pills.mp4",
+        "poster": "preview/eisenberg-paper.t1.overview.pills.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.section.sticker",
+      "tier": "tier1",
+      "purpose": "section",
+      "treatment": "sticker",
+      "file": "cards/tier1/t1-section-sticker.html",
+      "slots": [
+        {
+          "name": "glyph",
+          "type": "text",
+          "maxChars": 3
+        },
+        {
+          "name": "label",
+          "type": "text",
+          "maxChars": 16
+        }
+      ],
+      "duration": {
+        "min": 4,
+        "max": 7
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.section.sticker.mp4",
+        "poster": "preview/eisenberg-paper.t1.section.sticker.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.quote.ledger",
+      "tier": "tier1",
+      "purpose": "quote",
+      "treatment": "ledger",
+      "file": "cards/tier1/t1-quote-ledger.html",
+      "slots": [
+        {
+          "name": "q1",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "q2",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "q3",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "attrib",
+          "type": "text",
+          "maxChars": 40
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.quote.ledger.mp4",
+        "poster": "preview/eisenberg-paper.t1.quote.ledger.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t2.lower-third.pills",
+      "tier": "tier2",
+      "purpose": "lower-third",
+      "treatment": "pills",
+      "file": "cards/tier2/t2-lower-pills.html",
+      "slots": [
+        {
+          "name": "pill1",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "pill2",
+          "type": "text",
+          "maxChars": 18
+        }
+      ],
+      "duration": {
+        "min": 4,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t2.lower-third.pills.mp4",
+        "poster": "preview/eisenberg-paper.t2.lower-third.pills.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t2.label.tag",
+      "tier": "tier2",
+      "purpose": "label",
+      "treatment": "tag",
+      "file": "cards/tier2/t2-label-tag.html",
+      "slots": [
+        {
+          "name": "label",
+          "type": "text",
+          "maxChars": 22
+        }
+      ],
+      "duration": {
+        "min": 3,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t2.label.tag.mp4",
+        "poster": "preview/eisenberg-paper.t2.label.tag.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t2.list.steps",
+      "tier": "tier2",
+      "purpose": "list",
+      "treatment": "steps",
+      "file": "cards/tier2/t2-list-steps.html",
+      "slots": [
+        {
+          "name": "item1",
+          "type": "text",
+          "maxChars": 28
+        },
+        {
+          "name": "item2",
+          "type": "text",
+          "maxChars": 28
+        },
+        {
+          "name": "item3",
+          "type": "text",
+          "maxChars": 28
+        },
+        {
+          "name": "item4",
+          "type": "text",
+          "maxChars": 28
+        }
+      ],
+      "duration": {
+        "min": 4,
+        "max": 7
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t2.list.steps.mp4",
+        "poster": "preview/eisenberg-paper.t2.list.steps.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.custom.icon-connect",
+      "tier": "custom",
+      "purpose": "icon-connect",
+      "treatment": "diagram",
+      "file": "cards/custom/custom-icon-connect.html",
+      "slots": [
+        {
+          "name": "glyph",
+          "type": "text",
+          "maxChars": 3
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "l1",
+          "type": "text",
+          "maxChars": 120
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "maxChars": 30
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.custom.icon-connect.mp4",
+        "poster": "preview/eisenberg-paper.custom.icon-connect.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.thesis.icons",
+      "tier": "tier1",
+      "purpose": "thesis",
+      "treatment": "icons",
+      "file": "cards/tier1/t1-thesis-icons.html",
+      "slots": [
+        {
+          "name": "h1",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "h2",
+          "type": "text",
+          "maxChars": 12
+        },
+        {
+          "name": "h3",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "g1",
+          "type": "text",
+          "maxChars": 3
+        },
+        {
+          "name": "g2",
+          "type": "text",
+          "maxChars": 3
+        },
+        {
+          "name": "g3",
+          "type": "text",
+          "maxChars": 3
+        },
+        {
+          "name": "tag",
+          "type": "text",
+          "maxChars": 16
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.thesis.icons.mp4",
+        "poster": "preview/eisenberg-paper.t1.thesis.icons.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.list.terminal",
+      "tier": "tier1",
+      "purpose": "list",
+      "treatment": "terminal",
+      "file": "cards/tier1/t1-list-terminal.html",
+      "slots": [
+        {
+          "name": "s1",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "s2",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "s3",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "maxChars": 20
+        },
+        {
+          "name": "i1a",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "i1b",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "i2a",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "i2b",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "i3a",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "i3b",
+          "type": "text",
+          "maxChars": 30
+        }
+      ],
+      "duration": {
+        "min": 6,
+        "max": 9
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.list.terminal.mp4",
+        "poster": "preview/eisenberg-paper.t1.list.terminal.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.overview.prompt-bar",
+      "tier": "tier1",
+      "purpose": "overview",
+      "treatment": "prompt-bar",
+      "file": "cards/tier1/t1-prompt-bar.html",
+      "slots": [
+        {
+          "name": "prompt",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "model",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "file",
+          "type": "text",
+          "maxChars": 14
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.overview.prompt-bar.mp4",
+        "poster": "preview/eisenberg-paper.t1.overview.prompt-bar.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.overview.doc-card",
+      "tier": "tier1",
+      "purpose": "overview",
+      "treatment": "doc-card",
+      "file": "cards/tier1/t1-doc-card.html",
+      "slots": [
+        {
+          "name": "chip1",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "chip2",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "chip3",
+          "type": "text",
+          "maxChars": 16
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.overview.doc-card.mp4",
+        "poster": "preview/eisenberg-paper.t1.overview.doc-card.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t1.stat.progress",
+      "tier": "tier1",
+      "purpose": "stat",
+      "treatment": "progress",
+      "file": "cards/tier1/t1-stat-progress.html",
+      "slots": [
+        {
+          "name": "stat",
+          "type": "number",
+          "maxChars": 10
+        },
+        {
+          "name": "sub",
+          "type": "text",
+          "maxChars": 20
+        },
+        {
+          "name": "l1",
+          "type": "text",
+          "maxChars": 90
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "maxChars": 22
+        }
+      ],
+      "duration": {
+        "min": 5,
+        "max": 8
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t1.stat.progress.mp4",
+        "poster": "preview/eisenberg-paper.t1.stat.progress.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t2.caption.serif",
+      "tier": "tier2",
+      "purpose": "caption",
+      "treatment": "serif",
+      "file": "cards/tier2/t2-caption-serif.html",
+      "slots": [
+        {
+          "name": "w1",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "w2",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "w3",
+          "type": "text",
+          "maxChars": 22
+        }
+      ],
+      "duration": {
+        "min": 3,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t2.caption.serif.mp4",
+        "poster": "preview/eisenberg-paper.t2.caption.serif.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t2.label.keycap",
+      "tier": "tier2",
+      "purpose": "label",
+      "treatment": "keycap",
+      "file": "cards/tier2/t2-keycap.html",
+      "slots": [
+        {
+          "name": "key",
+          "type": "text",
+          "maxChars": 2
+        },
+        {
+          "name": "label",
+          "type": "text",
+          "maxChars": 16
+        }
+      ],
+      "duration": {
+        "min": 3,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t2.label.keycap.mp4",
+        "poster": "preview/eisenberg-paper.t2.label.keycap.png"
+      }
+    },
+    {
+      "id": "eisenberg-paper.t2.label.status-tags",
+      "tier": "tier2",
+      "purpose": "label",
+      "treatment": "status-tags",
+      "file": "cards/tier2/t2-status-tags.html",
+      "slots": [
+        {
+          "name": "tag1",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "tag2",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "tag3",
+          "type": "text",
+          "maxChars": 22
+        }
+      ],
+      "duration": {
+        "min": 3,
+        "max": 6
+      },
+      "preview": {
+        "mp4": "preview/eisenberg-paper.t2.label.status-tags.mp4",
+        "poster": "preview/eisenberg-paper.t2.label.status-tags.png"
+      }
+    }
+  ]
+}

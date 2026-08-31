@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="assets/tokens.css">
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#000;color:var(--text);font-family:var(--font-body);}
+      .stage{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);isolation:isolate;}
+
+      /* ---------- ambient background (shared command-deck) ---------- */
+      .bg{position:absolute;inset:0;overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-image:var(--grid-lines);will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:var(--beam);filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;background:var(--vignette);}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;background-image:var(--tex-grain);}
+
+      /* ---------- slides ---------- */
+      .slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:30px;padding:60px 100px;text-align:center;opacity:0;will-change:transform,opacity,filter;}
+
+      /* title + outro */
+      .eyebrow{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:var(--size-label);letter-spacing:var(--track-eyebrow);
+        text-transform:uppercase;color:var(--blue);text-shadow:var(--glow-eyebrow);}
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:132px;
+        line-height:1.03;letter-spacing:var(--track-tight);}
+      .ln .wd{display:inline-block;padding:.08em .13em .24em;will-change:transform,opacity;
+        background:var(--grad-chrome);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-chrome);}
+      .ln .wd.ac{background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-blue);}
+      .tsub{font-family:var(--font-body);font-weight:var(--wt-light);font-style:italic;font-size:38px;color:var(--text-dim);}
+
+      /* member photo card */
+      .ph{border-radius:26px;overflow:hidden;position:relative;flex:none;
+        border:2px solid rgba(var(--blue-rgb),.55);
+        box-shadow:0 40px 90px rgba(0,0,0,.6), 0 0 80px rgba(var(--blue-rgb),.22);}
+      .ph.p{width:560px;height:740px;}
+      .ph.l{width:1120px;height:740px;}
+      .ph img{width:100%;height:100%;object-fit:cover;display:block;}
+      .cap{display:flex;flex-direction:column;gap:10px;}
+      .cap-sub{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:17px;letter-spacing:.26em;
+        text-transform:uppercase;color:var(--blue);text-shadow:var(--glow-eyebrow);}
+      .cap-nm{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:56px;
+        letter-spacing:var(--track-tight);color:var(--white);line-height:1;}
+
+      /* persistent corner mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);letter-spacing:var(--track-tight);
+        line-height:.9;font-size:64px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark .ais{color:var(--white);}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(var(--blue-rgb),.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-5hae" id="ais-live-member-shirts" class="stage clip" data-composition-id="ais-live-member-shirts" data-start="0" data-duration="22.800000000000004" data-track-index="0" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-m7dd" class="bg">
+        <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+        <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+        <div data-hf-id="hf-hqud" class="beam"></div>
+        <div data-hf-id="hf-uo31" class="glow blue"></div>
+        <div data-hf-id="hf-jtmg" class="glow coral"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-h60x" class="grain"></div>
+      </div>
+      <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+
+      <div data-hf-id="hf-2vm3" class="slide title" id="sl-title">
+        <div data-hf-id="hf-ro5v" class="eyebrow">AIS LIVE COMMUNITY</div>
+        <div data-hf-id="hf-gmyq" class="ln"><span data-hf-id="hf-8sgj" class="wd">REPPING</span><span data-hf-id="hf-6btj" class="wd">THE</span><span data-hf-id="hf-7jpv" class="wd ac">AIS</span><span data-hf-id="hf-a00n" class="wd ac">GEAR</span></div>
+        <div data-hf-id="hf-s08j" class="tsub">Our members, wearing it proud</div>
+      </div>
+
+        <div data-hf-id="hf-kesu" class="slide member" id="sl-0" data-orient="p">
+          <div data-hf-id="hf-4roo" class="ph p"><img data-hf-id="hf-hpvh" src="assets/photos-web/michael-wacht.jpg" alt="Michael Wacht"></div>
+          <div data-hf-id="hf-2mgg" class="cap">
+            <div data-hf-id="hf-ws91" class="cap-sub">AIS COMMUNITY MEMBER</div>
+            <div data-hf-id="hf-zwn2" class="cap-nm">Michael Wacht</div>
+          </div>
+        </div>
+        <div data-hf-id="hf-s077" class="slide member" id="sl-1" data-orient="l">
+          <div data-hf-id="hf-jlac" class="ph l"><img data-hf-id="hf-58cv" src="assets/photos-web/kacper-rutkiewicz.jpg" alt="Kacper Rutkiewicz"></div>
+          <div data-hf-id="hf-xclk" class="cap">
+            <div data-hf-id="hf-pumx" class="cap-sub">AIS COMMUNITY MEMBER</div>
+            <div data-hf-id="hf-sfqp" class="cap-nm">Kacper Rutkiewicz</div>
+          </div>
+        </div>
+        <div data-hf-id="hf-fp10" class="slide member" id="sl-2" data-orient="p">
+          <div data-hf-id="hf-dgdc" class="ph p"><img data-hf-id="hf-vh1x" src="assets/photos-web/diane-mccracken.jpg" alt="Diane McCracken"></div>
+          <div data-hf-id="hf-w5oh" class="cap">
+            <div data-hf-id="hf-r1k0" class="cap-sub">AIS COMMUNITY MEMBER</div>
+            <div data-hf-id="hf-j69w" class="cap-nm">Diane McCracken</div>
+          </div>
+        </div>
+        <div data-hf-id="hf-k3z5" class="slide member" id="sl-3" data-orient="l">
+          <div data-hf-id="hf-5xh8" class="ph l"><img data-hf-id="hf-589v" src="assets/photos-web/jody-murfit.jpg" alt="Jody Murfit"></div>
+          <div data-hf-id="hf-wjzi" class="cap">
+            <div data-hf-id="hf-qn8z" class="cap-sub">AIS COMMUNITY MEMBER</div>
+            <div data-hf-id="hf-evu1" class="cap-nm">Jody Murfit</div>
+          </div>
+        </div>
+        <div data-hf-id="hf-z8ei" class="slide member" id="sl-4" data-orient="p">
+          <div data-hf-id="hf-c9g9" class="ph p"><img data-hf-id="hf-e93f" src="assets/photos-web/josh-holladay.jpg" alt="Josh Holladay"></div>
+          <div data-hf-id="hf-vd2f" class="cap">
+            <div data-hf-id="hf-onpu" class="cap-sub">AIS COMMUNITY MEMBER</div>
+            <div data-hf-id="hf-t8vk" class="cap-nm">Josh Holladay</div>
+          </div>
+        </div>
+        <div data-hf-id="hf-36ij" class="slide member" id="sl-5" data-orient="p">
+          <div data-hf-id="hf-cnra" class="ph p"><img data-hf-id="hf-q35p" src="assets/photos-web/mike-ai-consultant.jpg" alt="Mike"></div>
+          <div data-hf-id="hf-vrdg" class="cap">
+            <div data-hf-id="hf-7nir" class="cap-sub">AI CONSULTANT · AIS COMMUNITY</div>
+            <div data-hf-id="hf-dt5g" class="cap-nm">Mike</div>
+          </div>
+        </div>
+      <div data-hf-id="hf-7ryb" class="slide outro" id="sl-outro">
+        <div data-hf-id="hf-y7n0" class="eyebrow">THANK YOU FOR REPPING</div>
+        <div data-hf-id="hf-ru7a" class="ln"><span data-hf-id="hf-e44o" class="wd">THIS IS</span><span data-hf-id="hf-0rka" class="wd ac">OUR</span><span data-hf-id="hf-igs5" class="wd ac">CREW</span></div>
+        <div data-hf-id="hf-uo0t" class="tsub">AI Automation Society</div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.out" } });
+      const INTRO = 2.8, PER = 2.6, OUTRO_AT = 18.400000000000002, TOTAL = 22.800000000000004;
+
+      // ambient (whole duration)
+      tl.to(".grid-floor",   { backgroundPosition: "0px " + Math.round(TOTAL * 36) + "px", duration: TOTAL, ease: "none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPosition: "0px -" + Math.round(TOTAL * 36) + "px", duration: TOTAL, ease: "none" }, 0);
+      tl.fromTo(".beam", { rotate: -4 }, { rotate: 4, duration: TOTAL / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+      tl.fromTo(".glow.blue", { scale: .96 }, { scale: 1.06, duration: 6, ease: "sine.inOut", yoyo: true, repeat: Math.ceil(TOTAL / 6) }, 0);
+      tl.to(".dot", { opacity: .25, duration: .5, ease: "sine.inOut", yoyo: true, repeat: Math.floor(TOTAL / .5) - 1 }, 0);
+
+      // ---- title beat ----
+      tl.fromTo("#sl-title", { opacity: 0 }, { opacity: 1, duration: .01 }, 0);
+      tl.fromTo("#sl-title .eyebrow", { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: .5 }, 0.2);
+      tl.fromTo("#sl-title .ln .wd", { opacity: 0, y: 60, filter: "blur(14px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: .55, stagger: .1 }, 0.35);
+      tl.fromTo("#sl-title .tsub", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .5 }, 1.0);
+      // whip out
+      tl.to("#sl-title", { x: -230, opacity: 0, filter: "blur(16px)", duration: .4, ease: "power3.in" }, INTRO - .38);
+
+      // ---- member slides: whip in from the right, gentle drift, whip out left ----
+      const N = 6;
+      for (let i = 0; i < N; i++) {
+        const at = INTRO + i * PER;
+        const el = "#sl-" + i;
+        tl.fromTo(el, { opacity: 0, x: 260, filter: "blur(16px)" },
+          { opacity: 1, x: 0, filter: "blur(0px)", duration: .5 }, at - .1);
+        tl.fromTo(el + " .ph", { scale: .94 }, { scale: 1.0, duration: PER, ease: "sine.out" }, at - .1);
+        tl.fromTo(el + " .cap", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: .45 }, at + .22);
+        tl.to(el, { x: -260, opacity: 0, filter: "blur(16px)", duration: .38, ease: "power3.in" }, at + PER - .34);
+      }
+
+      // ---- outro ----
+      tl.fromTo("#sl-outro", { opacity: 0 }, { opacity: 1, duration: .01 }, OUTRO_AT - .05);
+      tl.fromTo("#sl-outro .eyebrow", { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: .5 }, OUTRO_AT + .05);
+      tl.fromTo("#sl-outro .ln .wd", { opacity: 0, y: 60, filter: "blur(14px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: .55, stagger: .1 }, OUTRO_AT + .2);
+      tl.fromTo("#sl-outro .tsub", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: .5 }, OUTRO_AT + .85);
+
+      // breathing outro hold
+      tl.set({}, {}, TOTAL);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["ais-live-member-shirts"] = tl;
+    </script>
+  </body>
+</html>

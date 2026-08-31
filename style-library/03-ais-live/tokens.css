@@ -96,8 +96,10 @@
 
   /* --- motion — snappy, kinetic, broadcast. The signature. ---------------- */
   /* Word reveals blur+rise with expo.out; numbers pop with back.out; cards
-     3D-flip; cuts fire a motion-blur whip + light streak. The camera never
-     sleeps (slow continuous dolly + breathing vignette). Never static holds. */
+     3D-flip; cuts fire a fast motion-blur whip + light streak. The camera never
+     sleeps but rides the BACKGROUND ONLY (the .bg depth layer) — the text layer
+     never scales/translates, so type stays pin-sharp. Real member <video> clips
+     sit dead still (a scaled frame-seeked video shakes). Never static holds. */
   --ease-word:   expo.out;         /* word-by-word headline reveal */
   --ease-pop:    back.out(1.6);    /* stat number / spring pops */
   --ease-flip:   power3.out;       /* 3D speaker-card flip, slide-ins */
@@ -105,6 +107,8 @@
   --ease-drift:  sine.inOut;       /* ambient breathing / parallax drift */
   --dur-in:   0.55s;
   --dur-out:  0.33s;
+  --dur-whip: 0.22s;   /* fast whip-out cut between sections (overlap the next in) */
+  --dur-swipe: 0.24s;  /* side-swipe match cut for swapping same-format panels */
 
   /* --- textures (deterministic) ------------------------------------------- */
   /* Perspective-grid lines — blue on transparent, tiled; used on the floor and

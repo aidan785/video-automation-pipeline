@@ -68,6 +68,24 @@ TOTAL = Math.max(TOTAL, maxBeatEnd);
 // video src relative to the output index.html
 const videoSrc = videoAbs ? relative(outDir, videoAbs) : "assets/clean.mp4";
 
+// ---- optional PIP stage (screen-recording bg + speaker square) ------------
+// plan.stage = { bg, pip: { src, size, margin, radius }, audio }
+// When present it replaces the single-video mount: `bg` fills the frame, `pip`
+// is a rounded square anchored bottom-right ABOVE the beat layers (the speaker
+// stays visible through tier-1 takeovers), and `audio` drives the mixer.
+const stage = plan.stage || null;
+const rel = (p) => relative(outDir, resolve(p));
+const pipCfg = stage
+  ? {
+      bg: rel(stage.bg),
+      src: rel(stage.pip.src),
+      audio: rel(stage.audio || stage.pip.src),
+      size: stage.pip.size ?? 440,
+      margin: stage.pip.margin ?? 44,
+      radius: stage.pip.radius ?? 36,
+    }
+  : null;
+
 // ---- helpers -------------------------------------------------------------
 function readCard(file) {
   const abs = join(libraryDir, file);
@@ -189,7 +207,9 @@ plan.beats.forEach((beat, n) => {
       let o = open
         .replace(/\s+data-composition-id="[^"]*"/, "")
         .replace(/\s+data-start="[^"]*"/, "");
-      return `${o} class="beat-layer clip" data-start="${beat.start}" data-duration="${beat.duration}" data-track-index="${beat.track || 2}">`;
+      // tracks 0/1 are the bg video + audio; a PIP stage also claims track 2.
+      // Same-track clips cannot overlap, so overlapping beats need distinct tracks.
+      return `${o} class="beat-layer clip" data-start="${beat.start}" data-duration="${beat.duration}" data-track-index="${beat.track || (pipCfg ? 3 : 2)}">`;
     }
   );
 
@@ -226,7 +246,19 @@ ${tokensBlock}
     #${slug} { position: absolute; inset: 0; width: ${W}px; height: ${H}px; overflow: hidden; }
     #video-stage { position: absolute; inset: 0; }
     #video-stage video { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .beat-layer { position: absolute; inset: 0; opacity: 0; }
+    .beat-layer { position: absolute; inset: 0; opacity: 0; z-index: 10; }
+${
+  pipCfg
+    ? `    #pip-frame {
+      position: absolute; z-index: 30;
+      right: ${pipCfg.margin}px; bottom: ${pipCfg.margin}px;
+      width: ${pipCfg.size}px; height: ${pipCfg.size}px;
+      border-radius: ${pipCfg.radius}px; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.10);
+    }
+    #pip-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }`
+    : ""
+}
 
 ${cardStyles.join("\n\n")}
   </style>
@@ -234,17 +266,33 @@ ${cardStyles.join("\n\n")}
 <body>
   <div id="${slug}" data-composition-id="${slug}" data-start="0" data-width="${W}" data-height="${H}">
     <div id="video-stage">
-      <video id="bg-video" muted data-start="0" data-duration="${round(TOTAL)}" data-track-index="0" src="${videoSrc}"></video>
-      <audio id="bg-audio" data-start="0" data-duration="${round(TOTAL)}" data-track-index="1" src="${videoSrc}"></audio>
+      <video id="bg-video" muted data-start="0" data-duration="${round(TOTAL)}" data-track-index="0" src="${pipCfg ? pipCfg.bg : videoSrc}"></video>
+      <audio id="bg-audio" data-start="0" data-duration="${round(TOTAL)}" data-track-index="1" src="${pipCfg ? pipCfg.audio : videoSrc}"></audio>
     </div>
 
 ${beatDoms.join("\n\n")}
+${
+  pipCfg
+    ? `
+    <div id="pip-frame">
+      <video id="pip-video" muted data-start="0" data-duration="${round(TOTAL)}" data-track-index="2" src="${pipCfg.src}"></video>
+    </div>`
+    : ""
+}
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <script>window.__beatTimelines = {};</script>
 
-${timelineScripts.map((s) => `  <script>\n${s}\n  </script>`).join("\n")}
+${timelineScripts
+  .map(
+    // IIFE-wrapped: cards declare top-level `const root` / `const tl`, which share
+    // one global scope across classic <script> blocks — unwrapped, every beat after
+    // the first dies on "Identifier 'root' has already been declared" and its
+    // animation never runs (the DOM still shows, so it looks like a styling bug).
+    (s) => `  <script>\n(function () {\n${s}\n})();\n  </script>`
+  )
+  .join("\n")}
 
   <script>
     window.__timelines = window.__timelines || {};

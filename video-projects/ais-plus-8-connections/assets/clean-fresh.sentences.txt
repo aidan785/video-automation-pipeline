@@ -1,0 +1,247 @@
+0:00.3  All right, now it's time to talk about connections.
+0:02.3  So these can be API connections, they can be MCP servers, they can be CLIs.
+0:06.7  It just means how do you get Claude to talk to some other software?
+0:11.2  So the way that I start to think about these is I put them into these different buckets, and these are the tier one.
+0:16.6  But basically, before I even start here, just think to yourself right now, and if you have a paper, like write it down real quick, what tools do you use every day?
+0:23.7  What tools are you constantly clicking into?
+0:25.6  Or what tools do you maybe have like a desktop app for?
+0:27.6  Those are things that you probably wanna think about connecting right away.
+0:29.9  And then let's start to think about these buckets.
+0:31.7  So I have revenue, customers, calendar, comms, tasks, meetings, and knowledge.
+0:36.1  So think about where do you normally look for revenue, right?
+0:39.2  Like you look in your bank account, maybe you don't wanna connect that.
+0:41.8  You look in maybe something like Stripe.
+0:43.3  Where do you look?
+0:44.0  And so for us, I put down here, oops, there we go, School, Stripe, and QuickBooks.
+0:48.2  And these are things that I probably wanna connect to my AOS, so that if I ask about payments or cancellations, or if I ask about our monthly recurring revenue or whatever it may be, my Claude could actually go touch
+0:57.8  it, and go touch it and find it for me.
+1:00.2  Now, I don't wanna get in the weeds right now about like permissioning and like safety, because obviously, there are some times when you want it to be able to read things, but never like edit or delete or process anything,
+1:09.4  and that's important to think about.
+1:10.3  But right now, we're just thinking about what do we wanna connect.
+1:12.6  So then we have customers.
+1:13.9  Like you can think about that, right?
+1:15.0  Um, for me, that's school and YouTube is where I'm primarily looking at like customer data or things like comments or the analytics there.
+1:22.2  Then we have calendar.
+1:22.9  So for me, pretty much just Google Workspace.
+1:25.1  For comms, Gmail, ClickUp, Slack.
+1:27.2  Those are probably some things I wanna connect.
+1:28.6  For tasks, ClickUp and Notion.
+1:31.2  Also maybe like Google Docs, so Google Workspace, probably there's a lot of good like-- or Google Sheets, there's data in there.
+1:35.9  Meetings, Fireflies is where I keep all those recordings, and then knowledge, YouTube, Google Workspace, and local knowledge.
+1:42.3  So just think about like your any databases and stuff like that.
+1:45.0  But this is kind of like what I consider tier one.
+1:46.9  These are the ones that I think are pretty encompassing, but that's not gonna cover all.
+1:50.5  Like we all have different types of businesses, we all have different types of priorities.
+1:53.4  You'll probably have other things, like maybe you'll have one just purely for socials if you wanna connect like X and Instagram and LinkedIn and TikTok, you can do that.
+2:00.8  But just start thinking about this, and it-- if you like realize in two weeks that you have a connection that you haven't connected yet, just connect it.
+2:06.9  It's not a huge deal.
+2:08.1  You're probably going to be adding things every week, like I said at the beginning of this video.
+2:11.6  So here's how I want you to think about connections.
+2:14.1  You connect in the form of usually an API, an MCP, or like a CLI, and you don't have to exactly know that.
+2:19.9  Let's say Fireflies, for example, is the first thing I wanted to connect.
+2:22.6  I could just go in here and type in Fireflies API documentation.
+2:26.1  And if we see API documentation, that means an AI can usually touch it.
+2:29.7  But also, "Hey, so I wanna start getting some connections put into here.
+2:33.4  Can you like see if I can connect to Fireflies?
+2:36.3  Like how would that work, and what would I need to give you in order for you to actually connect to my Fireflies?" So the point I'm trying to make here and why I demoed that is because when in doubt,
+2:43.9  just be curious.
+2:45.2  Like if you're genuinely just being curious about how AI works and what you can do, that's the best way to do it, because it will then go do the research and see if it can connect to Fireflies, and if
+2:54.6  it can, it will tell you exactly step-by-step what to do.
+2:58.4  So ultimately, what this is gonna do is it's probably gonna do some research.
+3:01.3  It's gonna find this documentation that I just found, and it's gonna say, "Hey, okay, so what you need to do is you need to open up your Fireflies account, you need to give me your API key, and you need
+3:08.8  to put it right here." And so usually when you're setting up these connections, you do this in a file called a .env, which we don't currently have, but it'll make one right here.
+3:17.9  And that's essentially think of it as like a password manager.
+3:20.8  It's a file that doesn't ever get committed to something like GitHub, and it basically lets you put in your passwords, your API keys, so that Claude can use them.
+3:28.5  Now, I know there is a customized thing in here.
+3:31.3  You can go to connectors, and you can connect things through here.
+3:34.7  So you could log into Gmail, you could log into Google Calendar, you can connect things like this.
+3:38.7  And there's no problem like that if you wanna do it like that.
+3:40.5  But the problem is, if you wanna switch to Codex, these connections don't exactly carry over to Codex.
+3:45.5  You would have to reconnect to everything in Codex.
+3:47.1  And it's not that hard.
+3:48.1  Literally, when you do this, you just sign in.
+3:49.7  Like it's an OAuth sign-in.
+3:51.0  You sign in, you authorize, you're good.
+3:53.4  And so that's great, but it's not as flexible.
+3:55.7  So you can do that, but if you put API keys in here and your Claude knows how to use those API keys, then so will Hermes Agent and so will Codex and whoever comes next.
+4:04.0  So that's why I like to prioritize doing it as API credentials instead of the connectors, because it's more tool agnostic, it's more flexible.
+4:11.8  All right, so here's what it said.
+4:13.2  It browsed the web, so it did research.
+4:15.1  It literally searched these sites and then fetched them.
+4:18.2  It searched some more, and it found a Fireflies MCP server.
+4:21.8  Now, I personally prefer APIs over MCPs.
+4:25.1  You can see Fireflies ships an official remote MCP server that uses OAuth, so you can authenticate in a browser, and I never need to see a credential.
+4:30.9  I don't wanna do this.
+4:32.3  I usually prefer APIs because they're just, they're quicker.
+4:35.2  I feel like I have more control, and you can have scoped API keys.
+4:38.4  And also, I don't wanna use OAuth, because same thing, I want this to be able to port over to Codex just fine.
+4:43.1  So I'm gonna push back here.
+4:44.2  I want to make sure that we're building this AOS so it's tool agnostic.
+4:47.5  I don't wanna do OAuth, um, when nece- when I can.
+4:50.1  I would rather do API documentation, and I know Fireflies has an API.
+4:53.6  So could you just like get set up with that and then create me the .env file so I can put in the API key?
+4:59.9  Now, you don't need a .env file for every single API key.
+5:03.1  You just need one in the beginning, but it hasn't yet made that, so it's gonna make that.
+5:07.1  And then what we're gonna do, see here it says, "Agreed, and it matches on your own line about the harness being the mote.
+5:12.0  An API key in the .env works from any harness." Cool.
+5:15.1  So while it's doing this, let me go over to Fireflies and just get my API key.
+5:18.5  So I'm gonna go into Fireflies.
+5:19.7  I'm going to go over to the settings.
+5:21.2  And by the way, whenever you're on any sort of platform and you need an API key, it's almost gonna always be in settings.
+5:27.5  Sometimes it'll be in something called like developer tools or developer settings.
+5:30.6  Right here you can see it's under a section called MCP and AI.
+5:33.9  And this is the MCP server that it was talking about, but I wanna use the API key.
+5:37.9  So right here, all I'm gonna do is copy this API key, and I'm gonna go back into Claude.
+5:41.0  And so what it's gonna do is it's going to create that .env, and when it does, I will go ahead and show you guys what that looks like, and I will paste in my Fireflies API key right in there.
+5:49.9  We'll save that, and then we'll say, "Hey, Claude code, see if that API key worked and Go ahead and test that out.
+5:54.9  See if you can pull in a transcript from, you know, a call today.
+5:57.4  Cool.
+5:57.8  So you can see it literally said, "Okay, go get your key, go to the dashboard, and then copy the key." And if I go into my files now, we have a .env, and right here you can see it literally
+6:05.4  gives us a placeholder.
+6:06.8  So it says, "Get your key here," and then-- and this is wrong.
+6:09.9  So remember I said sometimes it's in developer settings, sometimes it's in something else.
+6:13.4  You'll be able to find it pretty easily.
+6:14.8  But it gives me a placeholder.
+6:15.9  So I would delete this, and I would paste in my API key right here.
+6:18.6  I'm gonna go ahead and hit Save, and then I can exit out of that.
+6:21.1  And now, hopefully, we'll see if in this chat it's able to pick that up.
+6:25.0  Go ahead and just test that out and see if you can see some calls from today or yesterday to make sure that that API key works and that you have the correct API paths.
+6:34.6  So pretty much every time you make a connection, just go ahead and test that it actually works.
+6:39.0  He is gonna go ahead and test it right now on Fireflies.
+6:44.1  You can see that already worked really quick, two hundred and thirty-one transcripts on the account.
+6:47.9  Now it's gonna do another action.
+6:49.5  So what's really cool about this, I don't know if you guys were with me in the N8n days, but if you were, we had to basically hand wire up HTTP requests.
+6:56.3  I'm talking we had to put in the endpoint, we had to put in the request method, we had to put in the JSON body.
+7:01.3  But Claude Code, with its web search, found the API documentation and built all the scripts, and that's what's just a huge unlock.
+7:07.8  You don't ever have to build an API call ever again, which is truly amazing.
+7:11.3  All you have to do is know what tool you wanna connect to and where to put the API key, and you're pretty much set.
+7:17.4  And you can see it even does this thing where it fixes itself.
+7:20.6  It realized there was an error, and then it went ahead and fixed the script on its own.
+7:24.6  So really the key skills here are being curious, instructing what you want clearly, and defining the definition of done and the definition of good.
+7:33.2  So we haven't yet really got into the whole definition of good thing, but those are like the three most important key skills.
+7:38.7  Be curious, tell it clearly what you want, and tell it clearly what is good and what is done.
+7:43.7  Those all three together, super, super important.
+7:46.2  Okay.
+7:46.5  So this is finishing up.
+7:48.2  Now, what's cool about this is this is gonna keep crawling a little bit and testing out that that key works.
+7:52.0  Let's go back over here.
+7:53.0  What does it look like to connect to other things, whether that be ClickUp or School or YouTube or Google?
+7:58.1  Let's try and see what it could be like for Google, because that's probably something that's pretty important for a lot of you guys.
+8:03.2  I'm gonna open up a new chat in our AIOS.
+8:05.1  Okay, so I'm still going through the whole connection phase of setting things up.
+8:08.6  I would love to connect to Google Workspace because I've got a lot of things in Google Sheets and Google Docs and Gmail and my calendar's on there.
+8:16.4  So I really need to connect to everything on Google, and I don't wanna do this through Claude Code's native connectors because I wanna make sure this is tool agnostic.
+8:22.7  So how do I do this?
+8:24.1  You know, I wanna use like as-- an API or a CLI.
+8:28.4  What does that look like for Google?
+8:30.6  Do some research, tell me what I need to do, and also I have a GWS CLI set up already in my Herc2 project, but just for the sake of this demo, assume that we don't have that and tell me
+8:39.8  what I would need to do.
+8:40.8  So the reason I threw in that last part is just because I already have something set up.
+8:44.1  So Claude Code can touch everything in my Google environment already, so I didn't want it to come back and say, "Hey, you know, you've already got that set up." But the point I'm trying to make when I did that
+8:51.8  is just be curious.
+8:53.1  You may not know, "Hm, I wonder if I can connect to School.
+8:55.8  Let me just like ask about it, do some research," or, "I don't know how to connect to YouTube or to Instagram." You know?
+9:01.1  It'll recommend you the good APIs.
+9:02.7  It'll recommend you what you need to either pay for or subscribe to, or probably a lot of these are just free, maybe even an open source GitHub repo that you can download.
+9:10.6  It can help you figure out what that looks like.
+9:12.9  So it's gonna do some searching.
+9:14.3  I'm gonna go back over here to just make sure everything's okay.
+9:16.6  We can see that it found these calls from yesterday and today, so we can clearly see that the, um, Fireflies connection's working.
+9:23.1  And we also have this connections.md, which shows us what we're connected to.
+9:27.6  So it understands, um, some of the stuff, right?
+9:29.5  Like it knows that we have customer stuff in School.
+9:31.8  It knows that we have revenue in School and Stripe and QuickBooks.
+9:34.3  It knows all of this about us, but it can see that we're not yet connected to any of these except for we're connected to Meeting Intelligence, Fireflies.
+9:42.3  So now it knows in here we're connected with these scripts that work, and we have our password essentially in the .env, and now we're able to just keep figuring out what we need to keep connecting.
+9:52.9  And there's another skill that I told you guys about called...
+9:54.9  what was it called?
+9:55.3  Audit.
+9:56.1  So if I run this audit skill, which is inside of the AIOS repo, it's inside of this thing that you guys downloaded in the video pr-prior, I can run this, and this will help us figure out where the gaps
+10:05.8  are.
+10:06.3  So if you're ever feeling a little bit confused, just go ahead and run that audit and see what it tells you you still need to connect or more context that it needs from you, and how you can kinda keep
+10:14.4  just like leveling up your system, because that's another skill that we have in here.
+10:18.2  It's called Level Up.
+10:19.5  So, um, actually, what did that say?
+10:20.7  It says, "Use weekly to find and ship one new automation." It walks the three M's, and it helps you figure out how you can level up your system.
+10:27.3  So anyways.
+10:27.9  So right now you can see that our audit got a sixty-four point five out of a hundred, and honestly, that's still pretty generous.
+10:33.7  Our connections are thin.
+10:35.2  The context is strong, capabilities are strong, cadence is strong.
+10:39.3  Um, or sorry, capabilities are strong, but honestly, I probably need to rework this auditing skill because this is way too generous.
+10:46.5  Um, I'm actually curious, if I go to my Herc2 project real quick and I run the /audit, I wanna see what I get over here because this is like a pretty intense, um, AI operating system.
+10:54.7  So anyways, um, that's something that you can leverage, right?
+10:58.2  Now, let's see what happened over here.
+10:59.5  In the Google Workspace one, it said it gave us a lot of info.
+11:02.3  So Google has no API key path for user data.
+11:04.7  Um, it looks like it violates the API key is over OAuth principle.
+11:07.9  What you actually do is you create a Google Cloud project, and you name it something like Nate AIOS.
+11:12.4  You enable the correct APIs like Gmail, Google Drive, Google Sheets, Docs, Google Calendar.
+11:17.9  You configure the OAuth consent screen, and you basically set this all up.
+11:21.2  So I will say sometimes Google's a bit annoying with the way that things get set up.
+11:25.2  I have a full video that I've already done about how to connect Google Workspace CLI to Claude Code.
+11:30.1  So what I will do is I will link that below this video.
+11:32.8  So you can go there, follow that tutorial if you need Google, get set up.
+11:35.8  It's not too difficult, really.
+11:36.9  It's not too difficult.
+11:37.5  You just have to get the right connections, and then you'll put those things in the .env.
+11:42.2  Um, so anyways, let me see what this audit did on this other side.
+11:44.9  And you can see in my Herc2 AIOS, I got a ninety out of a hundred.
+11:48.9  Um, capabilities are strong, cadence is strong, context is strong.
+11:53.0  Yeah.
+11:53.3  Anyways, um, that's how the audit works.
+11:55.7  Okay, so what have we talked about now?
+11:57.4  I've shown you guys how that .env works.
+11:59.7  I've shown you how you think about Finding out how to connect to things and what that looks like.
+12:05.2  And now you're really just building this up.
+12:07.2  You know?
+12:07.5  Like most of this now that you have the framework of using GrillMe to put con- context in, using Claude Code to help you do research and find the API keys and do what you need to do c- to connect
+12:18.4  to these sources that we talked about.
+12:19.9  Pretty much your task before you go on and watch the next videos is to connect a bunch of the stuff, a bunch of the stuff that you have right now.
+12:26.7  And like I said, over time, you're gonna connect even more things.
+12:29.0  You're gonna connect different APIs, you're gonna connect different platforms, and now the test should basically be when you ask your AIOS something, like for example, "Can you help me figure out where is our, you know, Greengrass project?" You shouldn't
+12:41.5  have to specify, "And by the way, that's in ClickUp, and you get there using this API key, and you get there using this script." It should have the right context and routing rules in place to be able to find
+12:49.7  those things.
+12:50.2  So once you start adding stuff, context, and connections, start testing it a little bit.
+12:54.0  Try to find gaps.
+12:55.3  Try to poke holes and see what requests you can ask that actually immediately get the answer right.
+13:00.8  And when they get it wrong, just say, "Hey, remember, you don't need to ask me that.
+13:04.4  All of that lives there.
+13:05.5  Update your Claude.md, update any of the routing rules so that next time I ask, this doesn't happen again." And that's a huge part of it.
+13:12.0  I basically call this whole idea the bike method.
+13:14.9  Um, I was gonna try to like draw a bike or something, but I probably shouldn't.
+13:17.8  The whole idea of that is that when you're setting up Claude connections and context, and you're building skills and you're building automations, you have to think about it like you're teaching a kid to ride a bike, meaning you don't
+13:28.5  just put the kid on the bike and you walk away back inside and you stop watching.
+13:32.1  You are very much in the loop for a while.
+13:34.4  You have the kid on the bike, and you're, you know, holding the handlebars, and you're pushing them as you go, and you're helping make sure they don't fall, and you're watching them closely.
+13:41.7  And then the next time, maybe you take your hands off, but you're still right there just in case.
+13:45.0  And then you're saying, "Oh, you know what?
+13:46.1  You're leaning too far to the left.
+13:47.5  You have to make sure you're centered.
+13:48.7  Like put your weight in the middle." And then maybe you just put on training wheels, and you are not there at all, and you're just watching from a distance.
+13:54.3  And then one day, you take off...
+13:55.1  Okay, you guys get the point, right?
+13:56.3  I think we've all experienced learning how to ride a bike or taught someone to ride a bike.
+13:59.4  But the point I'm trying to make there is you have to watch, and you can't just assume the first output's gonna be good.
+14:04.2  You have to assume that the first output's gonna be bad, and that you have to be there to steer.
+14:07.6  And the more you steer, and the more specifically you give feedback, not just steer, you give feedback and say, "I really like that you did this.
+14:15.1  I don't like that you did that.
+14:16.5  Now update your instructions so that that doesn't happen again." That's really the key, is you have to codify the mistakes.
+14:22.1  You have to codify the successes.
+14:24.5  Because if you just take an output, for example, if you just take an output and then you say you don't tell it to change anything, then when you clear the session, it completely forgets that context.
+14:33.9  So every time you have feedback, make sure it changes something: instruction file, routing file, script, Claude.md.
+14:40.8  That's how you build things that actually get better every single time you use them and get better over time, rather than a system that feels more like you're just using ChatGPT on the web in 2023, where every time you
+14:50.2  talk to it, it feels like you have to re-explain who you are and you have to re-explain your priorities.
+14:53.9  That's one of the biggest things about this AIOS and the second brain, is that you should never having to be like re-explaining things twice.
+14:59.8  If you have to explain something and you have to correct them once, that's fine, but you shouldn't have to be do it-- like you shouldn't having...
+15:04.7  Oh my gosh, I can't talk.
+15:05.8  You shouldn't have to do that multiple times.
+15:07.7  And if you are, then honestly, that's gonna be an error on you.
+15:10.6  That's a user error because you should be instructing it to make those corrections.
+15:15.3  Oh my goodness, that went down the wrong pipe.
+15:17.1  I like completely forgot what I was gonna say.
+15:18.6  All right.
+15:19.1  So at this point, hopefully you're feeling good, and you feel like you've got some work to do because, like I said, you're gonna fill up this stuff before we move on to capabilities and cadence.
+15:28.7  So get to work, connect a bunch of tools until you feel like you're at the point where you've got a bunch of tier one sources in there, and you could genuinely talk to this thing and have it go reach
+15:37.6  off to the different platforms and pull in the data that you need.
+15:40.2  And then once you're ready to move on to capabilities, we'll talk about some cool things like skills and sub-agents and how we can start to now use these things to be way more productive.
+15:49.3  So I'll see you guys in the next one.

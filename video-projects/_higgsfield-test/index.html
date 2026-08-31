@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p34 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--navy);
+    font-family: var(--font-body); color: var(--white);
+  }
+
+  /* ---------- Higgsfield navy canvas: streaks + warm creep + vignette ---------- */
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base    { position: absolute; inset: 0; background: linear-gradient(180deg, var(--navy-2) 0%, var(--navy) 46%); }
+  #bg .streaks { position: absolute; inset: 0; background: var(--streaks); }
+  #bg .creep   { position: absolute; inset: -6%; background: var(--warm-creep); transform-origin: 92% 100%; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 2px rgba(var(--lime-rgb), .85),
+                0 0 38px rgba(var(--lime-rgb), .28), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      var(--navy) 0%, var(--navy) 26%,
+      rgba(2,6,15,.92) 35%, rgba(2,6,15,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+
+  /* ---------- shared Higgsfield card kit ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: 22px; font-weight: var(--wt-med);
+    letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--grey-pre);
+  }
+  .lm { color: var(--lime); }
+
+  /* frosted glass chip (plain statement) */
+  .chipx {
+    padding: 18px 30px; border-radius: var(--radius);
+    font-family: var(--font-body); font-weight: var(--wt-med); font-size: 29px; line-height: 1.4; color: rgba(255,255,255,.88);
+    background: var(--glass-bg); border: var(--glass-edge);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .chipx b { color: var(--lime-soft); font-weight: var(--wt-semi); }
+
+  /* the lime punch pill: charcoal on lime, the signature UI pill */
+  .punchx {
+    padding: 18px 34px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 29px; line-height: 1.35;
+    text-transform: uppercase; letter-spacing: 0.02em;
+    color: var(--charcoal); background: var(--lime);
+    box-shadow: 0 18px 40px rgba(0,0,0,.45);
+  }
+
+  /* attention chip: glass with a lime edge */
+  .warnx {
+    padding: 18px 30px; border-radius: var(--radius);
+    font-family: var(--font-body); font-weight: var(--wt-med); font-size: 29px; line-height: 1.4; color: rgba(255,255,255,.88);
+    background: var(--glass-bg); border: 1.5px solid rgba(var(--lime-rgb), .55);
+    box-shadow: 0 0 26px rgba(var(--lime-rgb), .12), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx b { color: var(--lime); font-weight: var(--wt-semi); }
+
+  .word { display: inline-block; color: var(--grey-pre); }
+
+  .qrow { display: flex; align-items: flex-start; gap: 20px; padding: 18px 28px; border-radius: var(--radius); background: var(--glass-bg); border: var(--glass-edge); box-shadow: var(--glass-shadow); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); }
+  .qrow .n { flex: 0 0 auto; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 21px; color: var(--charcoal); background: var(--lime); font-weight: var(--wt-bold); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 30px; letter-spacing: 0.01em; text-transform: uppercase; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; text-transform: none; letter-spacing: 0; color: rgba(255,255,255,.6); margin-top: 6px; }
+  .qrow .tx .sub b { color: var(--lime-soft); }
+
+  .kc { padding: 24px 32px; border-radius: var(--radius); background: var(--glass-bg); border: var(--glass-edge); box-shadow: var(--glass-shadow); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); }
+  .kc.hot { border: 1.5px solid rgba(var(--lime-rgb), .65); box-shadow: 0 0 26px rgba(var(--lime-rgb), .14), var(--glass-shadow); }
+  .kc.dead { opacity: .92; }
+  .kc .lab { font-family: var(--font-mono); font-size: 19px; letter-spacing: var(--track-pill); text-transform: uppercase; color: var(--lime-soft); margin-bottom: 8px; }
+  .kc.dead .lab { color: var(--grey-pre); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 34px; text-transform: uppercase; letter-spacing: 0.01em; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: rgba(255,255,255,.6); margin-top: 8px; }
+  .kc .det b { color: var(--lime-soft); }
+
+  .quote { padding: 22px 32px; border-radius: var(--radius); border-bottom-left-radius: 6px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; line-height: 1.45; font-style: italic; color: rgba(255,255,255,.88); background: var(--glass-bg); border: var(--glass-edge); box-shadow: var(--glass-shadow); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); }
+  .quote b { color: var(--lime-soft); font-style: normal; }
+
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 30px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 30px; color: var(--white);
+    background: var(--den); border: var(--glass-edge);
+    box-shadow: var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 20px; color: var(--grey-pre); }
+  .mpill.bad { color: var(--grey-pre); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--lime-rgb),.1), rgba(var(--lime-rgb),.8)); transform-origin: 0 50%; }
+
+  /* tilted left-side stacks (over beats): perspective on the container,
+     GSAP only ever animates the children (x/y) or container opacity/filter */
+  .over .stack { transform: perspective(1400px) rotateY(-6deg); transform-origin: 0 50%; }
+
+  /* ---------- B1 cold open ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 30px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 96px; line-height: 1.1; letter-spacing: var(--track-caps); text-transform: uppercase; }
+
+  /* ---------- B2 chaos montage (over, FULL+shift) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 170px; display: flex; flex-direction: column; gap: 14px; }
+  #b2 .stack > div { align-self: flex-start; max-width: 790px; }
+  #b2 .chipx { font-size: 27px; padding: 15px 26px; }
+  #b2 .punchx { font-size: 27px; }
+
+  /* ---------- B3 the mapping loop (under, PIP) ---------- */
+  #b3 .head { position: absolute; left: 110px; top: 56px; }
+  #b3 .head .t { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 54px; text-transform: uppercase; letter-spacing: var(--track-caps); color: var(--white); margin-top: 12px; }
+  #b3 .list { position: absolute; left: 110px; top: 210px; width: 1070px; display: flex; flex-direction: column; gap: 12px; }
+  #b3 .qrow { width: 1010px; padding: 13px 26px; }
+  #b3 .qrow .tx { font-size: 27px; }
+  #b3 .qrow .tx .sub { font-size: 20px; margin-top: 4px; }
+  #b3 .close { position: absolute; left: 110px; top: 900px; }
+  #b3 .close .punchx { font-size: 26px; }
+
+  /* ---------- B4 you won't find them all (over, FULL+shift) ---------- */
+  #b4 .stack { position: absolute; left: 80px; top: 230px; display: flex; flex-direction: column; gap: 18px; }
+  #b4 .stack > div { align-self: flex-start; max-width: 800px; }
+
+  /* ---------- B5 trigger rule takeover ---------- */
+  #b5 { display: grid; place-items: center; text-align: center; }
+  #b5 .kicker { margin-bottom: 44px; }
+  #b5 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 88px; line-height: 1.12; letter-spacing: var(--track-caps); text-transform: uppercase; }
+
+  /* ---------- B6 two kinds of triggers (over, FULL+shift) ---------- */
+  #b6 .stack { position: absolute; left: 80px; top: 180px; display: flex; flex-direction: column; gap: 16px; }
+  #b6 .stack > div { align-self: flex-start; max-width: 800px; }
+
+  /* ---------- B7 dependencies (over, FULL+shift) ---------- */
+  #b7 .stack { position: absolute; left: 80px; top: 230px; display: flex; flex-direction: column; gap: 16px; }
+  #b7 .stack > div { align-self: flex-start; max-width: 780px; }
+  #b7 .punchx { font-size: 28px; }
+
+  /* ---------- B8 the roast (under, PIP) ---------- */
+  #b8 .head { position: absolute; left: 110px; top: 70px; }
+  #b8 .head .t { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 54px; text-transform: uppercase; letter-spacing: var(--track-caps); color: var(--white); margin-top: 12px; }
+  #b8 .stack { position: absolute; left: 110px; top: 230px; width: 1060px; display: flex; flex-direction: column; gap: 16px; }
+  #b8 .stack > div { align-self: flex-start; max-width: 1020px; }
+  #b8 .punchx { font-size: 27px; }
+
+  /* ---------- B9 the silhouette (over, FULL+shift) ---------- */
+  #b9 .stack { position: absolute; left: 80px; top: 220px; display: flex; flex-direction: column; gap: 18px; }
+  #b9 .stack > div { align-self: flex-start; max-width: 800px; }
+  #b9 .punchx { font-size: 27px; }
+
+  /* ---------- B10 milestones by function (under, PIP) ---------- */
+  #b10 .head { position: absolute; left: 110px; top: 64px; }
+  #b10 .head .t { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 54px; text-transform: uppercase; letter-spacing: var(--track-caps); color: var(--white); margin-top: 12px; }
+  #b10 .rail { position: absolute; left: 110px; top: 240px; display: flex; align-items: center; }
+  #b10 .rail .mpill { font-size: 27px; padding: 15px 26px; }
+  #b10 .rail .mconn { width: 54px; }
+  #b10 .stack { position: absolute; left: 110px; top: 386px; width: 1060px; display: flex; flex-direction: column; gap: 18px; }
+  #b10 .stack > div { align-self: flex-start; max-width: 1020px; }
+  #b10 .qrow { max-width: 1010px; }
+  #b10 .punchx { font-size: 27px; }
+
+  /* ---------- B11 stakeholders (over, FULL+shift) ---------- */
+  #b11 .stack { position: absolute; left: 80px; top: 200px; display: flex; flex-direction: column; gap: 16px; }
+  #b11 .stack > div { align-self: flex-start; max-width: 800px; }
+  #b11 .punchx { font-size: 28px; }
+  #b11 .quote { max-width: 780px; }
+
+  /* ---------- B12 outro ---------- */
+  #b12 { display: grid; place-items: center; text-align: center; }
+  #b12 .nx .kick { margin-bottom: 22px; }
+  #b12 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; text-transform: uppercase; letter-spacing: var(--track-caps); color: var(--white); }
+  #b12 .tease { margin-top: 56px; display: flex; justify-content: center; }
+  #b12 .quote { max-width: 1100px; }
+
+  /* ---------- transition kit (whips / flash / letterbox / type wiper) ---------- */
+  #camera { position: absolute; inset: 0; transform-origin: 50% 46%; will-change: transform, filter; }
+  #flash {
+    position: absolute; inset: 0; z-index: 60; opacity: 0; pointer-events: none;
+    background: radial-gradient(70% 70% at 50% 46%,
+      rgba(255,255,250,.98) 0%, rgba(var(--lime-rgb),.75) 55%, rgba(var(--lime-rgb),.25) 100%);
+  }
+  #barT, #barB { position: absolute; left: 0; width: 1920px; height: 541px; z-index: 62; background: #01040A; pointer-events: none; }
+  #barT { top: 0; transform-origin: 50% 0; }
+  #barB { bottom: 0; transform-origin: 50% 100%; }
+  #hairline {
+    position: absolute; left: 0; top: 539px; width: 1920px; height: 2px; z-index: 63;
+    background: var(--lime); box-shadow: 0 0 24px rgba(var(--lime-rgb), .8);
+    opacity: 0; pointer-events: none;
+  }
+  #wiper {
+    position: absolute; left: 0; top: 50%; height: 0; z-index: 64;
+    display: flex; align-items: center; pointer-events: none; will-change: transform;
+  }
+  #wiper .w {
+    font-family: var(--font-display); font-weight: var(--wt-black); font-size: 420px; line-height: 1;
+    letter-spacing: -0.01em; text-transform: uppercase; color: var(--lime); white-space: nowrap;
+    text-shadow: 0 8px 0 rgba(0,0,0,.5), 0 30px 70px rgba(0,0,0,.6);
+  }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-831p" id="p34" data-composition-id="p34" data-start="0" data-width="1920" data-height="1080">
+  <div data-hf-id="hf-kwiw" id="camera">
+
+  <div data-hf-id="hf-n0in" id="bg" class="clip" data-start="0" data-duration="435" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-73mp" class="streaks"></div><div data-hf-id="hf-0waj" class="creep"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (track 4) ============ -->
+
+  <!-- B1 cold open takeover (0-8.4) -->
+  <div data-hf-id="hf-xg0j" id="b1" class="under clip" data-start="0" data-duration="8.4" data-track-index="4">
+    <div data-hf-id="hf-lm34" class="inner">
+      <div data-hf-id="hf-90z2" class="kick">Pillar Three · Scenario Mapping &amp; Milestones</div>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-zs8m" class="word w1">It</span> <span data-hf-id="hf-slsq" class="word w2">wasn't</span> <span data-hf-id="hf-4tu0" class="word w3">the</span> <span data-hf-id="hf-ofzi" class="word w4">technology.</span><br data-hf-id="hf-x5px"><span data-hf-id="hf-6n76" class="word w5">It</span> <span data-hf-id="hf-8a9d" class="word w6">was</span> <span data-hf-id="hf-72ys" class="word w7">the</span> <span data-hf-id="hf-6asc" class="word w8 hero">humans</span><span data-hf-id="hf-ka0n" class="word w9">.</span></div>
+    </div>
+  </div>
+
+  <!-- B3 the mapping loop (56.4-125.3, PIP) -->
+  <div data-hf-id="hf-2mn5" id="b3" class="under clip" data-start="56.4" data-duration="68.9" data-track-index="4">
+    <div data-hf-id="hf-z992" class="head">
+      <div data-hf-id="hf-ayu9" class="kick">The method, step by step</div>
+      <div data-hf-id="hf-kcn4" class="t">The Scenario-Mapping <span data-hf-id="hf-hlqq" class="lm">Loop</span></div>
+    </div>
+    <div data-hf-id="hf-33o8" class="list">
+      <div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-he23" class="tx">Same picture on screen<span data-hf-id="hf-xxip" class="sub">A diagram, a doc, doesn't matter. <b data-hf-id="hf-gxqo">Different pictures find different holes.</b></span></div></div>
+      <div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-diie" class="tx">Walk the process in order<span data-hf-id="hf-gu45" class="sub">At every decision point, the question that does 90% of the work: <b data-hf-id="hf-izza">what happens if?</b></span></div></div>
+      <div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-tgzg" class="tx">Ask about their experience<span data-hf-id="hf-awji" class="sub">Worst things seen? Rudest people? <b data-hf-id="hf-7zzs">Strangest input ever received?</b></span></div></div>
+      <div data-hf-id="hf-dy1b" class="qrow r4"><div data-hf-id="hf-6a5m" class="n">04</div><div data-hf-id="hf-d6tg" class="tx">Write it down, read it back, get the yes<span data-hf-id="hf-s0qh" class="sub"><b data-hf-id="hf-puqa">"Am I understanding you right?"</b></span></div></div>
+      <div data-hf-id="hf-9zxa" class="qrow r5"><div data-hf-id="hf-5vul" class="n">05</div><div data-hf-id="hf-9s1u" class="tx">Poke every decision point again<span data-hf-id="hf-1uvh" class="sub"><b data-hf-id="hf-c78t">The branches hide behind it.</b></span></div></div>
+    </div>
+    <div data-hf-id="hf-ysec" class="close"><div data-hf-id="hf-g6su" class="punchx p1">Listen, repeat, poke. The audit muscle, pointed at how work breaks.</div></div>
+  </div>
+
+  <!-- B5 trigger rule takeover (154.0-167.9) -->
+  <div data-hf-id="hf-xjgg" id="b5" class="under clip" data-start="154" data-duration="13.9" data-track-index="4">
+    <div data-hf-id="hf-bug8" class="inner">
+      <div data-hf-id="hf-dh2u" class="kicker kick">The rule that predicts the pain</div>
+      <div data-hf-id="hf-ippd" class="l1"><span data-hf-id="hf-44zx" class="word w1">Unpredictability</span> <span data-hf-id="hf-qxcx" class="word w2">comes</span><br data-hf-id="hf-rsrt"><span data-hf-id="hf-qcg1" class="word w3">from</span> <span data-hf-id="hf-k6at" class="word w4">the</span> <span data-hf-id="hf-o2vb" class="word w5 hero">trigger</span></div>
+    </div>
+  </div>
+
+  <!-- B8 the roast (235.4-287.8, PIP) -->
+  <div data-hf-id="hf-167b" id="b8" class="under clip" data-start="235.4" data-duration="52.4" data-track-index="4">
+    <div data-hf-id="hf-gwvu" class="head">
+      <div data-hf-id="hf-njjb" class="kick">Let the machines hunt</div>
+      <div data-hf-id="hf-50r3" class="t">The <span data-hf-id="hf-fsfx" class="lm">Roast</span> (or the Council)</div>
+    </div>
+    <div data-hf-id="hf-d1zs" class="stack">
+      <div data-hf-id="hf-sp7j" class="chipx c1">Claude spins up a cast of hostile users: <b data-hf-id="hf-fe1d">"trick it, prompt-inject it, break it, get weird"</b></div>
+      <div data-hf-id="hf-s6aa" class="punchx p1">Then sit back and read the damage report</div>
+      <div data-hf-id="hf-lwco" class="chipx c2">Agent teams surface edge cases you'd never role-play. <b data-hf-id="hf-l9th">They don't get tired or polite.</b></div>
+      <div data-hf-id="hf-pvfq" class="warnx w1">"100% of edge cases found" is not a stop condition. <b data-hf-id="hf-elby">That number doesn't exist.</b></div>
+      <div data-hf-id="hf-wp2g" class="punchx p2">So build defensively: the default answer is a safe escalation to a human</div>
+      <div data-hf-id="hf-x8mi" class="chipx c3">A false alarm costs a minute. <b data-hf-id="hf-hxay">A miss costs trust.</b></div>
+    </div>
+  </div>
+
+  <!-- B10 milestones by function (324.3-380.2, PIP) -->
+  <div data-hf-id="hf-ke9s" id="b10" class="under clip" data-start="324.3" data-duration="55.9" data-track-index="4">
+    <div data-hf-id="hf-hb6v" class="head">
+      <div data-hf-id="hf-jvie" class="kick">The $12,000 lesson</div>
+      <div data-hf-id="hf-9zq4" class="t">Milestones by <span data-hf-id="hf-5yr8" class="lm">Function</span></div>
+    </div>
+    <div data-hf-id="hf-qzq8" class="rail">
+      <div data-hf-id="hf-s0wt" class="mpill bad m1"><span data-hf-id="hf-g0je" class="mn">M1</span>Agent wired to the backend</div>
+      <div data-hf-id="hf-5oki" class="mconn mc1"></div>
+      <div data-hf-id="hf-0axt" class="mpill bad m2"><span data-hf-id="hf-geuf" class="mn">M2</span>Finished version, through QA</div>
+    </div>
+    <div data-hf-id="hf-g2wg" class="stack">
+      <div data-hf-id="hf-984y" class="warnx w1">See the flaw? <b data-hf-id="hf-3cqq">All the QA lived at the end.</b> Every problem surfaced at once.</div>
+      <div data-hf-id="hf-kkt3" class="qrow q1"><div data-hf-id="hf-rp2f" class="n">✓</div><div data-hf-id="hf-pxfc" class="tx">Nail one function before the next opens<span data-hf-id="hf-3i89" class="sub">Every onboarding scenario: filled, tested, <b data-hf-id="hf-736t">closed</b>. Then matchmaking. Then support.</span></div></div>
+      <div data-hf-id="hf-0yjx" class="punchx p1">Problems arrive in small, named batches instead of one avalanche</div>
+    </div>
+  </div>
+
+  <!-- B12 outro (416.5-435) -->
+  <div data-hf-id="hf-zplj" id="b12" class="under clip" data-start="416.5" data-duration="18.5" data-track-index="4">
+    <div data-hf-id="hf-anj5" class="inner">
+      <div data-hf-id="hf-erpu" class="nx">
+        <div data-hf-id="hf-p5g1" class="kick">Up next · Reliability, the last of this pillar</div>
+        <div data-hf-id="hf-h3qy" class="t">Demo-Ready vs <span data-hf-id="hf-sg3b" class="lm">Production</span>-Ready</div>
+      </div>
+      <div data-hf-id="hf-sooa" class="tease"><div data-hf-id="hf-sbrk" class="quote q1">"What does your agent do when the database goes down <b data-hf-id="hf-5xv1">at nine p.m. on a Friday?</b>"</div></div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-lhb7" id="p34-video" src="assets/clean.mp4" muted data-start="0" data-duration="430.14" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-0spz" id="p34-audio" src="assets/audio.m4a" data-start="0" data-duration="430.14" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <!-- B2 chaos montage (over FULL+shift, 8.6-50.5) -->
+  <div data-hf-id="hf-xjxq" id="b2" class="over clip" data-start="8.6" data-duration="41.9" data-track-index="6">
+    <div data-hf-id="hf-evzd" class="stack">
+      <div data-hf-id="hf-ykl4" class="kick k1">The chaos montage · humans doing human things</div>
+      <div data-hf-id="hf-epul" class="chipx c1">Answered two questions, vanished three weeks: <b data-hf-id="hf-n6g2">"can I book a table Friday?"</b></div>
+      <div data-hf-id="hf-ghod" class="chipx c2"><b data-hf-id="hf-9cwe">"Hey, it's me"</b> from a number the system had never seen</div>
+      <div data-hf-id="hf-vgp6" class="chipx c3">Booked, canceled, booked, canceled. <b data-hf-id="hf-1qdn">Six times in a row.</b></div>
+      <div data-hf-id="hf-z1tt" class="chipx c4">A steady trickle of no-shows, <b data-hf-id="hf-ysre">tracked by hand every day</b></div>
+      <div data-hf-id="hf-fy3q" class="warnx w1">Every one forced new logic. <b data-hf-id="hf-gwcp">None was in the original design.</b></div>
+      <div data-hf-id="hf-qy4y" class="punchx p1">The real difficulty: mapping every scenario so all the pieces fit together</div>
+    </div>
+  </div>
+
+  <!-- B4 you won't find them all (over FULL+shift, 126.4-153.4) -->
+  <div data-hf-id="hf-pq0a" id="b4" class="over clip" data-start="126.4" data-duration="27" data-track-index="6">
+    <div data-hf-id="hf-faae" class="stack">
+      <div data-hf-id="hf-mctm" class="kick k1">Go in knowing this</div>
+      <div data-hf-id="hf-9gnx" class="warnx w1">You will not find all the edge cases. <b data-hf-id="hf-czcr">That's just the reality.</b></div>
+      <div data-hf-id="hf-d5bt" class="chipx c1">Don't worry: <b data-hf-id="hf-d522">more edge cases get found at evals</b></div>
+      <div data-hf-id="hf-qt8f" class="chipx c2">The cafe: <b data-hf-id="hf-d3bk">~50-60%</b> designed up front · <b data-hf-id="hf-iy6q">+10%</b> testing · <b data-hf-id="hf-gxcm">+10%</b> the founders</div>
+    </div>
+  </div>
+
+  <!-- B6 two kinds of triggers (over FULL+shift, 168.9-217.8) -->
+  <div data-hf-id="hf-pw6n" id="b6" class="over clip" data-start="168.9" data-duration="48.9" data-track-index="6">
+    <div data-hf-id="hf-e3db" class="stack">
+      <div data-hf-id="hf-ax79" class="kick k1">Two kinds of builds</div>
+      <div data-hf-id="hf-wo68" class="kc hot t1">
+        <div data-hf-id="hf-iyfw" class="lab">Trigger = another system</div>
+        <div data-hf-id="hf-kjd3" class="val">Scopeable chaos</div>
+        <div data-hf-id="hf-uzb6" class="det">An email arrives: blank subject, weird domain, oversized body. <b data-hf-id="hf-k2vs">You can sit down and list most of it.</b></div>
+      </div>
+      <div data-hf-id="hf-k4ee" class="kc dead t2">
+        <div data-hf-id="hf-jcie" class="lab">Trigger = a human with a keyboard</div>
+        <div data-hf-id="hf-2jlh" class="val">Maximum chaos</div>
+        <div data-hf-id="hf-jodg" class="det">Open-ended texts from the general public, around the clock. <b data-hf-id="hf-mjm9">Expect far more mapping time.</b></div>
+      </div>
+      <div data-hf-id="hf-cg9q" class="chipx c1">The cafe had no expert to interview. <b data-hf-id="hf-3cj7">We role-played imaginary members.</b></div>
+    </div>
+  </div>
+
+  <!-- B7 dependencies (over FULL+shift, 218.2-235.0) -->
+  <div data-hf-id="hf-uge5" id="b7" class="over clip" data-start="218.2" data-duration="16.8" data-track-index="6">
+    <div data-hf-id="hf-ehoc" class="stack">
+      <div data-hf-id="hf-fp91" class="kick k1">The edge cases beginners miss · your dependencies</div>
+      <div data-hf-id="hf-llym" class="chipx c1">What happens if the <b data-hf-id="hf-b7ov">model provider is down</b>?</div>
+      <div data-hf-id="hf-xnu6" class="chipx c2">If the <b data-hf-id="hf-dd12">database times out</b>? If you hit a <b data-hf-id="hf-eifo">rate limit</b> at your busiest hour?</div>
+      <div data-hf-id="hf-bz9f" class="punchx p1">The predictable kind. They go on the map.</div>
+    </div>
+  </div>
+
+  <!-- B9 the silhouette (over FULL+shift, 289.2-323.6) -->
+  <div data-hf-id="hf-8agt" id="b9" class="over clip" data-start="289.2" data-duration="34.4" data-track-index="6">
+    <div data-hf-id="hf-dar9" class="stack">
+      <div data-hf-id="hf-gi43" class="kick k1">When do you stop mapping?</div>
+      <div data-hf-id="hf-20ot" class="chipx c1">It's like a silhouette: <b data-hf-id="hf-ufed">you see the outline early</b>, and keep filling the inside</div>
+      <div data-hf-id="hf-cra4" class="chipx c2">"I can't think of more" isn't "there are no more". <b data-hf-id="hf-t4pm">But you can see the picture well enough to build.</b></div>
+      <div data-hf-id="hf-wkms" class="punchx p1">There is no perfect version one. Plan A exists to generate the information for plan B.</div>
+    </div>
+  </div>
+
+  <!-- B11 stakeholders (over FULL+shift, 381.6-415.4) -->
+  <div data-hf-id="hf-zxy2" id="b11" class="over clip" data-start="381.6" data-duration="33.8" data-track-index="6">
+    <div data-hf-id="hf-dp2a" class="stack">
+      <div data-hf-id="hf-fegy" class="kick k1">The people your build lands on</div>
+      <div data-hf-id="hf-5rmu" class="quote q1">"We're not bringing these people in to fire you. <b data-hf-id="hf-oiy9">We're bringing them in to take the repetitive things off your plate.</b>"</div>
+      <div data-hf-id="hf-h5w5" class="chipx c1">Without that blessing, said in the decision maker's own voice, <b data-hf-id="hf-mi1y">you feel the resistance everywhere</b></div>
+      <div data-hf-id="hf-z6as" class="chipx c2">Employed track: leadership buy-in is <b data-hf-id="hf-fedh">the standard vs shelfware</b></div>
+      <div data-hf-id="hf-lerz" class="punchx p1">Get the sponsor. Get the sentence said out loud.</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-zjp7" id="vig" class="clip" data-start="0" data-duration="435" data-track-index="10"></div>
+
+  </div><!-- /#camera -->
+
+  <!-- transition overlays (above the camera, never blurred with it) -->
+  <div data-hf-id="hf-hmg5" id="flash"></div>
+  <div data-hf-id="hf-7su4" id="barT"></div>
+  <div data-hf-id="hf-69eq" id="barB"></div>
+  <div data-hf-id="hf-u7t3" id="hairline"></div>
+  <div data-hf-id="hf-4cyu" id="wiper"><div data-hf-id="hf-y8q3" class="w">UP NEXT</div></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 435;
+  const tl = gsap.timeline({ paused: true });
+  const LIME = '#D6FD03';
+  const WHITE = '#FFFFFF';
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 60;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* shot plan: identical to the P3.4 Kallaway edit — only the skin changed */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(8.0, { x: 380, y: 0, scale: 1 });
+  tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, 8.0);
+  toPIP(55.9);
+  toFULL(125.3);
+  toOFF(153.4);
+  fromOFF(167.8, { x: 0, y: 0, scale: 1 });
+  toPIP(235.0);
+  toFULL(288.0);
+  toPIP(323.9);
+  toFULL(380.2);
+  toOFF(415.5);
+
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  shadeOut(56.15);
+  clearLeft(126.3);  shadeOut(154.0);
+  clearLeft(168.8);
+  shadeOut(235.25);
+  clearLeft(289.1);  shadeOut(324.15);
+  clearLeft(381.5);  shadeOut(416.1);
+
+  /* ---- transition kit (ported from style-library cards/transitions) ----
+     Whips/zooms ride #camera; flash/letterbox/wiper are overlays above it.
+     Each fires exactly when the video re-anchors, so the blur or cover hides
+     the mechanical move underneath. */
+  const cam = '#camera';
+  function camWhip(t, dir = 1) {
+    tl.to(cam, { x: -140 * dir, scale: 1.07, duration: 0.28, ease: 'power3.in' }, t);
+    tl.to(cam, { filter: 'blur(18px)', duration: 0.28, ease: 'power2.in' }, t);
+    tl.set(cam, { x: 140 * dir }, t + 0.28);
+    tl.to(cam, { x: 0, scale: 1, duration: 0.42, ease: 'power3.out' }, t + 0.28);
+    tl.to(cam, { filter: 'blur(0px)', duration: 0.34, ease: 'power2.out' }, t + 0.3);
+  }
+  function camSpin(t) {
+    tl.to(cam, { rotation: -7, scale: 1.22, duration: 0.28, ease: 'power3.in' }, t);
+    tl.to(cam, { filter: 'blur(16px)', duration: 0.28, ease: 'power2.in' }, t);
+    tl.set(cam, { rotation: 7 }, t + 0.28);
+    tl.to(cam, { rotation: 0, scale: 1, duration: 0.45, ease: 'power3.out' }, t + 0.28);
+    tl.to(cam, { filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }, t + 0.32);
+  }
+  function camZoom(t) {
+    tl.to(cam, { scale: 1.32, rotation: 1.2, duration: 0.3, ease: 'power3.in' }, t);
+    tl.to(cam, { filter: 'blur(12px)', duration: 0.3, ease: 'power2.in' }, t);
+    tl.set(cam, { scale: 1.24, rotation: -1.2 }, t + 0.3);
+    tl.to(cam, { scale: 1, rotation: 0, duration: 0.5, ease: 'power3.out' }, t + 0.3);
+    tl.to(cam, { filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }, t + 0.34);
+  }
+  function camFlash(t) {
+    tl.to('#flash', { opacity: 1, duration: 0.07, ease: 'power1.in' }, t);
+    tl.set(cam, { scale: 1.05 }, t + 0.07);
+    tl.to('#flash', { opacity: 0, duration: 0.16, ease: 'power2.out' }, t + 0.08);
+    tl.to(cam, { scale: 1, duration: 0.4, ease: 'power3.out' }, t + 0.08);
+  }
+  function letterbox(tClose, tOpen) {
+    tl.to('#barT', { scaleY: 1, duration: 0.38, ease: 'power3.in' }, tClose);
+    tl.to('#barB', { scaleY: 1, duration: 0.38, ease: 'power3.in' }, tClose);
+    tl.to('#hairline', { opacity: 1, duration: 0.1, ease: 'power1.in' }, tClose + 0.3);
+    tl.to('#hairline', { opacity: 0, duration: 0.25, ease: 'power2.out' }, tOpen);
+    tl.to('#barT', { scaleY: 0, duration: 0.5, ease: 'power3.out' }, tOpen);
+    tl.to('#barB', { scaleY: 0, duration: 0.5, ease: 'power3.out' }, tOpen);
+  }
+  function typeWipe(t) {
+    tl.set('#wiper', { x: 2100, skewX: -8 }, t);
+    tl.to('#wiper', { x: -3400, duration: 1.0, ease: 'power2.inOut' }, t);
+    tl.to('#wiper', { skewX: 0, duration: 0.4, ease: 'power2.out' }, t + 0.7);
+  }
+
+  /* the transition plan — one move per beat boundary, energy matched */
+  tl.set('#barT, #barB', { scaleY: 0 }, 0);
+  tl.set('#wiper', { x: 2100 }, 0);
+  camFlash(8.05);            // B1 takeover -> B2 (video lands in SHIFT)
+  camWhip(55.85);            // B2 -> B3: whip left as video drops to PIP
+  camZoom(125.25);           // B3 -> B4: crash zoom as PIP returns FULL
+  letterbox(153.35, 154.2);  // B4 -> B5: the blink; video exits behind closed lids
+  camFlash(167.85);          // B5 -> B6: lime pop as video returns FULL
+  camSpin(234.95);           // B7 -> B8: spin whip into the PIP
+  camWhip(287.95, -1);       // B8 -> B9: whip right back to FULL
+  camZoom(323.85);           // B9 -> B10: crash zoom into the PIP
+  camWhip(380.15);           // B10 -> B11: whip left back to FULL
+  typeWipe(415.35);          // B11 -> B12: UP NEXT drives through into the outro
+
+  /* ambient: warm creep breathes, vignette pulses gently */
+  tl.to('#bg .creep', { scale: 1.12, opacity: 0.8, duration: 5, ease: 'sine.inOut', repeat: 85, yoyo: true }, 0);
+  tl.to('#vig',       { opacity: 0.9, duration: 4, ease: 'sine.inOut', repeat: 107, yoyo: true }, 0);
+
+  /* ---- Higgsfield motion verbs ---- */
+  /* SNAP entrances (expo.out), POP for lime pills (back.out(1.9)), staged grey-to-lime flips */
+  const inUp   = (t, sel, d = 0.5, y = 34)  => { tl.fromTo(sel, { y, opacity: 0 }, { y: 0, opacity: 1, duration: d, ease: 'expo.out' }, t); };
+  const inLeft = (t, sel, d = 0.5, x = -56) => { tl.fromTo(sel, { x, opacity: 0 }, { x: 0, opacity: 1, duration: d, ease: 'expo.out' }, t); };
+  const pop    = (t, sel, d = 0.55)         => { tl.fromTo(sel, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.9)' }, t); };
+  const outFade= (t, sel, d = 0.3)          => { tl.to(sel, { opacity: 0, filter: 'blur(14px)', duration: d, ease: 'power2.in' }, t); };
+  const flip   = (t, sel, c = LIME)         => { tl.to(sel, { color: c, duration: 0.22, ease: 'power2.inOut' }, t); };
+
+  /* drift: glass stacks float slowly while alive (children only — the
+     container carries the static perspective tilt) */
+  const drift = (t, sel, reps) => { tl.to(sel, { y: '-=7', duration: 3, ease: 'sine.inOut', yoyo: true, repeat: reps }, t); };
+
+  /* B1 cold open — words enter grey, flip staged to white, hero flips lime */
+  inUp(0.3, '#b1 .kick', 0.5, 20);
+  flip(1.1, '#b1 .kick');
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.92 },
+    { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: 'expo.out', stagger: 0.09 }, 2.2);
+  tl.to('#b1 .l1 .word', { color: WHITE, duration: 0.22, ease: 'power2.inOut', stagger: 0.07 }, 3.3);
+  flip(4.1, '#b1 .l1 .hero');
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 7.4);
+
+  /* B2 chaos */
+  inUp(8.8, '#b2 .k1', 0.45, 18);
+  flip(9.5, '#b2 .k1');
+  inLeft(9.2, '#b2 .c1');
+  inLeft(16.9, '#b2 .c2');
+  inLeft(20.6, '#b2 .c3');
+  inLeft(24.6, '#b2 .c4');
+  inLeft(32.6, '#b2 .w1');
+  pop(41.2, '#b2 .p1');
+  drift(10.5, '#b2 .stack > div', 12);
+  outFade(49.9, '#b2 .stack', 0.45);
+
+  /* B3 loop */
+  inUp(56.7, '#b3 .head', 0.5, 26);
+  flip(57.6, '#b3 .head .kick');
+  inLeft(66.0, '#b3 .r1');
+  inLeft(76.0, '#b3 .r2');
+  inLeft(92.5, '#b3 .r3');
+  inLeft(102.9, '#b3 .r4');
+  inLeft(107.6, '#b3 .r5');
+  pop(114.2, '#b3 .p1');
+  outFade(124.8, '#b3 .list', 0.45);
+  outFade(124.82, '#b3 .close', 0.45);
+  outFade(124.85, '#b3 .head', 0.45);
+
+  /* B4 */
+  inUp(126.5, '#b4 .k1', 0.45, 18);
+  flip(127.2, '#b4 .k1');
+  inLeft(128.4, '#b4 .w1');
+  inLeft(136.5, '#b4 .c1');
+  inLeft(140.6, '#b4 .c2');
+  drift(129.6, '#b4 .stack > div', 7);
+  outFade(152.9, '#b4 .stack', 0.45);
+
+  /* B5 trigger takeover */
+  inUp(154.3, '#b5 .kicker', 0.45, 20);
+  flip(155.1, '#b5 .kicker');
+  tl.fromTo('#b5 .l1 .word', { y: 40, opacity: 0, scale: 0.92 },
+    { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: 'expo.out', stagger: 0.09 }, 157.6);
+  tl.to('#b5 .l1 .word', { color: WHITE, duration: 0.22, ease: 'power2.inOut', stagger: 0.07 }, 158.6);
+  flip(159.3, '#b5 .l1 .hero');
+  outFade(167.2, '#b5 .inner', 0.6);
+
+  /* B6 triggers */
+  inUp(169.0, '#b6 .k1', 0.45, 18);
+  flip(169.7, '#b6 .k1');
+  pop(174.4, '#b6 .t1');
+  pop(186.3, '#b6 .t2');
+  inLeft(199.5, '#b6 .c1');
+  drift(175.6, '#b6 .stack > div', 13);
+  outFade(217.4, '#b6 .stack', 0.45);
+
+  /* B7 dependencies */
+  inUp(218.4, '#b7 .k1', 0.45, 18);
+  flip(219.1, '#b7 .k1');
+  inLeft(222.7, '#b7 .c1');
+  inLeft(224.7, '#b7 .c2');
+  pop(228.7, '#b7 .p1');
+  drift(223.9, '#b7 .stack > div', 3);
+  outFade(234.5, '#b7 .stack', 0.45);
+
+  /* B8 roast */
+  inUp(235.7, '#b8 .head', 0.5, 26);
+  flip(236.6, '#b8 .head .kick');
+  inLeft(240.8, '#b8 .c1');
+  pop(252.4, '#b8 .p1');
+  inLeft(254.4, '#b8 .c2');
+  inLeft(259.6, '#b8 .w1');
+  pop(267.4, '#b8 .p2');
+  inLeft(282.6, '#b8 .c3');
+  outFade(287.4, '#b8 .stack', 0.45);
+  outFade(287.45, '#b8 .head', 0.45);
+
+  /* B9 silhouette */
+  inUp(289.3, '#b9 .k1', 0.45, 18);
+  flip(290.0, '#b9 .k1');
+  inLeft(293.2, '#b9 .c1');
+  inLeft(300.5, '#b9 .c2');
+  pop(317.1, '#b9 .p1');
+  drift(294.4, '#b9 .stack > div', 9);
+  outFade(323.1, '#b9 .stack', 0.45);
+
+  /* B10 milestones */
+  inUp(324.5, '#b10 .head', 0.5, 26);
+  flip(325.4, '#b10 .head .kick');
+  pop(337.9, '#b10 .m1', 0.5);
+  tl.fromTo('#b10 .mc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.out' }, 346.4);
+  pop(346.7, '#b10 .m2', 0.5);
+  inLeft(352.1, '#b10 .w1');
+  inLeft(364.7, '#b10 .q1');
+  pop(375.6, '#b10 .p1');
+  outFade(379.7, '#b10 .stack', 0.45);
+  outFade(379.72, '#b10 .rail', 0.45);
+  outFade(379.75, '#b10 .head', 0.45);
+
+  /* B11 stakeholders */
+  inUp(381.7, '#b11 .k1', 0.45, 18);
+  flip(382.4, '#b11 .k1');
+  pop(388.6, '#b11 .q1');
+  inLeft(396.6, '#b11 .c1');
+  inLeft(406.7, '#b11 .c2');
+  pop(413.4, '#b11 .p1');
+  drift(389.8, '#b11 .stack > div', 7);
+  outFade(415.0, '#b11 .stack', 0.45);
+
+  /* B12 outro */
+  inUp(416.8, '#b12 .nx .kick', 0.45, 20);
+  flip(417.6, '#b12 .nx .kick');
+  tl.fromTo('#b12 .nx .t', { scale: 0.94, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.7, ease: 'expo.out' }, 417.5);
+  pop(425.9, '#b12 .q1');
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p34'] = tl;
+})();
+</script>
+</body>
+</html>

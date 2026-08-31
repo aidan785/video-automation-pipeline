@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AIS Live — Favorites (Updated)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<template id="__bundler_thumbnail" data-bg-color="#07121c">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#07121c"/>
+    <text x="600" y="440" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="900" font-style="italic" font-size="220" letter-spacing="-10">
+      <tspan fill="#ffffff">AIS</tspan><tspan fill="#37bdf8">LIVE</tspan>
+    </text>
+    <text x="600" y="530" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="28" letter-spacing="8" fill="#37bdf8">SHIFT · MARK SYSTEM</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: 'Inter', sans-serif; }
+  * { box-sizing: border-box; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 56px 40px 80px; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 700; color: #c96442; }
+  h1 { font-size: 44px; font-weight: 700; letter-spacing: -0.02em; color: #2a251f; margin: 8px 0 8px; }
+  .sub { font-size: 16px; color: rgba(60,50,40,0.72); max-width: 720px; line-height: 1.55; margin: 0 0 36px; }
+  .fav { margin-bottom: 48px; }
+  .fav-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: #2a251f; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+  .fav-label .num { background: #2a251f; color: #fef4a8; padding: 3px 8px; border-radius: 4px; }
+  .fav-note { font-family: 'Inter', sans-serif; font-size: 14px; color: rgba(60,50,40,0.8); margin-top: 14px; line-height: 1.55; max-width: 820px; }
+  .frame { width: 100%; height: 360px; border-radius: 4px; overflow: hidden; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06); }
+  .spec { margin-top: 14px; display: grid; grid-template-columns: 170px 1fr; gap: 4px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; padding: 18px 22px; background: #fff; border: 1px solid rgba(60,50,40,0.12); border-radius: 6px; }
+  .spec .k { color: rgba(60,50,40,0.55); letter-spacing: 0.15em; text-transform: uppercase; font-size: 10px; padding-top: 2px; }
+  .spec .v { color: #2a251f; }
+  .spec .v b { color: #000; font-weight: 700; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 8px; border: 1px solid rgba(0,0,0,0.08); }
+  .mock-section { margin-top: 26px; padding: 22px; background: #0a0e14; border-radius: 6px; }
+  .mock-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: #37bdf8; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .mock-title::before { content:''; width:6px;height:6px;border-radius:3px;background:#FF8A5C;box-shadow:0 0 8px #FF8A5C; }
+  .mock-sub { font-family: 'Inter', sans-serif; font-size: 13px; color: rgba(209,220,232,0.75); margin-bottom: 14px; font-weight: 300; line-height: 1.5; }
+  .mock-hint { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(209,220,232,0.45); margin-bottom: 12px; }
+  .rail { display: flex; gap: 14px; overflow-x: auto; overflow-y: hidden; padding: 4px 2px 18px; scroll-snap-type: x mandatory; }
+  .rail::-webkit-scrollbar { height: 8px; }
+  .rail::-webkit-scrollbar-track { background: #07121c; border-radius: 4px; }
+  .rail::-webkit-scrollbar-thumb { background: #19506c; border-radius: 4px; }
+  .rail::-webkit-scrollbar-thumb:hover { background: #37bdf8; }
+  .mcard { flex: 0 0 auto; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; }
+  .mcard .cap { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(209,220,232,0.55); font-weight: 500; }
+  .mcard .cap b { color: #fff; font-weight: 700; }
+  .mframe { border-radius: 4px; overflow: hidden; position: relative; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<!-- logos.jsx / mocks.jsx no longer needed; page is Shift-only -->
+<script type="text/babel" src="landing-mocks.jsx"></script>
+<script type="text/babel">
+// Inline frame — onyx with AIS command-deck radial (no external deps).
+function Frame({ children }) {
+  return (
+    <div className="frame" style={{ background: '#07121c' }}>
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(55,189,248,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.08) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+      <div style={{ position: 'absolute', top: -60, right: -40, width: 320, height: 320, background: '#37bdf8', filter: 'blur(100px)', opacity: 0.22, borderRadius: '50%' }}/>
+      <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Single-line Shift lockup (per screenshot): AIS white italic + LIVE cyan italic,
+// cyan rule running under LIVE only.
+function LogoShiftInline({ scale = 1 }) {
+  return (
+    <div style={{ transform: `scale(${scale})`, fontFamily: "'Montserrat', sans-serif", fontStyle: 'italic', fontWeight: 900, fontSize: 96, letterSpacing: '-0.03em', lineHeight: 0.9, display: 'inline-flex', alignItems: 'baseline' }}>
+      <span style={{ color: '#fff', WebkitTextStroke: '3px #fff' }}>AIS</span><span style={{ display:'inline-block', width: 14 }}/>
+      <span style={{ position: 'relative', color: '#37bdf8', WebkitTextStroke: '3px #37bdf8', textShadow: '0 0 28px rgba(55,189,248,0.55)' }}>
+        LIVE
+      </span>
+    </div>
+  );
+}
+
+// V2 — upright all-caps lockup (no italic). Same colorway, same proportions.
+function LogoShiftRoman({ scale = 1 }) {
+  return (
+    <div style={{ transform: `scale(${scale})`, fontFamily: "'Montserrat', sans-serif", fontStyle: 'normal', fontWeight: 900, fontSize: 96, letterSpacing: '-0.03em', lineHeight: 0.9, display: 'inline-flex', alignItems: 'baseline' }}>
+      <span style={{ color: '#fff', WebkitTextStroke: '3px #fff' }}>AIS</span><span style={{ display:'inline-block', width: 14 }}/>
+      <span style={{ position: 'relative', color: '#37bdf8', WebkitTextStroke: '3px #37bdf8', textShadow: '0 0 28px rgba(55,189,248,0.55)' }}>
+        LIVE
+      </span>
+    </div>
+  );
+}
+
+// V3 — mixed case: "AIS" all caps + "Live" with cap L + lowercase i/v/e. Upright.
+function LogoShiftMixed({ scale = 1 }) {
+  return (
+    <div style={{ transform: `scale(${scale})`, fontFamily: "'Montserrat', sans-serif", fontStyle: 'normal', fontWeight: 900, fontSize: 96, letterSpacing: '-0.03em', lineHeight: 0.9, display: 'inline-flex', alignItems: 'baseline' }}>
+      <span style={{ color: '#fff', WebkitTextStroke: '3px #fff' }}>AIS</span><span style={{ display:'inline-block', width: 14 }}/>
+      <span style={{ position: 'relative', color: '#37bdf8', WebkitTextStroke: '3px #37bdf8', textShadow: '0 0 28px rgba(55,189,248,0.55)' }}>
+        Live
+      </span>
+    </div>
+  );
+}
+
+// ───── Shift mark — auto-recolors for any surface ─────
+function ShiftMark({ theme = 'dark', size = 18, glow = true }) {
+  const m = {
+    dark:       { ais: '#fff',    live: '#37bdf8', glow: 'rgba(55,189,248,0.55)' },
+    blue:       { ais: '#fff',    live: '#07121c', glow: 'transparent' },
+    yellow:     { ais: '#07121c', live: '#fff',    glow: 'transparent' },
+    orange:     { ais: '#07121c', live: '#fff',    glow: 'transparent' },
+    white:      { ais: '#07121c', live: '#37bdf8', glow: 'rgba(55,189,248,0.25)' },
+    allblack:   { ais: '#07121c', live: '#07121c', glow: 'transparent' },
+    allwhite:   { ais: '#fff',    live: '#fff',    glow: 'transparent' },
+    blueblack:  { ais: '#37bdf8', live: '#07121c', glow: 'transparent' },
+    yellowblack:{ ais: '#f5d82a', live: '#07121c', glow: 'transparent' },
+    whiteblue:  { ais: '#fff',    live: '#37bdf8', glow: 'rgba(55,189,248,0.45)' },
+    blackblue:  { ais: '#07121c', live: '#37bdf8', glow: 'rgba(55,189,248,0.2)' },
+    orangeblack:{ ais: '#FF8A5C', live: '#07121c', glow: 'transparent' },
+    cream:      { ais: '#f0eee9', live: '#c96442', glow: 'transparent' },
+  };
+  const c = m[theme] || m.dark;
+  return (
+    <span style={{ fontFamily: "'Montserrat', sans-serif", fontStyle: 'italic', fontWeight: 900, fontSize: size, letterSpacing: '-0.03em', display: 'inline-flex', alignItems: 'baseline', lineHeight: 0.9 }}>
+      <span style={{ color: c.ais, WebkitTextStroke: `${Math.max(1, size*0.032)}px ${c.ais}` }}>AIS</span><span style={{ display:'inline-block', width: size*0.12 }}/>
+      <span style={{ color: c.live, WebkitTextStroke: `${Math.max(1, size*0.032)}px ${c.live}`, textShadow: glow && c.glow !== 'transparent' ? `0 0 ${size*0.8}px ${c.glow}` : 'none' }}>LIVE</span>
+    </span>
+  );
+}
+const Eyebrow = ({ children, color = '#37bdf8' }) => (
+  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+    <span style={{ width: 6, height: 6, borderRadius: 3, background: color, boxShadow: `0 0 8px ${color}` }}/>
+    {children}
+  </div>
+);
+const CmdBg = ({ op = 0.08 }) => (
+  <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(rgba(55,189,248,${op}) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,${op}) 1px, transparent 1px)`, backgroundSize: '24px 24px' }}/>
+);
+
+const M01 = () => (
+  <div style={{ width: 320, height: 320, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <Eyebrow>Countdown</Eyebrow>
+    <div style={{ position: 'relative' }}>
+      <div style={{ fontWeight: 900, fontSize: 96, letterSpacing: '-0.06em', lineHeight: 0.85 }}>T-28</div>
+      <div style={{ fontWeight: 300, fontSize: 16, color: '#d1dce8', marginTop: 4 }}>days until we're together.</div>
+    </div>
+    <div style={{ position: 'relative' }}><ShiftMark theme="dark" size={20}/></div>
+  </div>
+);
+const M02 = () => (
+  <div style={{ width: 320, height: 320, background: '#f5d82a', position: 'relative', overflow: 'hidden', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <Eyebrow color="#07121c">Speaker drop / 04</Eyebrow>
+    <div>
+      <div style={{ fontWeight: 900, fontSize: 38, letterSpacing: '-0.04em', lineHeight: 0.95 }}>Maya Ortega</div>
+      <div style={{ fontSize: 12, marginTop: 4 }}>Loopline Ops ∙ $100k/mo</div>
+      <div style={{ marginTop: 14, fontWeight: 900, fontStyle: 'italic', fontSize: 22, letterSpacing: '-0.02em', lineHeight: 1 }}>"Stop selling hours. Sell outcomes."</div>
+    </div>
+    <ShiftMark theme="yellow" size={20} glow={false}/>
+  </div>
+);
+const M03 = () => (
+  <div style={{ width: 320, height: 320, background: '#FF8A5C', position: 'relative', overflow: 'hidden', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <Eyebrow color="#07121c">Field report</Eyebrow>
+    <div>
+      <div style={{ fontWeight: 300, fontStyle: 'italic', fontSize: 24, lineHeight: 1.1 }}>"Made back ticket <span style={{ fontWeight: 900, fontStyle: 'normal' }}>28×</span> in 40 days."</div>
+      <div style={{ fontWeight: 700, fontSize: 12, marginTop: 10 }}>— J. Chen, Northbeam</div>
+    </div>
+    <ShiftMark theme="orange" size={20} glow={false}/>
+  </div>
+);
+const M04 = () => (
+  <div style={{ width: 320, height: 320, background: '#37bdf8', position: 'relative', overflow: 'hidden', padding: 24, color: '#07121c', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.12) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <Eyebrow color="#07121c">Track 01</Eyebrow>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 130, letterSpacing: '-0.07em', lineHeight: 0.82 }}>
+      BUILD.<br/><span style={{ color: '#fff' }}>SELL.</span><br/>SHIP.
+    </div>
+    <div style={{ position: 'relative' }}><ShiftMark theme="blue" size={20} glow={false}/></div>
+  </div>
+);
+const M05 = () => (
+  <div style={{ width: 240, height: 426, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, background: '#f5d82a', filter: 'blur(60px)', opacity: 0.25, borderRadius: '50%' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Eyebrow color="#FF8A5C">Enrolling</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}>01/03</div>
+    </div>
+    <div style={{ position: 'relative' }}>
+      <div style={{ fontWeight: 900, fontSize: 64, color: '#f5d82a', letterSpacing: '-0.06em', lineHeight: 0.88, textShadow: '0 0 40px rgba(245,216,42,0.4)' }}>REVENUE</div>
+      <div style={{ fontWeight: 300, fontSize: 16, color: '#fff', marginTop: 10, lineHeight: 1.2 }}>is a <span style={{ fontStyle: 'italic', fontWeight: 700, color: '#37bdf8' }}>skill</span>. Come build it.</div>
+    </div>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ padding: '9px 12px', background: '#f5d82a', color: '#07121c', fontWeight: 800, fontSize: 10, letterSpacing: '0.2em', textAlign: 'center' }}>CLAIM SEAT &gt;&gt;</div>
+      <ShiftMark theme="dark" size={16}/>
+    </div>
+  </div>
+);
+const M06 = () => (
+  <div style={{ width: 640, height: 320, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 36, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <div style={{ position: 'absolute', top: -80, right: -40, width: 320, height: 320, background: '#37bdf8', filter: 'blur(100px)', opacity: 0.25, borderRadius: '50%' }}/>
+    <div style={{ position: 'relative' }}><Eyebrow color="#FF8A5C">Sept 18–20 ∙ Austin TX</Eyebrow></div>
+    <div style={{ position: 'relative' }}>
+      <div style={{ fontWeight: 900, fontSize: 70, letterSpacing: '-0.05em', lineHeight: 0.88 }}>Real Projects.</div>
+      <div style={{ fontWeight: 900, fontStyle: 'italic', fontSize: 70, letterSpacing: '-0.05em', lineHeight: 0.88, color: '#37bdf8', textShadow: '0 0 40px rgba(55,121,255,0.6)' }}>Real Revenue.</div>
+    </div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="dark" size={32}/>
+      <div style={{ padding: '7px 12px', background: '#f5d82a', color: '#07121c', fontWeight: 800, fontSize: 10, letterSpacing: '0.2em' }}>AISLIVE.CO</div>
+    </div>
+  </div>
+);
+const M07 = () => (
+  <div style={{ width: 260, height: 360, background: '#FF8A5C', position: 'relative', overflow: 'hidden', padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent 0, transparent 26px, rgba(7,18,28,0.1) 26px, rgba(7,18,28,0.1) 28px)' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <Eyebrow color="#07121c">AIS presents / 001</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em' }}>№ 001</div>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 64, letterSpacing: '-0.06em', lineHeight: 0.88 }}>THREE<br/>DAYS.<br/><span style={{ color: '#fff', textShadow: '2px 2px 0 #07121c' }}>ONE</span><br/>ROOM.</div>
+    <div style={{ position: 'relative', borderTop: '2px solid #07121c', paddingTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>AUSTIN TX ∙ SEP 18–20</div>
+      <ShiftMark theme="orange" size={20} glow={false}/>
+    </div>
+  </div>
+);
+const M08 = () => (
+  <div style={{ width: 260, height: 360, background: '#0a0e14', position: 'relative', overflow: 'hidden', padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <div style={{ position: 'absolute', bottom: -60, left: -40, width: 220, height: 220, background: '#37bdf8', filter: 'blur(70px)', opacity: 0.3, borderRadius: '50%' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <ShiftMark theme="dark" size={18}/>
+      <div style={{ width: 7, height: 7, borderRadius: 4, background: '#FF8A5C', boxShadow: '0 0 10px #FF8A5C' }}/>
+    </div>
+    <div style={{ position: 'relative' }}>
+      <Eyebrow>Track 02</Eyebrow>
+      <div style={{ fontWeight: 900, fontSize: 32, letterSpacing: '-0.04em', lineHeight: 1, marginTop: 8, color: '#fff' }}>Client<br/>Acquisition<br/><span style={{ color: '#37bdf8' }}>Lab</span></div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: '#d1dce8', marginTop: 10 }}>ROOM 03 ∙ 14:00</div>
+    </div>
+    <div style={{ position: 'relative', fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}>Wayfinding ∙ Day 01</div>
+  </div>
+);
+const M09 = () => (
+  <div style={{ width: 360, height: 216, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 18, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <div style={{ position: 'absolute', top: -40, right: -40, width: 160, height: 160, background: '#37bdf8', filter: 'blur(60px)', opacity: 0.22, borderRadius: '50%' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <ShiftMark theme="dark" size={24}/>
+      <Eyebrow>Crew</Eyebrow>
+    </div>
+    <div style={{ position: 'relative' }}>
+      <div style={{ fontWeight: 800, fontSize: 19, letterSpacing: '-0.02em' }}>Nate Herk</div>
+      <div style={{ fontSize: 11, color: '#d1dce8' }}>Founder ∙ AI Automation Society</div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: '#37bdf8', marginTop: 8 }}>NATE@AISLIVE.CO</div>
+    </div>
+  </div>
+);
+const M10 = () => (
+  <div style={{ width: 360, height: 216, background: '#37bdf8', position: 'relative', overflow: 'hidden', padding: 18, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.1) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow color="#07121c">Real projects ∙ Real revenue</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>2026</div>
+    </div>
+    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+      <ShiftMark theme="blue" size={58} glow={false}/>
+    </div>
+  </div>
+);
+const M11 = () => (
+  <div style={{ width: 640, height: 160, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <div style={{ position: 'absolute', top: -60, right: 100, width: 240, height: 240, background: '#37bdf8', filter: 'blur(80px)', opacity: 0.22, borderRadius: '50%' }}/>
+    <div style={{ position: 'relative' }}>
+      <ShiftMark theme="dark" size={36}/>
+      <div style={{ fontWeight: 300, fontSize: 14, color: '#d1dce8', marginTop: 8 }}>Real projects. Real revenue. <span style={{ fontStyle: 'italic', fontWeight: 700, color: '#37bdf8' }}>One room.</span></div>
+    </div>
+    <div style={{ position: 'relative', textAlign: 'right' }}>
+      <Eyebrow color="#FF8A5C">Sep 18–20 ∙ Austin</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>AISLIVE.CO</div>
+    </div>
+  </div>
+);
+const M12 = () => (
+  <div style={{ width: 360, height: 360, background: '#0a0e14', position: 'relative', overflow: 'hidden', padding: 18, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+    <CmdBg op={0.05}/>
+    {[
+      { bg: '#37bdf8', theme: 'blue', eye: '#07121c', tag: 'ALL-ACCESS' },
+      { bg: '#f5d82a', theme: 'yellow', eye: '#07121c', tag: 'REVENUE' },
+      { bg: '#FF8A5C', theme: 'orange', eye: '#07121c', tag: 'LIVE' },
+      { bg: '#07121c', theme: 'dark', eye: '#37bdf8', tag: 'CREW' },
+    ].map((s, i) => (
+      <div key={i} style={{ position: 'relative', background: s.bg, borderRadius: 16, border: '2px dashed rgba(255,255,255,0.25)', padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <Eyebrow color={s.eye}>{s.tag}</Eyebrow>
+        <ShiftMark theme={s.theme} size={24} glow={s.theme === 'dark'}/>
+      </div>
+    ))}
+  </div>
+);
+const M13 = () => (
+  <div style={{ width: 320, height: 360, background: '#0a0e14', position: 'relative', overflow: 'hidden', padding: 20, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg/>
+    <div style={{ position: 'relative' }}>
+      <Eyebrow color="#f5d82a">Day 01 schedule</Eyebrow>
+      <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {[['09:30','Keynote — Nate Herk','#37bdf8'],['11:00','Client Acquisition Lab','#fff'],['14:00','Build Studio · Track A','#fff'],['16:30','Close the $10k deal','#f5d82a'],['20:30','Bonfire & Grind','#FF8A5C']].map(([t,n,c], i) => (
+          <div key={i} style={{ display: 'flex', gap: 10, borderBottom: '1px solid rgba(55,189,248,0.15)', paddingBottom: 6 }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700, color: '#d1dce8', letterSpacing: '0.1em', minWidth: 44 }}>{t}</div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: c }}>{n}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <ShiftMark theme="dark" size={18}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}>18.09.2026</div>
+    </div>
+  </div>
+);
+const M14 = () => (
+  <div style={{ width: 360, height: 216, background: '#fff', position: 'relative', overflow: 'hidden', padding: 18, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow color="#37bdf8">Sponsored by</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(7,18,28,0.5)' }}>PARTNER 01</div>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 22, letterSpacing: '-0.03em', lineHeight: 1.05 }}>The <span style={{ color: '#37bdf8', fontStyle: 'italic' }}>operators'</span> stack, curated.</div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="white" size={20}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>APPLY &gt;&gt;</div>
+    </div>
+  </div>
+);
+const M15 = () => (
+  <div style={{ width: 260, height: 260, background: '#FF8A5C', position: 'relative', overflow: 'hidden', padding: 16, color: '#07121c', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '5px solid #07121c' }}>
+    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8 }}>
+      <svg width="18" height="18" viewBox="0 0 22 22"><circle cx="11" cy="11" r="10" fill="#07121c" stroke="#fff" strokeWidth="1.5"/><path d="M11 5 L11 11 L15 13" stroke="#fff" strokeWidth="2" fill="none" strokeLinecap="round"/></svg>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, fontWeight: 700, letterSpacing: '0.3em' }}>WAYPOINT 04</span>
+    </div>
+    <div style={{ fontWeight: 900, fontSize: 42, letterSpacing: '-0.05em', lineHeight: 0.9, color: '#fff', textShadow: '2px 2px 0 #07121c' }}>BONFIRE<br/>& GRIND</div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '2px solid #07121c', paddingTop: 6 }}>
+      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>20:30 ∙ DAY 2</span>
+      <ShiftMark theme="orange" size={16} glow={false}/>
+    </div>
+  </div>
+);
+
+// ─── New set ─────────────────────────────────────────────────────
+// 16 — All-black mark on cream (print / letterhead / light deck)
+const M16 = () => (
+  <div style={{ width: 320, height: 320, background: '#f0eee9', position: 'relative', overflow: 'hidden', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow color="#07121c">Memo 004</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(7,18,28,0.5)' }}>INT.</div>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 40, letterSpacing: '-0.04em', lineHeight: 0.95 }}>Room is full.<br/><span style={{ fontStyle: 'italic' }}>Join the waitlist.</span></div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="allblack" size={22} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>AISLIVE.CO</div>
+    </div>
+  </div>
+);
+// 17 — All-white mark, photo-style placeholder with dark gradient
+const M17 = () => (
+  <div style={{ width: 320, height: 320, position: 'relative', overflow: 'hidden', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff', background: 'radial-gradient(circle at 80% 0%, #19506c 0%, #07121c 45%, #000 100%)' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 10px)' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow color="#fff">On-stage</Eyebrow>
+      <div style={{ width: 8, height: 8, borderRadius: 4, background: '#FF8A5C', boxShadow: '0 0 12px #FF8A5C' }}/>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 36, letterSpacing: '-0.04em', lineHeight: 0.95, fontStyle: 'italic' }}>"You won't build it<br/>sitting alone."</div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="allwhite" size={22} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.5)' }}>— N. HERK</div>
+    </div>
+  </div>
+);
+// 18 — Yellow / all-black — ticket stub
+const M18 = () => (
+  <div style={{ width: 420, height: 180, background: '#f5d82a', position: 'relative', overflow: 'hidden', display: 'flex', color: '#07121c', border: '2px dashed rgba(7,18,28,0.25)' }}>
+    <div style={{ padding: 16, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Eyebrow color="#07121c">All-access · Day 1</Eyebrow>
+      <div style={{ fontWeight: 900, fontSize: 28, letterSpacing: '-0.03em', lineHeight: 1 }}>Seat 042<br/>Row B</div>
+      <ShiftMark theme="yellowblack" size={18} glow={false}/>
+    </div>
+    <div style={{ borderLeft: '2px dashed rgba(7,18,28,0.25)', padding: 16, width: 130, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', textAlign: 'center' }}>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>SEP 18</div>
+      <div style={{ fontWeight: 900, fontSize: 40, letterSpacing: '-0.04em', lineHeight: 0.95 }}>$497</div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em' }}>#AL·042</div>
+    </div>
+  </div>
+);
+// 19 — Dark square, big all-white mark centered (avatar / bug)
+const M19 = () => (
+  <div style={{ width: 240, height: 240, background: '#07121c', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <CmdBg op={0.1}/>
+    <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 50%, rgba(55,189,248,0.18) 0%, transparent 60%)' }}/>
+    <ShiftMark theme="allwhite" size={44} glow={false}/>
+    <div style={{ position: 'absolute', bottom: 14, left: 14, fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.4)' }}>AVATAR / 01</div>
+  </div>
+);
+// 20 — Cream square, big all-black mark (minimal)
+const M20 = () => (
+  <div style={{ width: 240, height: 240, background: '#f0eee9', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.04) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <ShiftMark theme="allblack" size={44} glow={false}/>
+    <div style={{ position: 'absolute', bottom: 14, left: 14, fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.25em', color: 'rgba(7,18,28,0.45)' }}>AVATAR / 02</div>
+  </div>
+);
+// 21 — Electric-blue / all-black — huge single word
+const M21 = () => (
+  <div style={{ width: 420, height: 236, background: '#37bdf8', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.1) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <Eyebrow color="#07121c">Apply · 127 left</Eyebrow>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 110, letterSpacing: '-0.07em', lineHeight: 0.85, fontStyle: 'italic' }}>LIVE.</div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="allblack" size={22} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>APPLY &gt;&gt;</div>
+    </div>
+  </div>
+);
+// 22 — Cyber yellow, all-black mark, big numeric stat
+const M22 = () => (
+  <div style={{ width: 320, height: 320, background: '#f5d82a', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <Eyebrow color="#07121c">By the numbers</Eyebrow>
+    <div style={{ fontWeight: 900, fontSize: 130, letterSpacing: '-0.08em', lineHeight: 0.85 }}>300<span style={{ fontSize: 50, verticalAlign: '30%' }}>+</span></div>
+    <div style={{ fontWeight: 300, fontSize: 15, lineHeight: 1.3 }}>operators <span style={{ fontStyle: 'italic', fontWeight: 700 }}>in one room</span>, for 3 days.</div>
+    <ShiftMark theme="yellowblack" size={20} glow={false}/>
+  </div>
+);
+// 23 — Onyx + warm cream text (contrast flip)
+const M23 = () => (
+  <div style={{ width: 320, height: 320, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#f0eee9' }}>
+    <CmdBg op={0.07}/>
+    <Eyebrow color="#c96442">Cohort note</Eyebrow>
+    <div style={{ position: 'relative', fontWeight: 400, fontSize: 24, lineHeight: 1.25, fontStyle: 'italic' }}>"I've been to 12 of these.<br/>This one actually <span style={{ fontWeight: 900, color: '#c96442', fontStyle: 'normal' }}>paid me back</span>."</div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="cream" size={20} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(240,238,233,0.45)' }}>— A. RIVERA</div>
+    </div>
+  </div>
+);
+// 24 — Orange with all-black mark + big stat (matches user fave 04)
+const M24 = () => (
+  <div style={{ width: 320, height: 320, background: '#FF8A5C', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent 0, transparent 30px, rgba(7,18,28,0.08) 30px, rgba(7,18,28,0.08) 32px)' }}/>
+    <Eyebrow color="#07121c">Gain report</Eyebrow>
+    <div style={{ position: 'relative' }}>
+      <div style={{ fontWeight: 900, fontSize: 118, letterSpacing: '-0.08em', lineHeight: 0.85 }}>28×</div>
+      <div style={{ fontWeight: 300, fontStyle: 'italic', fontSize: 18, lineHeight: 1.2, marginTop: 4 }}>return on ticket in <span style={{ fontWeight: 900, fontStyle: 'normal' }}>40 days.</span></div>
+    </div>
+    <ShiftMark theme="orangeblack" size={20} glow={false}/>
+  </div>
+);
+// 25 — White deck cover, tiny all-black mark corner
+const M25 = () => (
+  <div style={{ width: 420, height: 236, background: '#fff', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <ShiftMark theme="allblack" size={18} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(7,18,28,0.45)' }}>DECK / INVESTOR V03</div>
+    </div>
+    <div style={{ position: 'relative' }}>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.25em', color: '#37bdf8', fontWeight: 700, marginBottom: 6 }}>CHAPTER 01</div>
+      <div style={{ fontWeight: 900, fontSize: 42, letterSpacing: '-0.04em', lineHeight: 0.95 }}>What the <span style={{ color: '#37bdf8', fontStyle: 'italic' }}>room</span><br/>is actually worth.</div>
+    </div>
+    <div style={{ position: 'relative', fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(7,18,28,0.45)' }}>2026 — NATE HERK ∙ AIS LIVE</div>
+  </div>
+);
+// 26 — IG carousel page 02 — big QUOTE on onyx
+const M26 = () => (
+  <div style={{ width: 320, height: 320, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg op={0.06}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow>Page 02 · of 05</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}>swipe →</div>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 140, letterSpacing: '-0.08em', lineHeight: 0.82, color: '#37bdf8', textShadow: '0 0 40px rgba(55,189,248,0.45)' }}>"$10k"</div>
+    <div style={{ position: 'relative', fontWeight: 300, fontSize: 14, color: '#d1dce8', lineHeight: 1.3 }}>The average deal closed <span style={{ fontStyle: 'italic', fontWeight: 700, color: '#fff' }}>in-room</span> at AIS Live '25.</div>
+    <ShiftMark theme="dark" size={18}/>
+  </div>
+);
+// 27 — Email header banner, cream with all-black mark
+const M27 = () => (
+  <div style={{ width: 640, height: 140, background: '#f0eee9', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}/>
+    <div style={{ position: 'relative' }}>
+      <ShiftMark theme="allblack" size={32} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.25em', color: 'rgba(7,18,28,0.55)', marginTop: 8 }}>WEEKLY / OPS DISPATCH</div>
+    </div>
+    <div style={{ position: 'relative', textAlign: 'right' }}>
+      <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: '-0.01em' }}>Issue 24</div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.2em', color: 'rgba(7,18,28,0.45)' }}>SEP 18 · 2026</div>
+    </div>
+  </div>
+);
+// 28 — Dark ad, revenue-yellow type treatment
+const M28 = () => (
+  <div style={{ width: 420, height: 236, background: '#0a0e14', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <CmdBg op={0.08}/>
+    <div style={{ position: 'absolute', top: -60, right: -40, width: 240, height: 240, background: '#f5d82a', filter: 'blur(90px)', opacity: 0.25, borderRadius: '50%' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow color="#f5d82a">Boarding · 127 left</Eyebrow>
+      <ShiftMark theme="dark" size={16}/>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 54, letterSpacing: '-0.05em', lineHeight: 0.9 }}>Close <span style={{ color: '#f5d82a', fontStyle: 'italic' }}>one deal</span>. Ticket paid.</div>
+    <div style={{ position: 'relative', fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.25em', color: '#d1dce8' }}>AISLIVE.CO  /  APPLY &gt;&gt;</div>
+  </div>
+);
+// 29 — Blue square with WHITE-ONLY mark (monochrome)
+const M29 = () => (
+  <div style={{ width: 320, height: 320, background: '#37bdf8', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <Eyebrow color="#fff">Monochrome / 01</Eyebrow>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 48, letterSpacing: '-0.04em', lineHeight: 0.95, fontStyle: 'italic' }}>One room.<br/>One voice.</div>
+    <ShiftMark theme="allwhite" size={22} glow={false}/>
+  </div>
+);
+// 30 — Black square, blue-only mark (night / premium)
+const M30 = () => (
+  <div style={{ width: 320, height: 320, background: '#000', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#fff' }}>
+    <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 20% 80%, rgba(55,189,248,0.2) 0%, transparent 50%)' }}/>
+    <Eyebrow color="#37bdf8">VIP access</Eyebrow>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 38, letterSpacing: '-0.04em', lineHeight: 0.95 }}>Front-row.<br/>Dinner included.<br/><span style={{ color: '#37bdf8', fontStyle: 'italic' }}>12 seats.</span></div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="whiteblue" size={20}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: '#f5d82a' }}>$4,997</div>
+    </div>
+  </div>
+);
+// 31 — Tote-bag mockup (big all-black on flat cream)
+const M31 = () => (
+  <div style={{ width: 300, height: 320, background: '#f0eee9', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 14, color: '#07121c' }}>
+    <div style={{ position: 'absolute', top: 0, left: '50%', width: 2, height: 30, background: '#07121c', transform: 'translateX(-40px)' }}/>
+    <div style={{ position: 'absolute', top: 0, left: '50%', width: 2, height: 30, background: '#07121c', transform: 'translateX(40px)' }}/>
+    <div style={{ position: 'absolute', top: 0, left: '50%', width: 82, height: 40, border: '2px solid #07121c', borderTop: 'none', borderRadius: '0 0 40px 40px', transform: 'translateX(-50%)' }}/>
+    <div style={{ marginTop: 34 }}><ShiftMark theme="allblack" size={46} glow={false}/></div>
+    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', fontWeight: 700 }}>ATX · 2026 · CREW</div>
+  </div>
+);
+// 32 — Cap / embroidery mock (orange on black)
+const M32 = () => (
+  <div style={{ width: 300, height: 200, background: '#07121c', position: 'relative', overflow: 'hidden', padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, color: '#fff' }}>
+    <CmdBg op={0.05}/>
+    <div style={{ position: 'relative', padding: '14px 20px', background: '#0a0e14', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 4, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+      <ShiftMark theme="orangeblack" size={28} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.4)' }}>EMBROIDERY · 5CM</div>
+    </div>
+  </div>
+);
+// 33 — Big narrow billboard, all-white on black (cinematic)
+const M33 = () => (
+  <div style={{ width: 700, height: 160, background: '#000', position: 'relative', overflow: 'hidden', padding: 26, display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#fff' }}>
+    <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 85% 50%, rgba(55,189,248,0.2) 0%, transparent 55%)' }}/>
+    <div style={{ position: 'relative' }}>
+      <ShiftMark theme="allwhite" size={44} glow={false}/>
+    </div>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+      <div style={{ fontWeight: 900, fontSize: 20, letterSpacing: '-0.02em', fontStyle: 'italic' }}>— coming to Austin, Sep 2026.</div>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.5)' }}>AISLIVE.CO</div>
+    </div>
+  </div>
+);
+// 34 — Sponsor slot v2 — crisp white, all-black mark (like user fave 01)
+const M34 = () => (
+  <div style={{ width: 360, height: 216, background: '#fff', position: 'relative', overflow: 'hidden', padding: 18, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(7,18,28,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(7,18,28,0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
+      <Eyebrow color="#37bdf8">Partner call</Eyebrow>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(7,18,28,0.5)' }}>SLOT 02 / 04</div>
+    </div>
+    <div style={{ position: 'relative', fontWeight: 900, fontSize: 22, letterSpacing: '-0.03em', lineHeight: 1.05 }}>Reach <span style={{ color: '#37bdf8', fontStyle: 'italic' }}>300+ operators</span> in one weekend.</div>
+    <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+      <ShiftMark theme="allblack" size={20} glow={false}/>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>PARTNERS@AISLIVE.CO</div>
+    </div>
+  </div>
+);
+// 35 — Metro-card style — orange & black horizontal
+const M35 = () => (
+  <div style={{ width: 420, height: 236, background: '#FF8A5C', position: 'relative', overflow: 'hidden', padding: 22, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#07121c' }}>
+    <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 18, background: '#07121c' }}/>
+    <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 18, background: '#07121c' }}/>
+    <div style={{ position: 'relative', paddingLeft: 24, paddingRight: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+      <Eyebrow color="#07121c">Press pass</Eyebrow>
+      <div>
+        <div style={{ fontWeight: 900, fontSize: 36, letterSpacing: '-0.04em', lineHeight: 0.95 }}>M. Alvarez</div>
+        <div style={{ fontSize: 12 }}>The Operators Weekly · Press</div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <ShiftMark theme="orangeblack" size={20} glow={false}/>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.2em', fontWeight: 700 }}>#PRS-024</div>
+      </div>
+    </div>
+  </div>
+);
+
+// Reconstruction of the "AIS.LIVE" single-line italic favorite (screenshot 2)
+// (other logo variants removed — this page is now Shift-only)
+
+function App() {
+  return (
+    <div className="page">
+      <div className="eyebrow">AIS LIVE ∙ LOGO GUIDELINES / FINAL</div>
+  <h1>The AIS Live mark.</h1>
+  <p className="sub">Final logo guidelines for <b>AIS Live</b>. The primary mark is the <b>Shift</b> single-line lockup — <b>AIS</b> + <b>LIVE</b>, set in <b>Montserrat Black (900) Italic</b>. One approved lockup, clear-space and minimum-size rules, do/don't, the full type system, copy patterns, palette, every approved colorway, and 35 in-use surfaces. This page is the source of truth.</p>
+        <div style={{ marginTop: 10, marginBottom: 24, padding: '14px 18px', background: '#07121c', borderLeft: '3px solid #37bdf8', borderRadius: 4, color: '#d1dce8', fontFamily: "'Inter', sans-serif", fontSize: 13, lineHeight: 1.55 }}>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 700, color: '#37bdf8', marginBottom: 6 }}>FINAL · LOCKED</div>
+          The Shift lockup is the only approved AIS Live mark. Always set in <b style={{ color: '#fff' }}>Montserrat 900 Italic</b>, ALL CAPS, single line, with AIS in white and LIVE in Electric Blue (#37BDF8) — or in one of the approved colorway substitutes shown on the variations grid. All other historical wordmarks (italic URL-style <i>AIS.LIVE</i>, terminal <code>$ais.live</code>) are deprecated and must not be used on new surfaces.
+        </div>
+
+      <div className="fav">
+        <div className="fav-label"><span className="num">LOGO</span> Shift — AIS + LIVE single-line lockup (Montserrat 900 Italic)</div>
+        <Frame><LogoShiftInline scale={1.6}/></Frame>
+        <div className="fav-note">Single-line lockup. AIS in white italic sits beside LIVE in electric-blue italic — slight gap between the words (kerning relaxed from −0.05em to −0.02em, with a small inline spacer) so "AIS" and "LIVE" read as two words not one compressed slab. Compact, badge-ready, and the only approved AIS Live mark — used everywhere from nav and favicon to billboards and merch.</div>
+        <div className="spec">
+          <div className="k">Typeface</div><div className="v"><b>Montserrat</b> — Black (900), Italic</div>
+          <div className="k">Case</div><div className="v">ALL CAPS</div>
+          <div className="k">Letter-spacing</div><div className="v">−0.02em (relaxed — gives AIS + LIVE breathing room)</div>
+          <div className="k">Line-height</div><div className="v">0.9</div>
+          <div className="k">"AIS" color</div><div className="v"><span className="sw" style={{ background: '#ffffff' }}/><b>#FFFFFF</b> · White</div>
+          <div className="k">"LIVE" color</div><div className="v"><span className="sw" style={{ background: '#37bdf8' }}/><b>#37BDF8</b> · Electric Blue (AIS accent)</div>
+          <div className="k">LIVE glow</div><div className="v">text-shadow: 0 0 28px rgba(55,189,248,0.55)</div>
+          <div className="k">Background</div><div className="v"><span className="sw" style={{ background: '#07121c', borderColor: 'rgba(0,0,0,0.2)' }}/><b>#07121C</b> · Deep Onyx (or the AIS command-deck radial)</div>
+          <div className="k">Min width</div><div className="v">120px (favicon lockup) · 32px clear-space on all sides</div>
+          <div className="k">Best for</div><div className="v">Nav bar, event badge, footer, merch embroidery, social avatar</div>
+          <div className="k">Tagline</div><div className="v">Kept separate — lives below or beside, never inside the mark</div>
+        </div>
+
+        {/* ── Clear-space + minimum-size diagram ── */}
+        <div style={{ marginTop: 22, padding: 24, background: '#07121c', borderRadius: 6, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(55,189,248,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.06) 1px, transparent 1px)', backgroundSize: '24px 24px' }}/>
+          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 32, alignItems: 'center' }}>
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#37bdf8', fontWeight: 700, marginBottom: 14 }}>● CLEAR SPACE</div>
+              <div style={{ position: 'relative', height: 220, border: '1px dashed rgba(55,189,248,0.35)', borderRadius: 4, padding: 'calc(0.5em + 12px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {/* X-height boxes — visualize the unit */}
+                <div style={{ position: 'absolute', left: 12, top: 12, width: 28, height: 28, border: '1px solid rgba(55,189,248,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#37bdf8', letterSpacing: '0.1em' }}>X</div>
+                <div style={{ position: 'absolute', right: 12, top: 12, width: 28, height: 28, border: '1px solid rgba(55,189,248,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#37bdf8', letterSpacing: '0.1em' }}>X</div>
+                <div style={{ position: 'absolute', left: 12, bottom: 12, width: 28, height: 28, border: '1px solid rgba(55,189,248,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#37bdf8', letterSpacing: '0.1em' }}>X</div>
+                <div style={{ position: 'absolute', right: 12, bottom: 12, width: 28, height: 28, border: '1px solid rgba(55,189,248,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#37bdf8', letterSpacing: '0.1em' }}>X</div>
+                {/* Inner safe area */}
+                <div style={{ position: 'absolute', inset: 50, border: '1px solid rgba(55,189,248,0.2)' }}/>
+                <ShiftMark theme="dark" size={48}/>
+              </div>
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#d1dce8', lineHeight: 1.55, marginTop: 14 }}>
+                Minimum clear space on all four sides equals the <b style={{ color: '#fff' }}>cap-height of "AIS"</b> (≈ 1× X). Nothing — type, image, edge, sponsor logo, UI chrome — may enter this zone. On crowded surfaces (posters, sponsor walls), prefer 1.5× X.
+              </div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#37bdf8', fontWeight: 700, marginBottom: 14 }}>● MINIMUM SIZES</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                {[
+                  { label: 'Digital · screen', size: 18, min: '120 px wide' },
+                  { label: 'Print · offset', size: 14, min: '24 mm wide (≈ 1")' },
+                  { label: 'Embroidery · merch', size: 22, min: '60 mm wide (≈ 2.4")' },
+                ].map((m, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 18, paddingBottom: 14, borderBottom: i < 2 ? '1px solid rgba(55,189,248,0.12)' : 'none' }}>
+                    <div style={{ width: 130, display: 'flex', justifyContent: 'flex-start' }}>
+                      <ShiftMark theme="dark" size={m.size} glow={false}/>
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#fff', fontWeight: 600 }}>{m.label}</div>
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.18em', color: 'rgba(209,220,232,0.6)', marginTop: 4 }}>≥ {m.min}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Do / Don't ── */}
+        <div style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
+          <div style={{ padding: 18, background: '#07121c', borderRadius: 6, position: 'relative', overflow: 'hidden', borderTop: '3px solid #37bdf8' }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#37bdf8', fontWeight: 700, marginBottom: 14 }}>✓ DO</div>
+            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#d1dce8', lineHeight: 1.5 }}>
+              <li><b style={{ color: '#fff' }}>Use the approved colorway grid</b> — every pair on the variations sheet below is contrast-tested against every approved ground.</li>
+              <li><b style={{ color: '#fff' }}>Pair the lockup with a separate tagline</b> — taglines live above, below, or beside the mark, never inside it.</li>
+              <li><b style={{ color: '#fff' }}>Keep the cap-height clear-space on every side</b>, even at small sizes.</li>
+              <li><b style={{ color: '#fff' }}>Apply the LIVE glow only on dark grounds</b> (Onyx, Charcoal, Pure Black). Drop it on every light or color ground.</li>
+              <li><b style={{ color: '#fff' }}>Use the italic primary on event surfaces</b>, the upright on institutional / press / decks.</li>
+            </ul>
+          </div>
+          <div style={{ padding: 18, background: '#07121c', borderRadius: 6, position: 'relative', overflow: 'hidden', borderTop: '3px solid #FF8A5C' }}>
+            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#FF8A5C', fontWeight: 700, marginBottom: 14 }}>✕ DON'T</div>
+            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#d1dce8', lineHeight: 1.5 }}>
+              <li><b style={{ color: '#fff' }}>Don't change the typeface.</b> Montserrat Black 900 only — no Bold (700), no other weights, no other families.</li>
+              <li><b style={{ color: '#fff' }}>Don't reflow the lockup.</b> AIS and LIVE always sit on one baseline; never stack them.</li>
+              <li><b style={{ color: '#fff' }}>Don't insert punctuation</b> between AIS and LIVE — no period, no slash, no hyphen.</li>
+              <li><b style={{ color: '#fff' }}>Don't tilt, skew, outline, drop-shadow, gradient, or 3D-extrude</b> the mark. Glow is the only allowed effect, only on dark grounds.</li>
+              <li><b style={{ color: '#fff' }}>Don't use unapproved color pairs.</b> If the pair isn't on the variations grid below, it isn't approved.</li>
+              <li><b style={{ color: '#fff' }}>Don't use the deprecated wordmarks</b> — italic URL-style <i>AIS.LIVE</i> or terminal <code>$ais.live</code> are no longer in the system.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mock-section">
+          <div className="mock-title">Mockup Examples</div>
+          <div className="mock-sub">35 surfaces across socials, posters, cards, signage, swag. Shift mark swaps colorways per surface — <b style={{ color: '#fff' }}>all-black</b>, <b style={{ color: '#fff' }}>all-white</b>, blue/black, yellow/black, coral/black, cream — so it never fights the composition. Coral (<b style={{ color: '#FF8A5C' }}>#FF8A5C</b>) is warmer and more vibrant than the previous orange and sits better next to the electric blue + cyber yellow. Scroll right →</div>
+          <div className="mock-hint">→ scroll horizontally ∙ 35 examples</div>
+          <div className="rail">
+            {[
+              { w: 'IG square', t: 'Countdown · onyx', C: M01 },
+              { w: 'IG square', t: 'Speaker drop · yellow', C: M02 },
+              { w: 'IG square', t: 'Field report · orange', C: M03 },
+              { w: 'IG square', t: 'Build/Sell/Ship · blue', C: M04 },
+              { w: 'IG story 9:16', t: 'Revenue · enrolling', C: M05 },
+              { w: 'Digital billboard', t: 'Austin hero', C: M06 },
+              { w: 'Print poster A3', t: '"Three Days"', C: M07 },
+              { w: 'Digital kiosk', t: 'Wayfinding Track 02', C: M08 },
+              { w: 'Business card · front', t: 'Onyx ∙ Crew', C: M09 },
+              { w: 'Business card · back', t: 'Electric blue bleed', C: M10 },
+              { w: 'LinkedIn banner', t: 'Hero · subtitle', C: M11 },
+              { w: 'Sticker sheet', t: '4 colorways', C: M12 },
+              { w: 'Printed schedule', t: 'Day 01', C: M13 },
+              { w: 'Sponsor slot', t: 'Inverted on white', C: M14 },
+              { w: 'Outdoor waypoint', t: 'Safety orange', C: M15 },
+              { w: 'Letterhead memo', t: 'ALL-BLACK on cream', C: M16 },
+              { w: 'IG square', t: 'ALL-WHITE · on-stage quote', C: M17 },
+              { w: 'Event ticket stub', t: 'Yellow · all-black mark', C: M18 },
+              { w: 'Square avatar', t: 'ALL-WHITE on onyx', C: M19 },
+              { w: 'Square avatar', t: 'ALL-BLACK on cream', C: M20 },
+              { w: 'Banner ad', t: 'Blue · all-black mark', C: M21 },
+              { w: 'IG square', t: '300+ stat · yellow/black', C: M22 },
+              { w: 'IG square', t: 'Onyx · cream mark (cohort)', C: M23 },
+              { w: 'IG square', t: 'Orange · 28× stat (all-black)', C: M24 },
+              { w: 'Deck cover', t: 'White · all-black mark', C: M25 },
+              { w: 'IG carousel pg.02', t: '$10k big-quote', C: M26 },
+              { w: 'Email header', t: 'Cream · all-black mark', C: M27 },
+              { w: 'Banner ad', t: 'Dark · yellow revenue', C: M28 },
+              { w: 'IG square', t: 'Monochrome white on blue', C: M29 },
+              { w: 'IG square', t: 'VIP black · white/blue mark', C: M30 },
+              { w: 'Tote bag', t: 'Cream · big all-black mark', C: M31 },
+              { w: 'Cap embroidery', t: 'Orange mark on onyx', C: M32 },
+              { w: 'Narrow billboard', t: 'All-white on pure black', C: M33 },
+              { w: 'Sponsor slot v2', t: 'White · all-black mark', C: M34 },
+              { w: 'Press pass', t: 'Orange/black commuter', C: M35 },
+            ].map((m, i) => {
+              const C = m.C;
+              return (
+                <div key={i} className="mcard">
+                  <div className="mframe"><C/></div>
+                  <div className="cap"><b>{String(i + 1).padStart(2, '0')}</b> &nbsp;∙&nbsp; {m.w} &nbsp;∙&nbsp; {m.t}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── LANDING PAGES · 12 directions ── */}
+      <div className="fav" style={{ marginTop: 56 }}>
+        <div className="fav-label"><span className="num">WEB</span> Landing page · 12 directions</div>
+        <div className="fav-note">Twelve full-width landing hero directions, each driving to the same Join Waitlist CTA. Different compositional bets — editorial split, center-stage monolith, Config-style loud, Stripe Sessions bright, command deck, zine shout, terminal, schedule-first, speaker-first, cinematic black, and a magazine cover. Scroll the rail to compare → click any mock to open it at scale. <b>The Shift mark swaps colorway per ground</b> exactly as the system prescribes.</div>
+        <div className="mock-hint">→ scroll horizontally ∙ 12 landing pages @ 1120×700</div>
+        <div className="rail" style={{ paddingBottom: 24 }}>
+          {window.LANDING_MOCKS.map((m, i) => {
+            const C = m.C;
+            const scale = 0.52;
+            return (
+              <div key={i} className="mcard" style={{ gap: 10 }}>
+                <div className="mframe" style={{ width: 1120 * scale, height: 700 * scale, position: 'relative', overflow: 'hidden', background: m.color }}>
+                  <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 1120, height: 700 }}>
+                    <C/>
+                  </div>
+                </div>
+                <div className="cap" style={{ maxWidth: 1120 * scale }}><b>L{String(i + 1).padStart(2, '0')}</b> &nbsp;∙&nbsp; {m.t} &nbsp;∙&nbsp; <span style={{ color: 'rgba(209,220,232,0.45)' }}>{m.s}</span></div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {false && (<div className="fav">
+        <div className="fav-label"><span className="num">02</span> AIS.LIVE — italic display wordmark</div>
+        <Frame/>
+        <div className="fav-note">Single-line italic treating the name like a URL. AIS in electric blue, period as the pivot, LIVE in white. URL-energy, domain-energy — reads as "a place you go". Evolution of the existing AIS italic-glow wordmark.</div>
+        <div className="spec">
+          <div className="k">Typeface</div><div className="v"><b>Montserrat</b> — Black (900), Italic</div>
+          <div className="k">Case</div><div className="v">ALL CAPS</div>
+          <div className="k">Letter-spacing</div><div className="v">−0.05em (tight)</div>
+          <div className="k">Line-height</div><div className="v">0.9</div>
+          <div className="k">"AIS" color</div><div className="v"><span className="sw" style={{ background: '#37bdf8' }}/><b>#37BDF8</b> · Electric Blue</div>
+          <div className="k">"." color</div><div className="v"><span className="sw" style={{ background: '#37bdf8' }}/><b>#37BDF8</b> · Electric Blue (acts as pivot)</div>
+          <div className="k">"LIVE" color</div><div className="v"><span className="sw" style={{ background: '#ffffff' }}/><b>#FFFFFF</b> · White</div>
+          <div className="k">AIS halo</div><div className="v">text-shadow: 0 0 40px rgba(55,121,255,0.6) — logo-halo token</div>
+          <div className="k">LIVE halo</div><div className="v">text-shadow: 0 0 40px rgba(55,189,248,0.3)</div>
+          <div className="k">Background</div><div className="v"><span className="sw" style={{ background: '#07121c', borderColor: 'rgba(0,0,0,0.2)' }}/><b>#07121C</b> · Deep Onyx with radial glow</div>
+          <div className="k">Best for</div><div className="v">Landing hero, billboard, poster, deck cover, end-card / bumper</div>
+          <div className="k">Don't</div><div className="v">Use below 180px wide — the dot loses weight</div>
+        </div>
+      </div>)}
+
+      {false && (<div className="fav">
+        <div className="fav-label"><span className="num">03</span> Cursor — terminal $ais.live</div>
+        <Frame/>
+        <div className="fav-note">Command-line energy. Dollar prompt, lowercase <code>ais.live</code>, blinking yellow cursor. Leans directly into the builder/operator audience — for devs, automation pros, anyone who lives in a terminal. Use sparingly — secondary mark, never primary.</div>
+        <div className="spec">
+          <div className="k">Typeface</div><div className="v"><b>Roboto Mono</b> — 500 (prompt), 700 (ais), 300 (.live)</div>
+          <div className="k">Case</div><div className="v">lowercase (deliberately)</div>
+          <div className="k">Letter-spacing</div><div className="v">−0.01em</div>
+          <div className="k">"$" prompt</div><div className="v"><span className="sw" style={{ background: '#37bdf8' }}/><b>#37BDF8</b> · Electric Blue · 500</div>
+          <div className="k">"ais"</div><div className="v"><span className="sw" style={{ background: '#ffffff' }}/><b>#FFFFFF</b> · White · 700 Bold</div>
+          <div className="k">".live"</div><div className="v"><span className="sw" style={{ background: '#37bdf8' }}/><b>#37BDF8</b> · Electric Blue · 300 Light</div>
+          <div className="k">Cursor block</div><div className="v"><span className="sw" style={{ background: '#f5d82a' }}/><b>#F5D82A</b> · Cyber Yellow · blinks 1s steps(1)</div>
+          <div className="k">Background</div><div className="v"><span className="sw" style={{ background: '#07121c', borderColor: 'rgba(0,0,0,0.2)' }}/><b>#07121C</b> · Deep Onyx — required, reads as terminal</div>
+          <div className="k">Best for</div><div className="v">Developer landing, code-track signage, sponsor swag (stickers), CLI install cards</div>
+          <div className="k">Don't</div><div className="v">Pair with the Shift lockup in the same surface — choose one voice</div>
+        </div>
+      </div>)}
+
+      {false && (<div className="fav">
+        <div className="fav-label">System notes · shared across all three</div>
+        <div className="spec">
+          <div className="k">Display / UI font</div><div className="v"><b>Montserrat</b> 300 / 400 / 500 / 600 / 700 / 900 · headings in 900 italic, body in 300</div>
+          <div className="k">Mono / eyebrow font</div><div className="v"><b>Roboto Mono</b> 400 / 500 / 700 · for eyebrows, timestamps, status text, terminal</div>
+          <div className="k">Font source</div><div className="v">Google Fonts (free) — no self-hosted files needed</div>
+          <div className="k">Electric Blue</div><div className="v"><span className="sw" style={{ background: '#37bdf8' }}/><b>#37BDF8</b> · Primary accent, AIS continuity anchor</div>
+          <div className="k">Cyber Yellow</div><div className="v"><span className="sw" style={{ background: '#f5d82a' }}/><b>#F5D82A</b> · Revenue, success, CTAs</div>
+          <div className="k">Coral</div><div className="v"><span className="sw" style={{ background: '#FF8A5C' }}/><b>#FF8A5C</b> · Live / on-air / outdoor safety</div>
+          <div className="k">Deep Onyx</div><div className="v"><span className="sw" style={{ background: '#07121c', borderColor: 'rgba(0,0,0,0.2)' }}/><b>#07121C</b> · Ground / stage</div>
+          <div className="k">Deep Charcoal</div><div className="v"><span className="sw" style={{ background: '#0a0e14', borderColor: 'rgba(0,0,0,0.2)' }}/><b>#0A0E14</b> · Raised panel</div>
+          <div className="k">Tagline</div><div className="v">Stays outside the mark — swaps per event ("Real Projects, Real Revenue", etc.)</div>
+        </div>
+      </div>)}
+
+      {/* ── TYPE SYSTEM · all titles / subheadings / styles that pair with Shift ── */}
+      <div className="fav" style={{ marginTop: 56 }}>
+        <div className="fav-label"><span className="num">SYS</span> Type system · what pairs with Shift</div>
+        <div className="fav-note">Every title, subhead, eyebrow, quote, stat, and caption you see in the 35 mockups above comes from one of these slots. Three fonts total — <b>Montserrat</b> for display/UI, <b>Inter</b> for body, <b>JetBrains Mono</b> for eyebrows, labels, and micro copy. <i>Approximated here with Manrope, Inter, and JetBrains Mono (wider tracking) — see the note at the top of the page.</i></div>
+
+        <div style={{ marginTop: 18, background: '#0a0e14', borderRadius: 6, padding: 24, color: '#fff', display: 'flex', flexDirection: 'column', gap: 22 }}>
+          <TypeRow label="H1 · Display Italic" meta="Montserrat · 900 Italic · −0.02em · lh 0.88" example="Real Revenue." sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontStyle: 'italic', fontSize: 72, letterSpacing: '-0.05em', lineHeight: 0.88, color: '#37bdf8', textShadow: '0 0 36px rgba(55,121,255,0.55)' }} notes="Hero / billboard / poster headline. Always italic. Pairs with a roman H1 line above it (see Real Projects.)." />
+          <TypeRow label="H1 · Display Roman" meta="Montserrat · 900 Regular · −0.02em · lh 0.88" example="Real Projects." sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 72, letterSpacing: '-0.05em', lineHeight: 0.88, color: '#fff' }} notes="Sets the anchor line. Period kept tight. Never mix with lowercase on the same line." />
+          <TypeRow label="H2 · Section Head" meta="Montserrat · 900 · −0.02em · lh 0.95" example="Client Acquisition Lab" sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 40, letterSpacing: '-0.04em', lineHeight: 0.95, color: '#fff' }} notes="Track titles, schedule items, kiosk headings. Up to 3 lines, color-swap the middle for emphasis." />
+          <TypeRow label="H3 · Card Head" meta="Montserrat · 800 · −0.02em · lh 1.05" example="Maya Ortega" sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: '-0.03em', lineHeight: 1.05, color: '#fff' }} notes="Speaker names, business-card names, press-pass names. Tight but not compressed." />
+          <TypeRow label="Stat · Big Number" meta="Montserrat · 900 · −0.04em · lh 0.85" example="28×" sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 92, letterSpacing: '-0.08em', lineHeight: 0.85, color: '#f5d82a', textShadow: '0 0 30px rgba(245,216,42,0.4)' }} notes="Return-on-ticket, attendee count, deal size. Tightest tracking in the system. Yellow or white only." />
+          <TypeRow label="Pull-quote · Italic" meta="Inter · 300 Italic · 0 · lh 1.3" example={'"Stop selling hours. Sell outcomes."'} sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 300, fontStyle: 'italic', fontSize: 22, letterSpacing: '-0.01em', lineHeight: 1.2, color: '#fff' }} notes="Speaker-card quote, testimonial card, cohort note. Thin italic ⬌ pairs against the black mark." />
+          <TypeRow label="Body" meta="Inter · 400 · 0 · lh 1.45" example="is a skill. Come build it." sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: 1.3, color: '#d1dce8' }} notes="Sub-lines under a big stat/headline, sponsor-slot copy, caption body. Keep under 10 words." />
+          <TypeRow label="Body · Emphasis" meta="Inter · 600 Italic · 0" example="One room." sample={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontStyle: 'italic', fontSize: 16, letterSpacing: '-0.01em', color: '#37bdf8' }} notes="In-line emphasis inside body copy. Only one phrase per sentence — blue, yellow, or orange." />
+          <TypeRow label="Eyebrow · Mono" meta="Manifold Extended · 700 · 0.22em · UPPER" example="● SPEAKER DROP / 04" sample={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 11, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#37bdf8' }} notes="Every card gets one — section label. Always prefixed with a dot · pulsed for `live`, solid for everything else." />
+          <TypeRow label="Caption · Mono" meta="Manifold Extended · 700 · 0.2em · UPPER" example="AUSTIN TX ∙ SEP 18–20" sample={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)' }} notes="Timestamps, dates, room numbers, press-pass IDs, emails. Always a de-emphasized surface-meta layer." />
+          <TypeRow label="Micro · Tag" meta="Manifold Extended · 700 · 0.22em · UPPER · on color" example="CLAIM SEAT >>" sample={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#07121c', background: '#f5d82a', padding: '6px 10px', display: 'inline-block' }} notes="CTAs, sticker tags, partner slugs. Solid fill, charcoal text, no rounded corners." />
+        </div>
+      </div>
+
+      {/* ── Title patterns — exact strings used across all 35 mocks ── */}
+      <div className="fav" style={{ marginTop: 40 }}>
+        <div className="fav-label"><span className="num">COPY</span> Title + subhead patterns</div>
+        <div className="fav-note">The exact eyebrow labels, headlines, and subheads used across every mock above — grouped so you can lift them directly when extending the system.</div>
+        <div className="spec" style={{ gridTemplateColumns: '170px 1fr' }}>
+          <div className="k">Eyebrows (mono)</div>
+          <div className="v">COUNTDOWN · SPEAKER DROP / 04 · FIELD REPORT · TRACK 01 · ENROLLING · SEPT 18–20 ∙ AUSTIN TX · AIS PRESENTS / 001 · NOW BOARDING / TRACK 02 · CREW · REAL PROJECTS ∙ REAL REVENUE · DAY 01 SCHEDULE · SPONSORED BY · WAYPOINT 04 · MEMO 004 · ON-STAGE · ALL-ACCESS · DAY 1 · MONOCHROME / 01 · VIP ACCESS · BOARDING · PAGE 02 · OF 05 · PARTNER CALL · PRESS PASS · GAIN REPORT · BY THE NUMBERS · COHORT NOTE · CHAPTER 01</div>
+
+          <div className="k">H1 headlines</div>
+          <div className="v"><i>Real Projects.</i> / <i>Real Revenue.</i> · <i>Three Days. One Room.</i> · <i>Room is full. Join the waitlist.</i> · <i>LIVE.</i> · <i>Close one deal. Ticket paid.</i> · <i>One room. One voice.</i> · <i>Front-row. Dinner included. 12 seats.</i> · <i>What the room is actually worth.</i> · <i>Reach 300+ operators in one weekend.</i></div>
+
+          <div className="k">H2 titles</div>
+          <div className="v">T-28 days until we're together. · Maya Ortega — Loopline Ops ∙ $100k/mo · BUILD. SELL. SHIP. · Client Acquisition Lab · Bonfire & Grind · Nate Herk — Founder ∙ AI Automation Society · M. Alvarez — The Operators Weekly ∙ Press</div>
+
+          <div className="k">Stat lines</div>
+          <div className="v">T-28 · 28× · 300+ · $10k · $497 · $4,997 · Issue 24 · #AL-042 · #PRS-024</div>
+
+          <div className="k">Pull-quotes</div>
+          <div className="v">"Stop selling hours. Sell outcomes." · "Made back ticket 28× in 40 days." · "I've been to 12 of these. This one actually paid me back." · "You won't build it sitting alone."</div>
+
+          <div className="k">Subheads / body</div>
+          <div className="v">is a skill. Come build it. · Real projects. Real revenue. One room. · The operators' stack, curated. · The average deal closed in-room at AIS Live '25. · operators in one room, for 3 days. · return on ticket in 40 days. · coming to Austin, Sep 2026.</div>
+
+          <div className="k">CTAs / micro</div>
+          <div className="v">CLAIM SEAT &gt;&gt; · APPLY &gt;&gt; · AISLIVE.CO · PARTNERS@AISLIVE.CO · NATE@AISLIVE.CO · 18.09.2026 · 20:30 ∙ DAY 2 · ROOM 03 ∙ 14:00 · swipe →</div>
+
+          <div className="k">Attributions</div>
+          <div className="v">— J. Chen, Northbeam · — A. Rivera · — N. Herk · 2026 — Nate Herk ∙ AIS LIVE</div>
+        </div>
+      </div>
+
+      {/* ── Color swatch block ── */}
+      <div className="fav" style={{ marginTop: 40 }}>
+        <div className="fav-label"><span className="num">PAL</span> Palette · exact tokens</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 12 }}>
+          {[
+            { n: 'Deep Onyx', h: '#07121C', r: 'Primary ground' },
+            { n: 'Deep Charcoal', h: '#0A0E14', r: 'Raised panel' },
+            { n: 'Pure Black', h: '#000000', r: 'Cinematic only' },
+            { n: 'Electric Blue', h: '#37BDF8', r: 'Accent / continuity' },
+            { n: 'Cyber Yellow', h: '#F5D82A', r: 'Revenue / CTAs' },
+            { n: 'Coral', h: '#FF8A5C', r: 'Live · new, warmer' },
+            { n: 'Cream', h: '#F0EEE9', r: 'Print / letterhead' },
+            { n: 'Paper White', h: '#FFFFFF', r: 'Sponsor / deck' },
+          ].map((c, i) => {
+            const dark = ['#07121C','#0A0E14','#000000'].includes(c.h);
+            return (
+              <div key={i} style={{ background: c.h, padding: 16, borderRadius: 6, color: dark ? '#fff' : '#07121c', border: '1px solid rgba(0,0,0,0.08)', minHeight: 110, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div style={{ fontWeight: 800, fontSize: 14, letterSpacing: '-0.01em' }}>{c.n}</div>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.1em', fontWeight: 700 }}>{c.h}</div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, letterSpacing: '0.15em', opacity: 0.7, marginTop: 4, textTransform: 'uppercase' }}>{c.r}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── All Shift mark variations ── */}
+      <div className="fav" style={{ marginTop: 56 }}>
+        <div className="fav-label"><span className="num">VAR</span> All Shift variations · every colorway on every ground</div>
+        <div className="fav-note">Every colorway of the Shift mark (<code>AIS</code> + <code>LIVE</code> italic lockup) tested against every approved ground. Use this as the source-of-truth when picking a variant for a new surface — if the pair isn't on this sheet, it isn't approved.</div>
+
+        <VariationsGrid/>
+      </div>
+
+    </div>
+  );
+}
+
+function VariationsGrid() {
+  const grounds = [
+    { name: 'Deep Onyx', bg: '#07121c', grid: 'rgba(55,189,248,0.08)' },
+    { name: 'Pure Black', bg: '#000000', grid: 'rgba(255,255,255,0.06)' },
+    { name: 'Deep Charcoal', bg: '#0A0E14', grid: 'rgba(55,189,248,0.07)' },
+    { name: 'Electric Blue', bg: '#37BDF8', grid: 'rgba(7,18,28,0.1)' },
+    { name: 'Cyber Yellow', bg: '#F5D82A', grid: 'rgba(7,18,28,0.08)' },
+    { name: 'Coral', bg: '#FF8A5C', grid: 'rgba(7,18,28,0.08)' },
+    { name: 'Cream', bg: '#F0EEE9', grid: 'rgba(7,18,28,0.05)' },
+    { name: 'Paper White', bg: '#FFFFFF', grid: 'rgba(7,18,28,0.05)' },
+  ];
+  const pairs = [
+    { key: 'dark', ais: '#fff', live: '#37BDF8', glow: true, label: 'White · Electric (primary)' },
+    { key: 'whiteblue', ais: '#fff', live: '#37BDF8', glow: false, label: 'White · Electric (flat)' },
+    { key: 'allwhite', ais: '#fff', live: '#fff', glow: false, label: 'All White' },
+    { key: 'allblack', ais: '#07121C', live: '#07121C', glow: false, label: 'All Black' },
+    { key: 'blackblue', ais: '#07121C', live: '#37BDF8', glow: false, label: 'Black · Electric' },
+    { key: 'blueblack', ais: '#37BDF8', live: '#07121C', glow: false, label: 'Electric · Black' },
+    { key: 'yellowblack', ais: '#F5D82A', live: '#07121C', glow: false, label: 'Yellow · Black' },
+    { key: 'blackyellow', ais: '#07121C', live: '#F5D82A', glow: false, label: 'Black · Yellow' },
+    { key: 'orangeblack', ais: '#FF8A5C', live: '#07121C', glow: false, label: 'Orange · Black' },
+    { key: 'blackorange', ais: '#07121C', live: '#FF8A5C', glow: false, label: 'Black · Orange' },
+    { key: 'whiteyellow', ais: '#fff', live: '#F5D82A', glow: false, label: 'White · Yellow' },
+    { key: 'whiteorange', ais: '#fff', live: '#FF8A5C', glow: false, label: 'White · Orange' },
+    { key: 'blackwhite', ais: '#07121C', live: '#fff', glow: false, label: 'Black · White' },
+    { key: 'whiteblack', ais: '#fff', live: '#07121C', glow: false, label: 'White · Black' },
+    { key: 'yellowelec', ais: '#F5D82A', live: '#37BDF8', glow: false, label: 'Yellow · Electric' },
+    { key: 'creamclay', ais: '#F0EEE9', live: '#C96442', glow: false, label: 'Cream · Clay' },
+  ];
+  const contrastOk = (hex, bg) => {
+    const h = (c) => parseInt(c.slice(1), 16);
+    const lum = (v) => { const r=((v>>16)&255)/255, g=((v>>8)&255)/255, b=(v&255)/255; const f=x=>x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4); return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); };
+    const a = lum(h(hex)), b = lum(h(bg));
+    const hi = Math.max(a,b), lo = Math.min(a,b);
+    return (hi + 0.05) / (lo + 0.05) >= 2.0;
+  };
+  return (
+    <div style={{ marginTop: 14, background: '#0a0e14', padding: 24, borderRadius: 6 }}>
+      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(209,220,232,0.55)', marginBottom: 14 }}>{pairs.length} colorways × {grounds.length} grounds = {pairs.length * grounds.length} permutations</div>
+      {grounds.map((g) => (
+        <div key={g.bg} style={{ marginBottom: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+            <span style={{ width: 14, height: 14, borderRadius: 3, background: g.bg, border: '1px solid rgba(255,255,255,0.15)' }}/>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#fff', fontWeight: 700 }}>{g.name}</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(209,220,232,0.45)' }}>{g.bg}</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            {pairs.filter((p) => contrastOk(p.ais, g.bg) && contrastOk(p.live, g.bg)).map((p) => (
+              <div key={g.bg + p.key} style={{ position: 'relative', background: g.bg, borderRadius: 4, padding: 16, border: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 10, minHeight: 90, overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(${g.grid} 1px, transparent 1px), linear-gradient(90deg, ${g.grid} 1px, transparent 1px)`, backgroundSize: '16px 16px', pointerEvents: 'none' }}/>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                  <span style={{ fontFamily: "'Montserrat', sans-serif", fontStyle: 'italic', fontWeight: 900, fontSize: 28, letterSpacing: '-0.02em', display: 'inline-flex', alignItems: 'baseline', lineHeight: 0.9 }}>
+                    <span style={{ color: p.ais }}>AIS</span><span style={{ display:'inline-block', width: 4 }}/>
+                    <span style={{ color: p.live, textShadow: p.glow ? `0 0 20px ${p.live}99` : 'none' }}>LIVE</span>
+                  </span>
+                </div>
+                <div style={{ position: 'relative', fontFamily: "'JetBrains Mono', monospace", fontSize: 8, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, color: ['#07121C','#000000','#0A0E14'].includes(g.bg) ? 'rgba(255,255,255,0.5)' : 'rgba(7,18,28,0.55)' }}>
+                  {p.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TypeRow({ label, meta, example, sample, notes }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 24, borderBottom: '1px solid rgba(55,189,248,0.12)', paddingBottom: 20 }}>
+      <div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 700, color: '#37bdf8' }}>{label}</div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.55)', marginTop: 6, lineHeight: 1.5 }}>{meta}</div>
+        <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 12, fontWeight: 300, color: 'rgba(255,255,255,0.65)', marginTop: 10, lineHeight: 1.45 }}>{notes}</div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={sample}>{example}</div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

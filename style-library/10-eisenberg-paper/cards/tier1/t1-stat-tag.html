@@ -1,0 +1,158 @@
+<!doctype html>
+<!--
+  EISENBERG PAPER · tier1 · stat · TAG  (vertical 1080x1920)
+  The price-tag stat. Serif label builds top (one coral word), a white paper
+  tag pops in mid-frame with a big mono count-up, wired by a dashed
+  connector down to a mini charcoal terminal that slides up half-in-frame
+  at the bottom. Camera pushes in; everything drifts.
+  Slots: k1 k2 k3 · stat (data-value + data-prefix) · sub.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; }
+
+      #ep-t1-stat-tag {
+        position: absolute; inset: 0; width: 1080px; height: 1920px;
+        background: var(--paper-mid); color: var(--ink);
+        font-family: var(--font-display); overflow: hidden;
+      }
+      #ep-t1-stat-tag .stage { position: absolute; inset: 0; z-index: 3; }
+
+      #ep-t1-stat-tag .kicker { position: absolute; left: 160px; top: 330px; line-height: 1.02; transform: rotate(-0.5deg); }
+      #ep-t1-stat-tag .kicker .w { display: block; font-size: 78px; text-shadow: var(--press); white-space: nowrap; }
+      #ep-t1-stat-tag .kicker .w:nth-child(2) { margin-left: 42px; font-style: italic; }
+      #ep-t1-stat-tag .kicker .w:nth-child(3) { margin-left: 10px; color: var(--coral); }
+
+      #ep-t1-stat-tag .tagwrap { position: absolute; left: 250px; top: 830px; }
+      #ep-t1-stat-tag .tag {
+        background: var(--tag); color: var(--tag-ink);
+        border-radius: var(--radius-tag); box-shadow: var(--shadow-tag);
+        padding: 34px 66px; text-align: center;
+        font-family: var(--font-mono);
+        transform: rotate(0.6deg);
+      }
+      #ep-t1-stat-tag .tag .num { font-size: var(--size-stat); font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+      #ep-t1-stat-tag .tag .sub {
+        margin-top: 16px; font-size: var(--size-label); font-weight: 600;
+        color: rgba(34, 32, 30, 0.55); text-transform: uppercase; letter-spacing: var(--track-pill);
+      }
+
+      #ep-t1-stat-tag svg.conn { position: absolute; left: 500px; top: 1090px; overflow: visible; }
+      #ep-t1-stat-tag svg.conn path { fill: none; stroke: var(--connector); stroke-width: 3; stroke-dasharray: 9 9; }
+
+      #ep-t1-stat-tag .miniwrap { position: absolute; left: 120px; top: 1310px; }
+      #ep-t1-stat-tag .mini {
+        width: 840px;
+        background: var(--card); border-radius: var(--radius-card);
+        border-top: 1px solid var(--card-hi);
+        border-left: 1px solid var(--card-hi-l);
+        box-shadow: var(--shadow-card);
+        padding: 32px 46px 400px; box-sizing: border-box;
+        font-family: var(--font-mono); color: var(--term-dim); font-size: var(--size-term-sm); line-height: 1.55;
+        transform: rotate(-0.6deg);
+      }
+      #ep-t1-stat-tag .mini .chrome { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+      #ep-t1-stat-tag .mini .dot { width: 13px; height: 13px; border-radius: 50%; background: var(--tag); }
+      #ep-t1-stat-tag .mini .line { white-space: pre-line; }
+    </style>
+  </head>
+  <body>
+    <div id="ep-t1-stat-tag" data-composition-id="ep-t1-stat-tag" data-start="0" data-width="1080" data-height="1920">
+      <div class="ep-cam">
+        <div class="ep-paper"></div>
+        <div class="stage">
+          <div class="drift"><div class="mover kicker">
+            <span class="w" data-slot="k1">budget</span>
+            <span class="w" data-slot="k2">goes straight</span>
+            <span class="w" data-slot="k3">into the next</span>
+          </div></div>
+
+          <div class="drift"><div class="mover tagwrap">
+            <div class="tag">
+              <div class="num"><span class="count" data-slot="stat" data-value="2342" data-prefix="$">0</span></div>
+              <div class="sub" data-slot="sub">tokens burned</div>
+            </div>
+          </div></div>
+
+          <div class="drift"><div class="mover connwrap">
+            <svg class="conn" width="200" height="220" viewBox="0 0 200 220">
+              <path class="connpath" d="M 30 0 C 30 100, 150 110, 150 215" />
+            </svg>
+          </div></div>
+
+          <div class="drift"><div class="mover miniwrap">
+            <div class="mini">
+              <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+              <div class="line">Claude Code v2.1.6&#10;Sonnet 4.5 · API Usage Billing</div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+      <div class="ep-lens"></div>
+      <div class="ep-vig"></div>
+      <div class="ep-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const root = "#ep-t1-stat-tag";
+      const DUR = 7;
+
+      function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+      const rnd = mulberry32(303);
+
+      const countEl = document.querySelector(root + " .count");
+      const target = parseFloat(countEl.getAttribute("data-value")) || 0;
+      const prefix = countEl.getAttribute("data-prefix") || "";
+      const counter = { v: 0 };
+      const fmt = (n) => prefix + Math.round(n).toLocaleString("en-US");
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(root + " .ep-cam", { scale: 1.04 }, { scale: 1.09, duration: DUR, ease: "none" }, 0)
+        .to(root + " .ep-cam", { x: -5, y: 6, rotation: 0.2, duration: DUR / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+
+      document.querySelectorAll(root + " .drift").forEach((el) => {
+        const half = 1.4 + rnd() * 0.7;
+        tl.to(el, {
+          x: (rnd() * 2 - 1) * 4, y: 3 + rnd() * 2.5, rotation: (rnd() * 2 - 1) * 0.35,
+          duration: half, ease: "sine.inOut", yoyo: true, repeat: Math.ceil(DUR / half),
+        }, 0);
+      });
+
+      const kwords = gsap.utils.toArray(root + " .kicker .w");
+      const connpath = document.querySelector(root + " .connpath");
+      const plen = connpath.getTotalLength();
+
+      tl
+        /* serif label builds word by word */
+        .from(kwords, { autoAlpha: 0, y: 14, scale: 0.96, filter: "blur(5px)", duration: 0.38, ease: "power3.out", stagger: 0.13 }, 0.3)
+
+        /* mini terminal slides up half-in-frame */
+        .fromTo(root + " .miniwrap",
+          { y: 520, x: -16, autoAlpha: 0, filter: "blur(10px)" },
+          { y: 0, x: 0, autoAlpha: 1, filter: "blur(0px)", duration: 0.9, ease: "back.out(0.9)" }, 1.0)
+
+        /* connector draws down to it */
+        .fromTo(connpath,
+          { strokeDashoffset: plen, opacity: 0 },
+          { strokeDashoffset: 0, opacity: 1, duration: 0.5, ease: "power2.inOut" }, 1.4)
+
+        /* tag pops, number counts up */
+        .from(root + " .tagwrap", { scale: 0.6, autoAlpha: 0, filter: "blur(8px)", duration: 0.55, ease: "back.out(1.0)" }, 1.65)
+        .to(counter, {
+          v: target, duration: 1.0, ease: "power1.out",
+          onUpdate: () => { countEl.textContent = fmt(counter.v); },
+        }, 1.8)
+
+        /* breathing hold */
+        .set({}, {}, DUR);
+
+      window.__timelines["ep-t1-stat-tag"] = tl;
+    </script>
+  </body>
+</html>

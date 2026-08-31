@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="assets/tokens.css">
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#000;color:var(--text);font-family:var(--font-body);}
+      .stage{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      .camera{position:absolute;inset:0;transform-style:preserve-3d;}
+
+      /* ---------- depth background ---------- */
+      .bg{position:absolute;inset:0;overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-image:var(--grid-lines);will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:var(--beam);filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;background:var(--vignette);}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;background-image:var(--tex-grain);}
+
+      /* ---------- content ---------- */
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:20px;padding:44px 100px;text-align:center;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:var(--size-label);letter-spacing:var(--track-eyebrow);
+        text-transform:uppercase;color:var(--blue);text-shadow:var(--glow-eyebrow);will-change:transform,opacity;}
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:102px;
+        line-height:1.02;letter-spacing:var(--track-tight);}
+      .ln .wd{display:inline-block;padding:.08em .13em .24em;will-change:transform,opacity;
+        background:var(--grad-chrome);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-chrome);}
+      .ln .wd.ac{background:var(--grad-blue);-webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;text-shadow:var(--glow-blue);}
+
+      .rows{display:flex;flex-direction:column;gap:22px;margin-top:4px;}
+      .row{display:flex;gap:56px;justify-content:center;}
+      .tm{display:flex;flex-direction:column;align-items:center;gap:8px;width:220px;will-change:transform,opacity;}
+      .tm-av{width:138px;height:138px;border-radius:50%;position:relative;}
+      .tm-av img{width:100%;height:100%;display:block;}
+      /* raw square crops get the ring the medallion PNGs already carry baked in */
+      .tm-av.crop{overflow:hidden;border:3px solid var(--blue);background:var(--onyx-deep);
+        box-shadow:0 0 26px rgba(var(--blue-rgb),.35);}
+      .tm-av.crop img{object-fit:cover;border-radius:50%;}
+      .tm-av.medallion{filter:drop-shadow(0 0 18px rgba(var(--blue-rgb),.30));}
+      .tm-nm{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);font-size:25px;color:var(--white);
+        line-height:1.1;}
+      .tm-rl{font-family:var(--font-mono);font-weight:var(--wt-bold);font-size:14px;letter-spacing:.16em;
+        text-transform:uppercase;color:var(--text-faint);line-height:1.3;max-width:220px;}
+
+      .sub{font-family:var(--font-body);font-weight:var(--wt-light);font-style:italic;font-size:32px;
+        color:var(--text-dim);will-change:transform,opacity;margin-top:6px;}
+
+      /* persistent corner mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:var(--wt-black);letter-spacing:var(--track-tight);
+        line-height:.9;font-size:80px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark .ais{color:var(--white);}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(var(--blue-rgb),.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em var(--red-live),0 0 .25em var(--red-live);}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-i6dj" id="ais-live-closing-team" class="stage clip" data-composition-id="ais-live-closing-team" data-start="0" data-duration="18" data-track-index="0" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-g4sl" class="camera">
+        <div data-hf-id="hf-m7dd" class="bg">
+          <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+          <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+          <div data-hf-id="hf-hqud" class="beam"></div>
+          <div data-hf-id="hf-uo31" class="glow blue"></div>
+          <div data-hf-id="hf-jtmg" class="glow coral"></div>
+          <div data-hf-id="hf-q7bi" class="vignette"></div>
+          <div data-hf-id="hf-h60x" class="grain"></div>
+        </div>
+        <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+        <div data-hf-id="hf-lm34" class="inner">
+          <div data-hf-id="hf-zcko" class="eyebrow">THE PEOPLE BEHIND AIS LIVE</div>
+          <div data-hf-id="hf-gmyq" class="ln"><span data-hf-id="hf-yc3g" class="wd">THANK</span><span data-hf-id="hf-w6zl" class="wd">YOU,</span><span data-hf-id="hf-7jpv" class="wd ac">AIS</span><span data-hf-id="hf-6rhx" class="wd ac">TEAM</span></div>
+          <div data-hf-id="hf-hnc7" class="rows">
+            <div data-hf-id="hf-thy4" class="row">
+          <div data-hf-id="hf-gkyt" class="tm" data-slug="nate-herk">
+            <div data-hf-id="hf-j9b0" class="tm-av medallion"><img data-hf-id="hf-5fye" src="assets/headshots/nate-herk.png?v=2" alt="Nate Herk"></div>
+            <div data-hf-id="hf-5v9h" class="tm-nm">Nate Herk</div>
+            <div data-hf-id="hf-fk4g" class="tm-rl">Founder &amp; CEO</div>
+          </div>
+          <div data-hf-id="hf-iqja" class="tm" data-slug="jon-morrow">
+            <div data-hf-id="hf-wgr8" class="tm-av medallion"><img data-hf-id="hf-8yhg" src="assets/headshots/jon-morrow.png?v=2" alt="Jon Morrow"></div>
+            <div data-hf-id="hf-h8r2" class="tm-nm">Jon Morrow</div>
+            <div data-hf-id="hf-92ex" class="tm-rl">President &amp; COO</div>
+          </div>
+          <div data-hf-id="hf-ysqe" class="tm" data-slug="ednan-abdullayev">
+            <div data-hf-id="hf-v9u5" class="tm-av medallion"><img data-hf-id="hf-dqy0" src="assets/headshots/ednan-abdullayev.png?v=2" alt="Ednan Abdullayev"></div>
+            <div data-hf-id="hf-kwrm" class="tm-nm">Ednan Abdullayev</div>
+            <div data-hf-id="hf-dnfu" class="tm-rl">Tech Lead</div>
+          </div>
+          <div data-hf-id="hf-91og" class="tm" data-slug="jenn-van-wagner">
+            <div data-hf-id="hf-vo56" class="tm-av medallion"><img data-hf-id="hf-rrq3" src="assets/headshots/jenn-van-wagner.png?v=2" alt="Jenn Van Wagner"></div>
+            <div data-hf-id="hf-igwp" class="tm-nm">Jenn Van Wagner</div>
+            <div data-hf-id="hf-uvst" class="tm-rl">Business Operations Specialist</div>
+          </div>
+          <div data-hf-id="hf-8qhq" class="tm" data-slug="yash-chauhan">
+            <div data-hf-id="hf-xnob" class="tm-av medallion"><img data-hf-id="hf-dgf2" src="assets/headshots/yash-chauhan.png?v=2" alt="Yash Chauhan"></div>
+            <div data-hf-id="hf-db8w" class="tm-nm">Yash Chauhan</div>
+            <div data-hf-id="hf-7cwq" class="tm-rl">Community &amp; Retention Manager</div>
+          </div>
+            </div>
+            <div data-hf-id="hf-lt04" class="row">
+          <div data-hf-id="hf-b43a" class="tm" data-slug="anne-marie-enns">
+            <div data-hf-id="hf-y1zc" class="tm-av medallion"><img data-hf-id="hf-30a4" src="assets/headshots/anne-marie-enns.png?v=2" alt="Anne-Marie Enns"></div>
+            <div data-hf-id="hf-xtww" class="tm-nm">Anne-Marie Enns</div>
+            <div data-hf-id="hf-m5yy" class="tm-rl">Conference Program Director</div>
+          </div>
+          <div data-hf-id="hf-ojv9" class="tm" data-slug="kodi">
+            <div data-hf-id="hf-wv29" class="tm-av medallion"><img data-hf-id="hf-7z3x" src="assets/headshots/kodi.png?v=2" alt="Kodi Zene"></div>
+            <div data-hf-id="hf-xnjo" class="tm-nm">Kodi Zene</div>
+            <div data-hf-id="hf-2xmq" class="tm-rl">Sponsorship Integration</div>
+          </div>
+          <div data-hf-id="hf-ugbq" class="tm" data-slug="russ-henneberry">
+            <div data-hf-id="hf-x9da" class="tm-av medallion"><img data-hf-id="hf-m89o" src="assets/headshots/russ-henneberry.png?v=2" alt="Russ Henneberry"></div>
+            <div data-hf-id="hf-zzyg" class="tm-nm">Russ Henneberry</div>
+            <div data-hf-id="hf-ic50" class="tm-rl">Marketing</div>
+          </div>
+          <div data-hf-id="hf-wsnc" class="tm" data-slug="pat-blakely">
+            <div data-hf-id="hf-z8wf" class="tm-av medallion"><img data-hf-id="hf-l6xa" src="assets/headshots/pat-blakely.png?v=2" alt="Pat Blakely"></div>
+            <div data-hf-id="hf-mj70" class="tm-nm">Pat Blakely</div>
+            <div data-hf-id="hf-hmzt" class="tm-rl">Writer &amp; Product Manager</div>
+          </div>
+            </div>
+            <div data-hf-id="hf-km31" class="row">
+          <div data-hf-id="hf-qiht" class="tm" data-slug="meghan-cox">
+            <div data-hf-id="hf-zn7g" class="tm-av medallion"><img data-hf-id="hf-7efy" src="assets/headshots/meghan-cox.png?v=2" alt="Meghan Cox"></div>
+            <div data-hf-id="hf-gxxd" class="tm-nm">Meghan Cox</div>
+            <div data-hf-id="hf-chhv" class="tm-rl">Customer Support</div>
+          </div>
+          <div data-hf-id="hf-gefm" class="tm" data-slug="aidan-stanik">
+            <div data-hf-id="hf-tkvg" class="tm-av medallion"><img data-hf-id="hf-8o78" src="assets/headshots/aidan-stanik.png?v=2" alt="Aidan Stanik"></div>
+            <div data-hf-id="hf-j5ki" class="tm-nm">Aidan Stanik</div>
+            <div data-hf-id="hf-e623" class="tm-rl">Media &amp; Community</div>
+          </div>
+          <div data-hf-id="hf-44ou" class="tm" data-slug="mustafa-tawfiq">
+            <div data-hf-id="hf-t6kf" class="tm-av medallion"><img data-hf-id="hf-656o" src="assets/headshots/mustafa-tawfiq.png?v=2" alt="Mustafa Tawfiq"></div>
+            <div data-hf-id="hf-y1fe" class="tm-nm">Mustafa Tawfiq</div>
+            <div data-hf-id="hf-98x1" class="tm-rl">Automation Support Specialist</div>
+          </div>
+          <div data-hf-id="hf-jtqz" class="tm" data-slug="dominic-ibarra">
+            <div data-hf-id="hf-ss9e" class="tm-av medallion"><img data-hf-id="hf-flcs" src="assets/headshots/dominic-ibarra.png?v=2" alt="Dominic Ibarra"></div>
+            <div data-hf-id="hf-g8l9" class="tm-nm">Dominic Ibarra</div>
+            <div data-hf-id="hf-cnuh" class="tm-rl">Automation Support Specialist</div>
+          </div>
+            </div>
+          </div>
+          <div data-hf-id="hf-nmtp" class="sub">The team that made AIS LIVE happen</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.out" } });
+
+      // ambient (whole duration)
+      tl.to(".grid-floor",   { backgroundPosition: "0px 660px", duration: 18, ease: "none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPosition: "0px -660px", duration: 18, ease: "none" }, 0);
+      tl.fromTo(".beam", { rotate: -4 }, { rotate: 4, duration: 9, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+      tl.fromTo(".glow.blue", { scale: .96 }, { scale: 1.06, duration: 6, ease: "sine.inOut", yoyo: true, repeat: 2 }, 0);
+      tl.to(".dot", { opacity: .25, duration: .5, ease: "sine.inOut", yoyo: true, repeat: 17 }, 0);
+      // camera drift rides the BACKGROUND only — text layer stays pin-sharp
+      tl.fromTo(".bg", { scale: 1.04 }, { scale: 1.0, duration: 18, ease: "none" }, 0);
+
+      // headline in
+      tl.fromTo(".eyebrow", { opacity: 0, y: 26, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: .55 }, 0.25);
+      tl.fromTo(".ln .wd", { opacity: 0, y: 60, filter: "blur(14px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: .6, stagger: .11 }, 0.45);
+
+      // medallions — staggered 3D pop, row by row
+      tl.fromTo(".tm", { opacity: 0, y: 44, scale: .78 },
+        { opacity: 1, y: 0, scale: 1, duration: .55, ease: "back.out(1.6)", stagger: { each: .07, from: "start" } }, 1.05);
+
+      // thank-you sub
+      tl.fromTo(".sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: .6 }, 2.4);
+
+      // gentle idle float on the medallions during the hold
+      tl.to(".tm-av", { y: -5, duration: 2.6, ease: "sine.inOut", yoyo: true, repeat: 4, stagger: { each: .12, yoyo: true } }, 3.2);
+
+      // breathing outro hold to 18s
+      tl.set({}, {}, 18);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["ais-live-closing-team"] = tl;
+    </script>
+  </body>
+</html>

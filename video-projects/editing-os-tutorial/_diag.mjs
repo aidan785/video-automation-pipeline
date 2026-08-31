@@ -1,0 +1,11 @@
+import { chromium } from "playwright";
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+const errs = [];
+p.on("pageerror", e => errs.push(e.message));
+await p.goto("http://localhost:8099/", { waitUntil: "load" });
+await p.waitForTimeout(3000);
+console.log("band timelines:", await p.evaluate(() => Object.keys(window.__bandTimelines || {}).length), "of 43");
+console.log("master registered:", await p.evaluate(() => !!(window.__timelines||{})["editing-os-tutorial"]));
+console.log("page errors:", errs.length); console.log(errs.slice(0,3).join("\n"));
+await b.close();

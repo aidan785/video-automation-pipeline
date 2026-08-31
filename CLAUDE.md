@@ -7,7 +7,8 @@ Modular agent pipeline that turns a raw talking-head recording into a polished, 
 A raw recording goes in; a finished, "human-edited" video comes out, ideally via a single master command (e.g. `/goal edit this video`). The work is split into **granular, composable agents/skills** that the master workflow assembles in order:
 
 1. **Cut silences** — auto-trim pauses/dead air. *(building first)*
-2. **Cut mistakes / repeats** — detect false starts, retakes, stutters; decide what to drop. (Manual reasoning in the reference today — this becomes a real agent.)
+2. **Cut mistakes / repeats** — detect false starts, retakes, stutters; decide what to drop. Includes the mandatory **retake read** (stage 4 of the skill): after the first verified render, re-transcribe and editorially read the whole fresh transcript to piece together the best take of every re-recorded sentence — the mechanical detector catches only a fraction of real retakes (`find-retakes.mjs` + `retake-pass.mjs`).
+   - **Verify (the passing agent, `verify-cuts`)** — after the clean render, re-transcribe and make at least three verification passes (silence sweep, cuts sweep, ledger sweep) to prove every silence and approved cut landed. PASS is the precondition for the steps below.
 3. **Tiered motion-graphic cards** — tier-1 = full-screen paper takeover (thesis/stat); tier-2 = glass lower-third. Driven by the `hyperframes-video-beats` skill + a beat-detection pass.
 4. **B-roll insertion** — later.
 

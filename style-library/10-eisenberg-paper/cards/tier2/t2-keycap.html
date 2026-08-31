@@ -1,0 +1,93 @@
+<!doctype html>
+<!--
+  EISENBERG PAPER · tier2 · label · KEYCAP  (vertical 1080x1920)
+  Transparent overlay: a white 3D keyboard keycap pops in and PRESSES once
+  (travel + darker side wall compressing), with a dark command pill beside
+  it (e.g. "/code burn"). For shortcut / command callouts. Drifts, holds,
+  ghosts out.
+  Slots: key · label.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+
+      #ep-t2-keycap {
+        position: absolute; inset: 0; width: 1080px; height: 1920px;
+        background: transparent; font-family: var(--font-mono); overflow: hidden;
+      }
+      #ep-t2-keycap .group { position: absolute; left: 300px; top: 1180px; display: flex; align-items: center; gap: 40px; }
+
+      /* 3D keycap: cap face + darker side wall via border-bottom */
+      #ep-t2-keycap .keycap {
+        width: 150px; height: 150px; border-radius: 22px;
+        background: var(--tag); color: var(--tag-ink);
+        border-bottom: 14px solid #C9C4BC;
+        box-shadow: var(--shadow-pill);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 64px; font-weight: 600;
+        transform: rotate(-1deg);
+        box-sizing: border-box;
+      }
+
+      #ep-t2-keycap .cmd {
+        background: var(--card); color: var(--tag);
+        border-radius: var(--radius-pill);
+        border-top: 1px solid var(--card-hi);
+        box-shadow: var(--shadow-pill);
+        padding: 20px 34px;
+        font-size: var(--size-pill); font-weight: 600;
+        letter-spacing: var(--track-pill); white-space: nowrap;
+        transform: rotate(0.6deg);
+      }
+      #ep-t2-keycap .cmd .slash { color: var(--coral); }
+    </style>
+  </head>
+  <body>
+    <div id="ep-t2-keycap" data-composition-id="ep-t2-keycap" data-start="0" data-width="1080" data-height="1920">
+      <div class="drift"><div class="mover group">
+        <div class="keywrap"><div class="keycap" data-slot="key">O</div></div>
+        <div class="cmd"><span class="slash">/</span><span data-slot="label">code burn</span></div>
+      </div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const root = "#ep-t2-keycap";
+      const DUR = 5;
+
+      function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+      const rnd = mulberry32(818);
+
+      const tl = gsap.timeline({ paused: true });
+
+      document.querySelectorAll(root + " .drift").forEach((el) => {
+        const half = 1.4 + rnd() * 0.7;
+        tl.to(el, {
+          x: (rnd() * 2 - 1) * 4, y: 3 + rnd() * 2.5, rotation: (rnd() * 2 - 1) * 0.35,
+          duration: half, ease: "sine.inOut", yoyo: true, repeat: Math.ceil(DUR / half),
+        }, 0);
+      });
+
+      tl
+        /* keycap pops in */
+        .from(root + " .keywrap", { scale: 0.55, autoAlpha: 0, filter: "blur(10px)", duration: 0.45, ease: "back.out(1.8)" }, 0.15)
+
+        /* the PRESS: cap travels down as the side wall compresses, then releases */
+        .to(root + " .keycap", { y: 9, borderBottomWidth: 5, duration: 0.12, ease: "power2.in" }, 0.85)
+        .to(root + " .keycap", { y: 0, borderBottomWidth: 14, duration: 0.18, ease: "back.out(2)" }, 0.97)
+
+        /* command pill slides in beside it on the press */
+        .from(root + " .cmd", { x: -40, autoAlpha: 0, filter: "blur(8px)", duration: 0.55, ease: "back.out(1.0)" }, 1.0)
+
+        /* ghost out */
+        .to(root + " .group", { autoAlpha: 0, filter: "blur(7px)", y: -20, duration: 0.55, ease: "power2.in" }, DUR - 0.55)
+        .set({}, {}, DUR);
+
+      window.__timelines["ep-t2-keycap"] = tl;
+    </script>
+  </body>
+</html>

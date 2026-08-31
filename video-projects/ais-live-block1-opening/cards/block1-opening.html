@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — Block 1: Opening (45.0 min)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --red-live:#ff3b30; /* coral = ambient bg glow only */
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;z-index:30;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:34px;padding:96px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:0 0 16px rgba(55,189,248,.45);}
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:122px;line-height:1.16;
+        letter-spacing:-.03em;max-width:1600px;}
+      .ln.hero{font-size:176px;}
+      .ln .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:41px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+
+      /* AIS+ product mark — ALL WHITE incl. the +, never tinted (directives) */
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:900;color:#fff;letter-spacing:-.02em;}
+      .plus .p{color:#fff;}
+
+      /* ---------- speaker spotlight (portrait) ---------- */
+      .scene-portrait .inner{display:block;padding:0;text-align:left;}
+      .portrait{position:absolute;left:-60px;top:40px;bottom:0;width:880px;
+        display:flex;align-items:flex-end;justify-content:center;will-change:transform,opacity;}
+      .portrait img{object-fit:contain;object-position:bottom center;
+        filter:drop-shadow(0 26px 54px rgba(0,0,0,.55));
+        -webkit-mask-image:
+          linear-gradient(to bottom,#000 80%,transparent 100%),
+          linear-gradient(to right,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        -webkit-mask-composite:source-in;
+        mask-image:
+          linear-gradient(to bottom,#000 80%,transparent 100%),
+          linear-gradient(to right,transparent 0%,#000 10%,#000 90%,transparent 100%);
+        mask-composite:intersect;}
+      /* multi-speaker: circle-medallion column, vertically centered on the left */
+      .pics{position:absolute;left:170px;top:0;bottom:40px;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;}
+      .pic{display:block;border-radius:50%;will-change:transform,opacity;
+        filter:drop-shadow(0 18px 36px rgba(0,0,0,.55));}
+      .pcontent{position:absolute;left:930px;right:110px;top:0;bottom:40px;
+        display:flex;flex-direction:column;align-items:flex-start;justify-content:center;}
+      .peyebrow{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.32em;text-transform:uppercase;
+        color:var(--blue);margin-bottom:26px;text-shadow:0 0 16px rgba(55,189,248,.45);will-change:transform,opacity;}
+      .plogo{margin-bottom:10px;will-change:transform,opacity;}
+      .plogo img{height:60px;display:block;filter:drop-shadow(0 0 28px rgba(55,189,248,.30));}
+      .ptitle{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;
+        line-height:1.1;color:#fff;max-width:840px;margin-left:-.15em;}
+      .ptitle .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .pdivider{width:128px;height:2px;background:var(--blue);margin:26px 0 28px;
+        box-shadow:0 0 16px rgba(55,189,248,.6);transform-origin:left center;will-change:transform,opacity;}
+      .pname{font-family:var(--font-display);font-style:italic;font-weight:800;letter-spacing:-.02em;
+        font-size:44px;color:#fff;line-height:1.15;max-width:840px;will-change:transform,opacity;}
+      .prole{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:27px;
+        letter-spacing:-.01em;color:rgba(209,220,232,.75);margin-top:8px;will-change:transform,opacity;}
+      .phook{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:29px;line-height:1.3;
+        color:rgba(209,220,232,.85);margin-top:14px;max-width:820px;will-change:transform,opacity;}
+      .pmeta{font-family:var(--font-mono);font-weight:500;font-size:23px;letter-spacing:.22em;
+        text-transform:uppercase;color:var(--blue);margin-top:32px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+
+      /* ---------- member win card: summary left, post screenshot right ---------- */
+      .winwrap{position:absolute;inset:0;display:flex;align-items:center;gap:70px;padding:80px 110px 90px 150px;}
+      .wintext{flex:0 0 760px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;}
+      .winhead{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:76px;line-height:1.12;
+        letter-spacing:-.03em;margin-left:-.15em;max-width:780px;}
+      .winhead .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .winhead .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .winsub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:31px;line-height:1.35;
+        color:rgba(209,220,232,.85);margin-top:16px;max-width:720px;will-change:transform,opacity;}
+      .winname{font-family:var(--font-mono);font-weight:500;font-size:24px;letter-spacing:.2em;text-transform:uppercase;
+        color:var(--blue);margin-top:30px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+      .winshot{flex:1;display:flex;align-items:center;justify-content:center;max-height:840px;
+        will-change:transform,opacity;transform-style:preserve-3d;}
+      .winshot img{max-width:100%;max-height:840px;object-fit:contain;border-radius:20px;
+        border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 60px rgba(55,189,248,.10);}
+
+      /* sponsor logos (white on transparent) */
+      .logorow{display:flex;gap:110px;justify-content:center;align-items:flex-start;}
+      .logo{display:flex;flex-direction:column;align-items:center;gap:44px;will-change:transform,opacity;}
+      .logobox{height:180px;display:flex;align-items:center;justify-content:center;}
+      .logo img{width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 36px rgba(55,189,248,.28));}
+      .logorole{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);}
+
+      /* ---------- placeholder drop-in box ---------- */
+      .phbox{width:1280px;padding:80px 90px;border-radius:26px;text-align:center;
+        display:flex;flex-direction:column;align-items:center;gap:24px;
+        border:3px dashed rgba(55,189,248,.55);background:rgba(9,20,32,.55);
+        box-shadow:0 0 60px rgba(55,189,248,.12), inset 0 0 80px rgba(55,189,248,.05);
+        will-change:transform,opacity;}
+      .pheyebrow{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 16px rgba(55,189,248,.45);will-change:transform,opacity;}
+      .phtitle{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:92px;line-height:1.1;
+        letter-spacing:-.03em;color:#fff;padding:0 .1em .12em;text-shadow:0 0 40px rgba(255,255,255,.2);will-change:transform,opacity;}
+      .phslot{font-family:var(--font-mono);font-weight:700;font-size:24px;letter-spacing:.26em;text-transform:uppercase;
+        color:rgba(209,220,232,.65);will-change:transform,opacity;}
+      .phnote{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:30px;line-height:1.35;
+        color:rgba(209,220,232,.75);max-width:1000px;will-change:transform,opacity;}
+
+      /* mounted finished pieces — full-frame, above the camera scenes */
+      .mount{position:absolute;inset:0;background:#000;will-change:transform,opacity,filter;z-index:20;}
+      .mfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="cmp-block1-opening" data-start="0" data-duration="2700" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="2700" data-track-index="0">
+        <div class="depth grid-ceiling"></div>
+        <div class="depth grid-floor"></div>
+        <div class="beam"></div>
+        <div class="glow blue"></div>
+        <div class="glow coral"></div>
+        <div class="vignette"></div>
+        <div class="grain"></div>
+      </div>
+      <div class="whip clip" id="whip" data-start="0" data-duration="2700" data-track-index="1"></div>
+      <div id="markbug" class="clip" data-start="0" data-duration="2700" data-track-index="2">
+        <div class="backdrop-mark"><span class="mark"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div>
+      </div>
+
+      <div id="camera">
+      <section id="sc0" class="scene clip " data-start="0" data-duration="60.4" data-track-index="12">
+        <div class="inner">
+        <div class="phbox">
+          <div class="pheyebrow">PLACEHOLDER · DROP-IN SLOT</div>
+          <div class="phtitle">Welcome Title / Hype Open</div>
+          <div class="phslot">60 SECOND SLOT · PLAYS FIRST</div>
+          <div class="phnote">Drop your file at assets/video/welcome-open.mp4 and re-run _gen.mjs. It mounts here automatically.</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc5" class="scene clip " data-start="420.1" data-duration="4.4" data-track-index="17">
+        <div class="inner">
+        <div class="eyebrow">TODAY'S SPEAKERS</div><div class="ln hero"><span class="wd ">Who's</span><span class="wd ">on</span><span class="wd ac">today.</span></div>
+        </div>
+      </section>
+      <section id="sc6" class="scene clip scene-portrait" data-start="424.1" data-duration="7.4" data-track-index="18">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/nate-herk.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">VIP Q&A · 9:30 AM</div>
+          
+          <div class="ptitle" style="font-size:84px"><span class="wd ">VIP</span><span class="wd ">Q&A</span><span class="wd ">with</span><span class="wd ">Nate</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Nate Herk</div>
+          <div class="prole">Founder · Uppit AI & AIS</div>
+          <div class="phook">Bring the question you've been mulling over for weeks.</div>
+          <div class="pmeta">SAT · JUL 11 · 9:30 AM CT · VIP ROOM</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc7" class="scene clip scene-portrait" data-start="431.1" data-duration="7.4" data-track-index="19">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/nate-herk.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">OPENING · 10:15 AM</div>
+          
+          <div class="ptitle" style="font-size:84px"><span class="wd ">Welcome</span><span class="wd ">to</span><span class="wd ">AIS</span><span class="wd ">Live</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Nate Herk</div>
+          <div class="prole">Founder · Uppit AI & AIS</div>
+          <div class="phook">How you actually make money in AI services, and the shape of the weekend.</div>
+          <div class="pmeta">SAT · JUL 11 · 10:15 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc8" class="scene clip scene-portrait" data-start="438.1" data-duration="7.4" data-track-index="20">
+        <div class="inner">
+        <div class="pics" style="gap:20px"><img class="pic" src="assets/medallions/aidan-finnegan.png" style="width:220px;height:220px" alt="" /><img class="pic" src="assets/medallions/glenn-marcus.png" style="width:220px;height:220px" alt="" /><img class="pic" src="assets/medallions/wyatt-lyonsmith.png" style="width:220px;height:220px" alt="" /><img class="pic" src="assets/medallions/nate-herk.png" style="width:220px;height:220px" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">MAIN STAGE · 10:30 AM</div>
+          
+          <div class="ptitle" style="font-size:62px"><span class="wd ">Anatomy</span><span class="wd ">of</span><span class="wd ">Three</span><span class="wd ">Real</span><span class="wd ">Deals</span></div>
+          <div class="pdivider"></div>
+          <div class="pname" style="font-size:34px">Aidan Finnegan · Nate Herk · Glenn Marcus · Wyatt Lyonsmith</div>
+          
+          <div class="phook">Three real client engagements, end to end. The actual version, numbers attached.</div>
+          <div class="pmeta">SAT · JUL 11 · 10:30 AM CT</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc9" class="scene clip scene-portrait" data-start="445.1" data-duration="7.4" data-track-index="21">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/jon-morrow.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">LIVE DEBRIEF · 11:25 AM</div>
+          
+          <div class="ptitle" style="font-size:80px"><span class="wd ">Patterns</span><span class="wd ">from</span><span class="wd ">Real</span><span class="wd ">Deals</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Jon Morrow</div>
+          <div class="prole">President & COO · Uppit AI</div>
+          <div class="phook">The throughline that turned each conversation into a signed engagement.</div>
+          <div class="pmeta">SAT · JUL 11 · 11:25 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc10" class="scene clip scene-portrait" data-start="452.1" data-duration="7.4" data-track-index="22">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/alex-mcdonnell.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">KEYNOTE · 11:40 AM</div>
+          <div class="plogo"><img src="assets/sponsors/hyperagent-white.png" alt="" /></div>
+          <div class="ptitle" style="font-size:84px"><span class="wd ">The</span><span class="wd ">New</span><span class="wd ">Standard</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Alex McDonnell</div>
+          <div class="prole">Product Marketing · HyperAgent</div>
+          <div class="phook">Why you need a fleet of always-on agents.</div>
+          <div class="pmeta">SAT · JUL 11 · 11:40 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc11" class="scene clip scene-portrait" data-start="459.1" data-duration="7.4" data-track-index="23">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/jannis-moore.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">SPONSORED SESSION · 12:00 PM</div>
+          <div class="plogo"><img src="assets/sponsors/glaido-white.png" alt="" /></div>
+          <div class="ptitle" style="font-size:84px"><span class="wd ">Voice,</span><span class="wd ">Live</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Jannis Moore</div>
+          <div class="prole">Co-Founder · Glaido</div>
+          <div class="phook">Voice AI you can actually bill for. Live demo from the Glaido team.</div>
+          <div class="pmeta">SAT · JUL 11 · 12:00 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc12" class="scene clip scene-portrait" data-start="466.1" data-duration="7.4" data-track-index="24">
+        <div class="inner">
+        <div class="pics" style="gap:30px"><img class="pic" src="assets/medallions/nate-herk.png" style="width:340px;height:340px" alt="" /><img class="pic" src="assets/medallions/ednan-abdullayev.png" style="width:340px;height:340px" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">CO-BUILD · 12:20 PM</div>
+          
+          <div class="ptitle" style="font-size:94px"><span class="wd ">Evals</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Nate Herk + Ednan Abdullayev</div>
+          
+          <div class="phook">Built live. The eval results tell you exactly what to fix.</div>
+          <div class="pmeta">SAT · JUL 11 · 12:20 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc13" class="scene clip scene-portrait" data-start="473.1" data-duration="7.4" data-track-index="25">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/liberty-white.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">FOUNDATION TRACK · 12:45 PM</div>
+          
+          <div class="ptitle" style="font-size:62px"><span class="wd ">Your</span><span class="wd ">First</span><span class="wd ">30</span><span class="wd ">Days</span><span class="wd ">in</span><span class="wd ">AI</span><span class="wd ">Automation</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Liberty White</div>
+          <div class="prole">Founder · She Learns AI</div>
+          <div class="phook">What to build first, what to ignore, what to ship in week one.</div>
+          <div class="pmeta">SAT · JUL 11 · 12:45 PM CT · WORKSHOP BLOCK 1</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc14" class="scene clip scene-portrait" data-start="480.1" data-duration="7.4" data-track-index="26">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/dave-ebbelaar.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">ADVANCED TRACK · 12:45 PM</div>
+          
+          <div class="ptitle" style="font-size:76px"><span class="wd ">Low-Code</span><span class="wd ">to</span><span class="wd ">Full-Code</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Dave Ebbelaar</div>
+          <div class="prole">Founder · Datalumina</div>
+          <div class="phook">The architecture choices that hold up at scale.</div>
+          <div class="pmeta">SAT · JUL 11 · 12:45 PM CT · WORKSHOP BLOCK 1</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc15" class="scene clip " data-start="487.1" data-duration="5.4" data-track-index="27">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln hero"><span class="wd ">Real</span><span class="wd ">members.</span><span class="wd ac">Real</span><span class="wd ac">numbers.</span></div>
+        </div>
+      </section>
+      <section id="sc17" class="scene clip " data-start="556.433" data-duration="8.4" data-track-index="29">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$385,000</span><span class="wd ac">contract.</span></div>
+            <div class="winsub">A $25K implementation fee plus $15K a month for 24 months, closed at a 76% profit margin.</div>
+            <div class="winname">David Kim</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/david-kim.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc18" class="scene clip " data-start="564.433" data-duration="8.4" data-track-index="30">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">Two</span><span class="wd ">deals,</span><span class="wd ac">one</span><span class="wd ac">week.</span></div>
+            <div class="winsub">$22.5K and $42K sold in the same week, crossing $15K MRR and making his first hire.</div>
+            <div class="winname">Jacob West</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/jacob-west.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc19" class="scene clip " data-start="572.433" data-duration="8.4" data-track-index="31">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$50K+</span><span class="wd ">in</span><span class="wd ac">the</span><span class="wd ac">pipeline.</span></div>
+            <div class="winsub">Four new clients within a month, just a couple of weeks in.</div>
+            <div class="winname">Mohammad Sallam</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/mohammad-sallam.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc20" class="scene clip " data-start="580.433" data-duration="8.4" data-track-index="32">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$40K</span><span class="wd ac">upfront.</span></div>
+            <div class="winsub">Plus 20% revenue share, on one custom AI build.</div>
+            <div class="winname">Kobe Shemesh</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/kobe-shemesh.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc21" class="scene clip " data-start="588.433" data-duration="5.4" data-track-index="33">
+        <div class="inner">
+        <div class="eyebrow">THANK YOU</div><div class="ln hero"><span class="wd ">The</span><span class="wd ">sponsors</span><span class="wd ac">behind</span><span class="wd ac">AIS</span><span class="wd ac">LIVE.</span></div>
+        </div>
+      </section>
+      <section id="sc23" class="scene clip " data-start="1698.7" data-duration="8.4" data-track-index="35">
+        <div class="inner">
+        <div class="eyebrow">OUR SPONSORS</div><div class="logorow"><div class="logo"><div class="logobox"><img src="assets/sponsors/glaido-white.png" alt="" style="height:150px" /></div><div class="logorole">SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section id="sc24" class="scene clip " data-start="1706.7" data-duration="5.4" data-track-index="36">
+        <div class="inner">
+        <div class="eyebrow"><span class="plus">AIS<span class="p">+</span></span> MEMBERSHIP</div><div class="ln hero"><span class="wd ">Why</span><span class="wd ">join.</span><span class="wd ac">What's</span><span class="wd ac">inside.</span></div>
+        </div>
+      </section>
+      <section id="sc26" class="scene clip " data-start="1778.1" data-duration="7.4" data-track-index="38">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">Doors are open · Main stage at 10:15 CT</div>
+        </div>
+      </section>
+      <section id="sc27" class="scene clip " data-start="1785.1" data-duration="60.4" data-track-index="39">
+        <div class="inner">
+        <div class="phbox">
+          <div class="pheyebrow">PLACEHOLDER · DROP-IN SLOT</div>
+          <div class="phtitle">Welcome Title / Hype Open</div>
+          <div class="phslot">60 SECOND SLOT · PLAYS FIRST</div>
+          <div class="phnote">Drop your file at assets/video/welcome-open.mp4 and re-run _gen.mjs. It mounts here automatically.</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc32" class="scene clip " data-start="2205.2" data-duration="4.4" data-track-index="44">
+        <div class="inner">
+        <div class="eyebrow">TODAY'S SPEAKERS</div><div class="ln hero"><span class="wd ">More</span><span class="wd ">of</span><span class="wd ac">today's</span><span class="wd ac">lineup.</span></div>
+        </div>
+      </section>
+      <section id="sc33" class="scene clip scene-portrait" data-start="2209.2" data-duration="7.4" data-track-index="45">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/jon-morrow.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">VIP WORKING SESSION · 2:00 PM</div>
+          
+          <div class="ptitle" style="font-size:68px"><span class="wd ">Land</span><span class="wd ">Your</span><span class="wd ">First</span><span class="wd ">Paying</span><span class="wd ">Client</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Jon Morrow</div>
+          <div class="prole">President & COO · Uppit AI</div>
+          <div class="phook">The fastest realistic path to your first paid AI engagement.</div>
+          <div class="pmeta">SAT · JUL 11 · 2:00 PM CT · VIP</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc34" class="scene clip scene-portrait" data-start="2216.2" data-duration="7.4" data-track-index="46">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/jenn-van-wagner.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">VIP WORKING SESSION · 2:00 PM</div>
+          
+          <div class="ptitle" style="font-size:62px"><span class="wd ">Turn</span><span class="wd ">Your</span><span class="wd ">Expertise</span><span class="wd ">Into</span><span class="wd ">a</span><span class="wd ">Service</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Jenn Van Wagner</div>
+          <div class="prole">Business Operations Specialist · Uppit AI</div>
+          <div class="phook">Turn what you already know into a productized, sellable AI service offer.</div>
+          <div class="pmeta">SAT · JUL 11 · 2:00 PM CT · VIP</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc35" class="scene clip scene-portrait" data-start="2223.2" data-duration="7.4" data-track-index="47">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/russ-henneberry.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">VIP WORKING SESSION · 2:00 PM</div>
+          
+          <div class="ptitle" style="font-size:88px"><span class="wd ">Price</span><span class="wd ">It</span><span class="wd ">Right</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Russ Henneberry</div>
+          <div class="prole">Founder · theCLICK</div>
+          <div class="phook">Packaging, anchoring, and what to charge for your AI work.</div>
+          <div class="pmeta">SAT · JUL 11 · 2:00 PM CT · VIP</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc36" class="scene clip scene-portrait" data-start="2230.2" data-duration="7.4" data-track-index="48">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/kacper-rutkiewicz.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">FEATURED SESSION · 2:35 PM</div>
+          
+          <div class="ptitle" style="font-size:52px"><span class="wd ">How</span><span class="wd ">I</span><span class="wd ">Run</span><span class="wd ">an</span><span class="wd ">Entire</span><span class="wd ">AI</span><span class="wd ">Automation</span><span class="wd ">Agency</span><span class="wd ">Using</span><span class="wd ">Claude</span><span class="wd ">Code</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Kacper Rutkiewicz</div>
+          <div class="prole">Founder · DeepRooted</div>
+          <div class="phook">Client delivery. Sales. Content. One workspace.</div>
+          <div class="pmeta">SAT · JUL 11 · 2:35 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc37" class="scene clip scene-portrait" data-start="2237.2" data-duration="7.4" data-track-index="49">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/sabrina-ramonov.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">FOUNDATION TRACK · 3:10 PM</div>
+          
+          <div class="ptitle" style="font-size:62px"><span class="wd ">Build</span><span class="wd ">Your</span><span class="wd ">First</span><span class="wd ">AI</span><span class="wd ">Content</span><span class="wd ">Engine</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Sabrina Ramonov</div>
+          <div class="prole">Founder & CEO · Blotato</div>
+          <div class="phook">A content engine built live, end to end, in 60 minutes.</div>
+          <div class="pmeta">SAT · JUL 11 · 3:10 PM CT · WORKSHOP BLOCK 2</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc38" class="scene clip scene-portrait" data-start="2244.2" data-duration="7.4" data-track-index="50">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/samin-yasar.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">ADVANCED TRACK · 3:10 PM</div>
+          
+          <div class="ptitle" style="font-size:70px"><span class="wd ">Build</span><span class="wd ">a</span><span class="wd ">Voice</span><span class="wd ">AI</span><span class="wd ">Sales</span><span class="wd ">Rep</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Samin Yasar</div>
+          <div class="prole">Founder & CEO · BookedIn.ai</div>
+          <div class="phook">Live on stage, end to end. Architecture that holds up in the wild.</div>
+          <div class="pmeta">SAT · JUL 11 · 3:10 PM CT · WORKSHOP BLOCK 2</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc39" class="scene clip scene-portrait" data-start="2251.2" data-duration="7.4" data-track-index="51">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/tangy-frederick.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">WORKSHOP BLOCK 3 · 4:20 PM</div>
+          
+          <div class="ptitle" style="font-size:80px"><span class="wd ">Enterprise</span><span class="wd ">AI</span><span class="wd ">Services</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Tangy Frederick</div>
+          <div class="prole">President · Regal Unicorn</div>
+          <div class="phook">How a small AI agency wins deals against firms ten times its size.</div>
+          <div class="pmeta">SAT · JUL 11 · 4:20 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc40" class="scene clip scene-portrait" data-start="2258.2" data-duration="7.4" data-track-index="52">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/ednan-abdullayev.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">MAIN STAGE · 5:05 PM</div>
+          
+          <div class="ptitle" style="font-size:80px"><span class="wd ">Get</span><span class="wd ">AIS+</span><span class="wd ">Certified</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Ednan Abdullayev</div>
+          <div class="prole">Tech Lead · AIS</div>
+          <div class="phook">The credential that proves you can build and sell real AI services.</div>
+          <div class="pmeta">SAT · JUL 11 · 5:05 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc41" class="scene clip scene-portrait" data-start="2265.2" data-duration="7.4" data-track-index="53">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/nate-herk.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">CLOSING · 5:20 PM</div>
+          
+          <div class="ptitle" style="font-size:76px"><span class="wd ">Day</span><span class="wd ">1</span><span class="wd ">Closing</span><span class="wd ">Remarks</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Nate Herk</div>
+          <div class="prole">Founder · Uppit AI & AIS</div>
+          <div class="phook">The day's biggest moments, plus the overnight challenge that sets up Day 2.</div>
+          <div class="pmeta">SAT · JUL 11 · 5:20 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc42" class="scene clip " data-start="2272.2" data-duration="5.4" data-track-index="54">
+        <div class="inner">
+        <div class="eyebrow">FROM THE COMMUNITY</div><div class="ln hero"><span class="wd ">Real</span><span class="wd ">builds.</span><span class="wd ac">Real</span><span class="wd ac">paydays.</span></div>
+        </div>
+      </section>
+      <section id="sc44" class="scene clip " data-start="2347.5" data-duration="8.4" data-track-index="56">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">£1K</span><span class="wd ">to</span><span class="wd ac">£30K</span><span class="wd ac">projects.</span></div>
+            <div class="winsub">From selling £1,000 workflows a year ago to closing AI agent projects at £25-30K.</div>
+            <div class="winname">Joe Scott</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/joe-scott.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc45" class="scene clip " data-start="2355.5" data-duration="8.4" data-track-index="57">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$25K</span><span class="wd ac">this</span><span class="wd ac">month.</span></div>
+            <div class="winsub">What started as a side hustle now invoices $25K a month, with $9K more in the pipeline.</div>
+            <div class="winname">Sef El</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/sef-el.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc46" class="scene clip " data-start="2363.5" data-duration="8.4" data-track-index="58">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">$10K</span><span class="wd ">in</span><span class="wd ac">one</span><span class="wd ac">year.</span></div>
+            <div class="winsub">A side hustle while still in university. 80% of it came through <span class="plus">AIS<span class="p">+</span></span> connections.</div>
+            <div class="winname">Abdurrahman Ibrahim</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/abdurrahman-ibrahim.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc47" class="scene clip " data-start="2371.5" data-duration="8.4" data-track-index="59">
+        <div class="inner">
+        <div class="winwrap">
+          <div class="wintext">
+            <div class="peyebrow">MEMBER WIN</div>
+            <div class="winhead"><span class="wd ">First</span><span class="wd ">client,</span><span class="wd ac">$5K.</span></div>
+            <div class="winsub">Closed at 18 years old.</div>
+            <div class="winname">Noel Payano</div>
+          </div>
+          <div class="winshot"><img src="assets/wins/noel-payano.png" alt="" /></div>
+        </div>
+        </div>
+      </section>
+      <section id="sc48" class="scene clip " data-start="2379.5" data-duration="5.4" data-track-index="60">
+        <div class="inner">
+        <div class="eyebrow">THANK YOU</div><div class="ln hero"><span class="wd ">The</span><span class="wd ">sponsors</span><span class="wd ac">behind</span><span class="wd ac">AIS</span><span class="wd ac">LIVE.</span></div>
+        </div>
+      </section>
+      <section id="sc49" class="scene clip " data-start="2384.5" data-duration="8.4" data-track-index="61">
+        <div class="inner">
+        <div class="eyebrow">PRESENTING SPONSOR</div><div class="logorow"><div class="logo"><div class="logobox"><img src="assets/sponsors/hyperagent-white-big.png" alt="" style="height:130px" /></div><div class="logorole">PRESENTING SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section id="sc50" class="scene clip " data-start="2392.5" data-duration="8.4" data-track-index="62">
+        <div class="inner">
+        <div class="eyebrow">OUR SPONSORS</div><div class="logorow"><div class="logo"><div class="logobox"><img src="assets/sponsors/glaido-white.png" alt="" style="height:150px" /></div><div class="logorole">SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section id="sc51" class="scene clip " data-start="2400.5" data-duration="5.4" data-track-index="63">
+        <div class="inner">
+        <div class="eyebrow"><span class="plus">AIS<span class="p">+</span></span> MEMBERSHIP</div><div class="ln hero"><span class="wd ">Why</span><span class="wd ">join.</span><span class="wd ac">What's</span><span class="wd ac">inside.</span></div>
+        </div>
+      </section>
+      <section id="sc53" class="scene clip " data-start="2471.9" data-duration="7.4" data-track-index="65">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">Doors are open · Main stage at 10:15 CT</div>
+        </div>
+      </section>
+      <section id="sc54" class="scene clip " data-start="2478.9" data-duration="60.4" data-track-index="66">
+        <div class="inner">
+        <div class="phbox">
+          <div class="pheyebrow">PLACEHOLDER · DROP-IN SLOT</div>
+          <div class="phtitle">Welcome Title / Hype Open</div>
+          <div class="phslot">60 SECOND SLOT · PLAYS FIRST</div>
+          <div class="phnote">Drop your file at assets/video/welcome-open.mp4 and re-run _gen.mjs. It mounts here automatically.</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc57" class="scene clip " data-start="2634.7" data-duration="4.4" data-track-index="69">
+        <div class="inner">
+        <div class="eyebrow">TOMORROW · EARN DAY</div><div class="ln hero"><span class="wd ">And</span><span class="wd ">tomorrow,</span><span class="wd ac">we</span><span class="wd ac">earn.</span></div>
+        </div>
+      </section>
+      <section id="sc58" class="scene clip scene-portrait" data-start="2638.7" data-duration="7.4" data-track-index="70">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/nate-herk.png" style="height:88%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">TOMORROW · DAY 2 OPEN · 9:45 AM</div>
+          
+          <div class="ptitle" style="font-size:64px"><span class="wd ">Now</span><span class="wd ">Let's</span><span class="wd ">Turn</span><span class="wd ">This</span><span class="wd ">Into</span><span class="wd ">Money</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Nate Herk</div>
+          <div class="prole">Founder · Uppit AI & AIS</div>
+          <div class="phook">Build Day is done. Day 2 is about earning.</div>
+          <div class="pmeta">SUN · JUL 12 · 9:45 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc59" class="scene clip scene-portrait" data-start="2645.7" data-duration="7.4" data-track-index="71">
+        <div class="inner">
+        <div class="portrait"><img src="assets/cutouts/alex-mcdonnell.png" style="height:96%;width:auto;max-width:none" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">TOMORROW · WORKSHOP · 10:00 AM</div>
+          <div class="plogo"><img src="assets/sponsors/hyperagent-white.png" alt="" /></div>
+          <div class="ptitle" style="font-size:56px"><span class="wd ">How</span><span class="wd ">to</span><span class="wd ">Build</span><span class="wd ">an</span><span class="wd ">Always-On</span><span class="wd ">Fleet</span><span class="wd ">of</span><span class="wd ">Agents</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Alex McDonnell</div>
+          <div class="prole">Product Marketing · HyperAgent</div>
+          <div class="phook">Sixty minutes, hands-on. System prompts, skills, tools, loops.</div>
+          <div class="pmeta">SUN · JUL 12 · 10:00 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc60" class="scene clip scene-portrait" data-start="2652.7" data-duration="7.4" data-track-index="72">
+        <div class="inner">
+        <div class="pics" style="gap:30px"><img class="pic" src="assets/medallions/devin-kearns.png" style="width:340px;height:340px" alt="" /><img class="pic" src="assets/medallions/dave-ebbelaar.png" style="width:340px;height:340px" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">TOMORROW · PANEL · 11:10 AM</div>
+          
+          <div class="ptitle" style="font-size:54px"><span class="wd ">The</span><span class="wd ">Tool</span><span class="wd ">War:</span><span class="wd ">What</span><span class="wd ">Actually</span><span class="wd ">Makes</span><span class="wd ">Money</span><span class="wd ">in</span><span class="wd ">2026</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Devin Kearns · Dave Ebbelaar</div>
+          
+          <div class="phook">Honest swings at each other's stacks. What ships, what's overhyped.</div>
+          <div class="pmeta">SUN · JUL 12 · 11:10 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc61" class="scene clip scene-portrait" data-start="2659.7" data-duration="7.4" data-track-index="73">
+        <div class="inner">
+        <div class="pics" style="gap:30px"><img class="pic" src="assets/medallions/jon-morrow.png" style="width:340px;height:340px" alt="" /><img class="pic" src="assets/medallions/pat-blakely.png" style="width:340px;height:340px" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">TOMORROW · 11:50 AM</div>
+          
+          <div class="ptitle" style="font-size:58px"><span class="wd ">Where</span><span class="wd ">Your</span><span class="wd ">First</span><span class="wd ">10</span><span class="wd ">Clients</span><span class="wd ">Are</span><span class="wd ">Hiding</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Jon Morrow · Pat Blakely</div>
+          
+          <div class="phook">Specific channels, specific behaviors, outreach that gets picked up.</div>
+          <div class="pmeta">SUN · JUL 12 · 11:50 AM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc62" class="scene clip scene-portrait" data-start="2666.7" data-duration="7.4" data-track-index="74">
+        <div class="inner">
+        <div class="pics" style="gap:30px"><img class="pic" src="assets/medallions/jon-morrow.png" style="width:340px;height:340px" alt="" /><img class="pic" src="assets/medallions/pat-blakely.png" style="width:340px;height:340px" alt="" /></div>
+        <div class="pcontent">
+          <div class="peyebrow">TOMORROW · 12:30 PM</div>
+          
+          <div class="ptitle" style="font-size:84px"><span class="wd ">The</span><span class="wd ">Sales</span><span class="wd ">Arc,</span><span class="wd ">LIVE</span></div>
+          <div class="pdivider"></div>
+          <div class="pname">Jon Morrow · Pat Blakely</div>
+          
+          <div class="phook">A real AI services sales call, live on stage. No script. No safety net.</div>
+          <div class="pmeta">SUN · JUL 12 · 12:30 PM CT · MAIN STAGE</div>
+        </div>
+        </div>
+      </section>
+      <section id="sc63" class="scene clip " data-start="2673.7" data-duration="6.4" data-track-index="75">
+        <div class="inner">
+        <div class="eyebrow">MAIN STAGE · 10:15 AM</div><div class="ln hero"><span class="wd ">Welcome</span><span class="wd ">to</span><span class="wd ac">AIS</span><span class="wd ac">Live.</span></div>
+        </div>
+      </section>
+      <section id="sc64" class="scene clip " data-start="2679.7" data-duration="8.4" data-track-index="76">
+        <div class="inner">
+        <div class="eyebrow">STARTING NOW</div><div class="ln"><span class="wd ">Nate</span><span class="wd ">Herk</span><span class="wd ">takes</span><span class="wd ac">the</span><span class="wd ac">stage.</span></div><div class="sub">How you actually make money in AI services.</div>
+        </div>
+      </section>
+      <section id="sc65" class="scene clip " data-start="2687.7" data-duration="12.7" data-track-index="77">
+        <div class="inner">
+        <div class="bigmark"><span class="mark big"><span class="ais">AIS</span><span class="gap"></span><span class="live">LIVE<span class="ring"></span><span class="dot"></span></span></span></div><div class="sub">Day 1 · Build Day · Starting now</div>
+        </div>
+      </section>
+      </div>
+      <div id="mnt0" class="mount">
+        <img id="mnt0-poster" class="mfill" src="assets/video/day1-agenda-poster.jpg" alt="" />
+        <video id="mnt0-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/day1-agenda.mp4" data-start="60" data-duration="180" data-track-index="501"></video>
+        <img id="mnt0-last" class="mfill" src="assets/video/day1-agenda-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt1" class="mount">
+        <img id="mnt1-poster" class="mfill" src="assets/video/get-setup-poster.jpg" alt="" />
+        <video id="mnt1-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/get-setup.mp4" data-start="240.4" data-duration="61" data-track-index="502"></video>
+        <img id="mnt1-last" class="mfill" src="assets/video/get-setup-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt2" class="mount">
+        <img id="mnt2-poster" class="mfill" src="assets/video/vip-qa-poster.jpg" alt="" />
+        <video id="mnt2-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/vip-qa.mp4" data-start="301.8" data-duration="34" data-track-index="503"></video>
+        <img id="mnt2-last" class="mfill" src="assets/video/vip-qa-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt3" class="mount">
+        <img id="mnt3-poster" class="mfill" src="assets/video/day1-teasers-poster.jpg" alt="" />
+        <video id="mnt3-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/day1-teasers.mp4" data-start="336.2" data-duration="83.5" data-track-index="504"></video>
+        <img id="mnt3-last" class="mfill" src="assets/video/day1-teasers-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt4" class="mount">
+        <img id="mnt4-poster" class="mfill" src="assets/video/testi-building-poster.jpg" alt="" />
+        <video id="mnt4-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-building.mp4" data-start="492.1" data-duration="63.93333333333333" data-track-index="505"></video>
+        <img id="mnt4-last" class="mfill" src="assets/video/testi-building-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt5" class="mount">
+        <img id="mnt5-poster" class="mfill" src="assets/video/hyperagent-keynote-poster.jpg" alt="" />
+        <video id="mnt5-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/hyperagent-keynote.mp4" data-start="593.433" data-duration="1104.8666666666666" data-track-index="506"></video>
+        <img id="mnt5-last" class="mfill" src="assets/video/hyperagent-keynote-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt6" class="mount">
+        <img id="mnt6-poster" class="mfill" src="assets/video/ais-plus-membership-poster.jpg" alt="" />
+        <video id="mnt6-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/ais-plus-membership.mp4" data-start="1711.7" data-duration="66" data-track-index="507"></video>
+        <img id="mnt6-last" class="mfill" src="assets/video/ais-plus-membership-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt7" class="mount">
+        <img id="mnt7-poster" class="mfill" src="assets/video/day1-agenda-poster.jpg" alt="" />
+        <video id="mnt7-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/day1-agenda.mp4" data-start="1845.1" data-duration="180" data-track-index="508"></video>
+        <img id="mnt7-last" class="mfill" src="assets/video/day1-agenda-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt8" class="mount">
+        <img id="mnt8-poster" class="mfill" src="assets/video/get-setup-poster.jpg" alt="" />
+        <video id="mnt8-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/get-setup.mp4" data-start="2025.5" data-duration="61" data-track-index="509"></video>
+        <img id="mnt8-last" class="mfill" src="assets/video/get-setup-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt9" class="mount">
+        <img id="mnt9-poster" class="mfill" src="assets/video/vip-qa-poster.jpg" alt="" />
+        <video id="mnt9-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/vip-qa.mp4" data-start="2086.9" data-duration="34" data-track-index="510"></video>
+        <img id="mnt9-last" class="mfill" src="assets/video/vip-qa-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt10" class="mount">
+        <img id="mnt10-poster" class="mfill" src="assets/video/day1-teasers-poster.jpg" alt="" />
+        <video id="mnt10-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/day1-teasers.mp4" data-start="2121.3" data-duration="83.5" data-track-index="511"></video>
+        <img id="mnt10-last" class="mfill" src="assets/video/day1-teasers-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt11" class="mount">
+        <img id="mnt11-poster" class="mfill" src="assets/video/testi-earning-poster.jpg" alt="" />
+        <video id="mnt11-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-earning.mp4" data-start="2277.2" data-duration="69.9" data-track-index="512"></video>
+        <img id="mnt11-last" class="mfill" src="assets/video/testi-earning-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt12" class="mount">
+        <img id="mnt12-poster" class="mfill" src="assets/video/ais-plus-membership-poster.jpg" alt="" />
+        <video id="mnt12-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/ais-plus-membership.mp4" data-start="2405.5" data-duration="66" data-track-index="513"></video>
+        <img id="mnt12-last" class="mfill" src="assets/video/ais-plus-membership-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt13" class="mount">
+        <img id="mnt13-poster" class="mfill" src="assets/video/get-setup-poster.jpg" alt="" />
+        <video id="mnt13-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/get-setup.mp4" data-start="2538.9" data-duration="61" data-track-index="514"></video>
+        <img id="mnt13-last" class="mfill" src="assets/video/get-setup-lastframe.jpg" alt="" />
+      </div>
+      <div id="mnt14" class="mount">
+        <img id="mnt14-poster" class="mfill" src="assets/video/vip-qa-poster.jpg" alt="" />
+        <video id="mnt14-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/vip-qa.mp4" data-start="2600.3" data-duration="34" data-track-index="515"></video>
+        <img id="mnt14-last" class="mfill" src="assets/video/vip-qa-lastframe.jpg" alt="" />
+      </div>
+      <audio id="mnt4-a" src="assets/video/testi-building.mp4" data-start="492.1" data-duration="63.93333333333333" data-track-index="565" data-volume="1"></audio>
+      <audio id="mnt5-a" src="assets/video/hyperagent-keynote.mp4" data-start="593.433" data-duration="1104.8666666666666" data-track-index="566" data-volume="1"></audio>
+      <audio id="mnt6-a" src="assets/video/ais-plus-membership.mp4" data-start="1711.7" data-duration="66" data-track-index="567" data-volume="1"></audio>
+      <audio id="mnt11-a" src="assets/video/testi-earning.mp4" data-start="2277.2" data-duration="69.9" data-track-index="572" data-volume="1"></audio>
+      <audio id="mnt12-a" src="assets/video/ais-plus-membership.mp4" data-start="2405.5" data-duration="66" data-track-index="573" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 2700;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers (all fromTo so nothing is left invisible) ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function rise(sel, at){ tl.fromTo(sel,{autoAlpha:0,y:110,filter:"blur(10px)"},
+        {autoAlpha:1,y:0,filter:"blur(0px)",duration:.7,ease:"power3.out"},at); }
+      function wipe(sel, at){ tl.fromTo(sel,{autoAlpha:0,scaleX:0},{autoAlpha:1,scaleX:1,duration:.55,ease:"power2.out"},at); }
+      function glowIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"back.out(1.4)",stagger:step||.12},at); }
+      function shotIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,x:70,rotationY:-14,filter:"blur(8px)"},
+        {autoAlpha:1,x:0,rotationY:0,filter:"blur(0px)",duration:.65,ease:"power3.out"},at); }
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=10",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut"},at); }
+      function phIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.92,y:30},
+        {autoAlpha:1,scale:1,y:0,duration:.6,ease:"power3.out",transformOrigin:"50% 50%"},at); }
+      // slow breathing on the dashed box so the drop-in slot reads alive, not broken
+      function phPulse(sel, at, cycles){ tl.to(sel,{borderColor:"rgba(55,189,248,.25)",duration:2.4,yoyo:true,
+        repeat:Math.max(1,Math.round(cycles*2)-1),ease:"sine.inOut"},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.8,ease:"power2.in"},at); }
+      function mountIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:1.045,filter:"blur(14px)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px)",duration:.5,ease:"power2.out",transformOrigin:"50% 50%"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+
+      /* ---- AMBIENT — short fixed cycles, even counts so yoyo ends at rest ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/90, yoyo:true, repeat:89, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/108, yoyo:true, repeat:107, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/450, yoyo:true, repeat:449, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/90, yoyo:true, repeat:89, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral",{ x:-36, y:22, duration:D/90, yoyo:true, repeat:89, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/322, yoyo:true, repeat:321, ease:"sine.inOut" }, 0);
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:3374, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:1687, ease:"none" }, 0);
+
+      /* ---- SCENES ---- */
+      // sc0 · ph  (60s)
+      phIn("#sc0 .phbox", 0.2);
+      drop("#sc0 .pheyebrow", 0.45);
+      drop("#sc0 .phtitle", 0.6);
+      drop("#sc0 .phslot", 0.75);
+      drop("#sc0 .phnote", 0.9);
+      phPulse("#sc0 .phbox", 1.2, 24.17);
+      whipOut("#sc0 .inner", 59.7);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 60);
+
+      // sc1 · mount day1-agenda  (180.4s)
+      streak(60);
+      tl.set("#mnt0", { autoAlpha: 0 }, 0);
+      tl.set("#mnt0-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt0", 60);
+      tl.set("#mnt0-poster", { autoAlpha: 0 }, 60.2);
+      tl.set("#mnt0-last", { autoAlpha: 1 }, 239.96);
+      whipOut("#mnt0", 240.1);
+      tl.set("#mnt0", { autoAlpha: 0 }, 240.4);
+
+      // sc2 · mount get-setup  (61.4s)
+      streak(240.4);
+      tl.set("#mnt1", { autoAlpha: 0 }, 0);
+      tl.set("#mnt1-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt1", 240.4);
+      tl.set("#mnt1-poster", { autoAlpha: 0 }, 240.6);
+      tl.set("#mnt1-last", { autoAlpha: 1 }, 301.36);
+      whipOut("#mnt1", 301.5);
+      tl.set("#mnt1", { autoAlpha: 0 }, 301.8);
+
+      // sc3 · mount vip-qa  (34.4s)
+      streak(301.8);
+      tl.set("#mnt2", { autoAlpha: 0 }, 0);
+      tl.set("#mnt2-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt2", 301.8);
+      tl.set("#mnt2-poster", { autoAlpha: 0 }, 302);
+      tl.set("#mnt2-last", { autoAlpha: 1 }, 335.76);
+      whipOut("#mnt2", 335.9);
+      tl.set("#mnt2", { autoAlpha: 0 }, 336.2);
+
+      // sc4 · mount day1-teasers  (83.9s)
+      streak(336.2);
+      tl.set("#mnt3", { autoAlpha: 0 }, 0);
+      tl.set("#mnt3-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt3", 336.2);
+      tl.set("#mnt3-poster", { autoAlpha: 0 }, 336.4);
+      tl.set("#mnt3-last", { autoAlpha: 1 }, 419.66);
+      whipOut("#mnt3", 419.8);
+      tl.set("#mnt3", { autoAlpha: 0 }, 420.1);
+
+      // sc5 · hero  (4s)
+      streak(420.1);
+      drop("#sc5 .eyebrow", 420.22);
+      words("#sc5 .ln .wd", 420.34);
+      whipOut("#sc5 .inner", 423.8);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 424.1);
+
+      // sc6 · portrait  (7s)
+      streak(424.1);
+      rise("#sc6 .portrait", 424.26);
+      drop("#sc6 .peyebrow", 424.32);
+      words("#sc6 .ptitle .wd", 424.46);
+      wipe("#sc6 .pdivider", 424.82);
+      drop("#sc6 .pname", 424.96);
+      drop("#sc6 .prole, #sc6 .phook", 425.1);
+      drop("#sc6 .pmeta", 425.28);
+      whipOut("#sc6 .inner", 430.8);
+      tl.set("#sc6 .inner", { autoAlpha: 0 }, 431.1);
+
+      // sc7 · portrait  (7s)
+      streak(431.1);
+      rise("#sc7 .portrait", 431.26);
+      drop("#sc7 .peyebrow", 431.32);
+      words("#sc7 .ptitle .wd", 431.46);
+      wipe("#sc7 .pdivider", 431.82);
+      drop("#sc7 .pname", 431.96);
+      drop("#sc7 .prole, #sc7 .phook", 432.1);
+      drop("#sc7 .pmeta", 432.28);
+      whipOut("#sc7 .inner", 437.8);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 438.1);
+
+      // sc8 · portrait  (7s)
+      streak(438.1);
+      glowIn("#sc8 .pic", 438.26, 0.12);
+      drop("#sc8 .peyebrow", 438.32);
+      words("#sc8 .ptitle .wd", 438.46);
+      wipe("#sc8 .pdivider", 438.82);
+      drop("#sc8 .pname", 438.96);
+      drop("#sc8 .prole, #sc8 .phook", 439.1);
+      drop("#sc8 .pmeta", 439.28);
+      whipOut("#sc8 .inner", 444.8);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 445.1);
+
+      // sc9 · portrait  (7s)
+      streak(445.1);
+      rise("#sc9 .portrait", 445.26);
+      drop("#sc9 .peyebrow", 445.32);
+      words("#sc9 .ptitle .wd", 445.46);
+      wipe("#sc9 .pdivider", 445.82);
+      drop("#sc9 .pname", 445.96);
+      drop("#sc9 .prole, #sc9 .phook", 446.1);
+      drop("#sc9 .pmeta", 446.28);
+      whipOut("#sc9 .inner", 451.8);
+      tl.set("#sc9 .inner", { autoAlpha: 0 }, 452.1);
+
+      // sc10 · portrait  (7s)
+      streak(452.1);
+      rise("#sc10 .portrait", 452.26);
+      drop("#sc10 .peyebrow", 452.32);
+      drop("#sc10 .plogo", 452.4);
+      words("#sc10 .ptitle .wd", 452.46);
+      wipe("#sc10 .pdivider", 452.82);
+      drop("#sc10 .pname", 452.96);
+      drop("#sc10 .prole, #sc10 .phook", 453.1);
+      drop("#sc10 .pmeta", 453.28);
+      whipOut("#sc10 .inner", 458.8);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 459.1);
+
+      // sc11 · portrait  (7s)
+      streak(459.1);
+      rise("#sc11 .portrait", 459.26);
+      drop("#sc11 .peyebrow", 459.32);
+      drop("#sc11 .plogo", 459.4);
+      words("#sc11 .ptitle .wd", 459.46);
+      wipe("#sc11 .pdivider", 459.82);
+      drop("#sc11 .pname", 459.96);
+      drop("#sc11 .prole, #sc11 .phook", 460.1);
+      drop("#sc11 .pmeta", 460.28);
+      whipOut("#sc11 .inner", 465.8);
+      tl.set("#sc11 .inner", { autoAlpha: 0 }, 466.1);
+
+      // sc12 · portrait  (7s)
+      streak(466.1);
+      glowIn("#sc12 .pic", 466.26, 0.12);
+      drop("#sc12 .peyebrow", 466.32);
+      words("#sc12 .ptitle .wd", 466.46);
+      wipe("#sc12 .pdivider", 466.82);
+      drop("#sc12 .pname", 466.96);
+      drop("#sc12 .prole, #sc12 .phook", 467.1);
+      drop("#sc12 .pmeta", 467.28);
+      whipOut("#sc12 .inner", 472.8);
+      tl.set("#sc12 .inner", { autoAlpha: 0 }, 473.1);
+
+      // sc13 · portrait  (7s)
+      streak(473.1);
+      rise("#sc13 .portrait", 473.26);
+      drop("#sc13 .peyebrow", 473.32);
+      words("#sc13 .ptitle .wd", 473.46);
+      wipe("#sc13 .pdivider", 473.82);
+      drop("#sc13 .pname", 473.96);
+      drop("#sc13 .prole, #sc13 .phook", 474.1);
+      drop("#sc13 .pmeta", 474.28);
+      whipOut("#sc13 .inner", 479.8);
+      tl.set("#sc13 .inner", { autoAlpha: 0 }, 480.1);
+
+      // sc14 · portrait  (7s)
+      streak(480.1);
+      rise("#sc14 .portrait", 480.26);
+      drop("#sc14 .peyebrow", 480.32);
+      words("#sc14 .ptitle .wd", 480.46);
+      wipe("#sc14 .pdivider", 480.82);
+      drop("#sc14 .pname", 480.96);
+      drop("#sc14 .prole, #sc14 .phook", 481.1);
+      drop("#sc14 .pmeta", 481.28);
+      whipOut("#sc14 .inner", 486.8);
+      tl.set("#sc14 .inner", { autoAlpha: 0 }, 487.1);
+
+      // sc15 · hero  (5s)
+      streak(487.1);
+      drop("#sc15 .eyebrow", 487.22);
+      words("#sc15 .ln .wd", 487.34);
+      whipOut("#sc15 .inner", 491.8);
+      tl.set("#sc15 .inner", { autoAlpha: 0 }, 492.1);
+
+      // sc16 · mount testi-building  (64.333s, voice audio)
+      streak(492.1);
+      tl.set("#mnt4", { autoAlpha: 0 }, 0);
+      tl.set("#mnt4-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt4", 492.1);
+      tl.set("#mnt4-poster", { autoAlpha: 0 }, 492.3);
+      tl.set("#mnt4-last", { autoAlpha: 1 }, 555.993);
+      whipOut("#mnt4", 556.133);
+      tl.set("#mnt4", { autoAlpha: 0 }, 556.433);
+
+      // sc17 · win  (8s)
+      streak(556.433);
+      drop("#sc17 .peyebrow", 556.573);
+      words("#sc17 .winhead .wd", 556.713);
+      drop("#sc17 .winsub", 557.183);
+      drop("#sc17 .winname", 557.353);
+      shotIn("#sc17 .winshot", 556.833);
+      drift("#sc17 .winshot", 558.233, 1.17);
+      drop("#sc17 .sub", 557.253);
+      whipOut("#sc17 .inner", 564.133);
+      tl.set("#sc17 .inner", { autoAlpha: 0 }, 564.433);
+
+      // sc18 · win  (8s)
+      streak(564.433);
+      drop("#sc18 .peyebrow", 564.573);
+      words("#sc18 .winhead .wd", 564.713);
+      drop("#sc18 .winsub", 565.183);
+      drop("#sc18 .winname", 565.353);
+      shotIn("#sc18 .winshot", 564.833);
+      drift("#sc18 .winshot", 566.233, 1.17);
+      drop("#sc18 .sub", 565.253);
+      whipOut("#sc18 .inner", 572.133);
+      tl.set("#sc18 .inner", { autoAlpha: 0 }, 572.433);
+
+      // sc19 · win  (8s)
+      streak(572.433);
+      drop("#sc19 .peyebrow", 572.573);
+      words("#sc19 .winhead .wd", 572.713);
+      drop("#sc19 .winsub", 573.183);
+      drop("#sc19 .winname", 573.353);
+      shotIn("#sc19 .winshot", 572.833);
+      drift("#sc19 .winshot", 574.233, 1.17);
+      drop("#sc19 .sub", 573.253);
+      whipOut("#sc19 .inner", 580.133);
+      tl.set("#sc19 .inner", { autoAlpha: 0 }, 580.433);
+
+      // sc20 · win  (8s)
+      streak(580.433);
+      drop("#sc20 .peyebrow", 580.573);
+      words("#sc20 .winhead .wd", 580.713);
+      drop("#sc20 .winsub", 581.183);
+      drop("#sc20 .winname", 581.353);
+      shotIn("#sc20 .winshot", 580.833);
+      drift("#sc20 .winshot", 582.233, 1.17);
+      drop("#sc20 .sub", 581.253);
+      whipOut("#sc20 .inner", 588.133);
+      tl.set("#sc20 .inner", { autoAlpha: 0 }, 588.433);
+
+      // sc21 · hero  (5s)
+      streak(588.433);
+      drop("#sc21 .eyebrow", 588.553);
+      words("#sc21 .ln .wd", 588.673);
+      whipOut("#sc21 .inner", 593.133);
+      tl.set("#sc21 .inner", { autoAlpha: 0 }, 593.433);
+
+      // sc22 · mount hyperagent-keynote  (1105.267s, voice audio)
+      streak(593.433);
+      tl.set("#mnt5", { autoAlpha: 0 }, 0);
+      tl.set("#mnt5-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt5", 593.433);
+      tl.set("#mnt5-poster", { autoAlpha: 0 }, 593.633);
+      tl.set("#mnt5-last", { autoAlpha: 1 }, 1698.26);
+      whipOut("#mnt5", 1698.4);
+      tl.set("#mnt5", { autoAlpha: 0 }, 1698.7);
+
+      // sc23 · sponsor  (8s)
+      streak(1698.7);
+      drop("#sc23 .eyebrow", 1698.82);
+      glowIn("#sc23 .logo", 1699.04, 0.14);
+      whipOut("#sc23 .inner", 1706.4);
+      tl.set("#sc23 .inner", { autoAlpha: 0 }, 1706.7);
+
+      // sc24 · hero  (5s)
+      streak(1706.7);
+      drop("#sc24 .eyebrow", 1706.82);
+      words("#sc24 .ln .wd", 1706.94);
+      whipOut("#sc24 .inner", 1711.4);
+      tl.set("#sc24 .inner", { autoAlpha: 0 }, 1711.7);
+
+      // sc25 · mount ais-plus-membership  (66.4s, voice audio)
+      streak(1711.7);
+      tl.set("#mnt6", { autoAlpha: 0 }, 0);
+      tl.set("#mnt6-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt6", 1711.7);
+      tl.set("#mnt6-poster", { autoAlpha: 0 }, 1711.9);
+      tl.set("#mnt6-last", { autoAlpha: 1 }, 1777.66);
+      whipOut("#mnt6", 1777.8);
+      tl.set("#mnt6", { autoAlpha: 0 }, 1778.1);
+
+      // sc26 · markflash  (7s)
+      streak(1778.1);
+      markPop("#sc26 .bigmark", 1778.32);
+      drop("#sc26 .sub", 1778.92);
+      whipOut("#sc26 .inner", 1784.8);
+      tl.set("#sc26 .inner", { autoAlpha: 0 }, 1785.1);
+
+      // sc27 · ph  (60s)
+      streak(1785.1);
+      phIn("#sc27 .phbox", 1785.3);
+      drop("#sc27 .pheyebrow", 1785.55);
+      drop("#sc27 .phtitle", 1785.7);
+      drop("#sc27 .phslot", 1785.85);
+      drop("#sc27 .phnote", 1786);
+      phPulse("#sc27 .phbox", 1786.3, 24.17);
+      whipOut("#sc27 .inner", 1844.8);
+      tl.set("#sc27 .inner", { autoAlpha: 0 }, 1845.1);
+
+      // sc28 · mount day1-agenda  (180.4s)
+      streak(1845.1);
+      tl.set("#mnt7", { autoAlpha: 0 }, 0);
+      tl.set("#mnt7-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt7", 1845.1);
+      tl.set("#mnt7-poster", { autoAlpha: 0 }, 1845.3);
+      tl.set("#mnt7-last", { autoAlpha: 1 }, 2025.06);
+      whipOut("#mnt7", 2025.2);
+      tl.set("#mnt7", { autoAlpha: 0 }, 2025.5);
+
+      // sc29 · mount get-setup  (61.4s)
+      streak(2025.5);
+      tl.set("#mnt8", { autoAlpha: 0 }, 0);
+      tl.set("#mnt8-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt8", 2025.5);
+      tl.set("#mnt8-poster", { autoAlpha: 0 }, 2025.7);
+      tl.set("#mnt8-last", { autoAlpha: 1 }, 2086.46);
+      whipOut("#mnt8", 2086.6);
+      tl.set("#mnt8", { autoAlpha: 0 }, 2086.9);
+
+      // sc30 · mount vip-qa  (34.4s)
+      streak(2086.9);
+      tl.set("#mnt9", { autoAlpha: 0 }, 0);
+      tl.set("#mnt9-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt9", 2086.9);
+      tl.set("#mnt9-poster", { autoAlpha: 0 }, 2087.1);
+      tl.set("#mnt9-last", { autoAlpha: 1 }, 2120.86);
+      whipOut("#mnt9", 2121);
+      tl.set("#mnt9", { autoAlpha: 0 }, 2121.3);
+
+      // sc31 · mount day1-teasers  (83.9s)
+      streak(2121.3);
+      tl.set("#mnt10", { autoAlpha: 0 }, 0);
+      tl.set("#mnt10-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt10", 2121.3);
+      tl.set("#mnt10-poster", { autoAlpha: 0 }, 2121.5);
+      tl.set("#mnt10-last", { autoAlpha: 1 }, 2204.76);
+      whipOut("#mnt10", 2204.9);
+      tl.set("#mnt10", { autoAlpha: 0 }, 2205.2);
+
+      // sc32 · hero  (4s)
+      streak(2205.2);
+      drop("#sc32 .eyebrow", 2205.32);
+      words("#sc32 .ln .wd", 2205.44);
+      whipOut("#sc32 .inner", 2208.9);
+      tl.set("#sc32 .inner", { autoAlpha: 0 }, 2209.2);
+
+      // sc33 · portrait  (7s)
+      streak(2209.2);
+      rise("#sc33 .portrait", 2209.36);
+      drop("#sc33 .peyebrow", 2209.42);
+      words("#sc33 .ptitle .wd", 2209.56);
+      wipe("#sc33 .pdivider", 2209.92);
+      drop("#sc33 .pname", 2210.06);
+      drop("#sc33 .prole, #sc33 .phook", 2210.2);
+      drop("#sc33 .pmeta", 2210.38);
+      whipOut("#sc33 .inner", 2215.9);
+      tl.set("#sc33 .inner", { autoAlpha: 0 }, 2216.2);
+
+      // sc34 · portrait  (7s)
+      streak(2216.2);
+      rise("#sc34 .portrait", 2216.36);
+      drop("#sc34 .peyebrow", 2216.42);
+      words("#sc34 .ptitle .wd", 2216.56);
+      wipe("#sc34 .pdivider", 2216.92);
+      drop("#sc34 .pname", 2217.06);
+      drop("#sc34 .prole, #sc34 .phook", 2217.2);
+      drop("#sc34 .pmeta", 2217.38);
+      whipOut("#sc34 .inner", 2222.9);
+      tl.set("#sc34 .inner", { autoAlpha: 0 }, 2223.2);
+
+      // sc35 · portrait  (7s)
+      streak(2223.2);
+      rise("#sc35 .portrait", 2223.36);
+      drop("#sc35 .peyebrow", 2223.42);
+      words("#sc35 .ptitle .wd", 2223.56);
+      wipe("#sc35 .pdivider", 2223.92);
+      drop("#sc35 .pname", 2224.06);
+      drop("#sc35 .prole, #sc35 .phook", 2224.2);
+      drop("#sc35 .pmeta", 2224.38);
+      whipOut("#sc35 .inner", 2229.9);
+      tl.set("#sc35 .inner", { autoAlpha: 0 }, 2230.2);
+
+      // sc36 · portrait  (7s)
+      streak(2230.2);
+      rise("#sc36 .portrait", 2230.36);
+      drop("#sc36 .peyebrow", 2230.42);
+      words("#sc36 .ptitle .wd", 2230.56);
+      wipe("#sc36 .pdivider", 2230.92);
+      drop("#sc36 .pname", 2231.06);
+      drop("#sc36 .prole, #sc36 .phook", 2231.2);
+      drop("#sc36 .pmeta", 2231.38);
+      whipOut("#sc36 .inner", 2236.9);
+      tl.set("#sc36 .inner", { autoAlpha: 0 }, 2237.2);
+
+      // sc37 · portrait  (7s)
+      streak(2237.2);
+      rise("#sc37 .portrait", 2237.36);
+      drop("#sc37 .peyebrow", 2237.42);
+      words("#sc37 .ptitle .wd", 2237.56);
+      wipe("#sc37 .pdivider", 2237.92);
+      drop("#sc37 .pname", 2238.06);
+      drop("#sc37 .prole, #sc37 .phook", 2238.2);
+      drop("#sc37 .pmeta", 2238.38);
+      whipOut("#sc37 .inner", 2243.9);
+      tl.set("#sc37 .inner", { autoAlpha: 0 }, 2244.2);
+
+      // sc38 · portrait  (7s)
+      streak(2244.2);
+      rise("#sc38 .portrait", 2244.36);
+      drop("#sc38 .peyebrow", 2244.42);
+      words("#sc38 .ptitle .wd", 2244.56);
+      wipe("#sc38 .pdivider", 2244.92);
+      drop("#sc38 .pname", 2245.06);
+      drop("#sc38 .prole, #sc38 .phook", 2245.2);
+      drop("#sc38 .pmeta", 2245.38);
+      whipOut("#sc38 .inner", 2250.9);
+      tl.set("#sc38 .inner", { autoAlpha: 0 }, 2251.2);
+
+      // sc39 · portrait  (7s)
+      streak(2251.2);
+      rise("#sc39 .portrait", 2251.36);
+      drop("#sc39 .peyebrow", 2251.42);
+      words("#sc39 .ptitle .wd", 2251.56);
+      wipe("#sc39 .pdivider", 2251.92);
+      drop("#sc39 .pname", 2252.06);
+      drop("#sc39 .prole, #sc39 .phook", 2252.2);
+      drop("#sc39 .pmeta", 2252.38);
+      whipOut("#sc39 .inner", 2257.9);
+      tl.set("#sc39 .inner", { autoAlpha: 0 }, 2258.2);
+
+      // sc40 · portrait  (7s)
+      streak(2258.2);
+      rise("#sc40 .portrait", 2258.36);
+      drop("#sc40 .peyebrow", 2258.42);
+      words("#sc40 .ptitle .wd", 2258.56);
+      wipe("#sc40 .pdivider", 2258.92);
+      drop("#sc40 .pname", 2259.06);
+      drop("#sc40 .prole, #sc40 .phook", 2259.2);
+      drop("#sc40 .pmeta", 2259.38);
+      whipOut("#sc40 .inner", 2264.9);
+      tl.set("#sc40 .inner", { autoAlpha: 0 }, 2265.2);
+
+      // sc41 · portrait  (7s)
+      streak(2265.2);
+      rise("#sc41 .portrait", 2265.36);
+      drop("#sc41 .peyebrow", 2265.42);
+      words("#sc41 .ptitle .wd", 2265.56);
+      wipe("#sc41 .pdivider", 2265.92);
+      drop("#sc41 .pname", 2266.06);
+      drop("#sc41 .prole, #sc41 .phook", 2266.2);
+      drop("#sc41 .pmeta", 2266.38);
+      whipOut("#sc41 .inner", 2271.9);
+      tl.set("#sc41 .inner", { autoAlpha: 0 }, 2272.2);
+
+      // sc42 · hero  (5s)
+      streak(2272.2);
+      drop("#sc42 .eyebrow", 2272.32);
+      words("#sc42 .ln .wd", 2272.44);
+      whipOut("#sc42 .inner", 2276.9);
+      tl.set("#sc42 .inner", { autoAlpha: 0 }, 2277.2);
+
+      // sc43 · mount testi-earning  (70.3s, voice audio)
+      streak(2277.2);
+      tl.set("#mnt11", { autoAlpha: 0 }, 0);
+      tl.set("#mnt11-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt11", 2277.2);
+      tl.set("#mnt11-poster", { autoAlpha: 0 }, 2277.4);
+      tl.set("#mnt11-last", { autoAlpha: 1 }, 2347.06);
+      whipOut("#mnt11", 2347.2);
+      tl.set("#mnt11", { autoAlpha: 0 }, 2347.5);
+
+      // sc44 · win  (8s)
+      streak(2347.5);
+      drop("#sc44 .peyebrow", 2347.64);
+      words("#sc44 .winhead .wd", 2347.78);
+      drop("#sc44 .winsub", 2348.25);
+      drop("#sc44 .winname", 2348.42);
+      shotIn("#sc44 .winshot", 2347.9);
+      drift("#sc44 .winshot", 2349.3, 1.17);
+      drop("#sc44 .sub", 2348.32);
+      whipOut("#sc44 .inner", 2355.2);
+      tl.set("#sc44 .inner", { autoAlpha: 0 }, 2355.5);
+
+      // sc45 · win  (8s)
+      streak(2355.5);
+      drop("#sc45 .peyebrow", 2355.64);
+      words("#sc45 .winhead .wd", 2355.78);
+      drop("#sc45 .winsub", 2356.25);
+      drop("#sc45 .winname", 2356.42);
+      shotIn("#sc45 .winshot", 2355.9);
+      drift("#sc45 .winshot", 2357.3, 1.17);
+      drop("#sc45 .sub", 2356.32);
+      whipOut("#sc45 .inner", 2363.2);
+      tl.set("#sc45 .inner", { autoAlpha: 0 }, 2363.5);
+
+      // sc46 · win  (8s)
+      streak(2363.5);
+      drop("#sc46 .peyebrow", 2363.64);
+      words("#sc46 .winhead .wd", 2363.78);
+      drop("#sc46 .winsub", 2364.25);
+      drop("#sc46 .winname", 2364.42);
+      shotIn("#sc46 .winshot", 2363.9);
+      drift("#sc46 .winshot", 2365.3, 1.17);
+      drop("#sc46 .sub", 2364.32);
+      whipOut("#sc46 .inner", 2371.2);
+      tl.set("#sc46 .inner", { autoAlpha: 0 }, 2371.5);
+
+      // sc47 · win  (8s)
+      streak(2371.5);
+      drop("#sc47 .peyebrow", 2371.64);
+      words("#sc47 .winhead .wd", 2371.78);
+      drop("#sc47 .winsub", 2372.25);
+      drop("#sc47 .winname", 2372.42);
+      shotIn("#sc47 .winshot", 2371.9);
+      drift("#sc47 .winshot", 2373.3, 1.17);
+      drop("#sc47 .sub", 2372.32);
+      whipOut("#sc47 .inner", 2379.2);
+      tl.set("#sc47 .inner", { autoAlpha: 0 }, 2379.5);
+
+      // sc48 · hero  (5s)
+      streak(2379.5);
+      drop("#sc48 .eyebrow", 2379.62);
+      words("#sc48 .ln .wd", 2379.74);
+      whipOut("#sc48 .inner", 2384.2);
+      tl.set("#sc48 .inner", { autoAlpha: 0 }, 2384.5);
+
+      // sc49 · sponsor  (8s)
+      streak(2384.5);
+      drop("#sc49 .eyebrow", 2384.62);
+      glowIn("#sc49 .logo", 2384.84, 0.14);
+      whipOut("#sc49 .inner", 2392.2);
+      tl.set("#sc49 .inner", { autoAlpha: 0 }, 2392.5);
+
+      // sc50 · sponsor  (8s)
+      streak(2392.5);
+      drop("#sc50 .eyebrow", 2392.62);
+      glowIn("#sc50 .logo", 2392.84, 0.14);
+      whipOut("#sc50 .inner", 2400.2);
+      tl.set("#sc50 .inner", { autoAlpha: 0 }, 2400.5);
+
+      // sc51 · hero  (5s)
+      streak(2400.5);
+      drop("#sc51 .eyebrow", 2400.62);
+      words("#sc51 .ln .wd", 2400.74);
+      whipOut("#sc51 .inner", 2405.2);
+      tl.set("#sc51 .inner", { autoAlpha: 0 }, 2405.5);
+
+      // sc52 · mount ais-plus-membership  (66.4s, voice audio)
+      streak(2405.5);
+      tl.set("#mnt12", { autoAlpha: 0 }, 0);
+      tl.set("#mnt12-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt12", 2405.5);
+      tl.set("#mnt12-poster", { autoAlpha: 0 }, 2405.7);
+      tl.set("#mnt12-last", { autoAlpha: 1 }, 2471.46);
+      whipOut("#mnt12", 2471.6);
+      tl.set("#mnt12", { autoAlpha: 0 }, 2471.9);
+
+      // sc53 · markflash  (7s)
+      streak(2471.9);
+      markPop("#sc53 .bigmark", 2472.12);
+      drop("#sc53 .sub", 2472.72);
+      whipOut("#sc53 .inner", 2478.6);
+      tl.set("#sc53 .inner", { autoAlpha: 0 }, 2478.9);
+
+      // sc54 · ph  (60s)
+      streak(2478.9);
+      phIn("#sc54 .phbox", 2479.1);
+      drop("#sc54 .pheyebrow", 2479.35);
+      drop("#sc54 .phtitle", 2479.5);
+      drop("#sc54 .phslot", 2479.65);
+      drop("#sc54 .phnote", 2479.8);
+      phPulse("#sc54 .phbox", 2480.1, 24.17);
+      whipOut("#sc54 .inner", 2538.6);
+      tl.set("#sc54 .inner", { autoAlpha: 0 }, 2538.9);
+
+      // sc55 · mount get-setup  (61.4s)
+      streak(2538.9);
+      tl.set("#mnt13", { autoAlpha: 0 }, 0);
+      tl.set("#mnt13-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt13", 2538.9);
+      tl.set("#mnt13-poster", { autoAlpha: 0 }, 2539.1);
+      tl.set("#mnt13-last", { autoAlpha: 1 }, 2599.86);
+      whipOut("#mnt13", 2600);
+      tl.set("#mnt13", { autoAlpha: 0 }, 2600.3);
+
+      // sc56 · mount vip-qa  (34.4s)
+      streak(2600.3);
+      tl.set("#mnt14", { autoAlpha: 0 }, 0);
+      tl.set("#mnt14-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt14", 2600.3);
+      tl.set("#mnt14-poster", { autoAlpha: 0 }, 2600.5);
+      tl.set("#mnt14-last", { autoAlpha: 1 }, 2634.26);
+      whipOut("#mnt14", 2634.4);
+      tl.set("#mnt14", { autoAlpha: 0 }, 2634.7);
+
+      // sc57 · hero  (4s)
+      streak(2634.7);
+      drop("#sc57 .eyebrow", 2634.82);
+      words("#sc57 .ln .wd", 2634.94);
+      whipOut("#sc57 .inner", 2638.4);
+      tl.set("#sc57 .inner", { autoAlpha: 0 }, 2638.7);
+
+      // sc58 · portrait  (7s)
+      streak(2638.7);
+      rise("#sc58 .portrait", 2638.86);
+      drop("#sc58 .peyebrow", 2638.92);
+      words("#sc58 .ptitle .wd", 2639.06);
+      wipe("#sc58 .pdivider", 2639.42);
+      drop("#sc58 .pname", 2639.56);
+      drop("#sc58 .prole, #sc58 .phook", 2639.7);
+      drop("#sc58 .pmeta", 2639.88);
+      whipOut("#sc58 .inner", 2645.4);
+      tl.set("#sc58 .inner", { autoAlpha: 0 }, 2645.7);
+
+      // sc59 · portrait  (7s)
+      streak(2645.7);
+      rise("#sc59 .portrait", 2645.86);
+      drop("#sc59 .peyebrow", 2645.92);
+      drop("#sc59 .plogo", 2646);
+      words("#sc59 .ptitle .wd", 2646.06);
+      wipe("#sc59 .pdivider", 2646.42);
+      drop("#sc59 .pname", 2646.56);
+      drop("#sc59 .prole, #sc59 .phook", 2646.7);
+      drop("#sc59 .pmeta", 2646.88);
+      whipOut("#sc59 .inner", 2652.4);
+      tl.set("#sc59 .inner", { autoAlpha: 0 }, 2652.7);
+
+      // sc60 · portrait  (7s)
+      streak(2652.7);
+      glowIn("#sc60 .pic", 2652.86, 0.12);
+      drop("#sc60 .peyebrow", 2652.92);
+      words("#sc60 .ptitle .wd", 2653.06);
+      wipe("#sc60 .pdivider", 2653.42);
+      drop("#sc60 .pname", 2653.56);
+      drop("#sc60 .prole, #sc60 .phook", 2653.7);
+      drop("#sc60 .pmeta", 2653.88);
+      whipOut("#sc60 .inner", 2659.4);
+      tl.set("#sc60 .inner", { autoAlpha: 0 }, 2659.7);
+
+      // sc61 · portrait  (7s)
+      streak(2659.7);
+      glowIn("#sc61 .pic", 2659.86, 0.12);
+      drop("#sc61 .peyebrow", 2659.92);
+      words("#sc61 .ptitle .wd", 2660.06);
+      wipe("#sc61 .pdivider", 2660.42);
+      drop("#sc61 .pname", 2660.56);
+      drop("#sc61 .prole, #sc61 .phook", 2660.7);
+      drop("#sc61 .pmeta", 2660.88);
+      whipOut("#sc61 .inner", 2666.4);
+      tl.set("#sc61 .inner", { autoAlpha: 0 }, 2666.7);
+
+      // sc62 · portrait  (7s)
+      streak(2666.7);
+      glowIn("#sc62 .pic", 2666.86, 0.12);
+      drop("#sc62 .peyebrow", 2666.92);
+      words("#sc62 .ptitle .wd", 2667.06);
+      wipe("#sc62 .pdivider", 2667.42);
+      drop("#sc62 .pname", 2667.56);
+      drop("#sc62 .prole, #sc62 .phook", 2667.7);
+      drop("#sc62 .pmeta", 2667.88);
+      whipOut("#sc62 .inner", 2673.4);
+      tl.set("#sc62 .inner", { autoAlpha: 0 }, 2673.7);
+
+      // sc63 · hero  (6s)
+      streak(2673.7);
+      drop("#sc63 .eyebrow", 2673.82);
+      words("#sc63 .ln .wd", 2673.94);
+      whipOut("#sc63 .inner", 2679.4);
+      tl.set("#sc63 .inner", { autoAlpha: 0 }, 2679.7);
+
+      // sc64 · tagline  (8s)
+      streak(2679.7);
+      drop("#sc64 .eyebrow", 2679.82);
+      words("#sc64 .ln .wd", 2679.94);
+      drop("#sc64 .sub", 2680.52);
+      whipOut("#sc64 .inner", 2687.4);
+      tl.set("#sc64 .inner", { autoAlpha: 0 }, 2687.7);
+
+      // sc65 · markflash  (12.3s)
+      streak(2687.7);
+      markPop("#sc65 .bigmark", 2687.92);
+      drop("#sc65 .sub", 2688.52);
+      settleOut("#sc65 .inner", 2699.1);
+
+      tl.to({}, { duration: D }, 0); // fill the slot
+      window.__timelines["cmp-block1-opening"] = tl;
+    </script>
+  </body>
+</html>

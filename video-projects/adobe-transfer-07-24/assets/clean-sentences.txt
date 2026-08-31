@@ -1,0 +1,188 @@
+0:00.1  So introducing Claude Opus 5.
+0:02.6  This is the new Opus model from Anthropic, and today we're gonna test it inside of Blender.
+0:07.8  And I highly encourage you to stick to the end, because if you've watched my past videos on Opus or any Claude model inside of Blender, it's okay.
+0:17.8  It's not perfect.
+0:18.7  It's definitely nowhere near, it's definitely nowhere near a professional 3D artist, but it can do a lot of cool stuff.
+0:25.3  But this new Opus update is ...
+0:27.8  But this new Opus 5 update, but this new Opus 5 update is a huge jump from Opus 4.8, and I'm gonna show you some examples of what I've been able to create already inside of my Blender sessions.
+0:40.4  Looking at the stats, I won't bore you with this.
+0:42.4  I'll go over this very quickly, and there's a few stats I wanna point out.
+0:45.2  As you can see, agentic terminal coding, it's Opus 5 has 43%, Opus 4.8 was at 21%.
+0:53.1  Agentic search is up at 90.8%, while Opus 4.8 is 84%.
+1:00.3  The biggest thing, especially as someone who worked ...
+1:02.9  The biggest, the biggest stat in my opinion is the computer use.
+1:06.4  This is how Claude can utilize your application, so how it can see inside of Blender and utilize the Blender program through computer use.
+1:17.0  It is at 70.6%, and that's a almost 20%-- And that's an almost 20% jump from 55.7% on Opus 4.8 with Fable very close behind.
+1:28.4  So this is, so this is a huge jump for the actual modeling.
+1:32.6  So this is a huge jump for the actual Claude knowledge on modeling, compositing, VFX, scene building, character animation.
+1:39.9  There's a lot of new opportunities.
+1:41.4  Because it's a better model, is ...
+1:43.3  Because it's a better model, because it's technically a better...
+1:46.6  Because it's a better mo- Because it's a better model on the stats, since the stats say it's a more accurate model, then it should be, then it should be giving us better outputs in Blender.
+1:57.2  And they are showing on their website, like some 3D modeling or like physics.
+2:01.5  This is not Blender, this just seems to be like HTML, like a website that they built using 3D elements.
+2:07.3  But it is really cool to see because it has this physics ability, because it has...
+2:13.0  So it's really cool to see that they're like utilizing, um, creative.
+2:16.5  So it's really cool to see that they're utilizing some 3D examples on physics, 3D building.
+2:22.6  So it's really cool to see that they're utilizing some of these 3D models, this one relating to physics, that we could most likely recreate in Blender.
+2:30.4  And in th- and in today's video I'm gonna show you it does really well.
+2:33.9  So let's jump, so let's jump into the actual video.
+2:37.2  How can we start prompting inside of Opus 4 point...
+2:40.4  So let's jump into the actual video.
+2:41.8  So let's jump into Blender.
+2:43.1  So let's open up a Blender session.
+2:45.2  Let's open up a Claude code session with Opus 5 loaded up, updated, and ready to go.
+2:51.1  And now before we get started, now before we get started I wanna show you some of my outputs that I have gotten from this model, and it's honestly super accurate.
+3:00.1  So firstly, so firstly is this kind of sci-fi alien hallway.
+3:04.0  This was completely designed, built, materials added by Opus 5.
+3:08.5  This is really, really good for literally a one-shot prompt which I'll show you in a second here what I shot off to Claude to build this.
+3:14.9  It even animated it.
+3:15.8  I actually removed the animation because I didn't like it.
+3:18.2  It just felt too clunky.
+3:19.8  Um, so there's definitely some iteration that needs to be updated there.
+3:23.0  But this is literally, but this is a one-shot prompt.
+3:26.1  This is a PNG image that I rendered out from my Blender session that Claude Opus had created for me.
+3:31.1  But I mean, but I mean, but I mean, like look at the materials.
+3:34.6  It is such a step up from Opus 4.8 from what I've noticed.
+3:39.0  It feels way more realistic.
+3:41.1  It did take a lot longer, I will say.
+3:42.8  This scene just in general, like prompting, modeling, setting up the scene, all the lighting, it took about like 25 minutes, which on Opus 4.8 it would only take like five minutes to build something up like this.
+3:52.9  But there was obviously some drawbacks to the materials that were being added.
+3:56.5  The lighting was a little bit off.
+3:58.0  It just felt kind of clunky and weird.
+4:00.3  Didn't feel like an actual 3D generation, but I think we're getting closer to AI being able to implement, AI being able to create scenes like this in Blender.
+4:08.9  So this is the prompt that I shot off to Opus 5.
+4:11.9  As you can see, I have Opus 5 loaded up ready to go with one million contexts.
+4:16.1  All I said was to create a station corridor with hard surface and lighting.
+4:21.3  A module sci-fi corridor, camera pushing down the length of the corridor which I eventually had removed, a volumetric haze, emissive floor stripes, and failing overhead light.
+4:32.6  So it's not insane, and so I also gave some, and so I gave some context to Claude, like what are the stresses and, like what are the stresses of this build?
+4:41.5  Like why is this difficult compared to like a normal Claude-built scene inside of Blender?
+4:46.8  And the big thing is geometry nodes for module panel arrays and griable scatter.
+4:51.8  It's a Boolean heavy hard surface.
+4:54.2  The materials which was a big part, like I wanted to test out how these materials actually are being utilized and built inside of Blender using Claude.
+5:02.0  So the procedural material node trees built in Python, and then I gave it like an example.
+5:06.3  And then I gave it, and then I gave it some context for that, so the worn metal with edge wear from pointiness and curvature masks, and then just some lighting stuff, the volumetric scatter.
+5:15.7  And then just some lighting stuff, volume scatter, and then cycles, denoise, and compositing.
+5:20.9  So with that simple prompt I was able to get an output like this and l- to get an output like this and start animating inside of Blender.
+5:27.9  And then just jumping into the actual scene, if we turn this on the rendered viewport, you can see it created this little hallway for us.
+5:36.0  Very, very simple, um, and it looks great.
+5:39.2  Like I mean this is-- And it looks great.
+5:41.0  I mean this is definitely workable inside of a scene.
+5:44.6  And so just to show you the actual model I guess of what it created for this hallway is, you know, here's the camera.
+5:49.8  This is the exact same view that you just saw just with the actual rendered viewport right here.
+5:56.4  And now I can use this as VFX for my background.
+5:58.9  So if I have a scene where, you know, I'm dressed up in some alien movie and I need a alien corridor or like a sci-fi corridor, it kind of looks like it's like a spaceship, I can now use this
+6:09.7  just because I was able to ideate with Claude and then come up with a prompt to shoot off in Blender to b- To get a real 3D scene.
+6:19.4  The next thing I wanted to show you is the next scene that I had built is ...
+6:23.1  The next scene that I had built out with Claude is essentially like this product shoot, and I will say, the actual product itself feels fake, I will say.
+6:31.6  Like, the, the bottle, the glass bottle feels, like, a little cheap.
+6:35.2  Um, and I mean, the lighting looks kind of cool, and the cap obviously, like, it's a little choppy up here, so it doesn't look great, but it was able to animate liquid physics inside of Blender and then render out
+6:46.7  a screenshot.
+6:47.7  As you can see, here's, like, the border cube where the liquid is splashing out.
+6:52.0  But it did this in one single prompt.
+6:54.0  This took a way, this took a way longer time than the actual corridor.
+6:58.8  This took, like, 40 minutes, and it really, really thought.
+7:01.8  But the good thing with Opus 5 is it's half as cheap as ...
+7:06.3  But the good thing with Opus 5 is it's half as expensive as Fable 5.
+7:11.4  So I honestly didn't waste a bunch of context and a bunch of tokens, which results in a loss of money.
+7:17.5  I only spent, like, 15% of my context on this actual animation, and I'm really, really happy with the actual liquid output.
+7:25.1  I mean, it's not perfect, and again, it was one prompt, which I'll show you guys in a second what that prompt looked like.
+7:30.1  But for one prompt, one single generation, and a few- and 40 to 45 minutes of thinking, it was able to create this for me.
+7:38.7  And so this is, and so this is what that scene looked like.
+7:41.6  Let me just open this quick.
+7:42.8  Um, again, it ha- it created a water simulation, and it cached, it ca- it created a water simulation for me based off that one prompt, cached all the images, all ...
+7:53.1  It cached the entire simulation, and I'm honestly, like, really shocked.
+7:56.7  And I'm honestly, like, really shocked with the fact that it was just able to do this based off of this idea that I had in my head for this product shoot.
+8:03.2  And so now if you have a product, even if it's ...
+8:06.0  And so now if you have a product, whether it's like a cosmetic brand or you have a T-shirt brand or a clothing brand of some sort, you can upload those images and create 3D references to create, say, like, a
+8:16.3  virtual store where it's like you have all of your clothes on a rack and you need, like, a photo shoot.
+8:21.2  It's really, really easy to create that inside of Blender now if you have absolutely no experience, but you do have a Claude subscription.
+8:28.5  So I'm really, really happy with this output, but I'm gonna show you guys the prompt that I shot off.
+8:32.8  So this prompt, again, very similar, has the same structure as the very f- as the first prompt, the sci-fi corridor.
+8:39.9  This is a physics beauty shot, um, which is a simulation, a liquid simulation with some shading.
+8:45.9  It's a product or object on a desk.
+8:47.6  I didn't even give it, like, a product description, but if you want, you can upload images, whatever you want.
+8:52.5  So it's an object on a dark set, liquid pouring and pooling around it, or you can add a rigid body shatter with slow motion timing, studio lighting, shadow depth of field.
+9:01.4  And then again, I go into the stresses, like why is this difficult?
+9:05.3  Why is this, why does this build, why does this build, why is this build stressful for an AI agent, let alone, like, a beginner u- let alone, like, a beginner learning Blender?
+9:16.6  It's utilizing Mantaflow liquid or rigid body fracture with cell fracture, caching and baking the actual animation, the liquid animation.
+9:25.4  Some motion blur stuff, which, very easy.
+9:27.7  Glass and liquid shading with proper IOR, and then three-point studio lighting, which honestly, Claude does a great job with setting up lighting inside of Blender, so I didn't think that was gonna be a huge problem.
+9:37.5  And so literally with that just simple prompt, it was able to recreate this full simulation scene for me.
+9:44.0  So get really creative with this.
+9:45.8  I highly suggest if you do have, like, a tangible product that you can promote, redesign it, redesign it inside of Blender using Claude so you have a 3D object of your product, and then throw it into a bunch of
+10:00.2  different scenes or animations that Claude can do for you now.
+10:04.4  And then this last scene that I had created is this canyon that I wanted to ...
+10:09.6  And then this last scene that I created is this canyon setup.
+10:13.1  So it's supposed to be, like, the Grand Canyon.
+10:16.1  I wanted geometry nodes, and I wanted, I wanted lots of rocks.
+10:20.0  I wanted realism, and honestly, I'm not, like, super happy with the output.
+10:23.9  It does look fake, but if this was, like, in a video game setting, I mean, it would make sense.
+10:28.0  It does kind of look like a video game, and this one took a lot less time.
+10:31.6  I think it was just because it's a lot easier of a build, but it's not terrible.
+10:35.4  I mean, there is some depth to it.
+10:37.0  It added, like, the ridges, um, some realism in that sense.
+10:40.9  It's a completely dry canyon, so everything's really dry.
+10:44.4  Everything's really dry.
+10:45.8  There's lots of rocks.
+10:46.9  There's not a lot of plants.
+10:48.1  And so down here, this is where I sent off this third prompt, which is the eroded canyon environment.
+10:54.3  And so this uses wide angle shots of the canyon at a low sun, at a low sunset, lots of scattered rocks and some vegetation, atmospheric depth, and then a slow crane camera move, which again, I deleted 'cause I'm not
+11:07.7  a huge fan of how Claude animates cameras inside of Blender.
+11:11.8  And then again, the stresses, it's a multi-layer displacement and noise stacking for the actual terrain.
+11:17.8  So you can see it has, like, the multi-stacking rocks inside of the canyon, which I tried to apply with realism.
+11:24.0  Some slope and altitude-driven shader masks, and then obviously geometry nodes for the ...
+11:30.0  And then geometry nodes, the sky and the lighting, and then atmospheric volume to wrap up everything inside of the actual build.
+11:38.3  And so if you're wondering how to actually set up the MCP server to start prompting with Opus 5 and Blender to work on scenes that you've already created, projects that you've already created, or just play around with it, say
+11:49.9  you're a brand new beginner to Blender and you know Claude pretty well, this is a great way to start playing around with 3D environments inside of Blender for whatever your project calls for.
+11:59.6  You need to head over to blender.org/lab/mcpserver.
+12:04.9  This is where we're gonna find the official Blender MCP server.
+12:08.1  This is not from GitHub.
+12:09.5  This is not, like, a bootleg one from GitHub.
+12:11.8  It's like- It is the official one that Blender has provided for Claude.
+12:15.9  So it's the most accurate way for Claude to talk to Blender when building out your scenes.
+12:21.0  So for installation, you need to have Blender five...
+12:23.4  You need to have Blender 5.05-- You need to have Blender 5.1 or newer, and it's super easy.
+12:29.3  You just need to find the add-on section, and you're gonna drop this into Blender once, and this will add it to the Blender lab repository.
+12:36.5  And then you need to drag it in one more time.
+12:38.5  This will actually install the add-on itself.
+12:41.2  Now, you might get some pop-ups that are saying, like, "Do you allow this?" Just click Allow.
+12:44.6  And then to actually verify that you have the Blender add-on connected, go into Edit, and then Preferences, and then, and then find your add-ons or-- And then find your add-ons, and then search up MCP.
+12:55.8  You should see this MCP pop up right here, and it's gonna show you where it downloaded on your computer.
+13:00.2  So this is the file path to the actual MCP.
+13:02.5  But we're not done yet.
+13:03.3  We need to verify with Claude that it's actually connected.
+13:05.7  Because you've only installed the add-on, we just need to add...
+13:08.6  So you've already installed the-- You just installed the add-on into Blender.
+13:11.8  You haven't done anything with Claude yet.
+13:13.0  So navigate to your Claude desktop app.
+13:15.6  This is just the easiest way.
+13:16.9  You can do it through an IDE like VS Code, but a lot of my viewers are beginners with Claude, so it's just easier, it's easier to do this, and everything is synced.
+13:25.7  Go into your account settings, and then find the extensions.
+13:29.9  You can see I have Blender already set up.
+13:31.9  But we can click Browse Extensions, and then delete that part.
+13:35.7  Okay, so once you're in the des- Once you're in the desktop app, you just need to...
+13:39.1  So once you're in the desktop app, you need to find the Customized tab right here, and then scroll down to Connectors.
+13:44.6  You can see I have Blender already working inside of my Claude sessions.
+13:48.6  But if you wanna add it, just click Add, Browse Connectors, and because it's an official Claude connector, you can just search up Blender, click it, and then, and then install.
+13:57.8  It'll ask you some authorization information.
+14:00.1  You just need to authorize that you have the MCP.
+14:03.2  You just need to authorize that this is-- You just need to authorize that Claude is available to work inside of Blender.
+14:09.9  And then you can prompt anywhere.
+14:11.1  You can, you can load it up inside of the Claude desktop app.
+14:15.0  And then just to verify that you're actually connected inside of Claude, you just need to write slap- you just need to type in /MCP, and that will pull up, and that will pull up all of your MCPs.
+14:23.6  Just search Blender, and it will say you are linked.
+14:26.8  Or if you're in-- Or if you're inside of an IDE like VS Code running the Claude Code extension, just type in /MCP, and you can see I have Blender connected and ready to go right here.
+14:38.4  It is connected for all my sessions.
+14:39.9  I have it installed globally, so no matter what session I'm in, so no matter what session I'm in, I can use Blender to build up, to build certain things for me.
+14:49.0  So if you like AI content like this, where it relates to three D and AI or editing and AI, I highly recommend that you join the Creative AI Network.
+14:56.3  This community has over one point six thousand people in.
+14:59.9  This community has over one point six thousand members, and we're constantly talking about new updates in AI, showcasing our portfolios, getting feedback.
+15:08.3  And I, and I also provide all of my Claude skills completely for free to implement.
+15:12.6  So I use-- So as you can see, this was a Blender video.
+15:14.8  I have a ton of Blender videos, every- everything from testing new models to animating characters and rigs inside of Blender with the, with the skill file attached so you can download it and use it yourself.
+15:25.5  But it's a great community, and it's a great-- but it's a great supportive community, so I highly recommend you join this.
+15:30.6  I'm gonna wrap up the video for today.
+15:32.3  Let me know what you thought about.
+15:33.8  Leave a like on this video if you liked it, and hit the subscribe button if you want to see more AI content like this.
+15:38.9  Thanks, guys, and I'll see you in the next one.

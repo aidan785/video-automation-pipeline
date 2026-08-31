@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p30 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .blue   { color: var(--accent);  text-shadow: var(--textglow-accent); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.done { color: var(--text-dim); }
+  .mpill.done .mn { color: rgba(var(--accent-rgb), .7); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 22px; padding: 24px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 37px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 25px; color: var(--text-dim); margin-top: 8px; }
+  .qrow .tx .sub b { color: var(--text); }
+
+  .kc { padding: 28px 34px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 10px; }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 38px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 26px; color: var(--text-dim); margin-top: 10px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  /* ---------- B1 cold open ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 104px; line-height: 1.1; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+
+  /* ---------- B2 game cafe (over, FULL+shift) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 250px; display: flex; flex-direction: column; gap: 18px; }
+  #b2 .stack > div { align-self: flex-start; max-width: 780px; }
+  #b2 .chipx b { color: var(--white); }
+  #b2 .punchx { font-size: 33px; }
+  #b2 .warnx b { color: var(--alert); }
+
+  /* ---------- B3 the one big mistake takeover ---------- */
+  #b3 { display: grid; place-items: center; text-align: center; }
+  #b3 .kicker { margin-bottom: 44px; }
+  #b3 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; line-height: 1.12; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  #b3 .row { margin-top: 52px; display: flex; justify-content: center; gap: 18px; }
+  #b3 .note { margin-top: 44px; display: flex; justify-content: center; }
+  #b3 .punchx { font-size: 32px; }
+
+  /* ---------- B4 the reframe (over, FULL+shift) ---------- */
+  #b4 .stack { position: absolute; left: 80px; top: 260px; display: flex; flex-direction: column; gap: 18px; }
+  #b4 .stack > div { align-self: flex-start; max-width: 790px; }
+  #b4 .step { display: flex; align-items: center; gap: 16px; }
+  #b4 .step .fn { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 21px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b4 .chipx b { color: var(--white); }
+  #b4 .step .chipx { max-width: 700px; }
+
+  /* ---------- B5 phase handoff takeover ---------- */
+  #b5 { display: grid; place-items: center; text-align: center; }
+  #b5 .kicker { margin-bottom: 56px; }
+  #b5 .rail { display: flex; align-items: center; justify-content: center; }
+  #b5 .nx { margin-top: 64px; }
+  #b5 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 96px; color: var(--white); text-shadow: var(--textglow); }
+
+  /* ---------- B6 production truth (over, FULL+shift) ---------- */
+  #b6 .stack { position: absolute; left: 80px; top: 250px; display: flex; flex-direction: column; gap: 18px; }
+  #b6 .stack > div { align-self: flex-start; max-width: 790px; }
+  #b6 .warnx b { color: var(--alert); }
+  #b6 .chipx b { color: var(--white); }
+  #b6 .punchx { font-size: 32px; line-height: 1.35; }
+
+  /* ---------- B7 Brightwater reply side (under, PIP) ---------- */
+  #b7 .head { position: absolute; left: 110px; top: 96px; }
+  #b7 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 62px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b7 .msgs { position: absolute; left: 110px; top: 246px; width: 1000px; display: flex; flex-direction: column; gap: 12px; }
+  #b7 .msgs .quote { align-self: flex-start; }
+  #b7 .card { position: absolute; left: 110px; top: 538px; width: 1040px; }
+  #b7 .rules { position: absolute; left: 110px; top: 768px; width: 1060px; display: flex; flex-direction: column; gap: 14px; }
+  #b7 .rules > div { align-self: flex-start; max-width: 1040px; }
+  #b7 .warnx b { color: var(--alert); }
+  #b7 .punchx { font-size: 32px; }
+
+  /* ---------- B8 three buckets takeover ---------- */
+  #b8 { display: grid; place-items: center; }
+  #b8 .wrap { width: 1360px; }
+  #b8 .kicker { text-align: center; margin-bottom: 40px; }
+  #b8 .rows { display: flex; flex-direction: column; gap: 18px; }
+  #b8 .kc .val { font-size: 40px; }
+  #b8 .note { margin-top: 32px; display: flex; justify-content: center; }
+  #b8 .note .chipx b { color: var(--white); }
+
+  /* ---------- B9 module roadmap (under, PIP) ---------- */
+  #b9 .head { position: absolute; left: 110px; top: 96px; }
+  #b9 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 62px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b9 .list { position: absolute; left: 110px; top: 268px; width: 1070px; display: flex; flex-direction: column; gap: 20px; }
+  #b9 .qrow { width: 1000px; }
+
+  /* ---------- B10 two examples + scars (under, PIP) ---------- */
+  #b10 .head { position: absolute; left: 110px; top: 96px; }
+  #b10 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 62px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b10 .pair { position: absolute; left: 110px; top: 262px; width: 1060px; display: flex; flex-direction: column; gap: 18px; }
+  #b10 .pair .chipx { align-self: flex-start; max-width: 1000px; }
+  #b10 .pair .chipx b { color: var(--white); }
+  #b10 .scars { position: absolute; left: 110px; top: 500px; width: 1060px; }
+  #b10 .scars .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 18px; }
+  #b10 .scars .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  #b10 .scars .chipx { font-size: 27px; padding: 14px 26px; }
+  #b10 .scars .chipx b { color: var(--white); }
+
+  /* ---------- B11 employed track (over, FULL+shift) ---------- */
+  #b11 .stack { position: absolute; left: 80px; top: 330px; display: flex; flex-direction: column; gap: 18px; }
+  #b11 .stack > div { align-self: flex-start; max-width: 780px; }
+  #b11 .chipx b { color: var(--white); }
+  #b11 .punchx { font-size: 33px; }
+
+  /* ---------- B12 outro ---------- */
+  #b12 { display: grid; place-items: center; text-align: center; }
+  #b12 .rail { display: flex; align-items: center; justify-content: center; }
+  #b12 .nx { margin-top: 70px; }
+  #b12 .nx .kick { margin-bottom: 20px; }
+  #b12 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; color: var(--white); text-shadow: var(--textglow); }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-z3st" id="p30" data-composition-id="p30" data-start="0" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-ztfp" id="bg" class="clip" data-start="0" data-duration="280" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (track 4) ============ -->
+
+  <!-- B1 cold open takeover (0-4.4) -->
+  <div data-hf-id="hf-rcyn" id="b1" class="under clip" data-start="0" data-duration="4.4" data-track-index="4">
+    <div data-hf-id="hf-lm34" class="inner">
+      <div data-hf-id="hf-wnwr" class="kick">Pillar Three · Workflow Architecture</div>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-1lqm" class="word w1">The</span> <span data-hf-id="hf-22f3" class="word w2 grad">hardest</span> <span data-hf-id="hf-lptj" class="word w3">build</span> <span data-hf-id="hf-0ihr" class="word w4">of</span> <span data-hf-id="hf-st7x" class="word w5">my</span> <span data-hf-id="hf-cjjy" class="word w6">career</span></div>
+    </div>
+  </div>
+
+  <!-- B3 the one big mistake takeover (46.0-63.2) -->
+  <div data-hf-id="hf-ghc1" id="b3" class="under clip" data-start="46" data-duration="17.2" data-track-index="4">
+    <div data-hf-id="hf-bug8" class="inner">
+      <div data-hf-id="hf-1ayp" class="kicker kick">Underneath every mistake · one big mistake</div>
+      <div data-hf-id="hf-ippd" class="l1"><span data-hf-id="hf-4mdu" class="word w1">The</span> <span data-hf-id="hf-2bkt" class="word w2">process</span> <span data-hf-id="hf-s8yi" class="word w3">did</span> <span data-hf-id="hf-t17f" class="word w4">not</span> <span data-hf-id="hf-yszk" class="word w5 grad">exist</span> <span data-hf-id="hf-os0m" class="word w6">yet</span></div>
+      <div data-hf-id="hf-thy4" class="row">
+        <div data-hf-id="hf-jv07" class="chipx c1">Nobody had run the cafe</div>
+        <div data-hf-id="hf-f71z" class="chipx c2">No receptionist to study</div>
+        <div data-hf-id="hf-sqoi" class="chipx c3">No history to map</div>
+      </div>
+      <div data-hf-id="hf-gjvw" class="note"><div data-hf-id="hf-12dq" class="punchx p1">They were inventing the process and asking us to automate the invention</div></div>
+    </div>
+  </div>
+
+  <!-- B5 phase handoff takeover (91.1-105.3) -->
+  <div data-hf-id="hf-n5uz" id="b5" class="under clip" data-start="91.1" data-duration="14.2" data-track-index="4">
+    <div data-hf-id="hf-anj5" class="inner">
+      <div data-hf-id="hf-h1w1" class="kicker kick">Here's where you stand · Phase One is done</div>
+      <div data-hf-id="hf-qzq8" class="rail">
+        <div data-hf-id="hf-gp4k" class="mpill done o1"><span data-hf-id="hf-gdo1" class="mn">✓</span>Outcome</div>
+        <div data-hf-id="hf-398s" class="mconn oc1"></div>
+        <div data-hf-id="hf-fr4h" class="mpill done o2"><span data-hf-id="hf-34th" class="mn">✓</span>Scope</div>
+        <div data-hf-id="hf-bx4n" class="mconn oc2"></div>
+        <div data-hf-id="hf-bb8r" class="mpill done o3"><span data-hf-id="hf-8dpo" class="mn">✓</span>Price</div>
+        <div data-hf-id="hf-7z0m" class="mconn oc3"></div>
+        <div data-hf-id="hf-cbs4" class="mpill done o4"><span data-hf-id="hf-7zen" class="mn">✓</span>Terms</div>
+        <div data-hf-id="hf-iui9" class="mconn oc4"></div>
+        <div data-hf-id="hf-f23g" class="mpill lit o5"><span data-hf-id="hf-idjy" class="mn">→</span>The Build</div>
+      </div>
+      <div data-hf-id="hf-erpu" class="nx">
+        <div data-hf-id="hf-2klx" class="t">Phase Two: <span data-hf-id="hf-gsfk" class="grad">You build the system</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B8 three buckets takeover (194.1-216.5) -->
+  <div data-hf-id="hf-2seh" id="b8" class="under clip" data-start="194.1" data-duration="22.4" data-track-index="4">
+    <div data-hf-id="hf-wnm4" class="wrap">
+      <div data-hf-id="hf-6jdq" class="kicker kick">Every decision, every failure · one of three buckets</div>
+      <div data-hf-id="hf-hnc7" class="rows">
+        <div data-hf-id="hf-jt39" class="kc hot k1"><div data-hf-id="hf-cjkg" class="lab">Bucket 01 · Context</div><div data-hf-id="hf-526f" class="val">What the model sees</div><div data-hf-id="hf-uthy" class="det">When it sees it, and <b data-hf-id="hf-7nlt">how you keep it clean</b></div></div>
+        <div data-hf-id="hf-pyt2" class="kc hot k2"><div data-hf-id="hf-2ic2" class="lab">Bucket 02 · Governance</div><div data-hf-id="hf-n54f" class="val">What the AI may and may not do</div><div data-hf-id="hf-h3c8" class="det">What it can touch, and <b data-hf-id="hf-f9ok">who owns the output</b></div></div>
+        <div data-hf-id="hf-twx3" class="kc hot k3"><div data-hf-id="hf-0v2m" class="lab">Bucket 03 · Model Economics</div><div data-hf-id="hf-9gv5" class="val">Which model, at what cost</div><div data-hf-id="hf-tu5e" class="det">Which model does <b data-hf-id="hf-pfjd">which job</b></div></div>
+      </div>
+      <div data-hf-id="hf-o37o" class="note"><div data-hf-id="hf-5g7p" class="chipx n1">This module: <b data-hf-id="hf-sx5r">bucket one</b>, plus the working edge of bucket two</div></div>
+    </div>
+  </div>
+
+  <!-- B9 module roadmap (216.7-238.5, PIP) -->
+  <div data-hf-id="hf-lnhi" id="b9" class="under clip" data-start="216.7" data-duration="21.8" data-track-index="4">
+    <div data-hf-id="hf-z992" class="head">
+      <div data-hf-id="hf-4ux0" class="kick">The road through this module</div>
+      <div data-hf-id="hf-ntvu" class="t">Four Skills</div>
+    </div>
+    <div data-hf-id="hf-33o8" class="list">
+      <div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-ow99" class="tx">Context, twice<span data-hf-id="hf-8ayx" class="sub"><b data-hf-id="hf-zmv3">What the model sees</b>, then how context breaks</span></div></div>
+      <div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-tivl" class="tx">Workflow<span data-hf-id="hf-q3kn" class="sub">How the pieces connect. <b data-hf-id="hf-8o5s">What code decides vs what the model judges</b></span></div></div>
+      <div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-ljrg" class="tx">Scenario mapping and milestones<span data-hf-id="hf-r051" class="sub">The skill <b data-hf-id="hf-k0ef">the game cafe taught me the hard way</b></span></div></div>
+      <div data-hf-id="hf-dy1b" class="qrow r4"><div data-hf-id="hf-6a5m" class="n">04</div><div data-hf-id="hf-yuuc" class="tx">Reliability<span data-hf-id="hf-6ynj" class="sub">What separates the demo from <b data-hf-id="hf-er8a">the thing a client can actually use</b></span></div></div>
+    </div>
+  </div>
+
+  <!-- B10 two examples + scars (238.6-261.0, PIP) -->
+  <div data-hf-id="hf-18ta" id="b10" class="under clip" data-start="238.6" data-duration="22.4" data-track-index="4">
+    <div data-hf-id="hf-gwvu" class="head">
+      <div data-hf-id="hf-xrs7" class="kick">How you'll learn it</div>
+      <div data-hf-id="hf-4u3k" class="t">Two Running Examples</div>
+    </div>
+    <div data-hf-id="hf-vt1w" class="pair">
+      <div data-hf-id="hf-pflh" class="chipx e1"><b data-hf-id="hf-8tk4">Brightwater Dental</b>: the build we do together, decision by decision</div>
+      <div data-hf-id="hf-fan5" class="chipx e2"><b data-hf-id="hf-q3l3">The game cafe</b>: the build I did the hard way</div>
+    </div>
+    <div data-hf-id="hf-5d5y" class="scars">
+      <div data-hf-id="hf-94ou" class="lab s0">Plus the rest of the scar collection</div>
+      <div data-hf-id="hf-kxq8" class="grid">
+        <div data-hf-id="hf-uvb5" class="chipx s1">The analytics agent that <b data-hf-id="hf-b6tn">drowned in its own data</b></div>
+        <div data-hf-id="hf-zmkg" class="chipx s2">The email drafter <b data-hf-id="hf-em2j">orchestrated exactly backwards</b></div>
+        <div data-hf-id="hf-grdz" class="chipx s3">The vector database <b data-hf-id="hf-0keh">we walked away from</b></div>
+        <div data-hf-id="hf-s8wp" class="chipx s4">The 73 page policy document that <b data-hf-id="hf-2rzg">taught me what retrieval costs</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B12 outro (272.6-280) -->
+  <div data-hf-id="hf-gor7" id="b12" class="under clip" data-start="272.6" data-duration="7.4" data-track-index="4">
+    <div data-hf-id="hf-b1u6" class="inner">
+      <div data-hf-id="hf-wyfs" class="rail">
+        <div data-hf-id="hf-ye3k" class="mpill lit o1"><span data-hf-id="hf-1r4b" class="mn">01</span>Context</div>
+        <div data-hf-id="hf-kqsk" class="mconn oc1"></div>
+        <div data-hf-id="hf-ngkz" class="mpill o2"><span data-hf-id="hf-1cta" class="mn">02</span>Governance</div>
+        <div data-hf-id="hf-kk1j" class="mconn oc2"></div>
+        <div data-hf-id="hf-7ne5" class="mpill o3"><span data-hf-id="hf-0yi9" class="mn">03</span>Model Economics</div>
+      </div>
+      <div data-hf-id="hf-6pee" class="nx">
+        <div data-hf-id="hf-rtvu" class="kick">Up next · the first bucket</div>
+        <div data-hf-id="hf-ipuw" class="t">What the Model <span data-hf-id="hf-i2vp" class="grad">Sees</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-qtkm" id="p30-video" src="assets/clean.mp4" muted data-start="0" data-duration="275.81" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-74po" id="p30-audio" src="assets/audio.m4a" data-start="0" data-duration="275.81" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <!-- B2 game cafe (over FULL+shift, 13.0-41.6) -->
+  <div data-hf-id="hf-xe2a" id="b2" class="over clip" data-start="13" data-duration="28.6" data-track-index="6">
+    <div data-hf-id="hf-d1zs" class="stack">
+      <div data-hf-id="hf-lhda" class="kick k1">The game cafe · the entire product was one text thread</div>
+      <div data-hf-id="hf-p99p" class="chipx c1">Sells the membership · <b data-hf-id="hf-pi2i">onboards you</b></div>
+      <div data-hf-id="hf-55hg" class="chipx c2">Books your tables · <b data-hf-id="hf-mr9e">finds you opponents</b></div>
+      <div data-hf-id="hf-awvf" class="chipx c3">Takes your <b data-hf-id="hf-cc0b">complaints</b></div>
+      <div data-hf-id="hf-2wig" class="punchx p1">Quoted at $12,000. Should have charged way more.</div>
+      <div data-hf-id="hf-r51t" class="warnx w1">We finished it. The client used it. <b data-hf-id="hf-7abg">We still lost money and blew the timeline.</b></div>
+    </div>
+  </div>
+
+  <!-- B4 the reframe (over FULL+shift, 66.4-90.7) -->
+  <div data-hf-id="hf-bhih" id="b4" class="over clip" data-start="66.4" data-duration="24.3" data-track-index="6">
+    <div data-hf-id="hf-g2wg" class="stack">
+      <div data-hf-id="hf-y851" class="kick k1">The Pillar One reframe · when the process doesn't exist yet</div>
+      <div data-hf-id="hf-6i6x" class="step f1"><div data-hf-id="hf-fbkv" class="fn">A</div><div data-hf-id="hf-n9mx" class="chipx">Buy the <b data-hf-id="hf-dvl0">$50 a month app</b> that already does this. Learn what you hate about it. Then build.</div></div>
+      <div data-hf-id="hf-agay" class="step f2"><div data-hf-id="hf-ex9u" class="fn">B</div><div data-hf-id="hf-214p" class="chipx">Run the process <b data-hf-id="hf-800e">completely manually</b> first. Automate what's proven.</div></div>
+      <div data-hf-id="hf-4uxf" class="punchx p1">Everything that could go wrong went wrong. You get to learn from it.</div>
+    </div>
+  </div>
+
+  <!-- B6 production truth (over FULL+shift, 108.0-132.6) -->
+  <div data-hf-id="hf-njnp" id="b6" class="over clip" data-start="108" data-duration="24.6" data-track-index="6">
+    <div data-hf-id="hf-evzd" class="stack">
+      <div data-hf-id="hf-c5ha" class="kick k1">The uncomfortable truth about this profession</div>
+      <div data-hf-id="hf-xl4p" class="warnx w1">Most AI projects never reach production. <b data-hf-id="hf-v4rf">They demo beautifully, then they die.</b></div>
+      <div data-hf-id="hf-p0qa" class="punchx p1">The gap between demo and production is not more AI. It's design.</div>
+      <div data-hf-id="hf-ek2i" class="chipx c1">What the model sees · how the pieces connect · <b data-hf-id="hf-7qvi">what happens when something breaks</b></div>
+      <div data-hf-id="hf-nhdg" class="chipx c2">Amateurs vibe code. <b data-hf-id="hf-qmrl">Pros ship work that moves the needle.</b></div>
+    </div>
+  </div>
+
+  <!-- B7 Brightwater reply side (138.1-194.0, PIP) -->
+  <div data-hf-id="hf-02kz" id="b7" class="under clip" data-start="138.1" data-duration="55.9" data-track-index="4">
+    <div data-hf-id="hf-hb6v" class="head">
+      <div data-hf-id="hf-tb6p" class="kick">Brightwater Dental · project one creates project two</div>
+      <div data-hf-id="hf-k0sm" class="t">The Reply Side</div>
+    </div>
+    <div data-hf-id="hf-1w6y" class="msgs">
+      <div data-hf-id="hf-zm6d" class="quote q1">"Can I move my <b data-hf-id="hf-wps2">Thursday cleaning</b>?"</div>
+      <div data-hf-id="hf-444y" class="quote q2">"Does my <b data-hf-id="hf-ywjr">insurance</b> cover this?"</div>
+      <div data-hf-id="hf-8aec" class="quote q3">"My tooth is killing me. <b data-hf-id="hf-2c26">Do I need to come in?</b>"</div>
+    </div>
+    <div data-hf-id="hf-3b49" class="card kc hot">
+      <div data-hf-id="hf-z671" class="lab">This pillar's build</div>
+      <div data-hf-id="hf-m2nf" class="val">A patient message triage agent</div>
+      <div data-hf-id="hf-6uz3" class="det">Reads each message, sorts it, <b data-hf-id="hf-1yf8">drafts a reply or takes an action</b>, and hands anything clinical to a human</div>
+    </div>
+    <div data-hf-id="hf-e2xp" class="rules">
+      <div data-hf-id="hf-svjt" class="warnx w1">Emergency triage stays on the leave it list. <b data-hf-id="hf-wq01">That call stands.</b></div>
+      <div data-hf-id="hf-r091" class="punchx p1">The audit boundary became a design requirement of the build</div>
+    </div>
+  </div>
+
+  <!-- B11 employed track (over FULL+shift, 261.4-272.2) -->
+  <div data-hf-id="hf-kens" id="b11" class="over clip" data-start="261.4" data-duration="10.8" data-track-index="6">
+    <div data-hf-id="hf-faae" class="stack">
+      <div data-hf-id="hf-rqgm" class="kick k1">One note for the employed track</div>
+      <div data-hf-id="hf-1jim" class="chipx c1">Everything in this module is <b data-hf-id="hf-fh46">identical on your side of the fence</b></div>
+      <div data-hf-id="hf-07ky" class="punchx p1">The system doesn't care who signs the invoice</div>
+      <div data-hf-id="hf-e05m" class="chipx c2">Where these lessons say client: <b data-hf-id="hf-eg1a">your boss, your review gates, your leadership</b></div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-db9h" id="vig" class="clip" data-start="0" data-duration="280" data-track-index="10"></div>
+  <div data-hf-id="hf-9vl1" id="grain" class="clip" data-start="0" data-duration="280" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 280;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* shot plan:
+     0-4.4 takeover (B1) -> 4.3 fromOFF FULL -> shift 12.8 (B2) -> home 41.6
+     -> OFF 45.9 (B3 mistake) -> 63.3 fromOFF FULL -> shift 66.2 (B4 reframe) -> home 90.7
+     -> OFF 91.0 (B5 handoff)... B4 home then immediately OFF: home 90.7 conflicts with OFF 91.0
+        -> use shadeOut at 90.5 then toOFF 90.8 (never tween wrap.x twice in overlapping windows)
+     -> 105.4 fromOFF FULL -> shift 107.7 (B6 truth) -> home 132.6
+     -> PIP 137.9 (B7) -> OFF 193.9 (B8 buckets) -> 216.6 fromOFF PIP (B9, B10)
+     -> FULL 260.4 -> shift 261.0 (B11) -> shadeOut 272.0 + out 272.3 (B12 outro) */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(4.3, { x: 0, y: 0, scale: 1 });
+  toOFF(45.9);
+  fromOFF(63.3, { x: 0, y: 0, scale: 1 });
+  toOFF(90.3);
+  fromOFF(105.4, { x: 0, y: 0, scale: 1 });
+  toPIP(137.9);
+  toOFF(193.9);
+  fromOFF(216.6, { x: PIP.x, y: PIP.y, scale: PIP.scale }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  toFULL(260.4);
+  tl.to(wrap, { opacity: 0, filter: 'blur(20px)', scale: 1.04, duration: 0.9, ease: 'power2.in' }, 271.8);
+
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  clearLeft(12.8);  unclearLeft(41.6);   // B2 game cafe
+  clearLeft(66.2);  shadeOut(90.9);      // B4 reframe (video drops OFF first at 90.3; scrim retracts after it's gone)
+  clearLeft(107.7); unclearLeft(132.6);  // B6 production truth
+  clearLeft(261.0); shadeOut(272.6);     // B11 employed track (video fade finishes 272.7; scrim retracts after)
+
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 69, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 55, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 69, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open — "hardest build of my career" 0.3-2.2 · "didn't fail on the tools" 2.3-3.5 */
+  inUp(0.2, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.12 }, 0.4);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 3.5);
+
+  /* B2 game cafe — one thread 13.3-17.4 · sells/onboards 18.5-20.5 · books/opponents 21.0-23.0 · complaints 23.6 · $12,000 25.1-27.6 · charged more 31.7 · lost money 36.9 */
+  inUp(13.3, '#b2 .k1', 0.6, 18);
+  inLeft(18.4, '#b2 .c1', 0.6);
+  inLeft(20.9, '#b2 .c2', 0.6);
+  inLeft(23.4, '#b2 .c3', 0.6);
+  spring(25.0, '#b2 .p1', 0.7);
+  inLeft(36.6, '#b2 .w1', 0.7);
+  outBlur(41.1, '#b2 .stack', 0.45);
+
+  /* B3 mistake — "did not yet exist" 46.8-49.6 · nobody ran cafe 49.8 · receptionist 51.5 · history 52.8 · inventing 54.5-59.8 */
+  inUp(46.2, '#b3 .kicker', 0.6, 20);
+  tl.fromTo('#b3 .l1 .word', { y: 40, opacity: 0, scale: 0.92, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.6, ease: 'expo.out', stagger: 0.11 }, 46.9);
+  spring(49.7, '#b3 .c1', 0.55);
+  spring(51.4, '#b3 .c2', 0.55);
+  spring(52.7, '#b3 .c3', 0.55);
+  inUp(54.6, '#b3 .note', 0.7, 24);
+  outBlur(62.5, '#b3 .inner', 0.6, -70);
+
+  /* B4 reframe — reframe from pillar one 63.4-66.4 · buy the app 68.3-73 · learn what you hate 73.5 · manually 77.5-81.3 · learn from mistakes 87.5 */
+  inUp(66.5, '#b4 .k1', 0.6, 18);
+  inLeft(68.2, '#b4 .f1', 0.7);
+  inLeft(77.3, '#b4 .f2', 0.7);
+  spring(84.9, '#b4 .p1', 0.7);
+  outBlur(90.2, '#b4 .stack', 0.45);
+
+  /* B5 handoff — phase one done 92.5 · found/mapped/scoped 93.7-98 · signed engagement 98.5-101 · phase two 101.6 · build the system 104.4 */
+  inUp(91.4, '#b5 .kicker', 0.6, 20);
+  spring(93.7, '#b5 .o1', 0.45);
+  tl.fromTo('#b5 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: 'power2.inOut' }, 94.5);
+  spring(94.7, '#b5 .o2', 0.45);
+  tl.fromTo('#b5 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: 'power2.inOut' }, 95.5);
+  spring(95.7, '#b5 .o3', 0.45);
+  tl.fromTo('#b5 .oc3', { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: 'power2.inOut' }, 96.5);
+  spring(96.7, '#b5 .o4', 0.45);
+  tl.fromTo('#b5 .oc4', { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: 'power2.inOut' }, 100.9);
+  spring(101.4, '#b5 .o5', 0.55);
+  tl.fromTo('#b5 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 103.9);
+  outBlur(104.8, '#b5 .inner', 0.55, -70);
+
+  /* B6 truth — never reach production 108.1-112 · demo beautifully die 112.9-115.7 · gap not more AI 115.8-119 · sees/connect/breaks 119.5-124.2 · amateur vs pro 124.4-130 */
+  inUp(107.9, '#b6 .k1', 0.6, 18);
+  inLeft(108.8, '#b6 .w1', 0.7);
+  spring(116.5, '#b6 .p1', 0.7);
+  inLeft(119.6, '#b6 .c1', 0.7);
+  inLeft(124.5, '#b6 .c2', 0.7);
+  outBlur(132.1, '#b6 .stack', 0.45);
+
+  /* B7 Brightwater — project two 138.8-141.3 · reminders/text back 144.7 · Thursday 146.8 · insurance 148.3 · tooth 149.3 · triage agent 156.9-160.5 · reads/sorts 160.7-170.1 · hold on 170.3 · leave it list 173.5-179.2 · never clinical 179.4 · by construction 183-188 · boundary punch 189.8-194.1 */
+  inUp(138.4, '#b7 .head', 0.7, 26);
+  spring(146.6, '#b7 .q1', 0.55);
+  spring(148.1, '#b7 .q2', 0.55);
+  spring(149.2, '#b7 .q3', 0.55);
+  inUp(157.0, '#b7 .card', 0.8, 32);
+  inLeft(173.4, '#b7 .w1', 0.7);
+  spring(189.6, '#b7 .p1', 0.7);
+  outBlur(193.3, '#b7 .msgs', 0.5);
+  outBlur(193.32, '#b7 .card', 0.5);
+  outBlur(193.35, '#b7 .rules', 0.5);
+  outBlur(193.4, '#b7 .head', 0.5);
+
+  /* B8 buckets — three buckets 194.4-198 · context 198.5-202.5 · governance 202.8-207.5 · model economics 207.8-212.7 · this module 213.0-216.5 */
+  inUp(194.5, '#b8 .kicker', 0.6, 20);
+  inUp(198.3, '#b8 .k1', 0.7, 30);
+  inUp(202.7, '#b8 .k2', 0.7, 30);
+  inUp(207.6, '#b8 .k3', 0.7, 30);
+  inUp(213.0, '#b8 .n1', 0.6, 16);
+  outBlur(215.9, '#b8 .wrap', 0.6, -70);
+
+  /* B9 roadmap — two lessons on context 217.0-220.7 · workflow 221.0-226.8 · scenario mapping 227.0-233.3 · reliability 233.6-238.4 */
+  inUp(216.8, '#b9 .head', 0.7, 26);
+  inLeft(217.1, '#b9 .r1', 0.7);
+  inLeft(221.0, '#b9 .r2', 0.7);
+  inLeft(227.0, '#b9 .r3', 0.7);
+  inLeft(233.5, '#b9 .r4', 0.7);
+  outBlur(238.1, '#b9 .list', 0.45);
+  outBlur(238.15, '#b9 .head', 0.45);
+
+  /* B10 examples — two examples 238.7-240.7 · Brightwater 241.1 · game cafe 244.2 · scar collection 247.5 · analytics 249.5 · email 252.3 · vector db 254.5 · policy doc 257.2 */
+  inUp(238.8, '#b10 .head', 0.7, 26);
+  inLeft(240.9, '#b10 .e1', 0.7);
+  inLeft(244.0, '#b10 .e2', 0.7);
+  inUp(247.4, '#b10 .s0', 0.6, 16);
+  inLeft(249.3, '#b10 .s1', 0.6);
+  inLeft(252.1, '#b10 .s2', 0.6);
+  inLeft(254.3, '#b10 .s3', 0.6);
+  inLeft(257.0, '#b10 .s4', 0.6);
+  outBlur(260.3, '#b10 .pair', 0.45);
+  outBlur(260.32, '#b10 .scars', 0.45);
+  outBlur(260.35, '#b10 .head', 0.45);
+
+  /* B11 employed — employed track 261.1-265.1 · identical 262.5 · invoice 265.4-267.3 · boss/gates 267.6-272.2 */
+  inUp(261.5, '#b11 .k1', 0.6, 18);
+  inLeft(262.4, '#b11 .c1', 0.7);
+  spring(265.3, '#b11 .p1', 0.7);
+  inLeft(267.6, '#b11 .c2', 0.7);
+  outBlur(271.7, '#b11 .stack', 0.45);
+
+  /* B12 outro — first bucket 272.6-275.5 · hold to 280 */
+  spring(273.4, '#b12 .o1', 0.5);
+  tl.fromTo('#b12 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: 'power2.inOut' }, 273.8);
+  spring(273.95, '#b12 .o2', 0.45);
+  tl.fromTo('#b12 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: 'power2.inOut' }, 274.1);
+  spring(274.3, '#b12 .o3', 0.45);
+  inUp(274.9, '#b12 .nx .kick', 0.6, 20);
+  tl.fromTo('#b12 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 275.3);
+  tl.fromTo('#b12 .rail .mpill.lit', { boxShadow: '0 0 18px rgba(55,189,248,0.35), inset 0 1px 0 rgba(255,255,255,0.18)' },
+    { boxShadow: '0 0 34px rgba(55,189,248,0.6), inset 0 1px 0 rgba(255,255,255,0.18)', duration: 0.9, ease: 'sine.inOut', repeat: 3, yoyo: true }, 276.2);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p30'] = tl;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=1920, height=1080" />
+<title>final verify</title><link href="assets/fonts/fonts.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:"Inter",sans-serif;}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#07121c;isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+#stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+#camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+.scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+.inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:96px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+.ln{font-family:"Montserrat",sans-serif;font-style:italic;font-weight:900;font-size:122px;line-height:1.16;letter-spacing:-.03em;max-width:1600px;}
+.ln .wd{display:inline-block;padding:.12em .15em .32em;
+  background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  text-shadow:0 0 34px rgba(255,255,255,.22);}
+.ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  text-shadow:0 0 48px rgba(55,189,248,.62);}
+.num{font-family:"Montserrat",sans-serif;font-style:italic;font-weight:900;font-size:320px;line-height:1.0;
+  letter-spacing:-.04em;padding:.08em .14em .26em;
+  background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  text-shadow:0 0 90px rgba(55,189,248,.6);}
+</style></head>
+<body>
+<div id="stage" data-composition-id="cmp-cliptest" data-start="0" data-duration="4" data-width="1920" data-height="1080">
+  <div id="camera">
+    <section id="s0" class="scene clip" data-start="0" data-duration="4" data-track-index="10">
+      <div class="inner">
+        <div class="ln"><span class="wd">They're</span><span class="wd">getting</span><span class="wd ac">paid.</span></div>
+        <div class="num">8:30</div>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+tl.fromTo("#s0 .wd",{autoAlpha:0,yPercent:110,scale:.92},{autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%",force3D:false},0.2);
+tl.fromTo("#s0 .num",{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:.62,ease:"back.out(1.6)",transformOrigin:"50% 55%",force3D:false},0.4);
+tl.to("#camera", { scale:1.035, y:-16, duration:2, yoyo:true, repeat:1, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+tl.to({}, { duration: 4 }, 0);
+window.__timelines["cmp-cliptest"] = tl;
+</script>
+</body></html>

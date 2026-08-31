@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>AIS LIVE — Block 7: Day 2 Lunch / Afternoon (35.0 min)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root{
+        --onyx:#07121c; --blue:#37bdf8; --coral:#ff8a5c; --red-live:#ff3b30; /* coral = ambient bg glow only */
+        --font-display:"Montserrat",sans-serif; --font-body:"Inter",sans-serif; --font-mono:"JetBrains Mono",monospace;
+      }
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:var(--font-body);}
+      #stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--onyx);
+        isolation:isolate;perspective:1600px;perspective-origin:50% 44%;}
+      #stage .clip{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;}
+      #camera{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+
+      /* ---------- depth background ---------- */
+      #bg{overflow:hidden;}
+      .depth{position:absolute;left:-40%;right:-40%;height:78%;background-color:transparent;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(55,189,248,.16) 0 1px, transparent 1px 66px),
+          repeating-linear-gradient(90deg, rgba(55,189,248,.09) 0 1px, transparent 1px 66px);
+        will-change:background-position;}
+      .grid-floor{bottom:-14%;transform:perspective(680px) rotateX(66deg);transform-origin:50% 100%;
+        -webkit-mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);
+        mask-image:linear-gradient(to top,#000 2%,rgba(0,0,0,.7) 32%,transparent 90%);}
+      .grid-ceiling{top:-14%;transform:perspective(680px) rotateX(-66deg);transform-origin:50% 0%;opacity:.6;
+        -webkit-mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);
+        mask-image:linear-gradient(to bottom,#000 2%,rgba(0,0,0,.6) 30%,transparent 88%);}
+      .beam{position:absolute;top:-20%;left:50%;width:1400px;height:1200px;margin-left:-700px;
+        background:conic-gradient(from 180deg at 50% 0%, transparent 0deg, rgba(55,189,248,.14) 22deg, transparent 44deg);
+        filter:blur(30px);opacity:.7;will-change:transform,opacity;}
+      .glow{position:absolute;border-radius:50%;will-change:transform;}
+      .glow.blue{top:-160px;left:50%;width:760px;height:760px;margin-left:-380px;background:var(--blue);filter:blur(155px);opacity:.18;}
+      .glow.coral{bottom:-220px;right:-140px;width:620px;height:620px;background:var(--coral);filter:blur(165px);opacity:.11;}
+      .vignette{position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 96%);will-change:opacity;}
+      .grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:screen;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+      .whip{position:absolute;top:50%;left:0;width:46%;height:10px;margin-top:-5px;opacity:0;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),rgba(55,189,248,.8),transparent);
+        filter:blur(7px);will-change:transform,opacity;z-index:30;}
+
+      /* ---------- scene ---------- */
+      .scene{display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+      .inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:34px;padding:96px 120px;text-align:center;transform-style:preserve-3d;will-change:transform,opacity;}
+
+      .eyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);display:inline-flex;align-items:center;gap:13px;text-shadow:0 0 16px rgba(55,189,248,.45);}
+      /* no ::before marker chip, no coral variant — live-asset directives */
+
+      .ln{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:122px;line-height:1.16;
+        letter-spacing:-.03em;max-width:1600px;}
+      .ln.hero{font-size:176px;}
+      /* generous padding so italic-900 ascenders/descenders never clip out of the
+         background-clip:text box; side padding supplies the inter-word gap */
+      .ln .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .ln .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .ln.quoteln{font-size:78px;line-height:1.28;max-width:1500px;}
+      .quoteln{position:relative;}
+      .quoteln::before{content:"\201C";color:var(--blue);margin-right:.04em;}
+      .quoteln::after{content:"\201D";color:var(--blue);margin-left:.04em;}
+
+      .sub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:41px;line-height:1.25;
+        color:rgba(209,220,232,.85);max-width:1440px;will-change:transform,opacity;}
+      .attrib{font-style:normal;font-family:var(--font-mono);font-weight:500;font-size:27px;letter-spacing:.06em;color:rgba(180,214,238,.82);}
+
+      /* AIS+ product mark — ALL WHITE incl. the +, never tinted (directives) */
+      .plus{font-family:var(--font-display);font-style:italic;font-weight:900;color:#fff;letter-spacing:-.02em;}
+      .plus .p{color:#fff;}
+
+      /* stat */
+      .statwrap{display:flex;flex-direction:column;align-items:center;gap:2px;}
+      .kicker{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.30em;text-transform:uppercase;color:#fff;}
+      .num{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:320px;line-height:1.0;
+        letter-spacing:-.04em;padding:.08em .14em .26em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 55%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 90px rgba(55,189,248,.6);}
+      .unit{font-family:var(--font-mono);font-weight:700;font-size:28px;letter-spacing:.30em;text-transform:uppercase;color:var(--blue);}
+
+      /* sponsor logos (white on transparent) */
+      .logorow{display:flex;gap:110px;justify-content:center;align-items:flex-start;}
+      .logo{display:flex;flex-direction:column;align-items:center;gap:44px;will-change:transform,opacity;}
+      .logobox{height:180px;display:flex;align-items:center;justify-content:center;}
+      .logo img{width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 36px rgba(55,189,248,.28));}
+      .logorole{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);}
+
+      /* agenda */
+      .agenda{display:flex;flex-direction:column;gap:14px;width:max-content;max-width:1680px;will-change:transform;}
+      .agrow{display:flex;align-items:baseline;gap:26px;font-family:var(--font-body);font-weight:700;font-size:38px;color:#fff;text-align:left;will-change:transform,opacity;}
+      .agt{font-family:var(--font-mono);font-weight:700;font-size:22px;color:var(--blue);min-width:130px;letter-spacing:.04em;}
+
+      /* ---------- member win card: summary left, post screenshot right ---------- */
+      .winwrap{position:absolute;inset:0;display:flex;align-items:center;gap:70px;padding:80px 110px 90px 150px;}
+      .wintext{flex:0 0 760px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;}
+      .peyebrow{font-family:var(--font-mono);font-weight:700;font-size:27px;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--blue);text-shadow:0 0 16px rgba(55,189,248,.45);will-change:transform,opacity;}
+      .winhead{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:76px;line-height:1.12;
+        letter-spacing:-.03em;margin-left:-.15em;max-width:780px;}
+      .winhead .wd{display:inline-block;padding:.12em .15em .32em;will-change:transform,opacity;
+        background:linear-gradient(180deg,#ffffff 0%,#d4dee8 50%,#9fb3c4 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 34px rgba(255,255,255,.22);}
+      .winhead .wd.ac{background:linear-gradient(180deg,#b3ecff 0%,#37bdf8 56%,#1487c9 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        text-shadow:0 0 48px rgba(55,189,248,.62);}
+      .winsub{font-family:var(--font-body);font-weight:300;font-style:italic;font-size:31px;line-height:1.35;
+        color:rgba(209,220,232,.85);margin-top:16px;max-width:720px;will-change:transform,opacity;}
+      .winname{font-family:var(--font-mono);font-weight:500;font-size:24px;letter-spacing:.2em;text-transform:uppercase;
+        color:var(--blue);margin-top:30px;text-shadow:0 0 14px rgba(55,189,248,.4);will-change:transform,opacity;}
+      .winshot{flex:1;display:flex;align-items:center;justify-content:center;max-height:840px;
+        will-change:transform,opacity;transform-style:preserve-3d;}
+      .winshot img{max-width:100%;max-height:840px;object-fit:contain;border-radius:20px;
+        border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 60px rgba(55,189,248,.10);}
+
+      /* placeholder slot — dashed frame, unmistakably interim (scaffold house style) */
+      .slotbox{width:1240px;height:480px;border:3px dashed rgba(55,189,248,.45);border-radius:26px;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+        background:rgba(9,20,32,.35);will-change:transform,opacity;}
+      .slotlab{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:66px;
+        letter-spacing:-.02em;color:#fff;text-shadow:0 0 28px rgba(255,255,255,.18);padding:0 .14em .08em;}
+      .slotnote{font-family:var(--font-mono);font-weight:700;font-size:26px;letter-spacing:.10em;
+        text-transform:uppercase;color:var(--blue);text-shadow:0 0 14px rgba(55,189,248,.4);}
+
+      /* mounted finished pieces — full-frame, above the camera scenes */
+      .mount{position:absolute;inset:0;background:#000;will-change:transform,opacity,filter;z-index:20;}
+      .mfill{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+      /* mark */
+      .backdrop-mark{position:absolute;right:72px;bottom:60px;display:inline-flex;z-index:6;}
+      .bigmark{display:inline-flex;will-change:transform,opacity,filter;}
+      .mark{font-family:var(--font-display);font-style:italic;font-weight:900;letter-spacing:-.03em;line-height:.9;
+        font-size:92px;display:inline-flex;align-items:baseline;position:relative;}
+      .mark.big{font-size:262px;}
+      .mark .ais{color:#fff;}
+      .mark .gap{display:inline-block;width:.08em;}
+      .live{position:relative;color:var(--blue);text-shadow:0 0 60px rgba(55,189,248,.55);padding-right:.28em;}
+      .dot{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:var(--red-live);box-shadow:0 0 .7em #ff3b30,0 0 .25em #ff3b30;}
+      .ring{position:absolute;top:.08em;left:100%;margin-left:.06em;width:.16em;height:.16em;border-radius:50%;
+        background:rgba(255,59,48,.55);opacity:0;transform-origin:50% 50%;pointer-events:none;}
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-6yxo" id="stage" data-composition-id="cmp-day2-lunch-fill" data-start="0" data-duration="2100" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-nvgq" id="bg" class="clip" data-start="0" data-duration="2100" data-track-index="0">
+        <div data-hf-id="hf-ituz" class="depth grid-ceiling"></div>
+        <div data-hf-id="hf-agmc" class="depth grid-floor"></div>
+        <div data-hf-id="hf-hqud" class="beam"></div>
+        <div data-hf-id="hf-uo31" class="glow blue"></div>
+        <div data-hf-id="hf-jtmg" class="glow coral"></div>
+        <div data-hf-id="hf-q7bi" class="vignette"></div>
+        <div data-hf-id="hf-h60x" class="grain"></div>
+      </div>
+      <div data-hf-id="hf-zpo2" class="whip clip" id="whip" data-start="0" data-duration="2100" data-track-index="1"></div>
+      <div data-hf-id="hf-5mfg" id="markbug" class="clip" data-start="0" data-duration="2100" data-track-index="2">
+        <div data-hf-id="hf-f7z4" class="backdrop-mark"><span data-hf-id="hf-zeo6" class="mark"><span data-hf-id="hf-5sqp" class="ais">AIS</span><span data-hf-id="hf-p0yb" class="gap"></span><span data-hf-id="hf-234l" class="live">LIVE<span data-hf-id="hf-ohjn" class="ring"></span><span data-hf-id="hf-9gry" class="dot"></span></span></span></div>
+      </div>
+
+      <div data-hf-id="hf-kwiw" id="camera">
+      <section data-hf-id="hf-y8ae" id="sc0" class="scene clip" data-start="0" data-duration="5.4" data-track-index="12">
+        <div data-hf-id="hf-lm34" class="inner">
+        <div data-hf-id="hf-49gn" class="eyebrow">DAY 2 · LUNCH · BACK AT 2:10 CT</div><div data-hf-id="hf-7jiu" class="ln hero"><span data-hf-id="hf-83yx" class="wd">Refuel.</span><span data-hf-id="hf-ihor" class="wd ac">Then</span><span data-hf-id="hf-3hlg" class="wd ac">we</span><span data-hf-id="hf-6t1k" class="wd ac">earn.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-qmf2" id="sc1" class="scene clip" data-start="5" data-duration="8.4" data-track-index="13">
+        <div data-hf-id="hf-bug8" class="inner">
+        <div data-hf-id="hf-i1e8" class="eyebrow">LAUNCHED THIS WEEKEND · AIS CERTIFICATION</div><div data-hf-id="hf-gmyq" class="ln"><span data-hf-id="hf-gns0" class="wd">Get</span><span data-hf-id="hf-5m1v" class="wd">AIS</span><span data-hf-id="hf-rtnp" class="wd ac">Certified.</span></div><div data-hf-id="hf-7fqw" class="sub">The credential that proves you can build and sell real AI services</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-1om9" id="sc3" class="scene clip" data-start="70.033" data-duration="9.4" data-track-index="15">
+        <div data-hf-id="hf-anj5" class="inner">
+        <div data-hf-id="hf-j5ss" class="eyebrow"><span data-hf-id="hf-taa8" class="plus">AIS<span data-hf-id="hf-0gsk" class="p">+</span></span> MEMBERS</div><div data-hf-id="hf-ru7a" class="ln"><span data-hf-id="hf-7eon" class="wd">Every</span><span data-hf-id="hf-cenx" class="wd">workshop</span><span data-hf-id="hf-l2j2" class="wd">template</span><span data-hf-id="hf-3ar0" class="wd">is</span><span data-hf-id="hf-x7cf" class="wd ac">saved</span><span data-hf-id="hf-38q3" class="wd ac">for</span><span data-hf-id="hf-x2mr" class="wd ac">members.</span></div><div data-hf-id="hf-31dk" class="sub">Build along this weekend, keep the templates forever.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-s851" id="sc5" class="scene clip" data-start="145.433" data-duration="8.4" data-track-index="17">
+        <div data-hf-id="hf-b1u6" class="inner">
+        <div data-hf-id="hf-5uji" class="eyebrow">REPLAY · PRESENTING SPONSOR · HYPERAGENT</div><div data-hf-id="hf-s8ib" class="ln"><span data-hf-id="hf-hb87" class="wd">The</span><span data-hf-id="hf-k0zh" class="wd">keynote,</span><span data-hf-id="hf-fggi" class="wd ac">again.</span></div><div data-hf-id="hf-h9b4" class="sub">Alex McDonnell: The New Standard, Why You Need a Fleet of Always-On Agents</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-hivx" id="sc7" class="scene clip" data-start="1258.7" data-duration="10.4" data-track-index="19">
+        <div data-hf-id="hf-9ux3" class="inner">
+        <div data-hf-id="hf-glhw" class="eyebrow">OUR SPONSORS</div><div data-hf-id="hf-vg67" class="logorow"><div data-hf-id="hf-e319" class="logo"><div data-hf-id="hf-c120" class="logobox"><img data-hf-id="hf-n03g" src="assets/sponsors/glaido-white.png" alt="" style="height:150px"></div><div data-hf-id="hf-2ko5" class="logorole">SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-vqsn" id="sc8" class="scene clip" data-start="1268.7" data-duration="5.4" data-track-index="20">
+        <div data-hf-id="hf-a984" class="inner">
+        <div data-hf-id="hf-p89z" class="eyebrow">FROM THE COMMUNITY</div><div data-hf-id="hf-o4fu" class="ln hero"><span data-hf-id="hf-uxq8" class="wd">Real</span><span data-hf-id="hf-4wo3" class="wd">members.</span><span data-hf-id="hf-ttu8" class="wd ac">Real</span><span data-hf-id="hf-id7o" class="wd ac">numbers.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-hioi" id="sc10" class="scene clip" data-start="1338.033" data-duration="8.4" data-track-index="22">
+        <div data-hf-id="hf-92b1" class="inner">
+        <div data-hf-id="hf-y0ha" class="winwrap">
+          <div data-hf-id="hf-xbin" class="wintext">
+            <div data-hf-id="hf-qctt" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-cokw" class="winhead"><span data-hf-id="hf-y0qm" class="wd">$385,000</span><span data-hf-id="hf-mjq0" class="wd ac">contract.</span></div>
+            <div data-hf-id="hf-x8ar" class="winsub">A $25K implementation fee plus $15K a month for 24 months, closed at a 76% profit margin.</div>
+            <div data-hf-id="hf-37r8" class="winname">David Kim</div>
+          </div>
+          <div data-hf-id="hf-tode" class="winshot"><img data-hf-id="hf-00fv" src="assets/wins/david-kim.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-lfz9" id="sc11" class="scene clip" data-start="1346.033" data-duration="8.4" data-track-index="23">
+        <div data-hf-id="hf-9gm2" class="inner">
+        <div data-hf-id="hf-1gc2" class="winwrap">
+          <div data-hf-id="hf-z5pr" class="wintext">
+            <div data-hf-id="hf-hdgl" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-jsco" class="winhead"><span data-hf-id="hf-vgri" class="wd">Two</span><span data-hf-id="hf-t89p" class="wd">deals,</span><span data-hf-id="hf-xxjc" class="wd ac">one</span><span data-hf-id="hf-lohu" class="wd ac">week.</span></div>
+            <div data-hf-id="hf-7eua" class="winsub">$22.5K and $42K sold in the same week, crossing $15K MRR and making his first hire.</div>
+            <div data-hf-id="hf-lmy5" class="winname">Jacob West</div>
+          </div>
+          <div data-hf-id="hf-z7nq" class="winshot"><img data-hf-id="hf-4su4" src="assets/wins/jacob-west.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-svko" id="sc12" class="scene clip" data-start="1354.033" data-duration="8.4" data-track-index="24">
+        <div data-hf-id="hf-emlf" class="inner">
+        <div data-hf-id="hf-1un3" class="winwrap">
+          <div data-hf-id="hf-yreq" class="wintext">
+            <div data-hf-id="hf-ikdo" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-ilfl" class="winhead"><span data-hf-id="hf-01tn" class="wd">$50K+</span><span data-hf-id="hf-uybf" class="wd">in</span><span data-hf-id="hf-k9k7" class="wd ac">the</span><span data-hf-id="hf-xe0k" class="wd ac">pipeline.</span></div>
+            <div data-hf-id="hf-mulu" class="winsub">Four new clients within a month, just a couple of weeks in.</div>
+            <div data-hf-id="hf-sumj" class="winname">Mohammad Sallam</div>
+          </div>
+          <div data-hf-id="hf-zlyr" class="winshot"><img data-hf-id="hf-pcj8" src="assets/wins/mohammad-sallam.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-j4iv" id="sc13" class="scene clip" data-start="1362.033" data-duration="8.4" data-track-index="25">
+        <div data-hf-id="hf-f0wg" class="inner">
+        <div data-hf-id="hf-28y4" class="winwrap">
+          <div data-hf-id="hf-yd3p" class="wintext">
+            <div data-hf-id="hf-i62n" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-izqm" class="winhead"><span data-hf-id="hf-e1j1" class="wd">$40K</span><span data-hf-id="hf-2a9q" class="wd ac">upfront.</span></div>
+            <div data-hf-id="hf-lv36" class="winsub">Plus 20% revenue share, on one custom AI build.</div>
+            <div data-hf-id="hf-4zvz" class="winname">Kobe Shemesh</div>
+          </div>
+          <div data-hf-id="hf-009s" class="winshot"><img data-hf-id="hf-pjrw" src="assets/wins/kobe-shemesh.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-9dna" id="sc14" class="scene clip" data-start="1370.033" data-duration="8.4" data-track-index="26">
+        <div data-hf-id="hf-kvm0" class="inner">
+        <div data-hf-id="hf-2n95" class="winwrap">
+          <div data-hf-id="hf-158w" class="wintext">
+            <div data-hf-id="hf-jczq" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-hstj" class="winhead"><span data-hf-id="hf-f95h" class="wd">£1K</span><span data-hf-id="hf-70q5" class="wd">to</span><span data-hf-id="hf-0yl3" class="wd ac">£30K</span><span data-hf-id="hf-9bm8" class="wd ac">projects.</span></div>
+            <div data-hf-id="hf-qf7y" class="winsub">From selling £1,000 workflows a year ago to closing AI agent projects at £25-30K.</div>
+            <div data-hf-id="hf-92vo" class="winname">Joe Scott</div>
+          </div>
+          <div data-hf-id="hf-x84l" class="winshot"><img data-hf-id="hf-70sn" src="assets/wins/joe-scott.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-b63n" id="sc15" class="scene clip" data-start="1378.033" data-duration="9.4" data-track-index="27">
+        <div data-hf-id="hf-khaz" class="inner">
+        <div data-hf-id="hf-526h" class="eyebrow">LUNCH · LIVE ACTIVITY</div><div data-hf-id="hf-smtc" class="ln"><span data-hf-id="hf-ep1p" class="wd">Practice</span><span data-hf-id="hf-fghr" class="wd">a</span><span data-hf-id="hf-qhf2" class="wd ac">Discovery</span><span data-hf-id="hf-tq9a" class="wd ac">Call.</span></div><div data-hf-id="hf-mmx0" class="sub">The practice room is open right now, all lunch.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-2hgp" id="sc16" class="scene clip" data-start="1387.033" data-duration="9.4" data-track-index="28">
+        <div data-hf-id="hf-k2zy" class="inner">
+        <div data-hf-id="hf-lcj8" class="eyebrow">DISCOVERY CALL PRACTICE</div><div data-hf-id="hf-puo5" class="ln"><span data-hf-id="hf-v2ip" class="wd">Run</span><span data-hf-id="hf-yfw4" class="wd">reps</span><span data-hf-id="hf-onbh" class="wd">on</span><span data-hf-id="hf-rshy" class="wd">what</span><span data-hf-id="hf-wpfb" class="wd">you</span><span data-hf-id="hf-zqnu" class="wd ac">just</span><span data-hf-id="hf-vyqg" class="wd ac">watched.</span></div><div data-hf-id="hf-48pd" class="sub">Paired matching, five-minute structured rounds, feedback every round.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-44xr" id="sc17" class="scene clip" data-start="1396.033" data-duration="9.4" data-track-index="29">
+        <div data-hf-id="hf-joox" class="inner">
+        <div data-hf-id="hf-q8z6" class="ln"><span data-hf-id="hf-miie" class="wd">Grab</span><span data-hf-id="hf-mz2c" class="wd">lunch,</span><span data-hf-id="hf-oaz1" class="wd ac">stay</span><span data-hf-id="hf-o442" class="wd ac">close.</span></div><div data-hf-id="hf-o1h5" class="sub">We're back on the main stage at 2:10 CT.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-b6q9" id="sc18" class="scene clip" data-start="1405.033" data-duration="34.4" data-track-index="30">
+        <div data-hf-id="hf-jadw" class="inner">
+        <div data-hf-id="hf-p47m" class="eyebrow">DAY 2 · THIS AFTERNOON</div><div data-hf-id="hf-qqow" class="agenda"><div data-hf-id="hf-z2vs" class="agrow"><span data-hf-id="hf-z1fb" class="agt">1:35 PM</span><span data-hf-id="hf-xa7x" class="agl">Lunch + Practice Discovery Call + VIP Working Sessions</span></div><div data-hf-id="hf-huwg" class="agrow"><span data-hf-id="hf-d9h1" class="agt">2:10 PM</span><span data-hf-id="hf-iipl" class="agl">Welcome Back: Sales Call Recap + Intro to Pricing</span></div><div data-hf-id="hf-gnzd" class="agrow"><span data-hf-id="hf-09b9" class="agt">2:25 PM</span><span data-hf-id="hf-4ous" class="agl">Ditching Hourly: The Pricing Mindset That Changes Everything</span></div><div data-hf-id="hf-h2ae" class="agrow"><span data-hf-id="hf-d0ue" class="agt">3:10 PM</span><span data-hf-id="hf-9b10" class="agl">What Companies Are Actually Buying in AI</span></div><div data-hf-id="hf-fvdb" class="agrow"><span data-hf-id="hf-iqer" class="agt">3:55 PM</span><span data-hf-id="hf-h1ud" class="agl">Live Debrief: What Buyers Actually Want</span></div><div data-hf-id="hf-g9oc" class="agrow"><span data-hf-id="hf-m8m9" class="agt">4:05 PM</span><span data-hf-id="hf-7cuk" class="agl">The Client Didn't Ask for AI + VIP Pricing War Room</span></div><div data-hf-id="hf-f2r9" class="agrow"><span data-hf-id="hf-875x" class="agt">4:45 PM</span><span data-hf-id="hf-untx" class="agl">What Actually Matters in AI Right Now</span></div><div data-hf-id="hf-fh2a" class="agrow"><span data-hf-id="hf-sib9" class="agt">5:15 PM</span><span data-hf-id="hf-el2m" class="agl">Closing Keynote: Build to Sell</span></div><div data-hf-id="hf-ea57" class="agrow"><span data-hf-id="hf-4rv6" class="agt">5:45 PM</span><span data-hf-id="hf-p60k" class="agl">Nate's Close + <span data-hf-id="hf-6b6w" class="plus">AIS<span data-hf-id="hf-41to" class="p">+</span></span> Pitch</span></div></div><div data-hf-id="hf-43lm" class="sub">All times Central</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-he2u" id="sc19" class="scene clip" data-start="1439.033" data-duration="10.4" data-track-index="31">
+        <div data-hf-id="hf-iw2v" class="inner">
+        <div data-hf-id="hf-lkbm" class="eyebrow">UP NEXT · MAIN STAGE · 2:10 PM</div><div data-hf-id="hf-qna7" class="ln"><span data-hf-id="hf-lpys" class="wd">Sales</span><span data-hf-id="hf-jhes" class="wd">call</span><span data-hf-id="hf-qtnf" class="wd">recap</span><span data-hf-id="hf-m1tp" class="wd">+</span><span data-hf-id="hf-toti" class="wd ac">intro</span><span data-hf-id="hf-94ql" class="wd ac">to</span><span data-hf-id="hf-hh90" class="wd ac">pricing.</span></div><div data-hf-id="hf-sgzj" class="sub">Nate Herk + Jon Morrow, live on the main stage</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-1gam" id="sc20" class="scene clip" data-start="1449.033" data-duration="9.4" data-track-index="32">
+        <div data-hf-id="hf-ihru" class="inner">
+        <div data-hf-id="hf-ayra" class="eyebrow">ALSO THIS AFTERNOON</div><div data-hf-id="hf-r1l8" class="ln"><span data-hf-id="hf-q3t6" class="wd">Ditching</span><span data-hf-id="hf-dodp" class="wd ac">Hourly.</span></div><div data-hf-id="hf-r6ny" class="sub">Jonathan Stark, 2:25 PM, the pricing mindset that changes everything</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-mhw2" id="sc21" class="scene clip" data-start="1458.033" data-duration="7.4" data-track-index="33">
+        <div data-hf-id="hf-i3gt" class="inner">
+        
+        <div data-hf-id="hf-vn0i" class="statwrap">
+          <div data-hf-id="hf-oxpl" class="kicker">MEMBERS WORLDWIDE</div>
+          <div data-hf-id="hf-67gu" class="num">0K+</div>
+          <div data-hf-id="hf-4b9l" class="unit">BUILDERS STRONG</div>
+        </div><div data-hf-id="hf-5syn" class="sub">One community. Every timezone.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-55wl" id="sc22" class="scene clip" data-start="1465.033" data-duration="8.4" data-track-index="34">
+        <div data-hf-id="hf-o228" class="inner">
+        <div data-hf-id="hf-vq2v" class="eyebrow">FROM THE COMMUNITY</div><div data-hf-id="hf-4oj4" class="ln quoteln"><span data-hf-id="hf-r0bf" class="wd">In</span><span data-hf-id="hf-6l2c" class="wd">six</span><span data-hf-id="hf-ccm9" class="wd">weeks</span><span data-hf-id="hf-ozuf" class="wd">I</span><span data-hf-id="hf-wxm0" class="wd">landed</span><span data-hf-id="hf-omwu" class="wd">two</span><span data-hf-id="hf-6pq7" class="wd">contracts</span><span data-hf-id="hf-c9h8" class="wd">worth</span><span data-hf-id="hf-z3zp" class="wd">nearly</span><span data-hf-id="hf-xif4" class="wd">$20,000.</span><span data-hf-id="hf-7vid" class="wd">And</span><span data-hf-id="hf-89rr" class="wd">the</span><span data-hf-id="hf-re4r" class="wd">sky's</span><span data-hf-id="hf-no8n" class="wd">the</span><span data-hf-id="hf-nufv" class="wd">limit.</span></div><div data-hf-id="hf-ad9w" class="sub attrib">Amy Simpson</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-2lks" id="sc23" class="scene clip" data-start="1473.033" data-duration="8.4" data-track-index="35">
+        <div data-hf-id="hf-nnr7" class="inner">
+        <div data-hf-id="hf-a9h5" class="eyebrow">MEMBER WIN</div><div data-hf-id="hf-40eg" class="ln quoteln"><span data-hf-id="hf-sfmf" class="wd">Every</span><span data-hf-id="hf-c3rn" class="wd">client</span><span data-hf-id="hf-b40y" class="wd">came</span><span data-hf-id="hf-qr6p" class="wd">to</span><span data-hf-id="hf-evv0" class="wd">me.</span><span data-hf-id="hf-kbjr" class="wd">I</span><span data-hf-id="hf-tk2u" class="wd">never</span><span data-hf-id="hf-rju2" class="wd">sent</span><span data-hf-id="hf-fqdb" class="wd">a</span><span data-hf-id="hf-usv4" class="wd">single</span><span data-hf-id="hf-thbq" class="wd">cold</span><span data-hf-id="hf-p3yz" class="wd">DM.</span></div><div data-hf-id="hf-hqll" class="sub attrib">Abdurrahman Ibrahim</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-i8wz" id="sc24" class="scene clip" data-start="1481.033" data-duration="8.4" data-track-index="36">
+        <div data-hf-id="hf-l16r" class="inner">
+        <div data-hf-id="hf-o9g1" class="ln"><span data-hf-id="hf-kt7g" class="wd">We're</span><span data-hf-id="hf-bpv3" class="wd">back</span><span data-hf-id="hf-5wk1" class="wd">at</span><span data-hf-id="hf-ijc1" class="wd ac">2:10</span><span data-hf-id="hf-hfif" class="wd ac">CT.</span></div><div data-hf-id="hf-991m" class="sub">Welcome Back: Sales Call Recap + Intro to Pricing</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-our7" id="sc25" class="scene clip" data-start="1489.033" data-duration="8.4" data-track-index="37">
+        <div data-hf-id="hf-lfhs" class="inner">
+        <div data-hf-id="hf-qqsd" class="bigmark"><span data-hf-id="hf-kh9c" class="mark big"><span data-hf-id="hf-xjo5" class="ais">AIS</span><span data-hf-id="hf-jq0j" class="gap"></span><span data-hf-id="hf-0ya1" class="live">LIVE<span data-hf-id="hf-qib7" class="ring"></span><span data-hf-id="hf-zcc2" class="dot"></span></span></span></div><div data-hf-id="hf-tx9q" class="sub">Day 2 · Lunch · Back at 2:10 CT</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-efm3" id="sc26" class="scene clip" data-start="1497.033" data-duration="5.4" data-track-index="38">
+        <div data-hf-id="hf-k8kp" class="inner">
+        <div data-hf-id="hf-a7bb" class="eyebrow">DAY 2 · LUNCH · BACK AT 2:10 CT</div><div data-hf-id="hf-oiqv" class="ln hero"><span data-hf-id="hf-jj6o" class="wd">Lunch</span><span data-hf-id="hf-2lqu" class="wd">now.</span><span data-hf-id="hf-tn2q" class="wd ac">Pricing</span><span data-hf-id="hf-0f3t" class="wd ac">next.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-zycd" id="sc27" class="scene clip" data-start="1502.033" data-duration="8.4" data-track-index="39">
+        <div data-hf-id="hf-kmvq" class="inner">
+        <div data-hf-id="hf-3d60" class="eyebrow">LAUNCHED THIS WEEKEND · AIS CERTIFICATION</div><div data-hf-id="hf-onr2" class="ln"><span data-hf-id="hf-4ml4" class="wd">Get</span><span data-hf-id="hf-7x0j" class="wd">AIS</span><span data-hf-id="hf-2qex" class="wd ac">Certified.</span></div><div data-hf-id="hf-aq1c" class="sub">The credential that proves you can build and sell real AI services</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-bram" id="sc29" class="scene clip" data-start="1567.066" data-duration="9.4" data-track-index="41">
+        <div data-hf-id="hf-jfyn" class="inner">
+        <div data-hf-id="hf-77kk" class="eyebrow"><span data-hf-id="hf-549t" class="plus">AIS<span data-hf-id="hf-2uwl" class="p">+</span></span> MEMBERS</div><div data-hf-id="hf-9fs2" class="ln"><span data-hf-id="hf-wwmk" class="wd">Membership</span><span data-hf-id="hf-5xpm" class="wd">questions?</span><span data-hf-id="hf-gbjh" class="wd ac">Ask</span><span data-hf-id="hf-z8rl" class="wd ac">at</span><span data-hf-id="hf-jv9j" class="wd ac">the</span><span data-hf-id="hf-j37y" class="wd ac">booth.</span></div><div data-hf-id="hf-76h3" class="sub">Nate takes a full pass at <span data-hf-id="hf-5iku" class="plus">AIS<span data-hf-id="hf-397m" class="p">+</span></span> at the close, 5:45 PM.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-lv2h" id="sc30" class="scene clip" data-start="1576.066" data-duration="5.4" data-track-index="42">
+        <div data-hf-id="hf-ju9o" class="inner">
+        <div data-hf-id="hf-d32s" class="eyebrow">THANK YOU</div><div data-hf-id="hf-ox1w" class="ln hero"><span data-hf-id="hf-90rb" class="wd">The</span><span data-hf-id="hf-miob" class="wd">sponsors</span><span data-hf-id="hf-hxpk" class="wd ac">behind</span><span data-hf-id="hf-7jpv" class="wd ac">AIS</span><span data-hf-id="hf-sckg" class="wd ac">LIVE.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-xxyk" id="sc31" class="scene clip" data-start="1581.066" data-duration="60.4" data-track-index="43">
+        <div data-hf-id="hf-incl" class="inner">
+        <div data-hf-id="hf-fox8" class="eyebrow">OUR SPONSORS</div><div data-hf-id="hf-5ycf" class="logorow"><div data-hf-id="hf-rugh" class="logo"><div data-hf-id="hf-kka8" class="logobox"><img data-hf-id="hf-bqzq" src="assets/sponsors/hyperagent-white-big.png" alt="" style="height:130px"></div><div data-hf-id="hf-vm3i" class="logorole">PRESENTING SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-3tyi" id="sc32" class="scene clip" data-start="1641.066" data-duration="10.4" data-track-index="44">
+        <div data-hf-id="hf-j1nm" class="inner">
+        <div data-hf-id="hf-ei05" class="eyebrow">OUR SPONSORS</div><div data-hf-id="hf-5k1e" class="logorow"><div data-hf-id="hf-t1dk" class="logo"><div data-hf-id="hf-jdd5" class="logobox"><img data-hf-id="hf-t19w" src="assets/sponsors/glaido-white.png" alt="" style="height:150px"></div><div data-hf-id="hf-gjg9" class="logorole">SPONSOR</div></div></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-h7z7" id="sc33" class="scene clip" data-start="1651.066" data-duration="5.4" data-track-index="45">
+        <div data-hf-id="hf-huqj" class="inner">
+        <div data-hf-id="hf-vbru" class="eyebrow">FROM THE COMMUNITY</div><div data-hf-id="hf-pbcx" class="ln hero"><span data-hf-id="hf-vnso" class="wd">Real</span><span data-hf-id="hf-abu9" class="wd">builds.</span><span data-hf-id="hf-ajoo" class="wd ac">Real</span><span data-hf-id="hf-0lql" class="wd ac">paydays.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-vdf2" id="sc35" class="scene clip" data-start="1726.366" data-duration="8.4" data-track-index="47">
+        <div data-hf-id="hf-i91k" class="inner">
+        <div data-hf-id="hf-31k6" class="winwrap">
+          <div data-hf-id="hf-0qxv" class="wintext">
+            <div data-hf-id="hf-iyop" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-i74k" class="winhead"><span data-hf-id="hf-90ba" class="wd">$25K</span><span data-hf-id="hf-xwpc" class="wd ac">this</span><span data-hf-id="hf-ve0c" class="wd ac">month.</span></div>
+            <div data-hf-id="hf-1lkk" class="winsub">What started as a side hustle now invoices $25K a month, with $9K more in the pipeline.</div>
+            <div data-hf-id="hf-zskc" class="winname">Sef El</div>
+          </div>
+          <div data-hf-id="hf-xmfm" class="winshot"><img data-hf-id="hf-qlcr" src="assets/wins/sef-el.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-ljzj" id="sc36" class="scene clip" data-start="1734.366" data-duration="8.4" data-track-index="48">
+        <div data-hf-id="hf-7jq2" class="inner">
+        <div data-hf-id="hf-3fv7" class="winwrap">
+          <div data-hf-id="hf-0cmu" class="wintext">
+            <div data-hf-id="hf-k5ls" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-h07h" class="winhead"><span data-hf-id="hf-csiu" class="wd">$10K</span><span data-hf-id="hf-14aj" class="wd">in</span><span data-hf-id="hf-bjb4" class="wd ac">one</span><span data-hf-id="hf-e53l" class="wd ac">year.</span></div>
+            <div data-hf-id="hf-iwm0" class="winsub">A side hustle while still in university. 80% of it came through <span data-hf-id="hf-4bnr" class="plus">AIS<span data-hf-id="hf-58qr" class="p">+</span></span> connections.</div>
+            <div data-hf-id="hf-28ve" class="winname">Abdurrahman Ibrahim</div>
+          </div>
+          <div data-hf-id="hf-y0qn" class="winshot"><img data-hf-id="hf-apih" src="assets/wins/abdurrahman-ibrahim.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-7d64" id="sc37" class="scene clip" data-start="1742.366" data-duration="8.4" data-track-index="49">
+        <div data-hf-id="hf-75f1" class="inner">
+        <div data-hf-id="hf-3u68" class="winwrap">
+          <div data-hf-id="hf-zybt" class="wintext">
+            <div data-hf-id="hf-jrar" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-heii" class="winhead"><span data-hf-id="hf-g0ka" class="wd">First</span><span data-hf-id="hf-nne5" class="wd">client,</span><span data-hf-id="hf-livq" class="wd ac">$5K.</span></div>
+            <div data-hf-id="hf-jp9l" class="winsub">Closed at 18 years old.</div>
+            <div data-hf-id="hf-2aix" class="winname">Noel Payano</div>
+          </div>
+          <div data-hf-id="hf-yf1o" class="winshot"><img data-hf-id="hf-fw3e" src="assets/wins/noel-payano.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-o6f4" id="sc38" class="scene clip" data-start="1750.366" data-duration="8.4" data-track-index="50">
+        <div data-hf-id="hf-8cc4" class="inner">
+        <div data-hf-id="hf-xvkt" class="winwrap">
+          <div data-hf-id="hf-wdkk" class="wintext">
+            <div data-hf-id="hf-elbe" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-mkhv" class="winhead"><span data-hf-id="hf-xenx" class="wd">$5,000,</span><span data-hf-id="hf-o256" class="wd ac">locked</span><span data-hf-id="hf-q7fj" class="wd ac">in.</span></div>
+            <div data-hf-id="hf-8d1a" class="winsub">First client closed at 38, with a full-time job and a toddler at home.</div>
+            <div data-hf-id="hf-r1bu" class="winname">Tyler Capps</div>
+          </div>
+          <div data-hf-id="hf-vmwh" class="winshot"><img data-hf-id="hf-auy9" src="assets/wins/tyler-capps.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-hpvg" id="sc39" class="scene clip" data-start="1758.366" data-duration="8.4" data-track-index="51">
+        <div data-hf-id="hf-7y13" class="inner">
+        <div data-hf-id="hf-y9vu" class="winwrap">
+          <div data-hf-id="hf-vz9j" class="wintext">
+            <div data-hf-id="hf-e70d" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-mysw" class="winhead"><span data-hf-id="hf-sum4" class="wd">Three</span><span data-hf-id="hf-b4gb" class="wd">builds,</span><span data-hf-id="hf-ace1" class="wd ac">one</span><span data-hf-id="hf-3puu" class="wd ac">week.</span></div>
+            <div data-hf-id="hf-w9tw" class="winsub">Two recurring sites at $150 and $200 a month, plus a $1,000 portfolio build.</div>
+            <div data-hf-id="hf-i2nf" class="winname">Michael Elliott</div>
+          </div>
+          <div data-hf-id="hf-w17i" class="winshot"><img data-hf-id="hf-whei" src="assets/wins/michael-elliott.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-jj8t" id="sc40" class="scene clip" data-start="1766.366" data-duration="9.4" data-track-index="52">
+        <div data-hf-id="hf-94y6" class="inner">
+        <div data-hf-id="hf-6y4d" class="eyebrow">LUNCH · LIVE ACTIVITY</div><div data-hf-id="hf-91h1" class="ln"><span data-hf-id="hf-puv5" class="wd">Practice</span><span data-hf-id="hf-fc2a" class="wd">a</span><span data-hf-id="hf-3gs2" class="wd ac">Discovery</span><span data-hf-id="hf-ncxe" class="wd ac">Call.</span></div><div data-hf-id="hf-wou4" class="sub">The practice room is open right now, all lunch.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-zrd5" id="sc41" class="scene clip" data-start="1775.366" data-duration="9.4" data-track-index="53">
+        <div data-hf-id="hf-8qn5" class="inner">
+        <div data-hf-id="hf-l8ek" class="eyebrow">DISCOVERY CALL PRACTICE</div><div data-hf-id="hf-a8e4" class="ln"><span data-hf-id="hf-7l93" class="wd">You</span><span data-hf-id="hf-xx3q" class="wd">watched</span><span data-hf-id="hf-n9xm" class="wd">the</span><span data-hf-id="hf-hb7i" class="wd">call.</span><span data-hf-id="hf-2zws" class="wd ac">Now</span><span data-hf-id="hf-yfap" class="wd ac">run</span><span data-hf-id="hf-374i" class="wd ac">one.</span></div><div data-hf-id="hf-v4ol" class="sub">The Discovery Call Practice room pairs you up automatically.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-w3ql" id="sc42" class="scene clip" data-start="1784.366" data-duration="9.4" data-track-index="54">
+        <div data-hf-id="hf-9xk8" class="inner">
+        <div data-hf-id="hf-9u33" class="ln"><span data-hf-id="hf-nhgy" class="wd">Best</span><span data-hf-id="hf-j7wl" class="wd">time</span><span data-hf-id="hf-ry3s" class="wd">to</span><span data-hf-id="hf-tb9d" class="wd ac">work</span><span data-hf-id="hf-jgyi" class="wd ac">the</span><span data-hf-id="hf-uodw" class="wd ac">floor.</span></div><div data-hf-id="hf-ne72" class="sub">The whole community is out of session right now.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-5jzp" id="sc43" class="scene clip" data-start="1793.366" data-duration="34.4" data-track-index="55">
+        <div data-hf-id="hf-9j97" class="inner">
+        <div data-hf-id="hf-8mom" class="eyebrow">DAY 2 · THIS AFTERNOON</div><div data-hf-id="hf-me8o" class="agenda"><div data-hf-id="hf-eog8" class="agrow"><span data-hf-id="hf-or1z" class="agt">1:35 PM</span><span data-hf-id="hf-oxld" class="agl">Lunch + Practice Discovery Call + VIP Working Sessions</span></div><div data-hf-id="hf-8mtc" class="agrow"><span data-hf-id="hf-i3qh" class="agt">2:10 PM</span><span data-hf-id="hf-cg0d" class="agl">Welcome Back: Sales Call Recap + Intro to Pricing</span></div><div data-hf-id="hf-88ib" class="agrow"><span data-hf-id="hf-5ta1" class="agt">2:25 PM</span><span data-hf-id="hf-f7jg" class="agl">Ditching Hourly: The Pricing Mindset That Changes Everything</span></div><div data-hf-id="hf-7u7a" class="agrow"><span data-hf-id="hf-1itm" class="agt">3:10 PM</span><span data-hf-id="hf-ro6k" class="agl">What Companies Are Actually Buying in AI</span></div><div data-hf-id="hf-7fw9" class="agrow"><span data-hf-id="hf-pxub" class="agt">3:55 PM</span><span data-hf-id="hf-uvnt" class="agl">Live Debrief: What Buyers Actually Want</span></div><div data-hf-id="hf-71l8" class="agrow"><span data-hf-id="hf-qr79" class="agt">4:05 PM</span><span data-hf-id="hf-i5es" class="agl">The Client Didn't Ask for AI + VIP Pricing War Room</span></div><div data-hf-id="hf-6na7" class="agrow"><span data-hf-id="hf-mie1" class="agt">4:45 PM</span><span data-hf-id="hf-v43d" class="agl">What Actually Matters in AI Right Now</span></div><div data-hf-id="hf-68z6" class="agrow"><span data-hf-id="hf-paeh" class="agt">5:15 PM</span><span data-hf-id="hf-chte" class="agl">Closing Keynote: Build to Sell</span></div><div data-hf-id="hf-5uo5" class="agrow"><span data-hf-id="hf-id7a" class="agt">5:45 PM</span><span data-hf-id="hf-wpn0" class="agl">Nate's Close + <span data-hf-id="hf-4pys" class="plus">AIS<span data-hf-id="hf-5n1s" class="p">+</span></span> Pitch</span></div></div><div data-hf-id="hf-fu8u" class="sub">All times Central</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-m9f5" id="sc44" class="scene clip" data-start="1827.366" data-duration="10.4" data-track-index="56">
+        <div data-hf-id="hf-aq6a" class="inner">
+        <div data-hf-id="hf-i7ly" class="eyebrow">UP NEXT · MAIN STAGE · 2:10 PM</div><div data-hf-id="hf-b106" class="ln"><span data-hf-id="hf-55u4" class="wd">Sales</span><span data-hf-id="hf-sgpo" class="wd">call</span><span data-hf-id="hf-5tcr" class="wd">recap</span><span data-hf-id="hf-1m8h" class="wd">+</span><span data-hf-id="hf-bfqi" class="wd ac">intro</span><span data-hf-id="hf-5kk1" class="wd ac">to</span><span data-hf-id="hf-ns18" class="wd ac">pricing.</span></div><div data-hf-id="hf-cs8v" class="sub">Nate Herk + Jon Morrow, live on the main stage</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-n09k" id="sc45" class="scene clip" data-start="1837.366" data-duration="9.4" data-track-index="57">
+        <div data-hf-id="hf-abv9" class="inner">
+        <div data-hf-id="hf-6vve" class="eyebrow">ALSO THIS AFTERNOON</div><div data-hf-id="hf-amp5" class="ln"><span data-hf-id="hf-p4bq" class="wd">What</span><span data-hf-id="hf-l4vv" class="wd">companies</span><span data-hf-id="hf-5ul2" class="wd">are</span><span data-hf-id="hf-t5xl" class="wd ac">actually</span><span data-hf-id="hf-1nzi" class="wd ac">buying.</span></div><div data-hf-id="hf-jarc" class="sub">Dr. Dariia Vasylieva with Anne-Marie Enns, 3:10 PM</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-sm42" id="sc46" class="scene clip" data-start="1846.366" data-duration="7.4" data-track-index="58">
+        <div data-hf-id="hf-3nbp" class="inner">
+        
+        <div data-hf-id="hf-chba" class="statwrap">
+          <div data-hf-id="hf-mm6p" class="kicker">THE ROOM IS PACKED</div>
+          <div data-hf-id="hf-u2ep" class="num">0+</div>
+          <div data-hf-id="hf-eorz" class="unit">PEOPLE GOING</div>
+        </div><div data-hf-id="hf-p6c8" class="sub">Two days, together in the room.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-5ohv" id="sc47" class="scene clip" data-start="1853.366" data-duration="8.4" data-track-index="59">
+        <div data-hf-id="hf-41mq" class="inner">
+        <div data-hf-id="hf-g7f3" class="eyebrow">FROM LAID OFF TO HIRED</div><div data-hf-id="hf-2thd" class="ln quoteln"><span data-hf-id="hf-kvq3" class="wd">In</span><span data-hf-id="hf-exr9" class="wd">a</span><span data-hf-id="hf-hivu" class="wd">month</span><span data-hf-id="hf-wzol" class="wd">and</span><span data-hf-id="hf-hpwg" class="wd">a</span><span data-hf-id="hf-ll5v" class="wd">half,</span><span data-hf-id="hf-jx8q" class="wd">I</span><span data-hf-id="hf-jizi" class="wd">went</span><span data-hf-id="hf-t7cc" class="wd">from</span><span data-hf-id="hf-8b57" class="wd">being</span><span data-hf-id="hf-igba" class="wd">laid</span><span data-hf-id="hf-xu5l" class="wd">off</span><span data-hf-id="hf-rjsr" class="wd">to</span><span data-hf-id="hf-3yy5" class="wd">having</span><span data-hf-id="hf-hblf" class="wd">a</span><span data-hf-id="hf-53bf" class="wd">job.</span></div><div data-hf-id="hf-mcmm" class="sub attrib">Griffin Maklansky</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-h0lv" id="sc48" class="scene clip" data-start="1861.366" data-duration="8.4" data-track-index="60">
+        <div data-hf-id="hf-4fxr" class="inner">
+        <div data-hf-id="hf-mjpp" class="eyebrow">MEMBER WIN</div><div data-hf-id="hf-37se" class="ln quoteln"><span data-hf-id="hf-dex0" class="wd">Six</span><span data-hf-id="hf-xi4r" class="wd">months</span><span data-hf-id="hf-rtrp" class="wd">of</span><span data-hf-id="hf-fa6f" class="wd">engineering</span><span data-hf-id="hf-t1dz" class="wd">work,</span><span data-hf-id="hf-snzt" class="wd">compressed</span><span data-hf-id="hf-w2wm" class="wd">into</span><span data-hf-id="hf-z16g" class="wd">one</span><span data-hf-id="hf-39hu" class="wd">afternoon.</span></div><div data-hf-id="hf-9l7e" class="sub attrib">Duy Nguyen</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-k3dr" id="sc49" class="scene clip" data-start="1869.366" data-duration="8.4" data-track-index="61">
+        <div data-hf-id="hf-4u8s" class="inner">
+        <div data-hf-id="hf-btm8" class="ln"><span data-hf-id="hf-62bl" class="wd">Main</span><span data-hf-id="hf-kxde" class="wd">stage</span><span data-hf-id="hf-otmz" class="wd">returns</span><span data-hf-id="hf-ugl1" class="wd ac">2:10</span><span data-hf-id="hf-usbr" class="wd ac">CT.</span></div><div data-hf-id="hf-3x4u" class="sub">Nate Herk + Jon Morrow pull the sales call apart</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-ndyf" id="sc50" class="scene clip" data-start="1877.366" data-duration="8.4" data-track-index="62">
+        <div data-hf-id="hf-58jt" class="inner">
+        <div data-hf-id="hf-ogtt" class="bigmark"><span data-hf-id="hf-t7q0" class="mark big"><span data-hf-id="hf-yql8" class="ais">AIS</span><span data-hf-id="hf-jbpi" class="gap"></span><span data-hf-id="hf-2574" class="live">LIVE<span data-hf-id="hf-q406" class="ring"></span><span data-hf-id="hf-zqn3" class="dot"></span></span></span></div><div data-hf-id="hf-hv3m" class="sub">Day 2 · Lunch · Back at 2:10 CT</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-2cug" id="sc51" class="scene clip" data-start="1885.366" data-duration="8.4" data-track-index="63">
+        <div data-hf-id="hf-5muu" class="inner">
+        <div data-hf-id="hf-2t2l" class="eyebrow">WHY WE'RE HERE</div><div data-hf-id="hf-20vb" class="ln quoteln"><span data-hf-id="hf-jixp" class="wd">I</span><span data-hf-id="hf-1unc" class="wd">found</span><span data-hf-id="hf-pw52" class="wd">my</span><span data-hf-id="hf-iz5j" class="wd">home.</span><span data-hf-id="hf-mb2w" class="wd">I</span><span data-hf-id="hf-eq8w" class="wd">found</span><span data-hf-id="hf-oxga" class="wd">my</span><span data-hf-id="hf-di76" class="wd">tribe.</span></div><div data-hf-id="hf-w6ln" class="sub attrib">Tonia Hardeman</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-xk0l" id="sc52" class="scene clip" data-start="1893.366" data-duration="8.4" data-track-index="64">
+        <div data-hf-id="hf-615v" class="inner">
+        <div data-hf-id="hf-sspy" class="winwrap">
+          <div data-hf-id="hf-32h9" class="wintext">
+            <div data-hf-id="hf-posv" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-aq5k" class="winhead"><span data-hf-id="hf-95sg" class="wd">$750</span><span data-hf-id="hf-0pzi" class="wd">in</span><span data-hf-id="hf-vano" class="wd ac">six</span><span data-hf-id="hf-mqq3" class="wd ac">days.</span></div>
+            <div data-hf-id="hf-a9wi" class="winsub">Landed her first AI OS build less than a week after joining.</div>
+            <div data-hf-id="hf-jypt" class="winname">Galyn Fergerson</div>
+          </div>
+          <div data-hf-id="hf-5a4i" class="winshot"><img data-hf-id="hf-bn38" src="assets/wins/galyn-fergerson.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-ufgu" id="sc53" class="scene clip" data-start="1901.366" data-duration="7.4" data-track-index="65">
+        <div data-hf-id="hf-6fgw" class="inner">
+        
+        <div data-hf-id="hf-cvmb" class="statwrap">
+          <div data-hf-id="hf-2ndt" class="kicker">SHIPPED BY THE COMMUNITY</div>
+          <div data-hf-id="hf-atzm" class="num">0K+</div>
+          <div data-hf-id="hf-dcnp" class="unit">AUTOMATIONS SHIPPED</div>
+        </div><div data-hf-id="hf-nxy6" class="sub">Real workflows. Real businesses.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-lg10" id="sc54" class="scene clip" data-start="1908.366" data-duration="8.4" data-track-index="66">
+        <div data-hf-id="hf-0gvh" class="inner">
+        <div data-hf-id="hf-seex" class="winwrap">
+          <div data-hf-id="hf-3gsa" class="wintext">
+            <div data-hf-id="hf-q33w" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-abuj" class="winhead"><span data-hf-id="hf-j71m" class="wd">Paid</span><span data-hf-id="hf-y7fw" class="wd">$800,</span><span data-hf-id="hf-4i22" class="wd ac">first</span><span data-hf-id="hf-rqad" class="wd ac">project.</span></div>
+            <div data-hf-id="hf-uftc" class="winsub">A Claude-coded home inventory system cataloging 1,000+ items.</div>
+            <div data-hf-id="hf-usf9" class="winname">Nika Matveeva</div>
+          </div>
+          <div data-hf-id="hf-4vth" class="winshot"><img data-hf-id="hf-7uly" src="assets/wins/nika-matveeva.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-ummg" id="sc55" class="scene clip" data-start="1916.366" data-duration="9.4" data-track-index="67">
+        <div data-hf-id="hf-0v6i" class="inner">
+        <div data-hf-id="hf-hfrh" class="eyebrow">STILL LUNCH</div><div data-hf-id="hf-bfb7" class="ln"><span data-hf-id="hf-q9ed" class="wd">Booths</span><span data-hf-id="hf-wmbe" class="wd">are</span><span data-hf-id="hf-8uby" class="wd ac">still</span><span data-hf-id="hf-2pce" class="wd ac">open.</span></div><div data-hf-id="hf-oofi" class="sub">A few minutes left to work the floor.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-6nr7" id="sc56" class="scene clip" data-start="1925.366" data-duration="8.4" data-track-index="68">
+        <div data-hf-id="hf-lsuk" class="inner">
+        <div data-hf-id="hf-tlc0" class="winwrap">
+          <div data-hf-id="hf-3v3b" class="wintext">
+            <div data-hf-id="hf-ku7p" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-9xji" class="winhead"><span data-hf-id="hf-kdw0" class="wd">Second</span><span data-hf-id="hf-hhtf" class="wd">client</span><span data-hf-id="hf-10bv" class="wd ac">in</span><span data-hf-id="hf-89qd" class="wd ac">3</span><span data-hf-id="hf-i8ff" class="wd ac">days.</span></div>
+            <div data-hf-id="hf-96v9" class="winsub">Three days after signing his first, and the new client paid on the spot.</div>
+            <div data-hf-id="hf-qqwn" class="winname">Christian Barraza</div>
+          </div>
+          <div data-hf-id="hf-62qk" class="winshot"><img data-hf-id="hf-gd5m" src="assets/wins/christian-barraza.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-ghhr" id="sc57" class="scene clip" data-start="1933.366" data-duration="30.4" data-track-index="69">
+        <div data-hf-id="hf-lejj" class="inner">
+        <div data-hf-id="hf-90zn" class="eyebrow">DAY 2 · THIS AFTERNOON</div><div data-hf-id="hf-l7bl" class="agenda"><div data-hf-id="hf-5gd4" class="agrow"><span data-hf-id="hf-ocqy" class="agt">1:35 PM</span><span data-hf-id="hf-q4ig" class="agl">Lunch + Practice Discovery Call + VIP Working Sessions</span></div><div data-hf-id="hf-5223" class="agrow"><span data-hf-id="hf-jank" class="agt">2:10 PM</span><span data-hf-id="hf-dmxg" class="agl">Welcome Back: Sales Call Recap + Intro to Pricing</span></div><div data-hf-id="hf-w2l7" class="agrow"><span data-hf-id="hf-7074" class="agt">2:25 PM</span><span data-hf-id="hf-e0md" class="agl">Ditching Hourly: The Pricing Mindset That Changes Everything</span></div><div data-hf-id="hf-wgw8" class="agrow"><span data-hf-id="hf-1x4n" class="agt">3:10 PM</span><span data-hf-id="hf-qh9h" class="agl">What Companies Are Actually Buying in AI</span></div><div data-hf-id="hf-v9z5" class="agrow"><span data-hf-id="hf-pjja" class="agt">3:55 PM</span><span data-hf-id="hf-w2kw" class="agl">Live Debrief: What Buyers Actually Want</span></div><div data-hf-id="hf-voa6" class="agrow"><span data-hf-id="hf-ry4c" class="agt">4:05 PM</span><span data-hf-id="hf-gyhp" class="agl">The Client Didn't Ask for AI + VIP Pricing War Room</span></div><div data-hf-id="hf-uhd3" class="agrow"><span data-hf-id="hf-npb4" class="agt">4:45 PM</span><span data-hf-id="hf-wb0g" class="agl">What Actually Matters in AI Right Now</span></div><div data-hf-id="hf-uvo4" class="agrow"><span data-hf-id="hf-qhbk" class="agt">5:15 PM</span><span data-hf-id="hf-cw4f" class="agl">Closing Keynote: Build to Sell</span></div><div data-hf-id="hf-tor1" class="agrow"><span data-hf-id="hf-irib" class="agt">5:45 PM</span><span data-hf-id="hf-vipx" class="agl">Nate's Close + <span data-hf-id="hf-3j1p" class="plus">AIS<span data-hf-id="hf-4g4p" class="p">+</span></span> Pitch</span></div></div><div data-hf-id="hf-g8jv" class="sub">All times Central</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-wjbw" id="sc58" class="scene clip" data-start="1963.366" data-duration="8.4" data-track-index="70">
+        <div data-hf-id="hf-l08i" class="inner">
+        <div data-hf-id="hf-t70z" class="winwrap">
+          <div data-hf-id="hf-49ec" class="wintext">
+            <div data-hf-id="hf-pahu" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-9j8h" class="winhead"><span data-hf-id="hf-gldf" class="wd">Client</span><span data-hf-id="hf-0boh" class="wd">in</span><span data-hf-id="hf-2x94" class="wd ac">week</span><span data-hf-id="hf-9ouu" class="wd ac">one.</span></div>
+            <div data-hf-id="hf-z6ay" class="winsub">Two courses finished and a first paying client, all in the first week.</div>
+            <div data-hf-id="hf-ijd4" class="winname">Chase Coughlin</div>
+          </div>
+          <div data-hf-id="hf-5ofj" class="winshot"><img data-hf-id="hf-xp3n" src="assets/wins/chase-coughlin.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-80cx" id="sc59" class="scene clip" data-start="1971.366" data-duration="8.4" data-track-index="71">
+        <div data-hf-id="hf-klxh" class="inner">
+        <div data-hf-id="hf-278v" class="eyebrow">CAREER SHIFT</div><div data-hf-id="hf-2f6c" class="ln quoteln"><span data-hf-id="hf-lwrv" class="wd">I</span><span data-hf-id="hf-dfp5" class="wd">actually</span><span data-hf-id="hf-j24i" class="wd">got</span><span data-hf-id="hf-pbrb" class="wd">my</span><span data-hf-id="hf-413j" class="wd">dream</span><span data-hf-id="hf-bg1u" class="wd">role:</span><span data-hf-id="hf-g7xy" class="wd">head</span><span data-hf-id="hf-ehex" class="wd">of</span><span data-hf-id="hf-9qzo" class="wd">AI.</span></div><div data-hf-id="hf-87ty" class="sub attrib">Pedro Gomez</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-1muy" id="sc60" class="scene clip" data-start="1979.366" data-duration="8.4" data-track-index="72">
+        <div data-hf-id="hf-ne2o" class="inner">
+        <div data-hf-id="hf-r7hu" class="winwrap">
+          <div data-hf-id="hf-4npd" class="wintext">
+            <div data-hf-id="hf-ra0z" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-94xg" class="winhead"><span data-hf-id="hf-dpon" class="wd">100</span><span data-hf-id="hf-y33d" class="wd">sessions</span><span data-hf-id="hf-iwxh" class="wd ac">at</span><span data-hf-id="hf-mkl8" class="wd ac">68.</span></div>
+            <div data-hf-id="hf-qcfe" class="winsub">Her 100th Claude Code session, building automations at 68 years young.</div>
+            <div data-hf-id="hf-yyhb" class="winname">Diane McCracken</div>
+          </div>
+          <div data-hf-id="hf-6vcm" class="winshot"><img data-hf-id="hf-kyh2" src="assets/wins/diane-mccracken.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-tf7c" id="sc61" class="scene clip" data-start="1987.366" data-duration="9.4" data-track-index="73">
+        <div data-hf-id="hf-mzrn" class="inner">
+        <div data-hf-id="hf-k1hh" class="eyebrow">DISCOVERY CALL PRACTICE</div><div data-hf-id="hf-69bu" class="ln"><span data-hf-id="hf-yvdq" class="wd">Still</span><span data-hf-id="hf-1kpl" class="wd">time</span><span data-hf-id="hf-pk9m" class="wd">to</span><span data-hf-id="hf-61gl" class="wd ac">run</span><span data-hf-id="hf-s51r" class="wd ac">a</span><span data-hf-id="hf-c7j7" class="wd ac">rep.</span></div><div data-hf-id="hf-330r" class="sub">Five-minute rounds until 2:10.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-sc63" id="sc62" class="scene clip" data-start="1996.366" data-duration="8.4" data-track-index="74">
+        <div data-hf-id="hf-mlgm" class="inner">
+        <div data-hf-id="hf-qt6t" class="winwrap">
+          <div data-hf-id="hf-520e" class="wintext">
+            <div data-hf-id="hf-roc0" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-8qmf" class="winhead"><span data-hf-id="hf-y01u" class="wd">Analyst</span><span data-hf-id="hf-6rh4" class="wd ac">to</span><span data-hf-id="hf-30h3" class="wd ac">builder.</span></div>
+            <div data-hf-id="hf-e6iy" class="winsub">After 15 years designing systems, he finally builds them, and signed a monthly retainer.</div>
+            <div data-hf-id="hf-08yw" class="winname">Wayne Dowden</div>
+          </div>
+          <div data-hf-id="hf-6h1l" class="winshot"><img data-hf-id="hf-mror" src="assets/wins/wayne-dowden.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-3803" id="sc63" class="scene clip" data-start="2004.366" data-duration="9.4" data-track-index="75">
+        <div data-hf-id="hf-m75l" class="inner">
+        <div data-hf-id="hf-5v0t" class="ln"><span data-hf-id="hf-w3br" class="wd">Find</span><span data-hf-id="hf-c6xr" class="wd">your</span><span data-hf-id="hf-npf9" class="wd">seat</span><span data-hf-id="hf-e81d" class="wd">by</span><span data-hf-id="hf-53kt" class="wd ac">2:10.</span></div><div data-hf-id="hf-wr1d" class="sub">The recap starts on time.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-1ype" id="sc64" class="scene clip" data-start="2013.366" data-duration="8.4" data-track-index="76">
+        <div data-hf-id="hf-imec" class="inner">
+        <div data-hf-id="hf-s03w" class="winwrap">
+          <div data-hf-id="hf-5gbf" class="wintext">
+            <div data-hf-id="hf-qhex" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-8cbe" class="winhead"><span data-hf-id="hf-evqa" class="wd">$385,000</span><span data-hf-id="hf-do6o" class="wd ac">contract.</span></div>
+            <div data-hf-id="hf-jlc3" class="winsub">A $25K implementation fee plus $15K a month for 24 months, closed at a 76% profit margin.</div>
+            <div data-hf-id="hf-7x30" class="winname">David Kim</div>
+          </div>
+          <div data-hf-id="hf-7nyo" class="winshot"><img data-hf-id="hf-5pff" src="assets/wins/david-kim.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-71s1" id="sc65" class="scene clip" data-start="2021.366" data-duration="8.4" data-track-index="77">
+        <div data-hf-id="hf-i83b" class="inner">
+        <div data-hf-id="hf-6t9d" class="eyebrow">THE VERDICT</div><div data-hf-id="hf-1899" class="ln quoteln"><span data-hf-id="hf-8mga" class="wd">The</span><span data-hf-id="hf-hafm" class="wd">best</span><span data-hf-id="hf-abuo" class="wd">money</span><span data-hf-id="hf-n0s5" class="wd">I've</span><span data-hf-id="hf-2ctw" class="wd">ever</span><span data-hf-id="hf-91y4" class="wd">spent</span><span data-hf-id="hf-c8qp" class="wd">on</span><span data-hf-id="hf-pfv2" class="wd">any</span><span data-hf-id="hf-xvgt" class="wd">community.</span></div><div data-hf-id="hf-arj4" class="sub attrib">Nick Mohler</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-5lud" id="sc66" class="scene clip" data-start="2029.366" data-duration="8.4" data-track-index="78">
+        <div data-hf-id="hf-56nb" class="inner">
+        <div data-hf-id="hf-rlsv" class="winwrap">
+          <div data-hf-id="hf-5umg" class="wintext">
+            <div data-hf-id="hf-qvpy" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-7y0d" class="winhead"><span data-hf-id="hf-lvuq" class="wd">Two</span><span data-hf-id="hf-k2ep" class="wd">deals,</span><span data-hf-id="hf-aqp2" class="wd ac">one</span><span data-hf-id="hf-445v" class="wd ac">week.</span></div>
+            <div data-hf-id="hf-g9fq" class="winsub">$22.5K and $42K sold in the same week, crossing $15K MRR and making his first hire.</div>
+            <div data-hf-id="hf-rcwx" class="winname">Jacob West</div>
+          </div>
+          <div data-hf-id="hf-79nn" class="winshot"><img data-hf-id="hf-kv3o" src="assets/wins/jacob-west.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-sq97" id="sc67" class="scene clip" data-start="2037.366" data-duration="7.4" data-track-index="79">
+        <div data-hf-id="hf-5kyc" class="inner">
+        
+        <div data-hf-id="hf-d9xc" class="statwrap">
+          <div data-hf-id="hf-v4un" class="kicker">THE WORLD IS WATCHING</div>
+          <div data-hf-id="hf-9c0k" class="num">0M+</div>
+          <div data-hf-id="hf-msej" class="unit">VIEWS &amp; COUNTING</div>
+        </div><div data-hf-id="hf-qvht" class="sub">They watch. We build.</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-x8t1" id="sc68" class="scene clip" data-start="2044.366" data-duration="8.4" data-track-index="80">
+        <div data-hf-id="hf-4e19" class="inner">
+        <div data-hf-id="hf-pm9q" class="winwrap">
+          <div data-hf-id="hf-68xh" class="wintext">
+            <div data-hf-id="hf-igdj" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-dwls" class="winhead"><span data-hf-id="hf-7hff" class="wd">$50K+</span><span data-hf-id="hf-zxdg" class="wd">in</span><span data-hf-id="hf-j2nh" class="wd ac">the</span><span data-hf-id="hf-4jt8" class="wd ac">pipeline.</span></div>
+            <div data-hf-id="hf-qy46" class="winsub">Four new clients within a month, just a couple of weeks in.</div>
+            <div data-hf-id="hf-2mwb" class="winname">Mohammad Sallam</div>
+          </div>
+          <div data-hf-id="hf-23oa" class="winshot"><img data-hf-id="hf-2qj0" src="assets/wins/mohammad-sallam.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-pcx4" id="sc69" class="scene clip" data-start="2052.366" data-duration="8.4" data-track-index="81">
+        <div data-hf-id="hf-4sca" class="inner">
+        <div data-hf-id="hf-pnqw" class="bigmark"><span data-hf-id="hf-s0sx" class="mark big"><span data-hf-id="hf-yca7" class="ais">AIS</span><span data-hf-id="hf-ixeh" class="gap"></span><span data-hf-id="hf-1qw3" class="live">LIVE<span data-hf-id="hf-ppp5" class="ring"></span><span data-hf-id="hf-04y4" class="dot"></span></span></span></div><div data-hf-id="hf-i9en" class="sub">Day 2 · Lunch · Back at 2:10 CT</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-peqy" id="sc70" class="scene clip" data-start="2060.366" data-duration="8.4" data-track-index="82">
+        <div data-hf-id="hf-6rvf" class="inner">
+        <div data-hf-id="hf-p7yp" class="winwrap">
+          <div data-hf-id="hf-6n8i" class="wintext">
+            <div data-hf-id="hf-iuok" class="peyebrow">MEMBER WIN</div>
+            <div data-hf-id="hf-diar" class="winhead"><span data-hf-id="hf-yiq9" class="wd">$40K</span><span data-hf-id="hf-xrhe" class="wd ac">upfront.</span></div>
+            <div data-hf-id="hf-zv5y" class="winsub">Plus 20% revenue share, on one custom AI build.</div>
+            <div data-hf-id="hf-y9jj" class="winname">Kobe Shemesh</div>
+          </div>
+          <div data-hf-id="hf-1pd9" class="winshot"><img data-hf-id="hf-adsk" src="assets/wins/kobe-shemesh.png" alt=""></div>
+        </div>
+        </div>
+      </section>
+      <section data-hf-id="hf-s50g" id="sc71" class="scene clip" data-start="2068.366" data-duration="6.4" data-track-index="83">
+        <div data-hf-id="hf-766g" class="inner">
+        <div data-hf-id="hf-u07i" class="eyebrow">STARTING NEXT · MAIN STAGE</div><div data-hf-id="hf-ppny" class="ln hero"><span data-hf-id="hf-lyvj" class="wd">Back</span><span data-hf-id="hf-zj2f" class="wd">in</span><span data-hf-id="hf-mvml" class="wd">the</span><span data-hf-id="hf-pavn" class="wd ac">room.</span></div>
+        </div>
+      </section>
+      <section data-hf-id="hf-ddpc" id="sc72" class="scene clip" data-start="2074.366" data-duration="12.4" data-track-index="84">
+        <div data-hf-id="hf-5z9d" class="inner">
+        <div data-hf-id="hf-mdzr" class="eyebrow">MAIN STAGE · 2:10 PM</div><div data-hf-id="hf-8o49" class="ln"><span data-hf-id="hf-3yx1" class="wd">Sales</span><span data-hf-id="hf-r9sl" class="wd">call</span><span data-hf-id="hf-5f1q" class="wd">recap</span><span data-hf-id="hf-2t5k" class="wd">+</span><span data-hf-id="hf-bu1j" class="wd ac">intro</span><span data-hf-id="hf-6d63" class="wd ac">to</span><span data-hf-id="hf-ml45" class="wd ac">pricing.</span></div><div data-hf-id="hf-dgy5" class="sub">Nate Herk + Jon Morrow, starting now on the main stage</div>
+        </div>
+      </section>
+      <section data-hf-id="hf-rfo8" id="sc73" class="scene clip" data-start="2086.366" data-duration="14.034" data-track-index="85">
+        <div data-hf-id="hf-6dke" class="inner">
+        <div data-hf-id="hf-p9fv" class="bigmark"><span data-hf-id="hf-sf3y" class="mark big"><span data-hf-id="hf-zj7a" class="ais">AIS</span><span data-hf-id="hf-ij3g" class="gap"></span><span data-hf-id="hf-zrcy" class="live">LIVE<span data-hf-id="hf-pbe4" class="ring"></span><span data-hf-id="hf-0j95" class="dot"></span></span></span></div><div data-hf-id="hf-fvf5" class="sub">Day 2 · The afternoon starts now.</div>
+        </div>
+      </section>
+      </div>
+      <div data-hf-id="hf-dr00" id="mnt0" class="mount">
+        <img data-hf-id="hf-zihd" id="mnt0-poster" class="mfill" src="assets/video/cert-launch-poster.jpg" alt="">
+        <video data-hf-id="hf-w2zx" id="mnt0-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/cert-launch.mp4" data-start="13" data-duration="56.63333333333333" data-track-index="501"></video>
+        <img data-hf-id="hf-gx1y" id="mnt0-last" class="mfill" src="assets/video/cert-launch-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-eint" id="mnt1" class="mount">
+        <img data-hf-id="hf-ur3d" id="mnt1-poster" class="mfill" src="assets/video/ais-plus-membership-poster.jpg" alt="">
+        <video data-hf-id="hf-mfsa" id="mnt1-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/ais-plus-membership.mp4" data-start="79.033" data-duration="66" data-track-index="502"></video>
+        <img data-hf-id="hf-gz3a" id="mnt1-last" class="mfill" src="assets/video/ais-plus-membership-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-igru" id="mnt2" class="mount">
+        <img data-hf-id="hf-xd0g" id="mnt2-poster" class="mfill" src="assets/video/hyperagent-keynote-poster.jpg" alt="">
+        <video data-hf-id="hf-xqqf" id="mnt2-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/hyperagent-keynote.mp4" data-start="153.433" data-duration="1104.8666666666666" data-track-index="503"></video>
+        <img data-hf-id="hf-q32b" id="mnt2-last" class="mfill" src="assets/video/hyperagent-keynote-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-mevv" id="mnt3" class="mount">
+        <img data-hf-id="hf-vzvf" id="mnt3-poster" class="mfill" src="assets/video/testi-building-v2-poster.jpg" alt="">
+        <video data-hf-id="hf-a1xn" id="mnt3-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-building-v2.mp4" data-start="1273.7" data-duration="63.93333333333333" data-track-index="504"></video>
+        <img data-hf-id="hf-woio" id="mnt3-last" class="mfill" src="assets/video/testi-building-v2-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-yxec" id="mnt4" class="mount">
+        <img data-hf-id="hf-i3t9" id="mnt4-poster" class="mfill" src="assets/video/cert-launch-poster.jpg" alt="">
+        <video data-hf-id="hf-p1u0" id="mnt4-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/cert-launch.mp4" data-start="1510.033" data-duration="56.63333333333333" data-track-index="505"></video>
+        <img data-hf-id="hf-bo42" id="mnt4-last" class="mfill" src="assets/video/cert-launch-lastframe.jpg" alt="">
+      </div>
+      <div data-hf-id="hf-zp25" id="mnt5" class="mount">
+        <img data-hf-id="hf-9yh5" id="mnt5-poster" class="mfill" src="assets/video/testi-earning-v2-poster.jpg" alt="">
+        <video data-hf-id="hf-jsgi" id="mnt5-v" class="mfill" muted playsinline data-has-audio="false" src="assets/video/testi-earning-v2.mp4" data-start="1656.066" data-duration="69.9" data-track-index="506"></video>
+        <img data-hf-id="hf-xr5o" id="mnt5-last" class="mfill" src="assets/video/testi-earning-v2-lastframe.jpg" alt="">
+      </div>
+      <audio data-hf-id="hf-p002" id="mnt0-a" src="assets/video/cert-launch.mp4" data-start="13" data-duration="56.63333333333333" data-track-index="561" data-volume="1"></audio>
+      <audio data-hf-id="hf-t2eh" id="mnt1-a" src="assets/video/ais-plus-membership.mp4" data-start="79.033" data-duration="66" data-track-index="562" data-volume="1"></audio>
+      <audio data-hf-id="hf-8k4i" id="mnt2-a" src="assets/video/hyperagent-keynote.mp4" data-start="153.433" data-duration="1104.8666666666666" data-track-index="563" data-volume="1"></audio>
+      <audio data-hf-id="hf-i7ky" id="mnt3-a" src="assets/video/testi-building-v2.mp4" data-start="1273.7" data-duration="63.93333333333333" data-track-index="564" data-volume="1"></audio>
+      <audio data-hf-id="hf-z5tf" id="mnt4-a" src="assets/video/cert-launch.mp4" data-start="1510.033" data-duration="56.63333333333333" data-track-index="565" data-volume="1"></audio>
+      <audio data-hf-id="hf-53an" id="mnt5-a" src="assets/video/testi-earning-v2.mp4" data-start="1656.066" data-duration="69.9" data-track-index="566" data-volume="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 2100;
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---- reveal / transition helpers (all fromTo so nothing is left invisible) ---- */
+      function drop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,y:-16},{autoAlpha:1,y:0,duration:d||.5,ease:"power2.out"},at); }
+      // transform+opacity only — NO filter on text (a filter region clips italic edges + glow)
+      function words(sel, at){ tl.fromTo(sel,{autoAlpha:0,yPercent:110,scale:.92},
+        {autoAlpha:1,yPercent:0,scale:1,duration:.46,ease:"expo.out",stagger:.05,transformOrigin:"50% 100%"},at); }
+      function pop(sel, at, d){ tl.fromTo(sel,{autoAlpha:0,scale:.55},{autoAlpha:1,scale:1,duration:d||.62,ease:"back.out(1.6)",transformOrigin:"50% 55%"},at); }
+      function glowIn(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,scale:.7,filter:"brightness(2.4) blur(6px)"},
+        {autoAlpha:1,scale:1,filter:"brightness(1) blur(0px)",duration:.7,ease:"back.out(1.4)",stagger:step||.12},at); }
+      function slideX(sel, at, step){ tl.fromTo(sel,{autoAlpha:0,x:-46,filter:"blur(6px)"},
+        {autoAlpha:1,x:0,filter:"blur(0px)",duration:.5,ease:"power2.out",stagger:step||.12},at); }
+      function markPop(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:.6,filter:"blur(18px) brightness(2.6)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px) brightness(1)",duration:.8,ease:"back.out(1.5)",transformOrigin:"50% 50%"},at); }
+      function shotIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,x:70,rotationY:-14,filter:"blur(8px)"},
+        {autoAlpha:1,x:0,rotationY:0,filter:"blur(0px)",duration:.65,ease:"power3.out"},at); }
+      // gentle float during long signage holds — cards/lists only, never headline type
+      function drift(sel, at, cycles){ tl.to(sel,{y:"-=12",duration:2.4,yoyo:true,repeat:Math.max(1,Math.round(cycles*2)-1),
+        ease:"sine.inOut",stagger:{each:.25,from:"center"}},at); }
+      function whipOut(sel, at){ tl.to(sel,{autoAlpha:0,y:-155,filter:"blur(30px)",duration:.26,ease:"power2.in"},at); }
+      function settleOut(sel, at){ tl.to(sel,{autoAlpha:0,filter:"blur(12px)",duration:.8,ease:"power2.in"},at); }
+      function mountIn(sel, at){ tl.fromTo(sel,{autoAlpha:0,scale:1.045,filter:"blur(14px)"},
+        {autoAlpha:1,scale:1,filter:"blur(0px)",duration:.5,ease:"power2.out",transformOrigin:"50% 50%"},at); }
+      function streak(at){
+        tl.fromTo("#whip",{xPercent:-130,scaleX:.5,autoAlpha:0},{autoAlpha:.95,duration:.1,ease:"none",immediateRender:false,overwrite:"auto"},at-0.05);
+        tl.to("#whip",{xPercent:270,scaleX:1.7,autoAlpha:0,duration:.34,ease:"power3.in",overwrite:"auto"},at+0.02);
+      }
+      function countUp(sel, at, target, dur, suffix){
+        var o={v:0};
+        tl.call(function(){var el=document.querySelector(sel); if(el) el.textContent="0"+(suffix||"");}, null, at-0.001);
+        tl.to(o,{v:target,duration:dur,ease:"power2.out",onUpdate:function(){
+          var el=document.querySelector(sel); if(el) el.textContent=Math.round(o.v)+(suffix||"");}},at);
+      }
+
+      /* ---- AMBIENT — camera never sleeps; short fixed cycles (a 35-min half-cycle
+             would read as static), even segment counts so yoyo motion ends at rest ---- */
+      tl.to("#camera", { scale:1.035, y:-16, duration:D/70, yoyo:true, repeat:69, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.to(".grid-floor",   { backgroundPositionY:"+=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".grid-ceiling", { backgroundPositionY:"-=1716px", duration:D, ease:"none" }, 0);
+      tl.to(".beam",     { rotation:8, duration:D/84, yoyo:true, repeat:83, ease:"sine.inOut", transformOrigin:"50% 0%" }, 0);
+      tl.to(".beam",     { opacity:.4, duration:D/350, yoyo:true, repeat:349, ease:"sine.inOut" }, 0);
+      tl.to(".glow.blue",{ x:44, y:-24, duration:D/70, yoyo:true, repeat:69, ease:"sine.inOut" }, 0);
+      tl.to(".glow.coral",{ x:-36, y:22, duration:D/70, yoyo:true, repeat:69, ease:"sine.inOut" }, 0);
+      tl.to(".vignette", { opacity:.9, duration:D/250, yoyo:true, repeat:249, ease:"sine.inOut" }, 0);
+      // live-dot pulse — the only ambient motion on the SOLID mark (brand)
+      tl.to(".dot", { scale:1.1, duration:.8, yoyo:true, repeat:2624, ease:"sine.inOut", transformOrigin:"50% 50%" }, 0);
+      tl.fromTo(".ring", { scale:1, autoAlpha:0 }, { keyframes:[
+        { autoAlpha:.5, scale:1, duration:.001 },
+        { autoAlpha:0, scale:2.6, duration:.999, ease:"power2.out" },
+        { autoAlpha:0, scale:1, duration:.6 }
+      ], repeat:1312, ease:"none" }, 0);
+
+      /* ---- SCENES ---- */
+      // sc0 · hero  (5s)
+      drop("#sc0 .eyebrow", 0.12);
+      words("#sc0 .ln .wd", 0.24);
+      whipOut("#sc0 .inner", 4.7);
+      tl.set("#sc0 .inner", { autoAlpha: 0 }, 5);
+
+      // sc1 · tagline  (8s)
+      streak(5);
+      drop("#sc1 .eyebrow", 5.12);
+      words("#sc1 .ln .wd", 5.24);
+      drop("#sc1 .sub", 5.82);
+      whipOut("#sc1 .inner", 12.7);
+      tl.set("#sc1 .inner", { autoAlpha: 0 }, 13);
+
+      // sc2 · mount cert-launch  (57.033s, voice audio)
+      streak(13);
+      tl.set("#mnt0", { autoAlpha: 0 }, 0);
+      tl.set("#mnt0-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt0", 13);
+      tl.set("#mnt0-poster", { autoAlpha: 0 }, 13.2);
+      tl.set("#mnt0-last", { autoAlpha: 1 }, 69.593);
+      whipOut("#mnt0", 69.733);
+      tl.set("#mnt0", { autoAlpha: 0 }, 70.033);
+
+      // sc3 · tagline  (9s)
+      streak(70.033);
+      drop("#sc3 .eyebrow", 70.153);
+      words("#sc3 .ln .wd", 70.273);
+      drop("#sc3 .sub", 70.853);
+      whipOut("#sc3 .inner", 78.733);
+      tl.set("#sc3 .inner", { autoAlpha: 0 }, 79.033);
+
+      // sc4 · mount ais-plus-membership  (66.4s, voice audio)
+      streak(79.033);
+      tl.set("#mnt1", { autoAlpha: 0 }, 0);
+      tl.set("#mnt1-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt1", 79.033);
+      tl.set("#mnt1-poster", { autoAlpha: 0 }, 79.233);
+      tl.set("#mnt1-last", { autoAlpha: 1 }, 144.993);
+      whipOut("#mnt1", 145.133);
+      tl.set("#mnt1", { autoAlpha: 0 }, 145.433);
+
+      // sc5 · tagline  (8s)
+      streak(145.433);
+      drop("#sc5 .eyebrow", 145.553);
+      words("#sc5 .ln .wd", 145.673);
+      drop("#sc5 .sub", 146.253);
+      whipOut("#sc5 .inner", 153.133);
+      tl.set("#sc5 .inner", { autoAlpha: 0 }, 153.433);
+
+      // sc6 · mount hyperagent-keynote  (1105.267s, voice audio)
+      streak(153.433);
+      tl.set("#mnt2", { autoAlpha: 0 }, 0);
+      tl.set("#mnt2-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt2", 153.433);
+      tl.set("#mnt2-poster", { autoAlpha: 0 }, 153.633);
+      tl.set("#mnt2-last", { autoAlpha: 1 }, 1258.26);
+      whipOut("#mnt2", 1258.4);
+      tl.set("#mnt2", { autoAlpha: 0 }, 1258.7);
+
+      // sc7 · sponsor  (10s)
+      streak(1258.7);
+      drop("#sc7 .eyebrow", 1258.82);
+      glowIn("#sc7 .logo", 1259.04, 0.14);
+      whipOut("#sc7 .inner", 1268.4);
+      tl.set("#sc7 .inner", { autoAlpha: 0 }, 1268.7);
+
+      // sc8 · hero  (5s)
+      streak(1268.7);
+      drop("#sc8 .eyebrow", 1268.82);
+      words("#sc8 .ln .wd", 1268.94);
+      whipOut("#sc8 .inner", 1273.4);
+      tl.set("#sc8 .inner", { autoAlpha: 0 }, 1273.7);
+
+      // sc9 · mount testi-building-v2  (64.333s, voice audio)
+      streak(1273.7);
+      tl.set("#mnt3", { autoAlpha: 0 }, 0);
+      tl.set("#mnt3-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt3", 1273.7);
+      tl.set("#mnt3-poster", { autoAlpha: 0 }, 1273.9);
+      tl.set("#mnt3-last", { autoAlpha: 1 }, 1337.593);
+      whipOut("#mnt3", 1337.733);
+      tl.set("#mnt3", { autoAlpha: 0 }, 1338.033);
+
+      // sc10 · win  (8s)
+      streak(1338.033);
+      drop("#sc10 .peyebrow", 1338.173);
+      words("#sc10 .winhead .wd", 1338.313);
+      drop("#sc10 .winsub", 1338.783);
+      drop("#sc10 .winname", 1338.953);
+      shotIn("#sc10 .winshot", 1338.433);
+      drift("#sc10 .winshot", 1339.833, 1.17);
+      whipOut("#sc10 .inner", 1345.733);
+      tl.set("#sc10 .inner", { autoAlpha: 0 }, 1346.033);
+
+      // sc11 · win  (8s)
+      streak(1346.033);
+      drop("#sc11 .peyebrow", 1346.173);
+      words("#sc11 .winhead .wd", 1346.313);
+      drop("#sc11 .winsub", 1346.783);
+      drop("#sc11 .winname", 1346.953);
+      shotIn("#sc11 .winshot", 1346.433);
+      drift("#sc11 .winshot", 1347.833, 1.17);
+      whipOut("#sc11 .inner", 1353.733);
+      tl.set("#sc11 .inner", { autoAlpha: 0 }, 1354.033);
+
+      // sc12 · win  (8s)
+      streak(1354.033);
+      drop("#sc12 .peyebrow", 1354.173);
+      words("#sc12 .winhead .wd", 1354.313);
+      drop("#sc12 .winsub", 1354.783);
+      drop("#sc12 .winname", 1354.953);
+      shotIn("#sc12 .winshot", 1354.433);
+      drift("#sc12 .winshot", 1355.833, 1.17);
+      whipOut("#sc12 .inner", 1361.733);
+      tl.set("#sc12 .inner", { autoAlpha: 0 }, 1362.033);
+
+      // sc13 · win  (8s)
+      streak(1362.033);
+      drop("#sc13 .peyebrow", 1362.173);
+      words("#sc13 .winhead .wd", 1362.313);
+      drop("#sc13 .winsub", 1362.783);
+      drop("#sc13 .winname", 1362.953);
+      shotIn("#sc13 .winshot", 1362.433);
+      drift("#sc13 .winshot", 1363.833, 1.17);
+      whipOut("#sc13 .inner", 1369.733);
+      tl.set("#sc13 .inner", { autoAlpha: 0 }, 1370.033);
+
+      // sc14 · win  (8s)
+      streak(1370.033);
+      drop("#sc14 .peyebrow", 1370.173);
+      words("#sc14 .winhead .wd", 1370.313);
+      drop("#sc14 .winsub", 1370.783);
+      drop("#sc14 .winname", 1370.953);
+      shotIn("#sc14 .winshot", 1370.433);
+      drift("#sc14 .winshot", 1371.833, 1.17);
+      whipOut("#sc14 .inner", 1377.733);
+      tl.set("#sc14 .inner", { autoAlpha: 0 }, 1378.033);
+
+      // sc15 · action  (9s)
+      streak(1378.033);
+      drop("#sc15 .eyebrow", 1378.153);
+      words("#sc15 .ln .wd", 1378.273);
+      drop("#sc15 .sub", 1378.853);
+      whipOut("#sc15 .inner", 1386.733);
+      tl.set("#sc15 .inner", { autoAlpha: 0 }, 1387.033);
+
+      // sc16 · tagline  (9s)
+      streak(1387.033);
+      drop("#sc16 .eyebrow", 1387.153);
+      words("#sc16 .ln .wd", 1387.273);
+      drop("#sc16 .sub", 1387.853);
+      whipOut("#sc16 .inner", 1395.733);
+      tl.set("#sc16 .inner", { autoAlpha: 0 }, 1396.033);
+
+      // sc17 · tagline  (9s)
+      streak(1396.033);
+      words("#sc17 .ln .wd", 1396.273);
+      drop("#sc17 .sub", 1396.853);
+      whipOut("#sc17 .inner", 1404.733);
+      tl.set("#sc17 .inner", { autoAlpha: 0 }, 1405.033);
+
+      // sc18 · agenda  (34s)
+      streak(1405.033);
+      drop("#sc18 .eyebrow", 1405.153);
+      slideX("#sc18 .agrow", 1405.333, 0.07);
+      drop("#sc18 .sub", 1405.853);
+      drift("#sc18 .agenda", 1407.033, 6.46);
+      whipOut("#sc18 .inner", 1438.733);
+      tl.set("#sc18 .inner", { autoAlpha: 0 }, 1439.033);
+
+      // sc19 · tagline  (10s)
+      streak(1439.033);
+      drop("#sc19 .eyebrow", 1439.153);
+      words("#sc19 .ln .wd", 1439.273);
+      drop("#sc19 .sub", 1439.853);
+      whipOut("#sc19 .inner", 1448.733);
+      tl.set("#sc19 .inner", { autoAlpha: 0 }, 1449.033);
+
+      // sc20 · tagline  (9s)
+      streak(1449.033);
+      drop("#sc20 .eyebrow", 1449.153);
+      words("#sc20 .ln .wd", 1449.273);
+      drop("#sc20 .sub", 1449.853);
+      whipOut("#sc20 .inner", 1457.733);
+      tl.set("#sc20 .inner", { autoAlpha: 0 }, 1458.033);
+
+      // sc21 · stat  (7s)
+      streak(1458.033);
+      drop("#sc21 .kicker", 1458.313);
+      pop("#sc21 .num", 1458.453);
+      countUp("#sc21 .num", 1458.513, 400, 1.0, "K+");
+      drop("#sc21 .unit", 1458.813);
+      drop("#sc21 .sub", 1458.853);
+      whipOut("#sc21 .inner", 1464.733);
+      tl.set("#sc21 .inner", { autoAlpha: 0 }, 1465.033);
+
+      // sc22 · quote  (8s)
+      streak(1465.033);
+      drop("#sc22 .eyebrow", 1465.153);
+      words("#sc22 .quoteln .wd", 1465.293);
+      drop("#sc22 .attrib", 1465.983);
+      whipOut("#sc22 .inner", 1472.733);
+      tl.set("#sc22 .inner", { autoAlpha: 0 }, 1473.033);
+
+      // sc23 · quote  (8s)
+      streak(1473.033);
+      drop("#sc23 .eyebrow", 1473.153);
+      words("#sc23 .quoteln .wd", 1473.293);
+      drop("#sc23 .attrib", 1473.983);
+      whipOut("#sc23 .inner", 1480.733);
+      tl.set("#sc23 .inner", { autoAlpha: 0 }, 1481.033);
+
+      // sc24 · tagline  (8s)
+      streak(1481.033);
+      words("#sc24 .ln .wd", 1481.273);
+      drop("#sc24 .sub", 1481.853);
+      whipOut("#sc24 .inner", 1488.733);
+      tl.set("#sc24 .inner", { autoAlpha: 0 }, 1489.033);
+
+      // sc25 · markflash  (8s)
+      streak(1489.033);
+      markPop("#sc25 .bigmark", 1489.253);
+      drop("#sc25 .sub", 1489.853);
+      whipOut("#sc25 .inner", 1496.733);
+      tl.set("#sc25 .inner", { autoAlpha: 0 }, 1497.033);
+
+      // sc26 · hero  (5s)
+      streak(1497.033);
+      drop("#sc26 .eyebrow", 1497.153);
+      words("#sc26 .ln .wd", 1497.273);
+      whipOut("#sc26 .inner", 1501.733);
+      tl.set("#sc26 .inner", { autoAlpha: 0 }, 1502.033);
+
+      // sc27 · tagline  (8s)
+      streak(1502.033);
+      drop("#sc27 .eyebrow", 1502.153);
+      words("#sc27 .ln .wd", 1502.273);
+      drop("#sc27 .sub", 1502.853);
+      whipOut("#sc27 .inner", 1509.733);
+      tl.set("#sc27 .inner", { autoAlpha: 0 }, 1510.033);
+
+      // sc28 · mount cert-launch  (57.033s, voice audio)
+      streak(1510.033);
+      tl.set("#mnt4", { autoAlpha: 0 }, 0);
+      tl.set("#mnt4-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt4", 1510.033);
+      tl.set("#mnt4-poster", { autoAlpha: 0 }, 1510.233);
+      tl.set("#mnt4-last", { autoAlpha: 1 }, 1566.626);
+      whipOut("#mnt4", 1566.766);
+      tl.set("#mnt4", { autoAlpha: 0 }, 1567.066);
+
+      // sc29 · tagline  (9s)
+      streak(1567.066);
+      drop("#sc29 .eyebrow", 1567.186);
+      words("#sc29 .ln .wd", 1567.306);
+      drop("#sc29 .sub", 1567.886);
+      whipOut("#sc29 .inner", 1575.766);
+      tl.set("#sc29 .inner", { autoAlpha: 0 }, 1576.066);
+
+      // sc30 · hero  (5s)
+      streak(1576.066);
+      drop("#sc30 .eyebrow", 1576.186);
+      words("#sc30 .ln .wd", 1576.306);
+      whipOut("#sc30 .inner", 1580.766);
+      tl.set("#sc30 .inner", { autoAlpha: 0 }, 1581.066);
+
+      // sc31 · sponsor  (60s)
+      streak(1581.066);
+      drop("#sc31 .eyebrow", 1581.186);
+      glowIn("#sc31 .logo", 1581.406, 0.14);
+      drift("#sc31 .logorow", 1583.066, 11.88);
+      whipOut("#sc31 .inner", 1640.766);
+      tl.set("#sc31 .inner", { autoAlpha: 0 }, 1641.066);
+
+      // sc32 · sponsor  (10s)
+      streak(1641.066);
+      drop("#sc32 .eyebrow", 1641.186);
+      glowIn("#sc32 .logo", 1641.406, 0.14);
+      whipOut("#sc32 .inner", 1650.766);
+      tl.set("#sc32 .inner", { autoAlpha: 0 }, 1651.066);
+
+      // sc33 · hero  (5s)
+      streak(1651.066);
+      drop("#sc33 .eyebrow", 1651.186);
+      words("#sc33 .ln .wd", 1651.306);
+      whipOut("#sc33 .inner", 1655.766);
+      tl.set("#sc33 .inner", { autoAlpha: 0 }, 1656.066);
+
+      // sc34 · mount testi-earning-v2  (70.3s, voice audio)
+      streak(1656.066);
+      tl.set("#mnt5", { autoAlpha: 0 }, 0);
+      tl.set("#mnt5-last", { autoAlpha: 0 }, 0);
+      mountIn("#mnt5", 1656.066);
+      tl.set("#mnt5-poster", { autoAlpha: 0 }, 1656.266);
+      tl.set("#mnt5-last", { autoAlpha: 1 }, 1725.926);
+      whipOut("#mnt5", 1726.066);
+      tl.set("#mnt5", { autoAlpha: 0 }, 1726.366);
+
+      // sc35 · win  (8s)
+      streak(1726.366);
+      drop("#sc35 .peyebrow", 1726.506);
+      words("#sc35 .winhead .wd", 1726.646);
+      drop("#sc35 .winsub", 1727.116);
+      drop("#sc35 .winname", 1727.286);
+      shotIn("#sc35 .winshot", 1726.766);
+      drift("#sc35 .winshot", 1728.166, 1.17);
+      whipOut("#sc35 .inner", 1734.066);
+      tl.set("#sc35 .inner", { autoAlpha: 0 }, 1734.366);
+
+      // sc36 · win  (8s)
+      streak(1734.366);
+      drop("#sc36 .peyebrow", 1734.506);
+      words("#sc36 .winhead .wd", 1734.646);
+      drop("#sc36 .winsub", 1735.116);
+      drop("#sc36 .winname", 1735.286);
+      shotIn("#sc36 .winshot", 1734.766);
+      drift("#sc36 .winshot", 1736.166, 1.17);
+      whipOut("#sc36 .inner", 1742.066);
+      tl.set("#sc36 .inner", { autoAlpha: 0 }, 1742.366);
+
+      // sc37 · win  (8s)
+      streak(1742.366);
+      drop("#sc37 .peyebrow", 1742.506);
+      words("#sc37 .winhead .wd", 1742.646);
+      drop("#sc37 .winsub", 1743.116);
+      drop("#sc37 .winname", 1743.286);
+      shotIn("#sc37 .winshot", 1742.766);
+      drift("#sc37 .winshot", 1744.166, 1.17);
+      whipOut("#sc37 .inner", 1750.066);
+      tl.set("#sc37 .inner", { autoAlpha: 0 }, 1750.366);
+
+      // sc38 · win  (8s)
+      streak(1750.366);
+      drop("#sc38 .peyebrow", 1750.506);
+      words("#sc38 .winhead .wd", 1750.646);
+      drop("#sc38 .winsub", 1751.116);
+      drop("#sc38 .winname", 1751.286);
+      shotIn("#sc38 .winshot", 1750.766);
+      drift("#sc38 .winshot", 1752.166, 1.17);
+      whipOut("#sc38 .inner", 1758.066);
+      tl.set("#sc38 .inner", { autoAlpha: 0 }, 1758.366);
+
+      // sc39 · win  (8s)
+      streak(1758.366);
+      drop("#sc39 .peyebrow", 1758.506);
+      words("#sc39 .winhead .wd", 1758.646);
+      drop("#sc39 .winsub", 1759.116);
+      drop("#sc39 .winname", 1759.286);
+      shotIn("#sc39 .winshot", 1758.766);
+      drift("#sc39 .winshot", 1760.166, 1.17);
+      whipOut("#sc39 .inner", 1766.066);
+      tl.set("#sc39 .inner", { autoAlpha: 0 }, 1766.366);
+
+      // sc40 · action  (9s)
+      streak(1766.366);
+      drop("#sc40 .eyebrow", 1766.486);
+      words("#sc40 .ln .wd", 1766.606);
+      drop("#sc40 .sub", 1767.186);
+      whipOut("#sc40 .inner", 1775.066);
+      tl.set("#sc40 .inner", { autoAlpha: 0 }, 1775.366);
+
+      // sc41 · tagline  (9s)
+      streak(1775.366);
+      drop("#sc41 .eyebrow", 1775.486);
+      words("#sc41 .ln .wd", 1775.606);
+      drop("#sc41 .sub", 1776.186);
+      whipOut("#sc41 .inner", 1784.066);
+      tl.set("#sc41 .inner", { autoAlpha: 0 }, 1784.366);
+
+      // sc42 · tagline  (9s)
+      streak(1784.366);
+      words("#sc42 .ln .wd", 1784.606);
+      drop("#sc42 .sub", 1785.186);
+      whipOut("#sc42 .inner", 1793.066);
+      tl.set("#sc42 .inner", { autoAlpha: 0 }, 1793.366);
+
+      // sc43 · agenda  (34s)
+      streak(1793.366);
+      drop("#sc43 .eyebrow", 1793.486);
+      slideX("#sc43 .agrow", 1793.666, 0.07);
+      drop("#sc43 .sub", 1794.186);
+      drift("#sc43 .agenda", 1795.366, 6.46);
+      whipOut("#sc43 .inner", 1827.066);
+      tl.set("#sc43 .inner", { autoAlpha: 0 }, 1827.366);
+
+      // sc44 · tagline  (10s)
+      streak(1827.366);
+      drop("#sc44 .eyebrow", 1827.486);
+      words("#sc44 .ln .wd", 1827.606);
+      drop("#sc44 .sub", 1828.186);
+      whipOut("#sc44 .inner", 1837.066);
+      tl.set("#sc44 .inner", { autoAlpha: 0 }, 1837.366);
+
+      // sc45 · tagline  (9s)
+      streak(1837.366);
+      drop("#sc45 .eyebrow", 1837.486);
+      words("#sc45 .ln .wd", 1837.606);
+      drop("#sc45 .sub", 1838.186);
+      whipOut("#sc45 .inner", 1846.066);
+      tl.set("#sc45 .inner", { autoAlpha: 0 }, 1846.366);
+
+      // sc46 · stat  (7s)
+      streak(1846.366);
+      drop("#sc46 .kicker", 1846.646);
+      pop("#sc46 .num", 1846.786);
+      countUp("#sc46 .num", 1846.846, 1300, 1.1, "+");
+      drop("#sc46 .unit", 1847.146);
+      drop("#sc46 .sub", 1847.186);
+      whipOut("#sc46 .inner", 1853.066);
+      tl.set("#sc46 .inner", { autoAlpha: 0 }, 1853.366);
+
+      // sc47 · quote  (8s)
+      streak(1853.366);
+      drop("#sc47 .eyebrow", 1853.486);
+      words("#sc47 .quoteln .wd", 1853.626);
+      drop("#sc47 .attrib", 1854.316);
+      whipOut("#sc47 .inner", 1861.066);
+      tl.set("#sc47 .inner", { autoAlpha: 0 }, 1861.366);
+
+      // sc48 · quote  (8s)
+      streak(1861.366);
+      drop("#sc48 .eyebrow", 1861.486);
+      words("#sc48 .quoteln .wd", 1861.626);
+      drop("#sc48 .attrib", 1862.316);
+      whipOut("#sc48 .inner", 1869.066);
+      tl.set("#sc48 .inner", { autoAlpha: 0 }, 1869.366);
+
+      // sc49 · tagline  (8s)
+      streak(1869.366);
+      words("#sc49 .ln .wd", 1869.606);
+      drop("#sc49 .sub", 1870.186);
+      whipOut("#sc49 .inner", 1877.066);
+      tl.set("#sc49 .inner", { autoAlpha: 0 }, 1877.366);
+
+      // sc50 · markflash  (8s)
+      streak(1877.366);
+      markPop("#sc50 .bigmark", 1877.586);
+      drop("#sc50 .sub", 1878.186);
+      whipOut("#sc50 .inner", 1885.066);
+      tl.set("#sc50 .inner", { autoAlpha: 0 }, 1885.366);
+
+      // sc51 · quote  (8s)
+      streak(1885.366);
+      drop("#sc51 .eyebrow", 1885.486);
+      words("#sc51 .quoteln .wd", 1885.626);
+      drop("#sc51 .attrib", 1886.316);
+      whipOut("#sc51 .inner", 1893.066);
+      tl.set("#sc51 .inner", { autoAlpha: 0 }, 1893.366);
+
+      // sc52 · win  (8s)
+      streak(1893.366);
+      drop("#sc52 .peyebrow", 1893.506);
+      words("#sc52 .winhead .wd", 1893.646);
+      drop("#sc52 .winsub", 1894.116);
+      drop("#sc52 .winname", 1894.286);
+      shotIn("#sc52 .winshot", 1893.766);
+      drift("#sc52 .winshot", 1895.166, 1.17);
+      whipOut("#sc52 .inner", 1901.066);
+      tl.set("#sc52 .inner", { autoAlpha: 0 }, 1901.366);
+
+      // sc53 · stat  (7s)
+      streak(1901.366);
+      drop("#sc53 .kicker", 1901.646);
+      pop("#sc53 .num", 1901.786);
+      countUp("#sc53 .num", 1901.846, 100, 1.0, "K+");
+      drop("#sc53 .unit", 1902.146);
+      drop("#sc53 .sub", 1902.186);
+      whipOut("#sc53 .inner", 1908.066);
+      tl.set("#sc53 .inner", { autoAlpha: 0 }, 1908.366);
+
+      // sc54 · win  (8s)
+      streak(1908.366);
+      drop("#sc54 .peyebrow", 1908.506);
+      words("#sc54 .winhead .wd", 1908.646);
+      drop("#sc54 .winsub", 1909.116);
+      drop("#sc54 .winname", 1909.286);
+      shotIn("#sc54 .winshot", 1908.766);
+      drift("#sc54 .winshot", 1910.166, 1.17);
+      whipOut("#sc54 .inner", 1916.066);
+      tl.set("#sc54 .inner", { autoAlpha: 0 }, 1916.366);
+
+      // sc55 · action  (9s)
+      streak(1916.366);
+      drop("#sc55 .eyebrow", 1916.486);
+      words("#sc55 .ln .wd", 1916.606);
+      drop("#sc55 .sub", 1917.186);
+      whipOut("#sc55 .inner", 1925.066);
+      tl.set("#sc55 .inner", { autoAlpha: 0 }, 1925.366);
+
+      // sc56 · win  (8s)
+      streak(1925.366);
+      drop("#sc56 .peyebrow", 1925.506);
+      words("#sc56 .winhead .wd", 1925.646);
+      drop("#sc56 .winsub", 1926.116);
+      drop("#sc56 .winname", 1926.286);
+      shotIn("#sc56 .winshot", 1925.766);
+      drift("#sc56 .winshot", 1927.166, 1.17);
+      whipOut("#sc56 .inner", 1933.066);
+      tl.set("#sc56 .inner", { autoAlpha: 0 }, 1933.366);
+
+      // sc57 · agenda  (30s)
+      streak(1933.366);
+      drop("#sc57 .eyebrow", 1933.486);
+      slideX("#sc57 .agrow", 1933.666, 0.07);
+      drop("#sc57 .sub", 1934.186);
+      drift("#sc57 .agenda", 1935.366, 5.63);
+      whipOut("#sc57 .inner", 1963.066);
+      tl.set("#sc57 .inner", { autoAlpha: 0 }, 1963.366);
+
+      // sc58 · win  (8s)
+      streak(1963.366);
+      drop("#sc58 .peyebrow", 1963.506);
+      words("#sc58 .winhead .wd", 1963.646);
+      drop("#sc58 .winsub", 1964.116);
+      drop("#sc58 .winname", 1964.286);
+      shotIn("#sc58 .winshot", 1963.766);
+      drift("#sc58 .winshot", 1965.166, 1.17);
+      whipOut("#sc58 .inner", 1971.066);
+      tl.set("#sc58 .inner", { autoAlpha: 0 }, 1971.366);
+
+      // sc59 · quote  (8s)
+      streak(1971.366);
+      drop("#sc59 .eyebrow", 1971.486);
+      words("#sc59 .quoteln .wd", 1971.626);
+      drop("#sc59 .attrib", 1972.316);
+      whipOut("#sc59 .inner", 1979.066);
+      tl.set("#sc59 .inner", { autoAlpha: 0 }, 1979.366);
+
+      // sc60 · win  (8s)
+      streak(1979.366);
+      drop("#sc60 .peyebrow", 1979.506);
+      words("#sc60 .winhead .wd", 1979.646);
+      drop("#sc60 .winsub", 1980.116);
+      drop("#sc60 .winname", 1980.286);
+      shotIn("#sc60 .winshot", 1979.766);
+      drift("#sc60 .winshot", 1981.166, 1.17);
+      whipOut("#sc60 .inner", 1987.066);
+      tl.set("#sc60 .inner", { autoAlpha: 0 }, 1987.366);
+
+      // sc61 · tagline  (9s)
+      streak(1987.366);
+      drop("#sc61 .eyebrow", 1987.486);
+      words("#sc61 .ln .wd", 1987.606);
+      drop("#sc61 .sub", 1988.186);
+      whipOut("#sc61 .inner", 1996.066);
+      tl.set("#sc61 .inner", { autoAlpha: 0 }, 1996.366);
+
+      // sc62 · win  (8s)
+      streak(1996.366);
+      drop("#sc62 .peyebrow", 1996.506);
+      words("#sc62 .winhead .wd", 1996.646);
+      drop("#sc62 .winsub", 1997.116);
+      drop("#sc62 .winname", 1997.286);
+      shotIn("#sc62 .winshot", 1996.766);
+      drift("#sc62 .winshot", 1998.166, 1.17);
+      whipOut("#sc62 .inner", 2004.066);
+      tl.set("#sc62 .inner", { autoAlpha: 0 }, 2004.366);
+
+      // sc63 · tagline  (9s)
+      streak(2004.366);
+      words("#sc63 .ln .wd", 2004.606);
+      drop("#sc63 .sub", 2005.186);
+      whipOut("#sc63 .inner", 2013.066);
+      tl.set("#sc63 .inner", { autoAlpha: 0 }, 2013.366);
+
+      // sc64 · win  (8s)
+      streak(2013.366);
+      drop("#sc64 .peyebrow", 2013.506);
+      words("#sc64 .winhead .wd", 2013.646);
+      drop("#sc64 .winsub", 2014.116);
+      drop("#sc64 .winname", 2014.286);
+      shotIn("#sc64 .winshot", 2013.766);
+      drift("#sc64 .winshot", 2015.166, 1.17);
+      whipOut("#sc64 .inner", 2021.066);
+      tl.set("#sc64 .inner", { autoAlpha: 0 }, 2021.366);
+
+      // sc65 · quote  (8s)
+      streak(2021.366);
+      drop("#sc65 .eyebrow", 2021.486);
+      words("#sc65 .quoteln .wd", 2021.626);
+      drop("#sc65 .attrib", 2022.316);
+      whipOut("#sc65 .inner", 2029.066);
+      tl.set("#sc65 .inner", { autoAlpha: 0 }, 2029.366);
+
+      // sc66 · win  (8s)
+      streak(2029.366);
+      drop("#sc66 .peyebrow", 2029.506);
+      words("#sc66 .winhead .wd", 2029.646);
+      drop("#sc66 .winsub", 2030.116);
+      drop("#sc66 .winname", 2030.286);
+      shotIn("#sc66 .winshot", 2029.766);
+      drift("#sc66 .winshot", 2031.166, 1.17);
+      whipOut("#sc66 .inner", 2037.066);
+      tl.set("#sc66 .inner", { autoAlpha: 0 }, 2037.366);
+
+      // sc67 · stat  (7s)
+      streak(2037.366);
+      drop("#sc67 .kicker", 2037.646);
+      pop("#sc67 .num", 2037.786);
+      countUp("#sc67 .num", 2037.846, 40, 1.0, "M+");
+      drop("#sc67 .unit", 2038.146);
+      drop("#sc67 .sub", 2038.186);
+      whipOut("#sc67 .inner", 2044.066);
+      tl.set("#sc67 .inner", { autoAlpha: 0 }, 2044.366);
+
+      // sc68 · win  (8s)
+      streak(2044.366);
+      drop("#sc68 .peyebrow", 2044.506);
+      words("#sc68 .winhead .wd", 2044.646);
+      drop("#sc68 .winsub", 2045.116);
+      drop("#sc68 .winname", 2045.286);
+      shotIn("#sc68 .winshot", 2044.766);
+      drift("#sc68 .winshot", 2046.166, 1.17);
+      whipOut("#sc68 .inner", 2052.066);
+      tl.set("#sc68 .inner", { autoAlpha: 0 }, 2052.366);
+
+      // sc69 · markflash  (8s)
+      streak(2052.366);
+      markPop("#sc69 .bigmark", 2052.586);
+      drop("#sc69 .sub", 2053.186);
+      whipOut("#sc69 .inner", 2060.066);
+      tl.set("#sc69 .inner", { autoAlpha: 0 }, 2060.366);
+
+      // sc70 · win  (8s)
+      streak(2060.366);
+      drop("#sc70 .peyebrow", 2060.506);
+      words("#sc70 .winhead .wd", 2060.646);
+      drop("#sc70 .winsub", 2061.116);
+      drop("#sc70 .winname", 2061.286);
+      shotIn("#sc70 .winshot", 2060.766);
+      drift("#sc70 .winshot", 2062.166, 1.17);
+      whipOut("#sc70 .inner", 2068.066);
+      tl.set("#sc70 .inner", { autoAlpha: 0 }, 2068.366);
+
+      // sc71 · hero  (6s)
+      streak(2068.366);
+      drop("#sc71 .eyebrow", 2068.486);
+      words("#sc71 .ln .wd", 2068.606);
+      whipOut("#sc71 .inner", 2074.066);
+      tl.set("#sc71 .inner", { autoAlpha: 0 }, 2074.366);
+
+      // sc72 · tagline  (12s)
+      streak(2074.366);
+      drop("#sc72 .eyebrow", 2074.486);
+      words("#sc72 .ln .wd", 2074.606);
+      drop("#sc72 .sub", 2075.186);
+      whipOut("#sc72 .inner", 2086.066);
+      tl.set("#sc72 .inner", { autoAlpha: 0 }, 2086.366);
+
+      // sc73 · markflash  (13.634s)
+      streak(2086.366);
+      markPop("#sc73 .bigmark", 2086.586);
+      drop("#sc73 .sub", 2087.186);
+      settleOut("#sc73 .inner", 2099.1);
+
+      tl.to({}, { duration: D }, 0); // Law #11 — fill the slot
+      window.__timelines["cmp-day2-lunch-fill"] = tl;
+    </script>
+  </body>
+</html>

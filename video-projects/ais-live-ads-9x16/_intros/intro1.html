@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>AIS Live — Ad 1 Intro (9x16)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c; --charcoal: #0a0e14; --cream: #f0eee9; --paper: #ffffff;
+        --blue: #37bdf8; --yellow: #f5d82a; --coral: #ff8a5c; --red-live: #ff3b30;
+        --paper-soft: rgba(209, 220, 232, 0.82); --paper-mute: rgba(209, 220, 232, 0.55);
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #000; isolation: isolate; }
+
+      /* full-frame, in place — matches the body so the hard cut is seamless */
+      #bg-wrap { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+      #bg-video { position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #root .clip { position: absolute; inset: 0; width: 1080px; height: 1920px; pointer-events: none; }
+
+      /* persistent bottom panel (same as body) */
+      #panel .grid {
+        position: absolute; left: -40px; right: -40px; bottom: -40px; height: 880px;
+        background-image: linear-gradient(rgba(55,189,248,0.11) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.11) 1px, transparent 1px);
+        background-size: 46px 46px;
+        -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 62%, transparent 100%); mask-image: linear-gradient(0deg, #000 0%, #000 62%, transparent 100%);
+      }
+      #panel .scrim {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 860px;
+        background: linear-gradient(0deg, rgba(7,18,28,0.97) 0%, rgba(7,18,28,0.93) 40%, rgba(7,18,28,0.62) 72%, rgba(7,18,28,0.0) 100%);
+      }
+
+      /* card (onyx, blue hairline, grid texture) */
+      .card { position: relative; overflow: hidden; border-radius: 6px; background: linear-gradient(135deg, rgba(7,18,28,0.93), rgba(10,14,20,0.86)); border: 1px solid rgba(55,189,248,0.32); box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06); }
+      .card::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(55,189,248,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(55,189,248,0.07) 1px, transparent 1px); background-size: 28px 28px; }
+
+      .kick { display: inline-block; font-family: var(--font-mono); font-weight: 700; font-size: 26px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--blue); white-space: nowrap; padding: 12px 20px; border-radius: 4px; border: 1.5px solid rgba(55,189,248,0.55); background: rgba(7,18,28,0.55); }
+
+      /* beats are bottom-anchored in the lower half */
+      .beat { position: absolute; left: 56px; bottom: 132px; width: 968px; }
+
+      /* A · not making money yet */
+      #beatA .kick { margin-bottom: 24px; }
+      #beatA .line { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 92px; line-height: 1.0; letter-spacing: -0.035em; color: #fff; text-shadow: 0 3px 26px rgba(0,0,0,0.55); }
+      #beatA .box { display: inline-block; background: var(--blue); color: var(--onyx); font-style: italic; padding: 2px 20px 8px; border-radius: 5px; box-shadow: 0 0 40px rgba(55,189,248,0.4); }
+
+      /* B · the quiet gap (two cards) */
+      #beatB .kick { margin-bottom: 24px; }
+      #beatB .gbox { padding: 28px 34px; width: 100%; }
+      #beatB .gtext { font-family: var(--font-body); font-weight: 600; font-size: 46px; line-height: 1.04; color: #fff; letter-spacing: -0.012em; }
+      #beatB .bottom .gtext { color: var(--paper-soft); }
+      #beatB .gaplabel { display: flex; align-items: center; gap: 16px; margin: 20px 0 20px 4px; font-family: var(--font-mono); font-weight: 700; font-size: 22px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--coral); }
+      #beatB .gaplabel::after { content: ""; flex: 1; height: 2px; background: linear-gradient(90deg, rgba(255,138,92,0.7), rgba(255,138,92,0)); }
+
+      /* C · here's the truth */
+      #beatC .truth { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 116px; line-height: 0.92; letter-spacing: -0.04em; color: #fff; text-shadow: 0 3px 30px rgba(0,0,0,0.6); }
+      #beatC .truth em { color: var(--blue); font-style: italic; }
+
+      /* D · nobody films that part -> until now */
+      #beatD .sub { font-family: var(--font-body); font-weight: 600; font-size: 50px; color: var(--paper-soft); letter-spacing: -0.01em; margin-bottom: 22px; text-shadow: 0 3px 20px rgba(0,0,0,0.5); }
+      #beatD .big { font-family: var(--font-display); font-style: italic; font-weight: 900; font-size: 150px; line-height: 0.86; letter-spacing: -0.045em; color: #fff; text-shadow: 0 4px 40px rgba(0,0,0,0.6); }
+      #beatD .big em { color: var(--blue); font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="ais-live-intro1-9x16" data-start="0" data-duration="15.90" data-width="1080" data-height="1920">
+      <div id="bg-wrap">
+        <video id="bg-video" src="assets/intro1-source.mp4" data-start="0" data-duration="15.90" data-track-index="0" data-has-audio="false" muted></video>
+      </div>
+      <audio id="bg-audio" src="assets/intro1-audio.m4a" data-start="0" data-duration="15.90" data-track-index="1"></audio>
+
+      <div id="panel" class="clip" data-start="0" data-duration="15.90" data-track-index="2">
+        <div class="scrim"></div>
+        <div class="grid"></div>
+      </div>
+
+      <!-- A -->
+      <div id="beatA" class="clip" data-start="0.4" data-duration="4.3" data-track-index="3">
+        <div class="beat">
+          <div class="kick">The AI person</div>
+          <div class="line">Not making money<br>from it. <span class="box">yet.</span></div>
+        </div>
+      </div>
+
+      <!-- B -->
+      <div id="beatB" class="clip" data-start="5.4" data-duration="5.9" data-track-index="4">
+        <div class="beat">
+          <div class="kick">The quiet gap</div>
+          <div class="card gbox top"><span class="gtext">How you talk about AI</span></div>
+          <div class="gaplabel">The gap</div>
+          <div class="card gbox bottom"><span class="gtext">What&rsquo;s in your bank account</span></div>
+        </div>
+      </div>
+
+      <!-- C -->
+      <div id="beatC" class="clip" data-start="11.3" data-duration="1.4" data-track-index="5">
+        <div class="beat">
+          <div class="truth">Here&rsquo;s the <em>truth.</em></div>
+        </div>
+      </div>
+
+      <!-- D -->
+      <div id="beatD" class="clip" data-start="12.7" data-duration="3.2" data-track-index="6">
+        <div class="beat">
+          <div class="sub">Nobody films that part&hellip;</div>
+          <div class="big">Until <em>now.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DURATION = 15.90;
+      const tl = gsap.timeline({ paused: true });
+
+      /* A — "yet." on 3.20 */
+      tl.fromTo("#beatA", { autoAlpha: 0, y: 44, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.7);
+      tl.from("#beatA .kick", { autoAlpha: 0, y: 12, duration: 0.4, ease: "power2.out" }, 0.9);
+      tl.from("#beatA .line", { autoAlpha: 0, y: 16, duration: 0.45, ease: "power2.out" }, 1.05);
+      tl.fromTo("#beatA .box", { scale: 0.6, autoAlpha: 0, y: 8 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.4, ease: "back.out(2)", transformOrigin: "left center" }, 3.15);
+      tl.to("#beatA", { autoAlpha: 0, y: 40, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 4.35);
+
+      /* B — kicker on "quiet gap" (6.58); top "how you talk about AI" (8.06); bottom "bank account" (9.72) */
+      tl.fromTo("#beatB", { autoAlpha: 0, y: 44, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 6.3);
+      tl.from("#beatB .kick", { autoAlpha: 0, y: 12, duration: 0.4, ease: "power2.out" }, 6.5);
+      tl.fromTo("#beatB .top", { autoAlpha: 0, scale: 0.94, y: 10 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out", transformOrigin: "left center" }, 7.9);
+      tl.from("#beatB .gaplabel", { autoAlpha: 0, duration: 0.4, ease: "power1.out" }, 8.9);
+      tl.fromTo("#beatB .bottom", { autoAlpha: 0, scale: 0.94, y: 20 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out", transformOrigin: "left center" }, 9.5);
+      tl.to("#beatB", { autoAlpha: 0, y: 40, filter: "blur(8px)", duration: 0.4, ease: "power2.in" }, 11.0);
+
+      /* C — "truth" (11.68) */
+      tl.fromTo("#beatC", { autoAlpha: 0, scale: 0.8, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "back.out(1.6)", transformOrigin: "left center" }, 11.4);
+      tl.to("#beatC", { autoAlpha: 0, scale: 0.94, filter: "blur(8px)", duration: 0.35, ease: "power2.in" }, 12.35);
+
+      /* D — "nobody films that part" (13.88) -> "until now" (15.28) */
+      tl.fromTo("#beatD .sub", { autoAlpha: 0, y: 18, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power2.out" }, 13.0);
+      tl.fromTo("#beatD .big", { autoAlpha: 0, scale: 0.7, y: 14 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.8)", transformOrigin: "left center" }, 15.05);
+      tl.to("#beatD .sub", { autoAlpha: 0.35, duration: 0.4, ease: "power1.out" }, 15.15);
+
+      tl.set("#beatA", { autoAlpha: 0 }, 4.8);
+      tl.set("#beatB", { autoAlpha: 0 }, 11.45);
+      tl.set("#beatC", { autoAlpha: 0 }, 12.75);
+      tl.set({}, {}, DURATION);
+      window.__timelines["ais-live-intro1-9x16"] = tl;
+    </script>
+  </body>
+</html>

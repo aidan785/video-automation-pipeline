@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p11 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+
+  /* ---------- persistent background ---------- */
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  /* ---------- video ---------- */
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; will-change: transform; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit ---------- */
+  .glass {
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .blue   { color: var(--accent);  text-shadow: var(--textglow-accent); }
+  .yellow { color: var(--accent-2); text-shadow: 0 0 18px rgba(var(--accent2-rgb), .55); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+  .mpill {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 34px; border-radius: 999px;
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap;
+  }
+  .mpill .mn { font-family: var(--font-mono); font-size: 21px; color: var(--text-faint); }
+  .mpill.lit { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.lit .mn { color: var(--accent); }
+  .mpill.done { color: var(--text-dim); }
+  .mpill.done .mn { color: rgba(var(--accent-rgb), .7); }
+  .mconn { width: 66px; height: 2px; margin: 0 8px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.15), rgba(var(--accent-rgb),.85)); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* ---------- B1 cold open ---------- */
+  #b1 { display: grid; place-items: center; text-align: center; }
+  #b1 .kick { margin-bottom: 28px; }
+  #b1 .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 132px; line-height: 1.04; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  #b1 .l2 { margin-top: 30px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 44px; color: var(--text); }
+
+  /* ---------- B2 why-questions chips (over, FULL) ---------- */
+  #b2 .stack { position: absolute; left: 80px; top: 380px; display: flex; flex-direction: column; gap: 18px; }
+  #b2 .stack > div { align-self: flex-start; }
+  #b2 .q { font-style: normal; }
+  #b2 .q .qm { color: var(--accent); font-weight: var(--wt-black); margin-right: 10px; }
+
+  /* ---------- B3 sexy vs boring (under, PIP) ---------- */
+  #b3 .cards { position: absolute; left: 110px; top: 150px; width: 1000px; display: flex; flex-direction: column; gap: 26px; }
+  #b3 .cc { padding: 32px 40px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b3 .cc .lab { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px; }
+  #b3 .cc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 44px; color: var(--text-dim); }
+  #b3 .cc.real { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); }
+  #b3 .cc.real .lab { color: var(--accent); }
+  #b3 .cc.real .val { color: var(--white); text-shadow: var(--textglow); }
+  #b3 .movetitle { position: absolute; left: 110px; top: 560px; }
+  #b3 .movetitle .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b3 .sub { position: absolute; left: 110px; top: 780px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 34px; color: var(--text-dim); }
+  #b3 .sub b { color: var(--white); }
+
+  /* ---------- B4 two things before you dig (under, PIP) ---------- */
+  #b4 .head { position: absolute; left: 110px; top: 110px; }
+  #b4 .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 72px; color: var(--white); text-shadow: var(--textglow); margin-top: 12px; }
+  #b4 .one { position: absolute; left: 110px; top: 320px; width: 1050px; }
+  #b4 .qrow { display: flex; align-items: center; gap: 22px; padding: 26px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 40px; color: var(--white); }
+  #b4 .qrow .n { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 24px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b4 .pair { margin-top: 22px; display: flex; gap: 20px; }
+  #b4 .pc { flex: 1; padding: 22px 28px; border-radius: var(--radius-sm); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b4 .pc .pl { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; margin-bottom: 10px; color: var(--text-faint); }
+  #b4 .pc .pv { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 27px; color: var(--text-dim); line-height: 1.35; }
+  #b4 .pc.pain { border-color: rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  #b4 .pc.pain .pl { color: var(--accent); }
+  #b4 .two { position: absolute; left: 110px; top: 660px; width: 1050px; }
+  #b4 .spectrum { margin-top: 22px; padding: 28px 32px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b4 .spectrum .ends { display: flex; justify-content: space-between; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text-dim); margin-bottom: 16px; }
+  #b4 .spectrum .track { position: relative; height: 14px; border-radius: 999px; background: linear-gradient(90deg, rgba(var(--accent-rgb),.55), rgba(255,255,255,.10), rgba(var(--accent2-rgb),.45)); }
+  #b4 .spectrum .needle { position: absolute; top: -10px; left: 12%; width: 4px; height: 34px; border-radius: 2px; background: var(--white); box-shadow: var(--glow-white); }
+
+  /* ---------- B5 two-paths fork (under, GFX takeover) ---------- */
+  #b5 { display: grid; place-items: center; }
+  #b5 .wrap { position: relative; width: 1500px; height: 760px; }
+  #b5 .root { position: absolute; left: 50%; top: 40px; transform: translate(-50%, 0); }
+  #b5 .root .mpill { font-size: 40px; padding: 24px 44px; }
+  #b5 .branch { position: absolute; width: 640px; padding: 34px 38px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b5 .branch .bl { font-family: var(--font-mono); font-size: 21px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px; }
+  #b5 .branch .bt { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 44px; color: var(--white); margin-bottom: 14px; }
+  #b5 .branch .bq { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; color: var(--text-dim); }
+  #b5 .branch.left { left: 0; top: 300px; }
+  #b5 .branch.right { right: 0; top: 300px; }
+  #b5 .branch.hot { border-color: rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); }
+  #b5 .branch.hot .bl { color: var(--accent); }
+  #b5 svg.forks { position: absolute; left: 0; top: 0; width: 1500px; height: 760px; overflow: visible; }
+  #b5 svg.forks path { fill: none; stroke: rgba(var(--accent-rgb), .75); stroke-width: 3; filter: drop-shadow(0 0 8px rgba(var(--accent-rgb), .5)); }
+  #b5 .note { position: absolute; right: 40px; top: 600px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; color: var(--text-dim); }
+  #b5 .note b { color: var(--white); }
+  #b5 .thislesson { position: absolute; left: 40px; top: 600px; }
+
+  /* ---------- B6 keep-asking-why thesis + prove-it (over, FULL) ---------- */
+  #b6ask { position: absolute; left: 80px; top: 430px; width: 700px; }
+  #b6ask .punchx { font-size: 40px; line-height: 1.3; }
+  #b6ask .punchx .why { color: var(--accent); }
+  #b6q { position: absolute; left: 80px; top: 470px; }
+  #b6prove { position: absolute; left: 80px; top: 490px; }
+
+  /* ---------- B7 why-chain (under, PIP) ---------- */
+  #b7 .head { position: absolute; left: 110px; top: 88px; }
+  #b7 .chain { position: absolute; left: 110px; top: 168px; display: flex; flex-direction: column; gap: 0; }
+  #b7 .link { align-self: flex-start; padding: 18px 30px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 31px; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b7 .why { align-self: flex-start; margin: 8px 0 8px 40px; display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 23px; letter-spacing: .14em; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b7 .why .arr { font-size: 26px; }
+  #b7 .link.final { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 36px; color: var(--white); background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65); box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  #b7 .link.final .money { color: var(--accent-2); text-shadow: 0 0 18px rgba(var(--accent2-rgb), .55); }
+  #b7 .sum { position: absolute; left: 110px; top: 820px; display: flex; gap: 18px; }
+  #b7 .sc { padding: 16px 26px; border-radius: var(--radius-sm); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text-dim); white-space: nowrap; }
+  #b7 .sc b { color: var(--white); }
+  #b7 .sc.metric { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+
+  /* ---------- B8 the pipe (under, PIP) ---------- */
+  #b8 .case { position: absolute; left: 110px; top: 110px; display: flex; gap: 20px; }
+  #b8 .pipezone { position: absolute; left: 110px; top: 330px; width: 1060px; height: 420px; }
+  #b8 .pipe { position: absolute; left: 0; top: 130px; width: 1000px; height: 90px; border-radius: 45px; background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04)); border: 1.5px solid var(--glass-border); box-shadow: inset 0 2px 0 var(--glass-hi), var(--glass-shadow); overflow: hidden; }
+  #b8 .flow { position: absolute; inset: 8px; border-radius: 40px; background: repeating-linear-gradient(90deg, rgba(var(--accent-rgb),.5) 0 60px, rgba(var(--accent-rgb),.22) 60px 120px); background-size: 240px 100%; }
+  #b8 .inlab { position: absolute; left: 0; top: 60px; font-family: var(--font-mono); font-size: 21px; letter-spacing: .12em; color: var(--text-dim); }
+  #b8 .outlab { position: absolute; right: 40px; top: 60px; font-family: var(--font-mono); font-size: 21px; letter-spacing: .12em; color: var(--text-dim); }
+  #b8 .leak { position: absolute; top: 230px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  #b8 .leak .drip { width: 16px; height: 26px; border-radius: 50% 50% 60% 60%; background: rgba(var(--alert-rgb), .8); box-shadow: 0 0 14px rgba(var(--alert-rgb), .5); }
+  #b8 .leak .ll { padding: 12px 22px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 26px; color: var(--text); background: rgba(var(--alert-rgb), .08); border: 1px solid rgba(var(--alert-rgb), .5); box-shadow: 0 0 16px rgba(var(--alert-rgb), .2); white-space: nowrap; }
+  #b8 .leak .ll b { color: var(--alert); }
+  #b8 .leak.l1 { left: 220px; }
+  #b8 .leak.l2 { left: 700px; }
+  #b8 .verdict { position: absolute; left: 0; top: 0; }
+  #b8 .fix { position: absolute; left: 110px; top: 800px; }
+
+  /* ---------- B9 5x question (over, FULL) ---------- */
+  #b9x { position: absolute; left: 80px; top: 420px; width: 720px; }
+  #b9x .punchx { font-size: 42px; line-height: 1.3; }
+  #b9x .strain { margin-top: 18px; display: inline-block; padding: 16px 28px; border-radius: var(--radius-sm); background: rgba(12, 17, 27, 0.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-body); font-weight: var(--wt-med); font-size: 29px; color: var(--text); }
+  #b9x .strain b { color: var(--white); }
+
+  /* ---------- B10 silence (under, PIP) ---------- */
+  #b10 .big { position: absolute; left: 110px; top: 130px; }
+  #b10 .big .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; color: var(--white); text-shadow: var(--textglow); }
+  #b10 .big .s { margin-top: 10px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 34px; color: var(--text-dim); }
+  #b10 .big .s b { color: var(--white); }
+  #b10 .seq { position: absolute; left: 110px; top: 400px; display: flex; flex-direction: column; gap: 16px; }
+  #b10 .seq .chipx { align-self: flex-start; }
+  #b10 .sig { position: absolute; left: 110px; top: 748px; width: 1020px; }
+  #b10 .sig .sh { font-family: var(--font-mono); font-size: 22px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+  #b10 .sig .row { display: flex; gap: 18px; }
+  #b10 .reps { position: absolute; left: 110px; top: 942px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 30px; color: var(--text-dim); }
+  #b10 .reps b { color: var(--white); }
+
+  /* ---------- B11 when it fails (over, FULL) ---------- */
+  #b11a .stack { position: absolute; left: 80px; top: 360px; display: flex; flex-direction: column; gap: 18px; }
+  #b11a .stack > div { align-self: flex-start; max-width: 720px; }
+  #b11b { position: absolute; left: 80px; top: 440px; max-width: 700px; }
+  #b11c .stack { position: absolute; left: 80px; top: 420px; display: flex; flex-direction: column; gap: 18px; }
+  #b11c .stack > div { align-self: flex-start; max-width: 720px; }
+
+  /* ---------- B12 order-taking + vendor->consultant (over, FULL) ---------- */
+  #b12 .mistake { position: absolute; left: 80px; top: 400px; max-width: 680px; }
+  #b12 .mistake .warnx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 38px; }
+  #b12 .mistake .sub { margin-top: 16px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; color: var(--text-dim); max-width: 640px; }
+  #b12 .push { position: absolute; left: 80px; top: 430px; }
+  #b12 .push .punchx { font-size: 42px; }
+  #b12 .morph { position: absolute; left: 80px; top: 560px; display: flex; align-items: center; gap: 28px; white-space: nowrap; padding: 18px 36px; border-radius: 999px; background: rgba(12, 17, 27, 0.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b12 .morph .v { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 48px; color: var(--text-dim); }
+  #b12 .morph .arr { font-size: 42px; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b12 .morph .c { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 54px; color: var(--white); text-shadow: var(--textglow-accent); }
+  #b12 .charge { position: absolute; left: 80px; top: 706px; display: inline-block; padding: 16px 32px; border-radius: 999px; background: rgba(12, 17, 27, 0.94); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 40px; color: var(--white); text-shadow: var(--textglow); }
+  #b12 .charge .j { color: var(--accent-2); text-shadow: 0 0 20px rgba(var(--accent2-rgb), .5); }
+
+  /* ---------- B13 outro ---------- */
+  #b13 { display: grid; place-items: center; text-align: center; }
+  #b13 .rail { display: flex; align-items: center; justify-content: center; }
+  #b13 .nx { margin-top: 70px; }
+  #b13 .nx .kick { margin-bottom: 20px; }
+  #b13 .nx .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 110px; color: var(--white); text-shadow: var(--textglow); }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-krej" id="p11" data-composition-id="p11" data-start="0" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-6qw6" id="bg" class="clip" data-start="0" data-duration="518.5" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE ============ -->
+
+  <div data-hf-id="hf-lor5" id="b1" class="under clip" data-start="0" data-duration="6.8" data-track-index="4">
+    <div data-hf-id="hf-lm34" class="inner">
+      <div data-hf-id="hf-gywk" class="kick">Move One · Reframe</div>
+      <div data-hf-id="hf-x6ul" class="l1"><span data-hf-id="hf-nkyy" class="word w1">Always</span> <span data-hf-id="hf-nl2x" class="word w2">Be</span> <span data-hf-id="hf-b9co" class="word w3 grad">Suspicious</span><br data-hf-id="hf-x5px">
+        <span data-hf-id="hf-0ihr" class="word w4">of</span> <span data-hf-id="hf-453e" class="word w5">the</span> <span data-hf-id="hf-n2i6" class="word w6">Asked-For</span> <span data-hf-id="hf-c0ae" class="word w7">Solution</span></div>
+      <div data-hf-id="hf-14ym" class="l2"><span data-hf-id="hf-x86q" class="word w8">“Build</span> <span data-hf-id="hf-vinx" class="word w9">me</span> <span data-hf-id="hf-f7ea" class="word w10">an</span> <span data-hf-id="hf-g92y" class="word w11 blue">executive</span> <span data-hf-id="hf-akia" class="word w12 blue">assistant.”</span></div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-56b4" id="b3" class="under clip" data-start="46.9" data-duration="25.5" data-track-index="4">
+    <div data-hf-id="hf-5cwd" class="cards">
+      <div data-hf-id="hf-500v" class="cc sexy">
+        <div data-hf-id="hf-0wmw" class="lab">Way cooler to say</div>
+        <div data-hf-id="hf-t6cl" class="val">“I have my own AI executive assistant”</div>
+      </div>
+      <div data-hf-id="hf-c3dy" class="cc real">
+        <div data-hf-id="hf-o2kp" class="lab">Actually saves the business</div>
+        <div data-hf-id="hf-000y" class="val">A proposal-writing automation</div>
+      </div>
+    </div>
+    <div data-hf-id="hf-tysr" class="movetitle">
+      <div data-hf-id="hf-hikh" class="kick">The first move of the audit</div>
+      <div data-hf-id="hf-eok5" class="t">The Reframe</div>
+    </div>
+    <div data-hf-id="hf-fjh0" class="sub">The asked-for fix is almost never the real fix. <b data-hf-id="hf-jktt">The solution is usually boring.</b></div>
+  </div>
+
+  <div data-hf-id="hf-ipih" id="b4" class="under clip" data-start="72.4" data-duration="55" data-track-index="4">
+    <div data-hf-id="hf-z992" class="head">
+      <div data-hf-id="hf-33a2" class="kick">Before you dig</div>
+      <div data-hf-id="hf-tjzd" class="t">Two things I always want</div>
+    </div>
+    <div data-hf-id="hf-ogzo" class="one">
+      <div data-hf-id="hf-6q4r" class="qrow"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-5wz6">Why did they book the call?</div></div>
+      <div data-hf-id="hf-vt1w" class="pair">
+        <div data-hf-id="hf-emyu" class="pc curi"><div data-hf-id="hf-6ezt" class="pl">Curiosity</div><div data-hf-id="hf-aps4" class="pv">“Our CEO says we need an AI strategy.”</div></div>
+        <div data-hf-id="hf-h2at" class="pc pain"><div data-hf-id="hf-4g3o" class="pl">Pain</div><div data-hf-id="hf-lcy0" class="pv">“Two vacations stacked, the whole business bottlenecked.”</div></div>
+      </div>
+    </div>
+    <div data-hf-id="hf-9yku" class="two">
+      <div data-hf-id="hf-gsa3" class="qrow"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-5grt">Where are they on AI?</div></div>
+      <div data-hf-id="hf-net1" class="spectrum">
+        <div data-hf-id="hf-szpa" class="ends"><span data-hf-id="hf-9iu5">“AI is magic, a month to transform”</span><span data-hf-id="hf-vsdb">“Never been convinced of the ROI”</span></div>
+        <div data-hf-id="hf-64lp" class="track"><div data-hf-id="hf-29vx" class="needle"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-91yd" id="b5" class="under clip" data-start="127.4" data-duration="31.4" data-track-index="4">
+    <div data-hf-id="hf-wnm4" class="wrap">
+      <div data-hf-id="hf-iz4w" class="root"><div data-hf-id="hf-e6rd" class="mpill lit">Discovery call</div></div>
+      <svg data-hf-id="hf-v8gg" class="forks" viewBox="0 0 1500 760">
+        <path data-hf-id="hf-y9bf" class="fl" d="M 750 150 C 750 230, 320 200, 320 300" />
+        <path data-hf-id="hf-dsgf" class="fr" d="M 750 150 C 750 230, 1180 200, 1180 300" />
+      </svg>
+      <div data-hf-id="hf-sbni" class="branch left hot">
+        <div data-hf-id="hf-csci" class="bl">Most of the time</div>
+        <div data-hf-id="hf-rbpe" class="bt">The Reframe path</div>
+        <div data-hf-id="hf-cdik" class="bq">They arrive holding a solution: “build me a chatbot.”</div>
+      </div>
+      <div data-hf-id="hf-v2r2" class="branch right">
+        <div data-hf-id="hf-fy9s" class="bl">Sometimes</div>
+        <div data-hf-id="hf-w81x" class="bt">The Exploratory path</div>
+        <div data-hf-id="hf-56ij" class="bq">“Tell me what I don't know. We don't know where to begin.”</div>
+      </div>
+      <div data-hf-id="hf-divk" class="thislesson"><div data-hf-id="hf-bmpc" class="punchx">This lesson</div></div>
+      <div data-hf-id="hf-pezw" class="note">Nothing to reframe yet: <b data-hf-id="hf-yvb2">go straight to mapping</b> (next lesson)</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-vz1q" id="b7" class="under clip" data-start="211.4" data-duration="36" data-track-index="4">
+    <div data-hf-id="hf-gwvu" class="head"><div data-hf-id="hf-fyvz" class="kick">Brightwater Dental · the why-chain</div></div>
+    <div data-hf-id="hf-i9yj" class="chain">
+      <div data-hf-id="hf-avqt" class="link k1">“We want a chatbot on our website.”</div>
+      <div data-hf-id="hf-z6dv" class="why y1"><span data-hf-id="hf-88az" class="arr">↓</span> WHY?</div>
+      <div data-hf-id="hf-5h7t" class="link k2">The front desk can't keep up with the calls.</div>
+      <div data-hf-id="hf-q63w" class="why y2"><span data-hf-id="hf-mxkb" class="arr">↓</span> WHY?</div>
+      <div data-hf-id="hf-yvdq" class="link k3">Most calls are people rescheduling.</div>
+      <div data-hf-id="hf-apmo" class="why y3"><span data-hf-id="hf-mj9a" class="arr">↓</span> WHY DOES IT MATTER?</div>
+      <div data-hf-id="hf-87z7" class="link final k4">No-shows cost the practice <span data-hf-id="hf-m5i5" class="money">$1,000s</span> a month.</div>
+    </div>
+    <div data-hf-id="hf-zz21" class="sum">
+      <div data-hf-id="hf-m4h0" class="sc s1">Asked: <b data-hf-id="hf-rjyg">chatbot</b></div>
+      <div data-hf-id="hf-8jmu" class="sc s2">Problem: <b data-hf-id="hf-xrhp">no-shows</b></div>
+      <div data-hf-id="hf-ihdm" class="sc metric s3">Metric: <b data-hf-id="hf-oyt2">no-show rate</b></div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-q1si" id="b8" class="under clip" data-start="247.4" data-duration="85.8" data-track-index="4">
+    <div data-hf-id="hf-jawk" class="case">
+      <div data-hf-id="hf-8bo1" class="chipx c1">Asked for: <b data-hf-id="hf-eee4">a lead-gen agent</b></div>
+      <div data-hf-id="hf-asqg" class="chipx c2">“Only half my slots are booked”</div>
+    </div>
+    <div data-hf-id="hf-xrb2" class="pipezone">
+      <div data-hf-id="hf-j2nx" class="verdict kick">A business is a pipe</div>
+      <div data-hf-id="hf-uep2" class="inlab">LEADS IN →</div>
+      <div data-hf-id="hf-a338" class="pipe"><div data-hf-id="hf-ck2w" class="flow"></div></div>
+      <div data-hf-id="hf-vmw0" class="outlab">→ PAYING CUSTOMERS</div>
+      <div data-hf-id="hf-2byq" class="leak l1">
+        <div data-hf-id="hf-hx21" class="drip"></div>
+        <div data-hf-id="hf-60m3" class="ll">Booked but <b data-hf-id="hf-ggin">never showed</b></div>
+      </div>
+      <div data-hf-id="hf-ydup" class="leak l2">
+        <div data-hf-id="hf-hgml" class="drip"></div>
+        <div data-hf-id="hf-ajmn" class="ll"><b data-hf-id="hf-xxyo">Hundreds</b> never contacted again</div>
+      </div>
+    </div>
+    <div data-hf-id="hf-fmpd" class="fix">
+      <div data-hf-id="hf-yv2j" class="punchx px">Pouring in more water fixes nothing. Fix the leaks.</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-1quh" id="b10" class="under clip" data-start="361.3" data-duration="48.3" data-track-index="4">
+    <div data-hf-id="hf-vf1u" class="big">
+      <div data-hf-id="hf-vo8j" class="t">Silence.</div>
+      <div data-hf-id="hf-hc57" class="s">There's a lot of power in it, <b data-hf-id="hf-2eqp">if you control it.</b></div>
+    </div>
+    <div data-hf-id="hf-np05" class="seq">
+      <div data-hf-id="hf-dy0u" class="chipx q1">Ask the why…</div>
+      <div data-hf-id="hf-yg7w" class="chipx q2">…then just sit.</div>
+      <div data-hf-id="hf-0s1f" class="chipx q3">They keep talking…</div>
+      <div data-hf-id="hf-10zu" class="punchx q4">…and talk their way to the real problem.</div>
+    </div>
+    <div data-hf-id="hf-h43b" class="sig">
+      <div data-hf-id="hf-b2gc" class="sh">The two signals you're done</div>
+      <div data-hf-id="hf-thy4" class="row">
+        <div data-hf-id="hf-r56h" class="punchx g1">They have the aha moment</div>
+        <div data-hf-id="hf-v7pm" class="punchx g2">A real cost with a <span data-hf-id="hf-f2x0" class="yellow">number</span> attached</div>
+      </div>
+    </div>
+    <div data-hf-id="hf-wij7" class="reps r1">A skill you earn by <b data-hf-id="hf-p24p">reps</b>, not a script you memorize.</div>
+  </div>
+
+  <div data-hf-id="hf-xqyt" id="b13" class="under clip" data-start="505.1" data-duration="13.4" data-track-index="4">
+    <div data-hf-id="hf-bug8" class="inner">
+      <div data-hf-id="hf-qzq8" class="rail">
+        <div data-hf-id="hf-loi2" class="mpill done o1"><span data-hf-id="hf-gdo1" class="mn">✓</span>Reframe</div>
+        <div data-hf-id="hf-398s" class="mconn oc1"></div>
+        <div data-hf-id="hf-fwms" class="mpill lit o2"><span data-hf-id="hf-1cta" class="mn">02</span>Map</div>
+        <div data-hf-id="hf-bx4n" class="mconn oc2"></div>
+        <div data-hf-id="hf-cshc" class="mpill o3"><span data-hf-id="hf-0yi9" class="mn">03</span>Score</div>
+        <div data-hf-id="hf-7z0m" class="mconn oc3"></div>
+        <div data-hf-id="hf-ok55" class="mpill o4"><span data-hf-id="hf-0k78" class="mn">04</span>Sort</div>
+      </div>
+      <div data-hf-id="hf-erpu" class="nx">
+        <div data-hf-id="hf-1sq8" class="kick">Up next</div>
+        <div data-hf-id="hf-wup7" class="t">Move Two: <span data-hf-id="hf-tojh" class="grad">Map</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-4rwe" id="p11-video" src="assets/clean.mp4" muted data-start="0" data-duration="514.22" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-ej98" id="p11-audio" src="assets/audio.m4a" data-start="0" data-duration="514.22" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE ============ -->
+
+  <div data-hf-id="hf-ry4z" id="b2" class="over clip" data-start="17" data-duration="27" data-track-index="6">
+    <div data-hf-id="hf-d1zs" class="stack">
+      <div data-hf-id="hf-9swh" class="chipx q qa"><span data-hf-id="hf-6o68" class="qm">?</span>Why do you feel too busy?</div>
+      <div data-hf-id="hf-sxd1" class="chipx q qb"><span data-hf-id="hf-c1qw" class="qm">?</span>Who writes the proposals?</div>
+      <div data-hf-id="hf-xha9" class="chipx q qc"><span data-hf-id="hf-autt" class="qm">?</span>How do you write them?</div>
+      <div data-hf-id="hf-ie7q" class="punchx qd">The bottleneck: every proposal, by hand</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-hu7z" id="b6ask" class="over self clip" data-start="175.8" data-duration="10.6" data-track-index="6">
+    <div data-hf-id="hf-abrn" class="punchx">Keep asking <span data-hf-id="hf-d1hx" class="why">why</span> until you reach a <span data-hf-id="hf-cq7w" class="yellow">number</span> they want to move.</div>
+  </div>
+
+  <div data-hf-id="hf-qgsd" id="b6q" class="over self clip" data-start="186.4" data-duration="12" data-track-index="6">
+    <div data-hf-id="hf-8bm1" class="chipx">“When we're done, how will we <b data-hf-id="hf-lsu5">prove</b> this was successful?”</div>
+  </div>
+
+  <div data-hf-id="hf-x5ab" id="b6prove" class="over self clip" data-start="206.5" data-duration="4.6" data-track-index="6">
+    <div data-hf-id="hf-qltg" class="chipx">Prove it moved a number → <b data-hf-id="hf-lmf8">raises &amp; promotions</b></div>
+  </div>
+
+  <div data-hf-id="hf-8jzd" id="b9x" class="over self clip" data-start="340.8" data-duration="19.5" data-track-index="6">
+    <div data-hf-id="hf-9iyu" class="punchx">If you <span data-hf-id="hf-u4rb" class="yellow">5X'd</span> your customers tomorrow: what breaks first?</div>
+    <div data-hf-id="hf-qqzc" class="strain st">The honest answer is never “nothing.” They'll point at <b data-hf-id="hf-2oh8">what's already straining.</b></div>
+  </div>
+
+  <div data-hf-id="hf-px1v" id="b11a" class="over clip" data-start="413" data-duration="20" data-track-index="6">
+    <div data-hf-id="hf-g2wg" class="stack">
+      <div data-hf-id="hf-rrjc" class="warnx s1">Situation 1 · The stubborn client: “I know what you're doing, but I want <b data-hf-id="hf-besh">this</b>.”</div>
+      <div data-hf-id="hf-o3f4" class="chipx s2">Hardest version: a fully scoped PDF they designed themselves</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-xbyr" id="b11b" class="over self clip" data-start="433.9" data-duration="14.5" data-track-index="6">
+    <div data-hf-id="hf-3gz1" class="punchx pb">Make your case once, cleanly. Then decide.</div>
+    <div data-hf-id="hf-4tab" class="warnx wb" style="margin-top:16px;">They will <b data-hf-id="hf-dwru">not</b> remember it was their spec.</div>
+  </div>
+
+  <div data-hf-id="hf-vwch" id="b11c" class="over clip" data-start="449.3" data-duration="15" data-track-index="6">
+    <div data-hf-id="hf-evzd" class="stack">
+      <div data-hf-id="hf-jx6w" class="chipx s1">Situation 2 · “You'd have to talk to my VP for that.”</div>
+      <div data-hf-id="hf-um5e" class="punchx s2">Book the call with whoever <b data-hf-id="hf-zwtw">lives</b> in the process.</div>
+    </div>
+  </div>
+
+  <div data-hf-id="hf-28x2" id="b12" class="over clip" data-start="471.7" data-duration="33.4" data-track-index="6">
+    <div data-hf-id="hf-zy5k" class="mistake">
+      <div data-hf-id="hf-voqo" class="warnx">The #1 mistake: order-taking</div>
+      <div data-hf-id="hf-8foe" class="sub subm">Accepting what they give you: imposter syndrome, fear of losing the sale, fear of contradicting your boss.</div>
+    </div>
+    <div data-hf-id="hf-wzho" class="push"><div data-hf-id="hf-vapl" class="punchx">Push anyway.</div></div>
+    <div data-hf-id="hf-4wma" class="morph">
+      <span data-hf-id="hf-n0vb" class="v">vendor</span><span data-hf-id="hf-8mm0" class="arr">→</span><span data-hf-id="hf-p9nh" class="c">consultant</span>
+    </div>
+    <div data-hf-id="hf-rtwa" class="charge">Charge for <span data-hf-id="hf-nkpl" class="j">judgment</span>, not labor.</div>
+  </div>
+
+  <div data-hf-id="hf-x382" id="vig" class="clip" data-start="0" data-duration="518.5" data-track-index="10"></div>
+  <div data-hf-id="hf-sy5y" id="grain" class="clip" data-start="0" data-duration="518.5" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 518.5;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+
+  /* layout */
+  tl.set(wrap, { opacity: 0, scale: 1.06, x: -57, y: -32, filter: 'blur(22px)' }, 0);
+  tl.to(wrap, { opacity: 1, scale: 1, x: 0, y: 0, duration: 1.0, ease: 'power3.out' }, 5.9);
+  tl.to(wrap, { filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 6.1);
+  toPIP(46.9);
+  toOFF(127.4);
+  fromOFF(158.8, { x: 0, y: 0, scale: 1 });
+  toPIP(211.4);
+  toFULL(333.2);
+  toPIP(361.3);
+  toFULL(409.6);
+  tl.to(wrap, { opacity: 0, filter: 'blur(20px)', scale: 1.04, duration: 1.0, ease: 'power2.in' }, 505.1);
+
+  /* screen-fixed left scrim + video shift (current kit) */
+  const SHIFT_X = 380;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  clearLeft(16.7);  unclearLeft(43.6);   // B2 why chips
+  clearLeft(175.5); unclearLeft(198.7);  // B6 ask-why + prove question
+  clearLeft(206.2); shadeOut(211.3);     // B6 prove pill (toPIP takes the wrap at 211.4)
+  clearLeft(340.5); shadeOut(361.2);     // B9x 5X question (toPIP takes the wrap at 361.3)
+  clearLeft(412.7); unclearLeft(464.6);  // B11 situations
+  clearLeft(471.4); shadeOut(504.9);     // B12 mistake block (video fades out shifted)
+
+  /* ambient */
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: 128, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: 102, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: 128, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* B1 cold open (0–6.8) — VO 0.3–6.0 */
+  inUp(0.3, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1 .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' },
+    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.13 }, 0.55);
+  tl.fromTo('#b1 .l2 .word', { y: 26, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.13 }, 2.9);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 1.0, ease: 'power2.in' }, 5.8);
+
+  /* B2 why chips (17–44) — why 17.3/19.4 · who 28.3 · how 30.3 · bottleneck 33.5 */
+  inLeft(17.4, '#b2 .qa', 0.7);
+  inLeft(28.4, '#b2 .qb', 0.7);
+  inLeft(30.3, '#b2 .qc', 0.7);
+  spring(33.4, '#b2 .qd', 0.7);
+  tl.to('#b2 .q', { opacity: 0.62, duration: 0.5, ease: 'power2.out' }, 34.0);
+  outBlur(43.3, '#b2 .stack');
+
+  /* B3 sexy vs boring (46.9–72.4) — cooler 48.2 · boring one 53.4 · first move 62.1 · boring 70.4 */
+  inUp(48.2, '#b3 .sexy', 0.8, 36);
+  inLeft(53.6, '#b3 .real', 0.8);
+  inUp(62.2, '#b3 .movetitle', 0.9, 34);
+  inUp(65.6, '#b3 .sub', 0.7, 24);
+  outBlur(71.6, '#b3 .cards', 0.5);
+  outBlur(71.7, '#b3 .movetitle', 0.5);
+  outBlur(71.75, '#b3 .sub', 0.5);
+
+  /* B4 two things (72.4–127.4) — two things 74.5 · book 76.3 · CEO 84 · vacations 87.5 · second 104.3 · magic 107.8 · roi 116 */
+  inUp(73.3, '#b4 .head', 0.8, 30);
+  inLeft(76.4, '#b4 .one .qrow', 0.8);
+  inUp(84.0, '#b4 .pc.curi', 0.7, 30);
+  inUp(87.4, '#b4 .pc.pain', 0.7, 30);
+  tl.fromTo('#b4 .pc.pain', { boxShadow: '0 0 10px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 26px rgba(55,189,248,0.65), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.7, ease: 'sine.inOut', repeat: 3, yoyo: true }, 92.0);
+  inLeft(104.4, '#b4 .two .qrow', 0.8);
+  inUp(107.9, '#b4 .spectrum', 0.8, 30);
+  tl.fromTo('#b4 .needle', { left: '12%' }, { left: '86%', duration: 2.4, ease: 'power2.inOut' }, 113.5);
+  tl.to('#b4 .needle', { left: '48%', duration: 1.6, ease: 'power2.inOut' }, 119.5);
+  outBlur(126.6, '#b4 .head', 0.5);
+  outBlur(126.65, '#b4 .one', 0.5);
+  outBlur(126.7, '#b4 .two', 0.5);
+
+  /* B5 fork takeover (127.4–158.8) — two shapes 127.4 · solution 129.7 · reframe path 135 · exploratory 140.3 · mapping 146 · this lesson 150.9 */
+  spring(128.2, '#b5 .root', 0.7);
+  tl.fromTo('#b5 .fl', { strokeDasharray: 900, strokeDashoffset: 900 }, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, 129.4);
+  inUp(130.1, '#b5 .branch.left', 0.8, 40);
+  tl.fromTo('#b5 .fr', { strokeDasharray: 900, strokeDashoffset: 900 }, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, 137.2);
+  inUp(137.9, '#b5 .branch.right', 0.8, 40);
+  inUp(145.0, '#b5 .note', 0.7, 24);
+  spring(151.0, '#b5 .thislesson', 0.6);
+  tl.fromTo('#b5 .branch.left', { boxShadow: '0 0 22px rgba(55,189,248,0.55), 0 0 56px rgba(55,189,248,0.3), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 40px rgba(55,189,248,0.75), 0 0 100px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 151.2);
+  outBlur(158.0, '#b5 .wrap', 0.6, -80);
+
+  /* B6 thesis + prove (over FULL) */
+  spring(176.0, '#b6ask', 0.8);                 // "keep asking why…" 176.1
+  tl.to('#b6ask', { opacity: 0, y: -36, filter: 'blur(12px)', duration: 0.5, ease: 'power2.in' }, 185.8);
+  inUp(186.6, '#b6q', 0.7, 30);                 // "how will we prove" 187.5
+  tl.to('#b6q', { opacity: 0, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 197.9);
+  inUp(206.7, '#b6prove', 0.6, 26);             // raises 209
+  tl.to('#b6prove', { opacity: 0, filter: 'blur(10px)', duration: 0.4, ease: 'power2.in' }, 210.6);
+
+  /* B7 why-chain (211.4–247.4) — chatbot 214.9 · why 219 · front desk 220.5 · why 222.9 · resched 224.3 · why 226.3 · no-shows 230.5 · asked 237.1 · problem 238.3 · metric 240.7 */
+  inUp(212.4, '#b7 .head', 0.6, 22);
+  spring(214.6, '#b7 .k1', 0.6);
+  inUp(218.9, '#b7 .y1', 0.4, -14);
+  spring(220.4, '#b7 .k2', 0.6);
+  inUp(222.8, '#b7 .y2', 0.4, -14);
+  spring(224.3, '#b7 .k3', 0.6);
+  inUp(226.3, '#b7 .y3', 0.4, -14);
+  spring(229.7, '#b7 .k4', 0.75);
+  inLeft(237.1, '#b7 .s1', 0.6);
+  inLeft(238.4, '#b7 .s2', 0.6);
+  inLeft(240.7, '#b7 .s3', 0.6);
+  outBlur(246.4, '#b7 .chain', 0.5);
+  outBlur(246.45, '#b7 .head', 0.5);
+  outBlur(246.5, '#b7 .sum', 0.5);
+
+  /* B8 pipe (247.4–333.2) — lead gen 249.3 · half slots 254 · pipe 264.5 · walk 270.7 · leaks 278.3 · no-show 281 · hundreds 298.1 · pouring 306.3 · fix leaks 309.5 · reactivate 315.4 · aha 322 */
+  inLeft(249.4, '#b8 .c1', 0.7);
+  inLeft(254.1, '#b8 .c2', 0.7);
+  inUp(264.6, '#b8 .verdict', 0.6, 20);
+  inUp(265.0, '#b8 .pipe', 0.9, 40);
+  inUp(265.3, '#b8 .inlab', 0.6, 16);
+  inUp(265.5, '#b8 .outlab', 0.6, 16);
+  tl.fromTo('#b8 .flow', { backgroundPosition: '0px 0' }, { backgroundPosition: '1440px 0', duration: 24, ease: 'none' }, 265.0);
+  spring(281.2, '#b8 .leak.l1', 0.7);
+  tl.fromTo('#b8 .leak.l1 .drip', { y: -8, opacity: 1 }, { y: 26, opacity: 0.2, duration: 0.9, ease: 'power1.in', repeat: 7, yoyo: false }, 281.6);
+  spring(298.2, '#b8 .leak.l2', 0.7);
+  tl.fromTo('#b8 .leak.l2 .drip', { y: -8, opacity: 1 }, { y: 26, opacity: 0.2, duration: 0.9, ease: 'power1.in', repeat: 7, yoyo: false }, 298.6);
+  spring(306.5, '#b8 .fix .px', 0.8);
+  tl.to('#b8 .case', { opacity: 0.55, duration: 0.5 }, 306.5);
+  outBlur(332.3, '#b8 .pipezone', 0.55);
+  outBlur(332.35, '#b8 .fix', 0.55);
+  outBlur(332.4, '#b8 .case', 0.55);
+
+  /* B9 5x question (over FULL) — 341.1 question · 344.7 never nothing · straining 350 */
+  spring(340.9, '#b9x .punchx', 0.8);
+  inUp(347.2, '#b9x .strain', 0.7, 24);
+  tl.to('#b9x', { opacity: 0, y: -34, filter: 'blur(12px)', duration: 0.5, ease: 'power2.in' }, 359.6);
+
+  /* B10 silence (361.3–409.6) — power in silence 371.5 · ask why 375 · sit 376 · keep talking 379 · real problem 383 · how many 385.4 · signals 393.7 · aha 396 · number 398 · reps 405 */
+  inUp(371.6, '#b10 .big .t', 0.9, 36);
+  inUp(373.2, '#b10 .big .s', 0.7, 24);
+  inLeft(375.1, '#b10 .q1', 0.6);
+  inLeft(376.9, '#b10 .q2', 0.6);
+  inLeft(379.4, '#b10 .q3', 0.6);
+  spring(382.4, '#b10 .q4', 0.7);
+  inUp(393.8, '#b10 .sig .sh', 0.5, 18);
+  spring(395.6, '#b10 .g1', 0.6);
+  spring(397.6, '#b10 .g2', 0.6);
+  inUp(404.9, '#b10 .r1', 0.7, 24);
+  outBlur(408.8, '#b10 .big', 0.5);
+  outBlur(408.85, '#b10 .seq', 0.5);
+  outBlur(408.9, '#b10 .sig', 0.5);
+  outBlur(408.95, '#b10 .reps', 0.5);
+
+  /* B11 when it fails (over FULL) */
+  inLeft(414.9, '#b11a .s1', 0.7);               // stubborn 414.9
+  inLeft(419.2, '#b11a .s2', 0.7);               // PDF 419.5
+  tl.to('#b11a', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 432.4);
+  spring(434.2, '#b11b .pb', 0.7);               // make your case 434.2
+  inUp(443.1, '#b11b .wb', 0.7, 26);             // won't remember 444.5
+  tl.to('#b11b', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 448.5);
+  inLeft(449.6, '#b11c .s1', 0.7);               // VP 452
+  spring(456.2, '#b11c .s2', 0.7);               // book the call 456.4
+  tl.to('#b11c', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 463.6);
+
+  /* B12 order-taking (471.7–505.1) — mistake 471.7 · push anyway 492.5 · vendor 494.5 · consultant 496.5 · judgment 502.7 */
+  inUp(472.0, '#b12 .mistake .warnx', 0.7, 30);
+  inUp(474.5, '#b12 .mistake .subm', 0.7, 22);
+  tl.to('#b12 .mistake', { opacity: 0, y: -30, filter: 'blur(10px)', duration: 0.45, ease: 'power2.in' }, 491.4);
+  spring(492.5, '#b12 .push .punchx', 0.6);
+  tl.to('#b12 .push', { opacity: 0, filter: 'blur(8px)', duration: 0.4, ease: 'power2.in' }, 497.9);
+  inUp(494.4, '#b12 .morph', 0.7, 26);
+  tl.to('#b12 .morph .v', { opacity: 0.55, duration: 0.5, ease: 'power2.out' }, 496.3);
+  tl.fromTo('#b12 .morph .c', { scale: 1 }, { scale: 1.07, duration: 0.4, ease: 'back.out(1.8)', yoyo: true, repeat: 1 }, 496.8);
+  inUp(502.7, '#b12 .charge', 0.6, 24);
+  tl.to('#b12 .morph', { opacity: 0, filter: 'blur(10px)', duration: 0.4, ease: 'power2.in' }, 504.3);
+  tl.to('#b12 .charge', { opacity: 0, filter: 'blur(10px)', duration: 0.4, ease: 'power2.in' }, 504.5);
+
+  /* B13 outro (505.1–518.5) — VO ends 514.2 */
+  spring(505.9, '#b13 .o1', 0.5);
+  tl.fromTo('#b13 .oc1', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 506.25);
+  spring(506.45, '#b13 .o2', 0.5);
+  tl.fromTo('#b13 .oc2', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 506.75);
+  spring(506.95, '#b13 .o3', 0.5);
+  tl.fromTo('#b13 .oc3', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, 507.25);
+  spring(507.45, '#b13 .o4', 0.5);
+  tl.fromTo('#b13 .o2', { boxShadow: '0 0 22px rgba(55,189,248,0.55), 0 0 56px rgba(55,189,248,0.3), inset 0 1px 0 rgba(255,255,255,0.22)' },
+    { boxShadow: '0 0 40px rgba(55,189,248,0.7), 0 0 110px rgba(55,189,248,0.4), inset 0 1px 0 rgba(255,255,255,0.22)', duration: 0.8, ease: 'sine.inOut', repeat: 3, yoyo: true }, 508.0);
+  inUp(508.3, '#b13 .nx .kick', 0.6, 20);
+  tl.fromTo('#b13 .nx .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' },
+    { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 508.6);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p11'] = tl;
+})();
+</script>
+</body>
+</html>

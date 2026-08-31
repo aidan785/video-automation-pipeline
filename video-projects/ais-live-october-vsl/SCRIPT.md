@@ -1,0 +1,312 @@
+# AIS Live: Build Your AI OS — Video Sales Letter
+
+> **Speaker:** Nate Herk  
+> **Format:** Talking head, supported by screen recordings and brief on-screen proof  
+> **Target length:** Approximately 9–11 minutes  
+> **Status:** Working draft. Verify the revenue/headcount claim, ticket details, guarantee cutoff, and final agenda before recording.
+
+---
+
+## 1\. Open: Start and scale with AI
+
+Imagine you had your own personal AI chief of staff to help you start and scale your business.
+
+Like Jarvis from Iron Man, but built specifically for your company, helping you plan what to do next, create content, market your offers, follow up with leads, and keep the day-to-day work moving.
+
+Well, that's exactly what I'm going to show you how to build.
+
+It's called an AI OS.
+
+And it's the same kind of system my team and I use to run a company averaging approximately $420,000 per month—with fewer than 10 employees.
+
+For two days, I'm opening those systems up and showing you how to build your own.
+
+If you're starting, you'll discover the most important AI agents for building your company—and how to install them for free.
+
+If you're already in business, you'll see how we use AI across content, marketing, sales, operations, and even recruiting to scale revenue without scaling headcount at the same rate.
+
+The event is called **AIS Live: Build Your AI OS**.
+
+It takes place October 17th and 18th. It's fully virtual, so you can attend from anywhere in the world.
+
+And by the end of the weekend, you'll have a working AI OS custom-built to help you scale.
+
+Let me show you how it works.
+
+---
+
+## 2\. The proof: A different kind of company
+
+Over the past 12 months, our company has generated an average of approximately $420,000 per month in revenue with fewer than 10 employees.
+
+Now, that doesn't mean nine exhausted people are working around the clock.
+
+It means every person on our team has their own AI OS.
+
+Our content systems help turn ideas and expertise into finished assets.
+
+Marketing uses AI to research, build, test, and analyze campaigns faster.
+
+Sales uses it to prepare conversations, preserve prospect context, and keep opportunities moving.
+
+Operations uses it to organize decisions, document processes, prepare meetings, and make sure important work doesn't disappear.
+
+We even use AI in recruiting to help us define roles and evaluate candidates when hiring a human really is the right decision.
+
+The result is not a company without people.
+
+It's a company where every person can accomplish dramatically more.
+
+And that changes the economics of growth.
+
+Instead of revenue, payroll, and headcount all rising together, revenue can grow much faster than the size and complexity of the team.
+
+That's the model we're opening up at AIS Live.
+
+---
+
+## 3\. Tools versus an AI OS
+
+Now, you might be thinking, “I already use AI.”
+
+Great.
+
+But can you honestly say it's making you money?
+
+Maybe it helps you write an email faster.
+
+Summarize a document.
+
+Brainstorm content.
+
+Save a few minutes here and there.
+
+All of that is useful.
+
+But it isn't the same as using AI to create operating capacity across a business.
+
+That's the difference between having AI tools and having an AI OS.
+
+A prompt helps you complete one task.
+
+An automation connects a few steps.
+
+An AI OS gives AI the context, memory, responsibilities, agents, and workflows it needs to help you operate.
+
+It knows what matters about the business.
+
+It understands the role it is supposed to perform.
+
+It can follow repeatable processes instead of forcing you to explain everything again every morning.
+
+And it connects the pieces into a system designed around the company you actually want to build.
+
+You don't need another folder filled with prompts.
+
+You need to turn AI into capacity.
+
+That's the entire event in one sentence.
+
+---
+
+## 4\. If you're starting a business
+
+If you haven't started your business yet, AIS Live has a path built for you.
+
+And no, you do not need to start an AI company to make money with AI.
+
+You can start a consulting business.
+
+An agency.
+
+A training company.
+
+A software business.
+
+Almost anything.
+
+AI doesn't have to be what you sell.
+
+It can be the team behind what you sell.
+
+During the Start Track, you'll discover the most important AI agents for starting a company—and how to install them for free.
+
+You'll see how AI can give you capabilities in content, marketing, sales, administration, and operations before you can afford—or even want—to hire a traditional team.
+
+And instead of building a labor-heavy company first and trying to automate it later, you'll be able to design AI into the business from day one.
+
+You won't leave with a list of 100 tools to investigate.
+
+You'll leave with a working blueprint for the AI OS your new company actually needs—and a clear first system to begin activating.
+
+---
+
+## 5\. If you're scaling an existing business
+
+If you already own a business, the question is different.
+
+If your revenue doubled over the next 12 months, how many people would you need to hire?
+
+And do you actually want to manage all of them?
+
+Because if doubling revenue also means doubling payroll, meetings, handoffs, and management, you're not only scaling your profits.
+
+You're scaling your headaches.
+
+The Scale Track is designed to help you find another path.
+
+We'll show you the systems we use across content, marketing, sales, operations, and even recruiting.
+
+You'll see how individual employees can use their own AI OS to increase output without growing a department around every new responsibility.
+
+You'll learn how to identify the constraints that are actually limiting the business—and decide where AI can create meaningful capacity.
+
+And you'll map those systems onto the company you already run.
+
+The goal isn't to automate everything.
+
+And it isn't to replace every employee.
+
+The goal is to stop treating another hire as the automatic answer to every growth problem.
+
+Your people should spend their time on judgment, relationships, creativity, leadership, and the work where being human matters.
+
+AI should carry more of the research, preparation, coordination, first drafts, routine production, follow-up, reporting, and administrative work underneath them.
+
+That's how a small team begins to operate like a much larger one.
+
+---
+
+## 6\. What happens during the weekend
+
+AIS Live is not another tour of shiny AI tools.
+
+Every session has to answer a business question.
+
+What does this system help you accomplish?
+
+What work does it remove or accelerate?
+
+What context does it need?
+
+Where is human judgment still essential?
+
+And how does it help you start or scale with fewer people?
+
+During the weekend, you'll see how to build a personal AI OS that remembers what matters about your work and helps you execute at a higher level.
+
+You'll go behind the scenes of the systems we use for content, marketing, sales, operations, and recruiting.
+
+You'll see how agents, memory, workflows, and business context fit together—without requiring you to become a programmer.
+
+You'll follow the Start or Scale path that matches your situation.
+
+And you'll bring the pieces together into a working blueprint for your own AI OS.
+
+The promise is not that every attendee will finish every possible system in one weekend.
+
+That would not be credible.
+
+The goal is to give you the architecture, help you identify the highest-leverage place to start, and activate the first system that begins bringing the blueprint to life.
+
+So you leave with more than notes.
+
+You leave knowing what to build, why it matters, and what comes first.
+
+---
+
+## 7\. General Admission and VIP
+
+There are two ways to attend.
+
+General Admission gives you access to both days of AIS Live, the Start and Scale programming, the demonstrations and implementation guidance, and seven days of access to the recordings.
+
+General Admission ranges from $97 to $199, depending on when you claim your seat.
+
+Then there's VIP.
+
+VIP includes everything in General Admission, plus permanent access to the event recordings and private Q\&As with members of our staff from different departments.
+
+These are not generic conversations about everyone's favorite AI tools.
+
+They're your opportunity to ask the people actually running our systems how they use an individual AI OS inside content, marketing, sales, operations, recruiting, and other confirmed areas of the business.
+
+VIP ranges from $199 to $299, depending on when you register.
+
+The current ticket prices, the next price-increase deadline, and the final list of benefits are right below this video.
+
+Take a look at the two options and choose the one that fits you.
+
+And if you're already an active AIS+ member, watch for the separate member registration instructions. Monthly members receive General Admission, and annual members receive VIP.
+
+---
+
+## 8\. The guarantee
+
+I also want you to know the risk is on us.
+
+Attend all of Day 1\.
+
+Attend most of Day 2\.
+
+If you decide AIS Live wasn't worth the price of your ticket, email us before **\[EXACT CLOSING-SESSION REFUND CUTOFF\]** and ask for a refund.
+
+We'll return the full ticket price.
+
+No questionnaire.
+
+No hoops.
+
+That gives you almost the entire event to decide whether we delivered what we promised.
+
+We're comfortable doing that because we know what these systems have made possible inside our company—and we know how valuable it is to finally see the pieces working together.
+
+---
+
+## 9\. Close: Build the company you actually want
+
+Here's the reality.
+
+You can keep using AI to save a few minutes on individual tasks.
+
+Or you can begin redesigning how your business operates.
+
+If you're starting, that means building capabilities before you can afford a traditional team.
+
+If you're scaling, it means increasing capacity without allowing every new dollar of revenue to create another dollar of payroll and complexity.
+
+Either way, the opportunity is the same:
+
+Build a highly profitable company without building a huge team you never wanted to manage.
+
+That's the kind of company we're building.
+
+And during AIS Live, we'll show you what it looks like from the inside and help you create the blueprint for your own.
+
+It's two days.
+
+October 17th and 18th.
+
+Fully virtual.
+
+If you can't attend every session live, General Admission includes seven days of replay access, and VIP includes permanent access.
+
+Review the current ticket options below and claim your seat.
+
+I hope to see you at AIS Live.
+
+---
+
+## Production Notes
+
+- Open directly to camera with no logo animation before the first sentence.  
+- Put **“START AND SCALE WITH AI”** on screen during the first sentence.  
+- Change the on-screen text to **“$420K/MONTH · FEWER THAN 10 EMPLOYEES”** as Nate introduces the proof.  
+- When Nate states the $420,000/fewer-than-10 proof, show a simple verified graphic and disclose the agreed employee/contractor definition where appropriate.  
+- Support the departmental examples with short screen recordings of real systems. Remove private customer, employee, financial, and operational data before recording.  
+- Use on-screen chapter cards for **STARTING A BUSINESS** and **SCALING AN EXISTING BUSINESS** so viewers immediately recognize their path.  
+- Show the AI OS as a simple visual: business context and memory feeding role-specific agents and workflows across company functions.  
+- Keep the VSL evergreen by pointing viewers to the page for the current ticket price and next deadline.  
+- Insert the exact refund cutoff before recording.  
+- Verify all agenda claims against the final event schedule.
+

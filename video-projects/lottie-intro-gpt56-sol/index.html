@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>GPT-5.6 Sol x Blender — lottie-motion-design Energetic pass</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&display=swap");
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage video { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; }
+
+  :root { --amber: #FFB224; --violet: #A155FF; --ink: #0A0B0C; }
+
+  .chrome {
+    background: linear-gradient(180deg, #ffffff 0%, #b9bec4 68%, #e6e9ec 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .slam {
+    font-family: "Archivo", "Helvetica Neue", sans-serif; font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.015em; line-height: 0.96;
+  }
+
+  /* ---------- beat 1: cathedral hook, upper-left (ink chips for contrast) ---------- */
+  #hook { position: absolute; left: 70px; top: 100px; display: flex; flex-direction: column;
+    gap: 18px; align-items: flex-start; }
+  #hook .l1, #hook .l2 { background: rgba(10,11,12,0.90); border-radius: 12px;
+    padding: 18px 34px; box-shadow: 0 16px 44px rgba(0,0,0,0.5); }
+  #hook .l1 { font-size: 88px; color: #fff; }
+  #hook .l2 { font-size: 106px; color: var(--amber);
+    text-shadow: 0 0 34px rgba(255,178,36,0.35); }
+
+  /* ---------- beat 2: title slam ---------- */
+  #title { position: absolute; inset: 0; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; gap: 20px; }
+  #title .main { font-size: 238px; text-shadow: 0 10px 60px rgba(0,0,0,0.75); white-space: nowrap; }
+  #title .main .sol { color: var(--amber); -webkit-text-fill-color: var(--amber);
+    text-shadow: 0 0 46px rgba(255,178,36,0.5); }
+  #title .under { width: 520px; height: 10px; background: var(--amber); transform-origin: 0% 50%; }
+  #title .tag { font: 700 34px/1 "Archivo", sans-serif; letter-spacing: 0.30em;
+    text-transform: uppercase; color: #fff; text-shadow: 0 4px 24px rgba(0,0,0,0.8); }
+
+  /* ---------- beat 3: VS chip ---------- */
+  #vs { position: absolute; left: 70px; bottom: 96px; display: flex; align-items: center; gap: 22px;
+    background: rgba(10,11,12,0.88); border: 2px solid rgba(255,255,255,0.16);
+    border-radius: 10px; padding: 22px 34px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+  #vs .side { font-family: "Archivo", sans-serif; font-weight: 900; font-size: 52px;
+    text-transform: uppercase; letter-spacing: 0; line-height: 1; }
+  #vs .a { color: var(--amber); }
+  #vs .b { color: #fff; }
+  #vs .v { font: 900 30px/1 "Archivo", sans-serif; color: var(--violet); }
+
+  /* ---------- beat 4: agenda chips ---------- */
+  #agenda { position: absolute; left: 70px; bottom: 96px; display: flex; flex-direction: column; gap: 16px; }
+  .achip { display: flex; align-items: center; gap: 18px;
+    background: rgba(10,11,12,0.88); border: 2px solid rgba(255,255,255,0.14);
+    border-radius: 10px; padding: 16px 26px; box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+    transform-origin: 0% 50%; }
+  .achip .n { font: 900 26px/1 "Archivo", sans-serif; color: var(--amber); }
+  .achip .t { font: 700 34px/1 "Archivo", sans-serif; color: #fff;
+    text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ---------- beat 5 + 6: center slams (ink panels for contrast) ---------- */
+  .midslam { position: absolute; left: 0; right: 0; top: 300px; text-align: center; }
+  .midslam .txt { font-size: 132px; display: inline-block; color: #fff;
+    background: rgba(10,11,12,0.90); border-radius: 14px; padding: 26px 52px;
+    box-shadow: 0 22px 60px rgba(0,0,0,0.55); }
+  .midslam .txt em { font-style: normal; color: var(--amber);
+    -webkit-text-fill-color: var(--amber);
+    text-shadow: 0 0 40px rgba(255,178,36,0.45); }
+
+  /* radial scrim behind the title slam */
+  #tscrim { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 50% 46%, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 40%, transparent 68%); }
+
+  /* ---------- streaks (secondary layer) ---------- */
+  .streak { position: absolute; top: 50%; left: 0; width: 44%; height: 10px;
+    background: linear-gradient(90deg, transparent, var(--violet), #fff, transparent);
+    filter: blur(7px); transform: translateY(-50%); }
+  #streak1 { top: 22%; } #streak2 { top: 48%; } #streak3 { top: 40%; }
+
+  /* ---------- ambient ---------- */
+  #vig { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,0.6) 100%);
+    opacity: 0.35; }
+  #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='11'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 240px 240px; }
+
+  #endfade { position: absolute; inset: 0; background: #000; }
+</style>
+</head>
+<body>
+<div id="stage" data-composition-id="lottie-intro-gpt56-sol" data-start="0" data-width="1920" data-height="1080">
+
+  <video id="vid" src="assets/intro.mp4" data-has-audio="true" data-start="0" data-duration="48.6" data-track-index="0"></video>
+
+  <div id="vig"   class="clip" data-start="0" data-duration="48.6" data-track-index="9"></div>
+  <div id="grain" class="clip" data-start="0" data-duration="48.6" data-track-index="10"></div>
+
+  <!-- beat 1 — hook: "create this cathedral" (0.82) / "in under one minute" (3.42) -->
+  <div id="hook" class="clip" data-start="0.55" data-duration="4.9" data-track-index="2">
+    <div class="l1 slam">This cathedral.</div>
+    <div class="l2 slam">Under 1 minute.</div>
+  </div>
+
+  <!-- beat 2 — title slam: "The new GPT 5.6 Soul" (6.06) -->
+  <div id="tscrim" class="clip" data-start="5.85" data-duration="4.1" data-track-index="1"></div>
+  <div id="title" class="clip" data-start="5.85" data-duration="4.1" data-track-index="2">
+    <div class="main slam chrome">GPT-5.6 <span class="sol">Sol</span></div>
+    <div class="under"></div>
+    <div class="tag">In Blender</div>
+  </div>
+
+  <!-- beat 3 — VS chip: "compared to Fable 5" (12.06) -->
+  <div id="vs" class="clip" data-start="11.85" data-duration="2.9" data-track-index="2">
+    <span class="side a">Sol</span><span class="v">VS</span><span class="side b">Fable 5</span>
+  </div>
+
+  <!-- beat 4 — agenda chips: 15.26 / 17.32 / 22.84 -->
+  <div id="agenda" class="clip" data-start="15.0" data-duration="10.3" data-track-index="2">
+    <div class="achip c1"><span class="n">01</span><span class="t">The prompt</span></div>
+    <div class="achip c2"><span class="n">02</span><span class="t">Image &rarr; scene</span></div>
+    <div class="achip c3"><span class="n">03</span><span class="t">VS Fable 5</span></div>
+  </div>
+
+  <!-- beat 5 — "Codex might take the cake" (31.60) -->
+  <div id="cake" class="midslam clip" data-start="31.35" data-duration="3.3" data-track-index="2">
+    <div class="txt slam">Takes <em>the cake?</em></div>
+  </div>
+
+  <!-- beat 6 — "not seen anyone test it inside of Blender" (45.38) -->
+  <div id="first" class="midslam clip" data-start="45.15" data-duration="3.1" data-track-index="2">
+    <div class="txt slam"><em>First</em> Blender test</div>
+  </div>
+
+  <!-- streaks fire at slams -->
+  <div id="streak1" class="streak clip" data-start="0.55" data-duration="0.45" data-track-index="8"></div>
+  <div id="streak2" class="streak clip" data-start="5.85" data-duration="0.45" data-track-index="8"></div>
+  <div id="streak3" class="streak clip" data-start="31.35" data-duration="0.45" data-track-index="8"></div>
+
+  <div id="endfade" class="clip" data-start="48.1" data-duration="0.5" data-track-index="11"></div>
+</div>
+
+<script>
+(() => {
+  const DUR = 48.6;
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+
+  /* Energetic archetype (lottie-motion-design):
+     expo.out entrances 120-250ms, back.out(2.2) overshoot ~20-30%,
+     expo.in/power2.in exits 120-180ms, stagger 50-70ms. */
+
+  /* ===== ambient ===== */
+  tl.fromTo("#vig", { opacity: 0.30 }, { opacity: 0.42, duration: 3, ease: "sine.inOut", repeat: 15, yoyo: true, immediateRender: true }, 0);
+  for (let t = 0, i = 0; t < DUR; t += 0.25, i++) {
+    tl.set("#grain", { backgroundPosition:
+      (120 * Math.abs(Math.sin(i * 0.83 + 0.4))).toFixed(1) + "px " +
+      (120 * Math.abs(Math.cos(i * 1.31 + 0.2))).toFixed(1) + "px" }, t);
+  }
+
+  /* ===== streaks (fire AT the slam) ===== */
+  [["#streak1", 0.58], ["#streak2", 5.88], ["#streak3", 31.38]].forEach(([s, t]) => {
+    tl.fromTo(s, { xPercent: -120, scaleX: 0.5 }, { xPercent: 260, scaleX: 1.4, duration: 0.40, ease: "power3.in", immediateRender: true }, t);
+  });
+
+  /* ===== beat 1 — hook (0.55 - 5.45) ===== */
+  tl.from("#hook .l1", { x: -420, autoAlpha: 0, duration: 0.24, ease: "expo.out" }, 0.62);
+  tl.from("#hook .l2", { scale: 2.4, autoAlpha: 0, duration: 0.22, ease: "back.out(2.2)", transformOrigin: "0% 50%" }, 3.30);
+  tl.to("#hook .l1", { x: -80, autoAlpha: 0, duration: 0.16, ease: "expo.in" }, 5.05);
+  tl.to("#hook .l2", { x: -80, autoAlpha: 0, duration: 0.16, ease: "expo.in" }, 5.12);
+  tl.set("#hook", { autoAlpha: 0 }, 5.40);
+
+  /* ===== beat 2 — title slam (5.85 - 9.95) ===== */
+  tl.fromTo("#tscrim", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.20, ease: "power2.out", immediateRender: true }, 5.90);
+  tl.to("#tscrim", { autoAlpha: 0, duration: 0.22, ease: "power2.in" }, 9.55);
+  tl.from("#title .main", { scale: 3.1, autoAlpha: 0, duration: 0.25, ease: "expo.out" }, 5.95);
+  tl.from("#title .under", { scaleX: 0, duration: 0.20, ease: "back.out(2.2)" }, 6.16);   // secondary snap
+  tl.from("#title .tag",  { y: 26, autoAlpha: 0, duration: 0.18, ease: "expo.out" }, 6.24);
+  // micro punch on "Soul" spoken tail
+  tl.to("#title .main", { scale: 1.05, duration: 0.12, ease: "power2.out" }, 7.6);
+  tl.to("#title .main", { scale: 1.0, duration: 0.18, ease: "back.out(2.5)" }, 7.72);
+  tl.to("#title .tag",   { y: -20, autoAlpha: 0, duration: 0.15, ease: "expo.in" }, 9.42);
+  tl.to("#title .under", { scaleX: 0, duration: 0.15, ease: "expo.in" }, 9.48);
+  tl.to("#title .main",  { scale: 0.82, autoAlpha: 0, duration: 0.18, ease: "expo.in" }, 9.55);
+  tl.set("#title", { autoAlpha: 0 }, 9.90);
+
+  /* ===== beat 3 — VS chip (11.85 - 14.75) ===== */
+  tl.from("#vs", { y: 90, autoAlpha: 0, duration: 0.22, ease: "back.out(2.2)" }, 11.95);
+  tl.from("#vs .v", { scale: 2.6, autoAlpha: 0, duration: 0.18, ease: "back.out(2.6)" }, 12.12);
+  tl.to("#vs", { y: 50, autoAlpha: 0, duration: 0.16, ease: "expo.in" }, 14.45);
+  tl.set("#vs", { autoAlpha: 0 }, 14.72);
+
+  /* ===== beat 4 — agenda chips (15.0 - 25.3), anchored per phrase ===== */
+  tl.from("#agenda .c1", { x: -260, autoAlpha: 0, duration: 0.22, ease: "back.out(2.0)" }, 15.10);
+  tl.from("#agenda .c2", { x: -260, autoAlpha: 0, duration: 0.22, ease: "back.out(2.0)" }, 17.20);
+  tl.from("#agenda .c3", { x: -260, autoAlpha: 0, duration: 0.22, ease: "back.out(2.0)" }, 22.70);
+  tl.to("#agenda .c3 .t", { color: "#FFB224", duration: 0.15, ease: "power2.out" }, 23.0);  // spoken pulse
+  [".c1", ".c2", ".c3"].forEach((c, i) => {
+    tl.to("#agenda " + c, { x: -60, autoAlpha: 0, duration: 0.15, ease: "expo.in" }, 24.85 + i * 0.06);
+  });
+  tl.set("#agenda", { autoAlpha: 0 }, 25.25);
+
+  /* ===== beat 5 — take the cake (31.35 - 34.65) ===== */
+  tl.from("#cake .txt", { scale: 2.6, autoAlpha: 0, rotation: -3, duration: 0.24, ease: "expo.out" }, 31.45);
+  tl.to("#cake .txt", { rotation: 0, duration: 0.22, ease: "back.out(2.4)" }, 31.69);
+  tl.to("#cake .txt", { y: -70, autoAlpha: 0, duration: 0.17, ease: "expo.in" }, 34.30);
+  tl.set("#cake", { autoAlpha: 0 }, 34.60);
+
+  /* ===== beat 6 — first blender test (45.15 - 48.25) ===== */
+  tl.from("#first .txt", { scale: 0.4, autoAlpha: 0, duration: 0.22, ease: "back.out(2.2)" }, 45.25);
+  tl.to("#first .txt", { scale: 1.06, autoAlpha: 0, duration: 0.18, ease: "expo.in" }, 47.85);
+  tl.set("#first", { autoAlpha: 0 }, 48.15);
+
+  tl.fromTo("#endfade", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45, ease: "power2.in", immediateRender: true }, 48.12);
+
+  tl.to({}, { duration: DUR }, 0);   // Law #11
+  window.__timelines["lottie-intro-gpt56-sol"] = tl;
+})();
+</script>
+</body>
+</html>

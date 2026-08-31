@@ -1,0 +1,319 @@
+<!doctype html>
+<!--
+  VOX EXPLAINER · animated popup sheet -> alpha ProRes via _render-anim.mjs
+  Motion per style DESIGN.md: snap + stutter, back.out(2.2) pops, steps() jitter,
+  marker-box scaleX wipes. Deterministic (no Math.random / Date.now).
+-->
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../../style-library/01-vox-explainer/tokens.css" />
+<style>
+  html, body { margin: 0; background: transparent; }
+  .stage { display: inline-block; padding: 100px; }
+  .pop { position: relative; display: inline-block; }
+
+  .grain-fill {
+    position: absolute; inset: 0; background: var(--tex-grain);
+    background-size: 180px 180px; mix-blend-mode: multiply; opacity: 0.35;
+    pointer-events: none; border-radius: inherit;
+  }
+
+  /* ---- SECTION CARDS ---- */
+  .section-card { position: relative; }
+  .section-card .kicker {
+    position: relative; display: inline-block;
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 30px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); background: var(--paper); padding: 10px 22px 8px;
+    box-shadow: 5px 5px 0 rgba(23,19,14,0.14);
+    transform: rotate(-0.8deg); margin-bottom: 30px;
+  }
+  .section-card .titlebox {
+    position: relative; display: inline-block; clear: both; float: left;
+    background: var(--yellow); padding: 10px 44px 22px;
+    box-shadow: 9px 9px 0 rgba(23,19,14,0.16);
+    transform: skewX(-1.6deg) rotate(-0.6deg);
+  }
+  .section-card .title {
+    font-family: var(--font-display); font-weight: var(--wt-black);
+    font-size: 170px; line-height: 1.0; letter-spacing: var(--track-tight);
+    color: var(--ink); white-space: nowrap;
+  }
+  .section-card .numtab {
+    position: relative; display: inline-block; clear: both; float: left;
+    margin-top: 26px; background: var(--ink); color: var(--paper);
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 34px; letter-spacing: 0.12em; padding: 10px 20px 8px;
+    box-shadow: 5px 5px 0 rgba(23,19,14,0.14); transform: rotate(0.7deg);
+  }
+
+  /* ---- TAGS ---- */
+  .tag { position: relative; display: inline-block;
+    background: var(--paper); border: 5px solid var(--ink);
+    padding: 18px 40px 14px; box-shadow: 8px 8px 0 rgba(23,19,14,0.18);
+  }
+  .tag .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 64px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink); line-height: 1.0; white-space: nowrap;
+  }
+  .tag.r-neg  { transform: rotate(-1.6deg); }
+  .tag.r-pos  { transform: rotate(1.2deg); }
+  .tag.r-neg2 { transform: rotate(-0.7deg); }
+  .tag.orange { border-color: var(--orange); }
+  .tag .strike {
+    position: absolute; left: -14px; right: -14px; top: 50%; height: 9px;
+    background: var(--red); transform: translateY(-50%) rotate(-1.2deg);
+    transform-origin: left center;
+  }
+
+  /* ---- HIGGSFIELD ---- */
+  .brand { position: relative; display: inline-block;
+    background: var(--yellow); padding: 20px 46px 16px;
+    box-shadow: 8px 8px 0 rgba(23,19,14,0.18);
+    transform: skewX(-1.2deg) rotate(-0.8deg);
+  }
+  .brand .small {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 24px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); opacity: 0.75; margin-bottom: 4px;
+  }
+  .brand .txt {
+    font-family: var(--font-display); font-weight: var(--wt-black);
+    font-size: 92px; line-height: 1.0; letter-spacing: var(--track-tight);
+    color: var(--ink); white-space: nowrap;
+  }
+
+  /* ---- PROMPT ---- */
+  .prompt { position: relative; display: inline-block;
+    background: var(--paper); border: 5px solid var(--ink);
+    padding: 30px 42px 34px; box-shadow: 10px 10px 0 rgba(23,19,14,0.18);
+    transform: rotate(-0.6deg);
+  }
+  .prompt .small {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 26px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); margin-bottom: 18px;
+  }
+  .prompt .row { display: flex; align-items: center; gap: 6px; }
+  .prompt .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 78px; line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--ink); white-space: nowrap;
+  }
+  .prompt .txt .ch { display: inline-block; }
+  .prompt .cursor { width: 38px; height: 74px; background: var(--yellow);
+    box-shadow: 3px 3px 0 rgba(23,19,14,0.2); }
+
+  /* ---- ALCATRAZ TRIM NOTE ---- */
+  .note { position: relative; display: inline-block;
+    background: var(--paper); border: 5px solid var(--ink); border-left: 14px solid var(--yellow);
+    padding: 22px 34px 24px; max-width: 700px;
+    box-shadow: 9px 9px 0 rgba(0,0,0,0.4);
+    transform: rotate(-0.7deg);
+  }
+  .note .k {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 22px; letter-spacing: var(--track-wide); text-transform: uppercase;
+    color: var(--ink); opacity: 0.7; margin-bottom: 10px;
+  }
+  .note .l1 {
+    font-family: var(--font-display); font-weight: var(--wt-black);
+    font-size: 44px; line-height: 1.05; letter-spacing: var(--track-tight);
+    color: var(--ink); margin-bottom: 10px;
+  }
+  .note .l2 {
+    font-family: var(--font-label); font-weight: var(--wt-bold);
+    font-size: 26px; line-height: 1.3; color: var(--ink); opacity: 0.85;
+  }
+
+  /* ---- CHIPS ---- */
+  .chip { position: relative; display: inline-block;
+    background: var(--ink); padding: 16px 34px 12px;
+    box-shadow: 7px 7px 0 rgba(23,19,14,0.16);
+  }
+  .chip .txt {
+    font-family: var(--font-label); font-weight: var(--wt-black);
+    font-size: 56px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--paper); line-height: 1.0; white-space: nowrap;
+  }
+  .chip.paper { background: var(--paper); border: 4px solid var(--ink); }
+  .chip.paper .txt { color: var(--ink); }
+  .chip.r1 { transform: rotate(-1.4deg); }
+  .chip.r2 { transform: rotate(1.0deg); }
+  .chip.r3 { transform: rotate(-0.6deg); }
+  .chip.r4 { transform: rotate(1.4deg); }
+</style>
+</head>
+<body>
+
+<div class="stage" id="section-setup"><div class="pop"><div class="section-card">
+  <div class="kicker">EXPLAINER STUDIO · PHASE 01<div class="grain-fill"></div></div><br/>
+  <div class="titlebox"><div class="title">The Setup</div><div class="grain-fill"></div></div><br/>
+  <div class="numtab">01 / 03<div class="grain-fill"></div></div>
+</div></div></div>
+
+<div class="stage" id="section-prompting"><div class="pop"><div class="section-card">
+  <div class="kicker">EXPLAINER STUDIO · PHASE 02<div class="grain-fill"></div></div><br/>
+  <div class="titlebox"><div class="title">The Prompting</div><div class="grain-fill"></div></div><br/>
+  <div class="numtab">02 / 03<div class="grain-fill"></div></div>
+</div></div></div>
+
+<div class="stage" id="section-outputs"><div class="pop"><div class="section-card">
+  <div class="kicker">EXPLAINER STUDIO · PHASE 03<div class="grain-fill"></div></div><br/>
+  <div class="titlebox"><div class="title">The Outputs</div><div class="grain-fill"></div></div><br/>
+  <div class="numtab">03 / 03<div class="grain-fill"></div></div>
+</div></div></div>
+
+<div class="stage" id="role-animators"><div class="pop"><div class="tag r-neg"><div class="txt">Animators</div><div class="grain-fill"></div></div></div></div>
+<div class="stage" id="role-scriptwriters"><div class="pop"><div class="tag r-pos"><div class="txt">Scriptwriters</div><div class="grain-fill"></div></div></div></div>
+<div class="stage" id="role-editors"><div class="pop"><div class="tag r-neg2"><div class="txt">Editors</div><div class="grain-fill"></div></div></div></div>
+
+<div class="stage" id="full-team"><div class="pop"><div class="tag r-neg orange"><div class="txt">A Full Creative Team</div><div class="grain-fill"></div></div></div></div>
+<div class="stage" id="full-team-strike"><div class="pop"><div class="tag r-neg orange"><div class="txt">A Full Creative Team</div><div class="grain-fill"></div><div class="strike"></div></div></div></div>
+
+<div class="stage" id="higgsfield"><div class="pop"><div class="brand">
+  <div class="small">Powered by</div>
+  <div class="txt">Higgsfield</div>
+  <div class="grain-fill"></div>
+</div></div></div>
+
+<div class="stage" id="single-prompt"><div class="pop"><div class="prompt">
+  <div class="small">Just one prompt.</div>
+  <div class="row"><div class="txt" id="type-target">/explainerstudio</div><div class="cursor"></div></div>
+  <div class="grain-fill"></div>
+</div></div></div>
+
+<div class="stage" id="alcatraz-note"><div class="pop"><div class="note">
+  <div class="k">Quick note</div>
+  <div class="l1">The original video is 10 minutes long.</div>
+  <div class="l2">It's cut way down for this demo, so the jumps get choppy.</div>
+  <div class="grain-fill"></div>
+</div></div></div>
+
+<div class="stage" id="chip-scripting"><div class="pop"><div class="chip r1"><div class="txt">Scripting</div><div class="grain-fill"></div></div></div></div>
+<div class="stage" id="chip-editing"><div class="pop"><div class="chip paper r2"><div class="txt">Editing</div><div class="grain-fill"></div></div></div></div>
+<div class="stage" id="chip-animating"><div class="pop"><div class="chip r3"><div class="txt">Animating</div><div class="grain-fill"></div></div></div></div>
+<div class="stage" id="chip-generating"><div class="pop"><div class="chip paper r4"><div class="txt">Generating</div><div class="grain-fill"></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+  window.__anims = {};
+
+  // deterministic stop-motion jitter during the hold: stepped nudges, harmonic offsets
+  function jitter(tl, sel, from, until, seed) {
+    for (let t = from, i = 0; t < until; t += 0.24, i++) {
+      const r = 0.5 * Math.sin(i * 1.7 + seed) ;
+      const x = 1.2 * Math.sin(i * 2.3 + seed * 1.3);
+      const y = 1.2 * Math.cos(i * 1.9 + seed * 0.7);
+      tl.set(sel, { rotation: r, x: x, y: y }, t);
+    }
+  }
+  function grainFlicker(tl, root, until) {
+    for (let t = 0, i = 0; t < until; t += 0.2, i++) {
+      const gx = 40 + 120 * Math.abs(Math.sin(i * 0.9 + 0.4));
+      const gy = 30 + 110 * Math.abs(Math.cos(i * 1.3 + 0.9));
+      tl.set(root + " .grain-fill", { backgroundPosition: gx + "px " + gy + "px" }, t);
+    }
+  }
+
+  // ---- section cards: kicker snap -> box wipe -> title pop -> tab pop, jitter hold
+  ["section-setup", "section-prompting", "section-outputs"].forEach((id, n) => {
+    const DUR = 4.5, root = "#" + id;
+    const tl = gsap.timeline({ paused: true });
+    tl.from(root + " .kicker", { autoAlpha: 0, y: -16, duration: 0.28, ease: "steps(4)" }, 0.05)
+      .fromTo(root + " .titlebox", { autoAlpha: 0, scaleX: 0 },
+              { autoAlpha: 1, scaleX: 1, transformOrigin: "left center", duration: 0.38, ease: "power3.out", immediateRender: true }, 0.34)
+      .from(root + " .title", { autoAlpha: 0, y: 26, duration: 0.24, ease: "steps(3)" }, 0.55)
+      .from(root + " .numtab", { autoAlpha: 0, scale: 0, rotation: -50, transformOrigin: "50% 50%", duration: 0.4, ease: "back.out(2.4)" }, 0.85);
+    jitter(tl, root + " .pop", 1.4, DUR, 1.1 + n);
+    grainFlicker(tl, root, DUR);
+    tl.set({}, {}, DUR);
+    window.__anims[id] = { tl, dur: DUR };
+  });
+
+  // ---- tags & chips: paper-cut pop, jitter hold
+  const pops = [
+    ["role-animators", 2.4], ["role-scriptwriters", 2.4], ["role-editors", 2.4],
+    ["full-team", 3.0],
+    ["chip-scripting", 2.4], ["chip-editing", 2.4], ["chip-animating", 2.4], ["chip-generating", 2.4],
+  ];
+  pops.forEach(([id, DUR], n) => {
+    const root = "#" + id;
+    const tl = gsap.timeline({ paused: true });
+    tl.from(root + " .pop", { autoAlpha: 0, scale: 0, rotation: -7, transformOrigin: "50% 60%", duration: 0.42, ease: "back.out(2.2)" }, 0.05);
+    jitter(tl, root + " .pop", 0.7, DUR, 2.2 + n);
+    grainFlicker(tl, root, DUR);
+    tl.set({}, {}, DUR);
+    window.__anims[id] = { tl, dur: DUR };
+  });
+
+  // ---- full-team-strike: tag already on screen, red strike wipes through, jitter hold
+  {
+    const DUR = 3.0, root = "#full-team-strike";
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(root + " .strike", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power4.in", immediateRender: true }, 0.15)
+      .fromTo(root + " .pop", { x: 0 }, { x: 4, duration: 0.06, ease: "steps(1)", yoyo: true, repeat: 3 }, 0.45); // impact shake
+    jitter(tl, root + " .pop", 0.8, DUR, 4.4);
+    grainFlicker(tl, root, DUR);
+    tl.set({}, {}, DUR);
+    window.__anims["full-team-strike"] = { tl, dur: DUR };
+  }
+
+  // ---- higgsfield: blue plate wipes, brand pops
+  {
+    const DUR = 3.5, root = "#higgsfield";
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(root + " .brand", { autoAlpha: 0, scaleX: 0 },
+              { autoAlpha: 1, scaleX: 1, transformOrigin: "left center", duration: 0.36, ease: "power3.out", immediateRender: true }, 0.05)
+      .from(root + " .small", { autoAlpha: 0, y: -10, duration: 0.2, ease: "steps(3)" }, 0.4)
+      .from(root + " .txt", { autoAlpha: 0, y: 22, duration: 0.24, ease: "steps(3)" }, 0.5);
+    jitter(tl, root + " .pop", 1.0, DUR, 3.3);
+    grainFlicker(tl, root, DUR);
+    tl.set({}, {}, DUR);
+    window.__anims["higgsfield"] = { tl, dur: DUR };
+  }
+
+  // ---- alcatraz note: pop -> staggered lines -> jitter hold (8s, no baked exit)
+  {
+    const DUR = 8.0, root = "#alcatraz-note";
+    const tl = gsap.timeline({ paused: true });
+    tl.from(root + " .pop", { autoAlpha: 0, scale: 0, rotation: -5, transformOrigin: "20% 40%", duration: 0.42, ease: "back.out(2.2)" }, 0.05)
+      .from(root + " .k",  { autoAlpha: 0, y: -12, duration: 0.16, ease: "steps(2)" }, 0.5)
+      .from(root + " .l1", { autoAlpha: 0, y: 16, duration: 0.2, ease: "steps(3)" }, 0.65)
+      .from(root + " .l2", { autoAlpha: 0, y: 14, duration: 0.2, ease: "steps(3)" }, 0.9);
+    jitter(tl, root + " .pop", 1.4, DUR, 2.6);
+    grainFlicker(tl, root, DUR);
+    tl.set({}, {}, DUR);
+    window.__anims["alcatraz-note"] = { tl, dur: DUR };
+  }
+
+  // ---- single-prompt: card pop -> typewriter -> cursor blink hold
+  {
+    const DUR = 4.5, root = "#single-prompt";
+    const target = document.getElementById("type-target");
+    const text = target.textContent;
+    target.textContent = "";
+    for (const c of text) {
+      const s = document.createElement("span");
+      s.className = "ch"; s.textContent = c;
+      target.appendChild(s);
+    }
+    const tl = gsap.timeline({ paused: true });
+    tl.from(root + " .prompt", { autoAlpha: 0, scale: 0, rotation: -5, transformOrigin: "50% 60%", duration: 0.42, ease: "back.out(2.2)" }, 0.05)
+      .from(root + " .small", { autoAlpha: 0, duration: 0.16, ease: "steps(2)" }, 0.5)
+      .fromTo(root + " .ch", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: 0.07, immediateRender: true }, 0.7);
+    // cursor blink: 0.4s cycle through the whole clip
+    for (let t = 0.7; t < DUR; t += 0.4) {
+      tl.set(root + " .cursor", { autoAlpha: 0 }, t + 0.2);
+      tl.set(root + " .cursor", { autoAlpha: 1 }, t + 0.4);
+    }
+    jitter(tl, root + " .pop", 2.2, DUR, 5.1);
+    grainFlicker(tl, root, DUR);
+    tl.set({}, {}, DUR);
+    window.__anims["single-prompt"] = { tl, dur: DUR };
+  }
+</script>
+</body>
+</html>

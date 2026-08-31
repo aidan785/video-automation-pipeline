@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIS LIVE — d2-nate-afterparty</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --onyx: #07121c; --blue: #37bdf8; --red-live: #ff3b30;
+        --paper-soft: rgba(209,220,232,0.82); --paper-mute: rgba(209,220,232,0.55);
+        --font-display: "Montserrat", sans-serif; --font-body: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #fff; font-family: var(--font-body); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--onyx); isolation: isolate; }
+      #root .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- background ---------- */
+      .grid { position: absolute; inset: -48px;
+        background-image:
+          linear-gradient(rgba(55,189,248,0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55,189,248,0.065) 1px, transparent 1px);
+        background-size: 24px 24px; }
+      .glow { position: absolute; top: -180px; left: 20%; width: 760px; height: 760px; margin-left: -380px;
+        border-radius: 50%; background: var(--blue); filter: blur(150px); opacity: 0.16; }
+      .pedestal { position: absolute; left: 40px; bottom: -280px; width: 760px; height: 760px;
+        border-radius: 50%; background: var(--blue); filter: blur(150px); opacity: 0.20; }
+      .vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.58) 95%); }
+
+      /* ---------- portrait (solo, full-color cutout) ---------- */
+      .portrait { position: absolute; left: 10px; bottom: 0; width: 900px; height: 1000px;
+        display: flex; align-items: flex-end; justify-content: center; }
+      .portrait img { max-width: 100%; max-height: 100%; object-fit: contain; object-position: bottom center;
+        transform: scale(1.08); transform-origin: bottom center;
+        filter: drop-shadow(0 26px 54px rgba(0,0,0,0.55));
+        -webkit-mask-image:
+          linear-gradient(to bottom, #000 80%, transparent 100%),
+          linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-image:
+          linear-gradient(to bottom, #000 80%, transparent 100%),
+          linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        mask-composite: intersect; }
+
+      /* ---------- profile pics (multi: left column, vertically centered, left-aligned) ---------- */
+      .pics { position: absolute; left: 130px; top: 0; bottom: 0; width: 380px;
+        display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0px; }
+      .pic { width: 380px; height: 380px; display: block;
+        filter: drop-shadow(0 18px 36px rgba(0,0,0,0.55)); }
+
+      /* ---------- content (right) ---------- */
+      .content { position: absolute; left: 928px; right: 110px; top: 0; bottom: 0;
+        display: flex; flex-direction: column; justify-content: center; }
+      .ses-title { font-family: var(--font-display); font-style: italic; font-weight: 900; letter-spacing: -0.03em;
+        line-height: 1.08; font-size: 80px; color: #fff; max-width: 1180px;
+        padding: 0.06em 0.42em 0.16em 0; clip-path: inset(-0.16em -0.44em -0.30em -0.08em);
+        text-shadow: 0 0 60px rgba(55,189,248,0.20); }
+      .divider { width: 128px; height: 2px; background: var(--blue); margin: 34px 0 30px;
+        box-shadow: 0 0 16px rgba(55,189,248,0.6); transform-origin: left center; }
+      .speakers { display: flex; flex-direction: column; gap: 18px; }
+      .sp-name { font-family: var(--font-display); font-style: italic; font-weight: 800; letter-spacing: -0.02em;
+        font-size: 42px; color: #fff; line-height: 1.02; }
+      .sp-role { font-family: var(--font-body); font-weight: 300; font-style: italic; font-size: 27px;
+        letter-spacing: -0.01em; color: var(--paper-soft); margin-top: 4px; }
+      .ses-meta { font-family: var(--font-mono); font-weight: 500; font-size: 21px; letter-spacing: 0.22em;
+        text-transform: uppercase; color: var(--paper-mute); margin-top: 34px; }
+
+      /* ---------- chrome ---------- */
+      .chrome { position: absolute; top: 60px; left: 90px; right: 110px;
+        display: flex; align-items: center; justify-content: space-between; }
+      .logo { position: relative; display: inline-flex; }
+      .logo img { height: 52px; display: block; filter: drop-shadow(0 0 40px rgba(55,189,248,0.45)); }
+      .logo .ring { position: absolute; top: 12px; right: 13px; width: 7px; height: 7px;
+        border-radius: 50%; background: rgba(255,59,48,0.6); opacity: 0; transform-origin: 50% 50%; }
+      .day { font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.26em;
+        text-transform: uppercase; color: var(--paper-mute); text-align: right; }
+      .day b { color: var(--blue); }
+
+      /* ---------- confetti ---------- */
+      .confetti { position: absolute; left: 960px; top: 430px; z-index: 7; pointer-events: none; }
+      .cf { position: absolute; left: 0; top: 0; display: block; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="cmp-d2-nate-afterparty" data-start="0" data-duration="6.4" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="6.4" data-track-index="0">
+        <div class="grid"></div>
+        <div class="glow"></div>
+        <div class="pedestal"></div>
+        <div class="vignette"></div>
+      </div>
+      <div id="scene" class="clip" data-start="0" data-duration="6.4" data-track-index="1">
+        <div class="portrait"><img src="assets/cutouts-clean/nate-herk.png" crossorigin="anonymous" alt="Nate Herk" /></div>
+        <div class="content">
+          <div class="ses-title">VIP After-Party with Nate</div>
+          <div class="divider"></div>
+          <div class="speakers">
+            <div class="sp"><div class="sp-name">Nate Herk</div><div class="sp-role">Founder · Uppit AI & AIS</div></div>
+          </div>
+          <div class="ses-meta">SUN · JUL 12 · 6:10 PM CT</div>
+        </div>
+        <div class="chrome">
+          <span class="logo"><img src="assets/logos/AIS-LIVE-with-dot.png" crossorigin="anonymous" alt="AIS LIVE" /><span class="ring"></span></span>
+          <span class="day"><b>SUN</b> · JUL 12</span>
+        </div>
+        <div class="confetti"><i class="cf" style="width:10px;height:18px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:12px;height:13px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:8px;height:16px;background:#ffffff;border-radius:50%;"></i><i class="cf" style="width:12px;height:22px;background:#ff3b30;border-radius:1px;"></i><i class="cf" style="width:10px;height:12px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:16px;height:20px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:12px;height:21px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:15px;height:17px;background:#ff3b30;border-radius:50%;"></i><i class="cf" style="width:16px;height:20px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:14px;height:16px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:8px;height:21px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:9px;height:20px;background:#ff3b30;border-radius:1px;"></i><i class="cf" style="width:11px;height:19px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:13px;height:12px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:9px;height:11px;background:#ffffff;border-radius:50%;"></i><i class="cf" style="width:13px;height:15px;background:#ff3b30;border-radius:50%;"></i><i class="cf" style="width:9px;height:13px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:13px;height:19px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:12px;height:14px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:9px;height:11px;background:#ff3b30;border-radius:50%;"></i><i class="cf" style="width:11px;height:15px;background:#37bdf8;border-radius:50%;"></i><i class="cf" style="width:16px;height:13px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:10px;height:12px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:10px;height:15px;background:#ff3b30;border-radius:50%;"></i><i class="cf" style="width:13px;height:18px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:9px;height:15px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:13px;height:15px;background:#ffffff;border-radius:50%;"></i><i class="cf" style="width:11px;height:10px;background:#ff3b30;border-radius:1px;"></i><i class="cf" style="width:12px;height:21px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:8px;height:11px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:9px;height:16px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:14px;height:14px;background:#ff3b30;border-radius:1px;"></i><i class="cf" style="width:15px;height:14px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:13px;height:10px;background:#ff8a5c;border-radius:50%;"></i><i class="cf" style="width:14px;height:12px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:11px;height:21px;background:#ff3b30;border-radius:50%;"></i><i class="cf" style="width:16px;height:21px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:11px;height:21px;background:#ff8a5c;border-radius:50%;"></i><i class="cf" style="width:10px;height:18px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:15px;height:11px;background:#ff3b30;border-radius:50%;"></i><i class="cf" style="width:11px;height:18px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:14px;height:15px;background:#ff8a5c;border-radius:50%;"></i><i class="cf" style="width:10px;height:19px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:14px;height:14px;background:#ff3b30;border-radius:1px;"></i><i class="cf" style="width:13px;height:16px;background:#37bdf8;border-radius:1px;"></i><i class="cf" style="width:13px;height:11px;background:#ff8a5c;border-radius:1px;"></i><i class="cf" style="width:11px;height:17px;background:#ffffff;border-radius:1px;"></i><i class="cf" style="width:10px;height:10px;background:#ff3b30;border-radius:1px;"></i></div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = 6.4;
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(".ring", { scale: 1, autoAlpha: 0 }, { keyframes: [
+        { autoAlpha: 0.5, scale: 1, duration: 0.001 },
+        { autoAlpha: 0, scale: 2.6, duration: 0.999, ease: "power2.out" },
+        { autoAlpha: 0, scale: 1, duration: 0.6 }
+      ], repeat: 3, ease: "none" }, 0);
+      tl.to(".glow", { x: 40, y: -20, duration: 3.2, yoyo: true, repeat: 1, ease: "sine.inOut" }, 0);
+      tl.to(".pedestal", { scale: 1.06, duration: 3.2, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+      tl.to(".grid", { backgroundPosition: "24px 24px", duration: D, ease: "none" }, 0);
+      tl.fromTo(".ses-title", { textShadow: "0 0 50px rgba(55,189,248,0.14)" }, { textShadow: "0 0 92px rgba(55,189,248,0.32)", duration: 2.4, yoyo: true, repeat: 2, ease: "sine.inOut" }, 0);
+
+      tl.from(".logo", { autoAlpha: 0, y: -14, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.from(".day", { autoAlpha: 0, x: 14, duration: 0.5, ease: "power2.out" }, 0.3);
+      tl.from(".portrait", { autoAlpha: 0, x: -60, scale: 0.97, filter: "blur(14px)", duration: 0.9, ease: "power3.out", transformOrigin: "50% 100%" }, 0.2);
+      tl.from(".ses-title", { clipPath: "inset(-0.16em 100% -0.30em -0.08em)", duration: 0.66, ease: "power3.out" }, 0.6);
+      tl.from(".divider", { scaleX: 0, duration: 0.5, ease: "power3.inOut" }, 0.98);
+      tl.from(".sp", { autoAlpha: 0, y: 18, duration: 0.5, ease: "power2.out", stagger: 0.12 }, 1.08);
+      tl.from(".ses-meta", { autoAlpha: 0, y: 10, duration: 0.45, ease: "power2.out" }, 1.5);
+
+      /* confetti pop -> fall + fade (deterministic, baked positions) */
+      const CF = [{"tx":17,"ty":-459,"rot":-244,"fall":350,"d":0.135},{"tx":-281,"ty":-336,"rot":-78,"fall":426,"d":0.203},{"tx":-706,"ty":-3,"rot":98,"fall":399,"d":0.152},{"tx":960,"ty":-168,"rot":-234,"fall":364,"d":0.068},{"tx":-134,"ty":102,"rot":-237,"fall":430,"d":0.255},{"tx":-548,"ty":-250,"rot":281,"fall":697,"d":0.162},{"tx":-915,"ty":-218,"rot":-248,"fall":609,"d":0.101},{"tx":257,"ty":-275,"rot":3,"fall":303,"d":0.061},{"tx":-482,"ty":-1,"rot":409,"fall":459,"d":0.109},{"tx":-670,"ty":267,"rot":487,"fall":623,"d":0.295},{"tx":65,"ty":-252,"rot":130,"fall":429,"d":0.043},{"tx":-210,"ty":188,"rot":-375,"fall":625,"d":0.039},{"tx":458,"ty":-275,"rot":-513,"fall":381,"d":0.013},{"tx":-344,"ty":-300,"rot":78,"fall":575,"d":0.21},{"tx":98,"ty":126,"rot":-56,"fall":716,"d":0.266},{"tx":-370,"ty":-23,"rot":438,"fall":522,"d":0.26},{"tx":-626,"ty":148,"rot":412,"fall":423,"d":0.08},{"tx":-697,"ty":103,"rot":427,"fall":548,"d":0.066},{"tx":182,"ty":-171,"rot":288,"fall":406,"d":0.258},{"tx":526,"ty":-175,"rot":-392,"fall":571,"d":0.03},{"tx":275,"ty":-211,"rot":333,"fall":653,"d":0.223},{"tx":-858,"ty":-77,"rot":428,"fall":598,"d":0.268},{"tx":805,"ty":-141,"rot":312,"fall":480,"d":0.208},{"tx":283,"ty":-60,"rot":456,"fall":529,"d":0.105},{"tx":-28,"ty":211,"rot":-136,"fall":541,"d":0.153},{"tx":388,"ty":116,"rot":-264,"fall":404,"d":0.27},{"tx":-74,"ty":-362,"rot":467,"fall":437,"d":0.098},{"tx":-783,"ty":28,"rot":-492,"fall":655,"d":0.288},{"tx":-449,"ty":-174,"rot":-166,"fall":280,"d":0.278},{"tx":400,"ty":131,"rot":-156,"fall":586,"d":0.074},{"tx":-816,"ty":108,"rot":345,"fall":502,"d":0.014},{"tx":-117,"ty":-436,"rot":526,"fall":390,"d":0.029},{"tx":476,"ty":-311,"rot":213,"fall":344,"d":0.207},{"tx":595,"ty":-187,"rot":-236,"fall":506,"d":0.232},{"tx":-416,"ty":-110,"rot":-245,"fall":300,"d":0.135},{"tx":-11,"ty":-207,"rot":472,"fall":556,"d":0.231},{"tx":-323,"ty":19,"rot":112,"fall":608,"d":0.245},{"tx":-589,"ty":-483,"rot":347,"fall":467,"d":0.042},{"tx":-707,"ty":100,"rot":-194,"fall":616,"d":0.144},{"tx":429,"ty":87,"rot":307,"fall":720,"d":0.24},{"tx":-672,"ty":66,"rot":-62,"fall":350,"d":0.197},{"tx":32,"ty":-249,"rot":-34,"fall":396,"d":0.253},{"tx":-32,"ty":-304,"rot":-334,"fall":320,"d":0.118},{"tx":295,"ty":-222,"rot":-408,"fall":507,"d":0.255},{"tx":-66,"ty":160,"rot":320,"fall":450,"d":0.266},{"tx":-489,"ty":-85,"rot":-91,"fall":719,"d":0.061},{"tx":907,"ty":88,"rot":-197,"fall":323,"d":0.235},{"tx":470,"ty":-453,"rot":-272,"fall":485,"d":0.121}];
+      if (CF) {
+        tl.set(".cf", { x: 0, y: 0, scale: 0, autoAlpha: 0 }, 0);
+        tl.to(".cf", { x: (i) => CF[i].tx, y: (i) => CF[i].ty, rotation: (i) => CF[i].rot, scale: 1, autoAlpha: 1,
+          duration: 0.72, ease: "back.out(1.7)", stagger: (i) => CF[i].d }, 1.7);
+        tl.to(".cf", { y: (i) => CF[i].ty + CF[i].fall, rotation: (i) => CF[i].rot + 220, autoAlpha: 0,
+          duration: 2.1, ease: "power1.in", stagger: (i) => CF[i].d }, 2.55);
+      }
+
+      tl.set({}, {}, D);
+      window.__timelines["cmp-d2-nate-afterparty"] = tl;
+    </script>
+  </body>
+</html>
