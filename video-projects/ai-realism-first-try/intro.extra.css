@@ -1,0 +1,38 @@
+  /* ---------- cold open ---------- */
+  #co-back { position: absolute; inset: 0; background: #000; z-index: 3; }
+  #trip { position: absolute; left: 258px; top: 14px; width: 1404px; height: 1052px; z-index: 4; overflow: hidden; border-radius: 44px;
+    display: flex; gap: 6px; background: #000; }
+  #trip .col { position: relative; flex: 1; overflow: hidden; }
+  #trip .col img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #trip .col img.px { image-rendering: pixelated; opacity: 0; }
+  #sheet, #bh-sheet { position: absolute; width: 1404px; height: 1052px; transform-origin: 0 0; border-radius: 44px; background: #fff; overflow: hidden; }
+  #sheet { left: 258px; top: 14px; z-index: 4; }
+  .print { position: absolute; top: 196px; width: 380px; }
+  .print img { width: 380px; height: 480px; object-fit: cover; display: block; border-radius: 8px; }
+  .print .nm { margin-top: 26px; font-family: "Lexend", sans-serif; font-weight: 300; font-size: 36px; line-height: 1.2; color: #5a5a5a; text-align: center; }
+  .print .tk { font-family: "Redaction 35", serif; font-weight: 700; font-size: 74px; line-height: 1.15; color: #141414; text-align: center;
+    white-space: nowrap; transform: scaleX(.787); }
+  .cap.dark { top: 982px; }
+
+  /* ---------- behind Aidan (plate coords) ---------- */
+  #bh-sheet { left: 130px; top: 100px; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+
+  .rr { position: absolute; width: 400px; padding: 12px; box-sizing: border-box; background: #fff; border-radius: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .rr img { width: 100%; height: 480px; object-fit: cover; display: block; border-radius: 12px; }
+  #bh-rr1 { left: 70px; top: 190px; transform: rotate(-7deg); }
+  #bh-rr2 { left: 350px; top: 90px; transform: rotate(4deg); }
+  #bh-rr3 { left: 210px; top: 440px; transform: rotate(-2deg); }
+
+  .vcard { opacity: 0; position: absolute; width: 500px; height: 375px; padding: 10px; box-sizing: border-box; background: #fff; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .vcard img, .vcard video { position: absolute; left: 10px; top: 10px; width: 480px; height: 355px; object-fit: cover; border-radius: 15px; display: block; }
+  #bh-c1 { left: 120px; top: 100px; transform: rotate(-5deg); }
+  #bh-c2 { left: 200px; top: 560px; transform: rotate(4deg); }
+  #bh-c3 { left: 1300px; top: 120px; transform: rotate(5deg); }
+
+  /* ---------- cutaway montage ---------- */
+  #mont-back { position: absolute; inset: 0; z-index: 8; background: #000; }
+  .mont { opacity: 0; position: absolute; inset: 0; z-index: 9; pointer-events: none; }
+  .mont video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* keeps the text readable over bright footage: a soft dark corner, not a full-frame gradient */
+  #mont-shade { position: absolute; inset: 0; z-index: 9; pointer-events: none;
+    background: radial-gradient(1500px 760px at 0% 100%, rgba(0,0,0,.72), rgba(0,0,0,0) 70%); }

@@ -1,0 +1,56 @@
+{
+  "agent": "cut-mistakes",
+  "source_transcript": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-annual-upsell/assets/raw.silence-transcript.json",
+  "word_count": 1572,
+  "segment_count": 42,
+  "counts": {
+    "stutter": 2,
+    "retake": 1
+  },
+  "proposed_cut_seconds": 64.25,
+  "candidates": [
+    {
+      "id": "c001",
+      "type": "stutter",
+      "confidence": "high",
+      "recommend": "cut",
+      "cut": {
+        "start": 210.241,
+        "end": 210.592
+      },
+      "removes": "now.",
+      "keeps": "Now,",
+      "context": "exactly where you are right now. Now, here's the thing. Normally, AIS+",
+      "note": "repeated \"now\""
+    },
+    {
+      "id": "c003",
+      "type": "retake",
+      "confidence": "high",
+      "recommend": "cut",
+      "score": 0.563,
+      "cut": {
+        "start": 262.432,
+        "end": 325.652
+      },
+      "removes": "You get the Claude Code builds. You get the Get Your First Client playbook. You get the AI partner model. You get all of that tonight. So by the time that AIS Live rolls around, you're not starting from zero.",
+      "keeps": "Now, the how is the step-by-step training, the cloud code builds, the get your first client playbook, the AI partner model, the structured path that takes you from knowing what to do, the structured path that takes you from knowing what to do to actually being able to do it, and then helps you automate more and more of your business.",
+      "gapBetween": 53.7,
+      "note": "seg 28 ~ seg 35 (jaccard 0.56)"
+    },
+    {
+      "id": "c002",
+      "type": "stutter",
+      "confidence": "high",
+      "recommend": "cut",
+      "cut": {
+        "start": 291.732,
+        "end": 292.412
+      },
+      "removes": "what,",
+      "keeps": "what",
+      "context": "AIS Live tells you the what, what an AI OS looks like,",
+      "note": "repeated \"what\""
+    }
+  ]
+}

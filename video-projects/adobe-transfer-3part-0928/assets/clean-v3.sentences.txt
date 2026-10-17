@@ -1,0 +1,185 @@
+0:00.2  I'm sure you've been seeing these Blender previz to CDance 2.5 generation videos.
+0:05.5  You can turn a low-poly Blender render into this highly polished VFX shot or story or advertisement.
+0:12.9  And so I used Opus 5.5 to create this Porsche ad all from a very simple Blender previz preview that Blender had given to me.
+0:22.4  I was able to create my own assets, my own storyboard to get clean outputs just like this.
+0:27.1  This entire thing was generated in under 10 minutes.
+0:29.8  The Blender previz, the CDance 2.5 generation, the whole story of the ad, all using Blender and CDance 2.5.
+0:37.0  So let me show you how I did it.
+0:38.0  Now, before I show you how to set this up, I just wanna walk you through the process of a skill that I have built for you to utilize.
+0:46.1  So instead of you doing all this research on creating the Blender previz, getting accurate outputs that then translate to an AI model like CDance 2.5 and making sure those are accurate, I've built a skill inside of Claude for you
+0:57.9  to use.
+0:58.7  So for example, this is how it works.
+1:00.0  This is the Blender previz on the top, and this is the official CDance 2.5 render that I was able to create with all of my storyboarded assets inside of the skill.
+1:09.9  Everything matches perfectly to a T.
+1:12.0  So I get complete control over the camera, where the car's at, what the city looks like, what the street looks like.
+1:17.8  Everything inside of the scene in the CDance 2.5 rendered output is controlled by me.
+1:23.1  And then obviously, CDance 2.5 adds its little magic, like some of the physics of the wet ground, the mist explosion when the car takes off, motion blur on the camera when it turns, and then just overall realism in the
+1:35.7  actual interior of the car.
+1:37.2  So how this skill works is you essentially give the skill, you prompt it, and it creates this storyboard for you.
+1:42.8  So this is the foundation of the entire skill.
+1:45.3  It builds out certain shots depending on what you want.
+1:47.9  So if you want 15 shots at 15 seconds long for a longer video, it can do that for you.
+1:53.0  It's all by natural language.
+1:54.8  It creates a very basic HTML landing page for the AI model, which is Opus 5.5, to look at, to then create inside of Blender and feed to CDance 2.5.
+2:03.2  Once that's created, it creates a shot list of what the video can look like, and then it's going to generate that previz render inside of Blender for the AI model to reference.
+2:13.6  So that's what you're looking at right here.
+2:15.2  Then it's gonna create all of your assets.
+2:16.8  You can't feed a previz render to CDance 2.5 without providing assets and references, so it's gonna create tons of different references for the Porsche car.
+2:26.7  For the Porsche 911 in this example, the city, different views, the tunnel that it drives through, the parking garage that it ends at, the interior of the car, and the actual mitt that the guy is wearing, or the glove.
+2:37.6  And then we'll throw that into a comparison grid for you.
+2:40.5  So if you like one, it will then throw that into a comparison grid for the angles of each of the models, and you can do this with human figures, too.
+2:48.7  Same thing with all of the other assets, like the environment that the car's driving in, and create as much assets as it possibly can reference for the rendered viewport output.
+2:59.0  It then will take screenshots of your previz renders and then generate images of those inside of CDance 2.5 to verify, does this frame look right?
+3:09.1  Is the character models or the car models or any of the other assets that you've generated look accurate from the CDance 2.5 generation?
+3:16.6  And then it will move into the video generation phase, which the MCP that we will be using today makes sure you are not generating anything that you don't want to with cost verification checks throughout the whole process.
+3:29.6  So before you spend a huge chunk of credits, it will make sure, do you wanna break this down into subcredits?
+3:35.9  Which I do, just so we can separate the scenes.
+3:38.3  And if we do need to update something, we can update one scene that costs maybe 2,500 credits instead of the entire video, which could cost upwards of 40,000 credits.
+3:47.7  And then we'll generate all of those one by one for you, just like this.
+3:51.6  You can see all of the one-by-one generations based on the storyboard that we had created in the very beginning, and then we'll piece it together for you.
+3:59.0  It does not add audio, so you can throw it into a post-editing software like Premiere Pro or DaVinci to add audio yourself.
+4:06.3  So with this Porsche ad done, I'm gonna walk you through how you can set this up.
+4:09.3  So there's going to be four things, technically five, but the fifth one ties in very well with the fourth step to set this up.
+4:16.3  Obviously, you're going to need a Claude subscription, so you have access to Claude Code.
+4:20.2  And then I recommend downloading the desktop app.
+4:22.4  So if you are looking for the desktop app, just search up desktop app, and you can download the actual application onto your Mac or Windows operating system.
+4:30.7  And as you can see in the bottom left corner here, I have Claude Code where I can open everything right here with all of my sessions.
+4:35.8  The next thing that you're going to need is obviously Blender.
+4:38.1  We're gonna be utilizing Blender to create the previz renders, and I recommend downloading the most recent version, which is Blender 5.2.2, just so you get access to the most recent features.
+4:46.8  And with that, you're gonna need the Blender MCP, and it's very simple to set up the Blender MCP.
+4:51.9  All you gotta do is head over to this link right here, blender.org lab mcp server.
+4:56.8  This is the official Blender MCP server that you can use to have your agents communicate through the Blender MCP to Claude Code.
+5:03.6  And all we're gonna do is just drag this box in once.
+5:06.5  That will install the extension.
+5:08.2  And then you're gonna drag it in one more time, and that will actually download the MCP into your Blender viewport.
+5:13.4  And if you wanna check, you can go up to this edit tab right here, preferences, and then just in your add-ons directory right here, search up MCP, and you'll find the MCP is connected right here with the file path
+5:23.7  to where that is located.
+5:25.2  Now, if you still haven't set up the Blender MCP, go to the customized tab in your left bar directory.
+5:30.0  We can close out of that, and we're gonna navigate to our connectors.
+5:32.7  This is where we'll add the official Blender MCP connection, where you can enable this, authorize your account, and boom, now you are connected.
+5:40.5  You can head back in your session and check if the MCP is connected, so /mcp, hit Enter, and you can see that the MCP for Blender is connected.
+5:49.7  If you're not seeing that, just open a new session or refresh your current session, whether you are in the desktop app, or you're on web, or you are using VS Code.
+5:58.2  Now, the tool that we're gonna be using for our CD-Sedance 2.5 generation is Artlist.
+6:02.6  It's super easy to set up.
+6:04.1  You can just go to the AI toolkit, and you can see we get access to image and video models.
+6:08.5  They have a bunch of different models that you can test out and play with.
+6:11.9  But this fifth thing, which is kind of tied to the fourth thing, which is Artlist, is the Artlist MCP for Claude.
+6:18.4  It's essentially the same thing as we set up for Blender, but just for our Sedance 2.5 generations.
+6:23.4  We don't need to go back and forth inside of Artlist.
+6:26.1  In our Claude sessions, we can generate all of our image assets, all of our video assets inside of our current Claude session with the Artlist MCP.
+6:34.6  So what you gotta do is navigate to the Artlist MCP URL.
+6:38.3  Make sure you're on Claude, and then connect MCP.
+6:40.5  That- that's gonna take you to your Claude account on the web.
+6:43.8  And all you gotta do is verify Artlist and then the actual Artlistmcp.io.
+6:48.8  Hit Continue, and then we can see inside of our connectors, inside the Customized tab, search up Artlist.
+6:54.2  You'll see Artlist is a custom MCP which is connected.
+6:57.0  If you do not see this as a connected check, click Connect.
+6:59.8  It will take you to an authorization page where you can sign in with your Artlist account and access all of your credits, and then access all of the tools that Artlist offers inside of the MCP.
+7:09.0  So everything that you can do inside of Artlist is what you can do now inside of your Claude session.
+7:13.3  And if you are interested, the skill that I have built utilizes the Artlist MCP for all video and image generations.
+7:19.7  So jumping into the actual prompting, I just wanna bring up this amazing example from Kay Creatives.
+7:24.6  I recently watched her video on her workflow on creating a Red Bull ad, and I really liked the creative direction that she took with this.
+7:31.8  And so this inspired me a lot to create what I'm about to show you in this video today.
+7:36.6  Again, this video was completely generated with AI in a very similar workflow.
+7:40.2  So I essentially wanted to create a Red Bull ad for a penguin that couldn't fly, because we all know that penguins can't fly.
+7:46.9  And so what sells the effect better than having a bird that can't fly?
+7:50.4  Maybe once it gets its hands on Red Bull, it can fly.
+7:53.4  And so how we're going to create this, there's two ways.
+7:55.6  You can either call this skill that I have created, the Ad Spots Previz Sedance skill, which walks this entire process end to end utilizing Blender and the Artlist MCP for all of our asset image video generation.
+8:10.4  Or you can create it yourself.
+8:11.6  You can just kind of follow along my process of how I am building this, the outputs that I'm getting, and based on those outputs, you can turn that into a skill yourself if you want to just utilize your own
+8:22.7  workflow.
+8:23.3  So whatever works best for you.
+8:24.7  Where you can find that skill is in the description below.
+8:27.6  You'll find a link that says all of my free resources.
+8:30.4  If you join this community, it's completely free to join.
+8:32.7  There's about 4K members inside of the community that are constantly collaborating.
+8:36.9  If you go into the Classroom tab, Claude Skills Vault, you'll find all of the Blender skills that I have created, which I have plenty, that you can add into your workflows.
+8:44.4  You will find that Ad Creative Sedance Blender skill.
+8:47.6  So to prompt this whole entire process, I'm just going to initiate that skill.
+8:52.2  And once I do that, again, if you want to check out what this skill actually is.
+8:56.3  So it's first gonna ask you some inspiration.
+8:59.1  And again, I will skip over this stuff because it's just questions.
+9:02.0  We're already creating the Red Bull ad with the flying penguin.
+9:05.9  So the prompt that I shot this off with, again, the questions will help structure your answer.
+9:11.1  So if you're going for something very specific, depending on the timing, if you only want it five seconds, if you want it two minutes, this skill helps you build that out with the Artlist connection.
+9:19.7  So a penguin on an iceberg watches gulls wheel overhead.
+9:23.0  A silver blue can washes up at its feet.
+9:25.1  He drinks it, waddles off to the edge, and jumps.
+9:28.4  That kind of starts off the story.
+9:30.0  The confrontation is he rackets underwater like a torpedo, outruns an orca, which I change to a seal in the later output.
+9:38.4  He breaks the surface, and he starts flying because he drank the Red Bull can.
+9:42.1  And then the resolution, he dives back, glides gracefully back down to the colony of other penguins, and he's wearing goggles, kind of signifying like, "I can fly now." So that's then going to create a full storyboard using HTML.
+9:54.4  This is the foundation that we lay for later with the Artlist Sedance 2.5 generation, how we can direct the exact camera movement, the characters.
+10:02.6  It is the absolute bare minimum when generating with assets to save money, time, and credits.
+10:08.5  It then creates a very basic storyboard.
+10:10.5  So the first scene is grounded.
+10:12.2  Second scene, the can washes up.
+10:13.7  And then act two, torpedo dodging the whale or the seal.
+10:18.4  He breaches out of the water.
+10:19.9  And then in each of these, there's a frame action camera and sound.
+10:23.4  I ended up turning off all of the sound just because I like to edit in post for all sound design.
+10:28.1  But now that we have that, it's created this beat sheet for us with timing.
+10:32.3  So I want it to be fifteen seconds long.
+10:34.3  I ended up turning it into thirty seconds just because it felt a little bit too fast.
+10:38.2  And then it was time to create our assets.
+10:40.8  So to prompt it to create our assets, we wanna create a penguin asset, a seal or orca asset, the icebergs, the penguin colony, the Red Bull can.
+10:49.4  As many assets as we possibly can.
+10:51.2  And it's gonna use that connection to the Artlist MCP to generate all those assets inside of our session.
+10:57.4  So all I had to do was prompt it, "Let's generate the assets," shoot that off.
+11:01.5  And like I showed you in the beginning of the video, it gave me outputs like this.
+11:05.1  So we get side views, front profile views of the penguin, the seal, the Red Bull can, which it wouldn't let me put a Red Bull logo on it 'cause of copyright, which understandable.
+11:14.8  Underwater, the icebergs, some more nature scenes.
+11:17.8  Give me a ton of different variations of the penguin in different poses for, like, flying, standing, different colony images, different underwater images, different icebergs.
+11:25.8  Again, with the seal, different poses and positions, the Red Bull can.
+11:29.6  And then it will Suggest based off of these character boards what it would think is the best pick.
+11:35.8  It's not always gonna be accurate.
+11:36.9  AI's never gonna be accurate, especially with visual stuff.
+11:40.1  It's getting better, but it's not perfect.
+11:41.8  So make sure you look through your assets and make sure that this is one, this is two, this is three, this is four.
+11:46.8  Which one appeals to you the most?
+11:49.2  So once we have all of our assets, as many as you want inside of your scene, now we need to generate the Blender Previz.
+11:55.5  The Blender Previz is the visual reference that we will hand off to Artlist to generate with CDance 2.5 for our video generations.
+12:03.6  And the reason we do this is for camera control, character consistency, character placement, and positions, just so we're getting more accurate outputs and not regenerating stuff, which costs time, money, and credits.
+12:14.3  It will prompt you when it's ready to create the previz.
+12:17.1  You just need to make sure that you have an open Blender session.
+12:19.7  When you do, all you gotta say is, "Let's generate the previz." And boom, you get a previz like this.
+12:25.4  It looks really low poly, super unprofessional, but the AI models, specif- specifically CDance 2.5, are so good at picking up references that it will create a well-structured high quality or to the quality that you're asking off of this Blender
+12:40.6  previz.
+12:41.3  And the great thing is we don't need to download this.
+12:43.3  It doesn't need to go in any unorganized downloads folders.
+12:46.1  Everything can be generated inside of our Claude session.
+12:49.8  It'll give you a little storyboard of what you can just look at and expect from the scene.
+12:54.3  So this generated nine scenes, and so this is where my iteration came in.
+12:57.9  I want it to be a little bit longer.
+12:59.2  It felt way too fast.
+13:00.6  The transitions didn't feel as clean.
+13:02.7  And so with this new generation, it was able to create this new previz inside of Blender.
+13:07.7  It's a little bit slower.
+13:08.9  There's better transitions.
+13:10.4  It adds more to the story.
+13:12.2  Again, the smoother transitions are huge with the CDance 2.5 generation.
+13:16.7  It just sells that realism, sells the nice, clean, polished output.
+13:20.8  Then comes the actual prompting and CDance 2.5 generation via the Artlist MCP.
+13:27.1  So it gives you each scene that it generated in the storyboard with the length of how long the video's gonna be and then the credits that you're going to spend.
+13:34.8  So on that video, I spent about 25,500 credits, but it will run test generations with the 480p resolution so you're not spending as many credits.
+13:45.5  So it will test out a video to see the output that it gets in a much lower resolution where you're only spending realistically like 1,000 credits, which is like two cents, for you to reference and look at.
+13:55.7  And if you don't like it, you can iterate upon that before you get a final clean output with like a 1080p CDance 2.5 generation.
+14:03.0  So then it will generate those low-quality generations for you.
+14:07.1  And so I approve this.
+14:08.5  I like this.
+14:09.1  I like the styling.
+14:10.0  And so just like the Porsche ad that I had created, I then generated using CGym 5.0, which is another ByteDance model, a storyboard of what the video is going to look like.
+14:19.3  So it's again, there's lots of verification checks so you're not spending as many credits before you're generating.
+14:23.8  And so I approved this.
+14:25.2  He's looking at the seagulls wishing that he could fly.
+14:27.6  Then a Red Bull can washes up, and he taps it with his beak.
+14:31.0  That then explodes all over his beak, and so he's like, "All right.
+14:33.9  I'm gonna jump into the water," dives in, and then a seal tries to eat him.
+14:37.7  So he jumps out, and in slow motion, he starts to fly.
+14:41.2  So now he's like flying around, and then he lands with goggles to show, you know, I can fly now.
+14:46.2  And so just like that, you can create these really cool AI video generations inside of one Claude session using Blender as your previz control and the Artlist MCP as your all-in-one image and video asset generation station.
+15:00.8  So if you like AI content like this, feel free to subscribe and like.
+15:04.2  It means a great deal to me, and let me know what you're going to create with it in the comments below.
+15:08.7  I'm gonna leave you guys with that.
+15:10.0  I hope you guys enjoyed, and as always, I will see you in the next one.

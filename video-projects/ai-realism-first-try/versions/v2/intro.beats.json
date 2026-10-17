@@ -1,0 +1,103 @@
+{
+  "id": "intro",
+  "fps": 30,
+  "duration": 66.9,
+  "video": "assets/clean-bg.mp4",
+  "audio": "assets/clean-audio.m4a",
+  "cutout": "assets/roto/aidan-kf2.webm",
+  "transcript": "assets/clean.fresh.json",
+  "plateIn": { "at": 15.56, "blur": 16, "dur": 0.42 },
+  "filmFrame": [[0, 15.76]],
+  "inject": { "html": "intro.extra.html", "behind": "intro.behind.html", "css": "intro.extra.css", "js": "intro.extra.js" },
+  "clips": [
+    { "src": "assets/co/elena-cu.mp4",    "in": 0,    "out": 1.30,  "mediaStart": 0.6 },
+    { "src": "assets/co/elena-work.mp4",  "in": 1.30, "out": 3.47,  "mediaStart": 0.3 },
+    { "src": "assets/co/marcus-cu.mp4",   "in": 3.47, "out": 4.93,  "mediaStart": 1.4 },
+    { "src": "assets/co/marcus-work.mp4", "in": 4.93, "out": 6.72,  "mediaStart": 0.5 },
+    { "src": "assets/co/dot-cu.mp4",      "in": 6.72, "out": 8.62,  "mediaStart": 0.6 },
+    { "src": "assets/co/dot-skate.mp4",   "in": 8.62, "out": 10.14, "mediaStart": 0.8 }
+  ],
+  "cues": {
+    "sheetLand": 16.02,
+    "luck": "just luck", "most": "Most people", "write": "write a prompt", "hit": "hit Generate", "gen1": "Generate", "hope": "hope",
+    "then": "Then you're stuck", "laterEnd": "end:later", "credits": "your credits", "gone": "gone", "bank": "your bank account",
+    "still": "and it still", "every": "every shot", "onegen": "one generation", "onestep": "one step", "before": "before you even",
+    "gen2": "Generate#2", "burning": "burning", "teach": "I teach", "workflows": "workflows", "systems": "systems",
+    "whole": "my whole workflow", "sowell": "So we'll", "setup": "the setup", "prompts": "the prompts", "theone": "the one step",
+    "keeper": "a keeper", "over1": "over#2", "over2": "over#3", "over3": "over#4"
+  },
+  "cam": [
+    { "at": 0, "s": 1 },
+    { "at": 18.40, "s": 1.14, "dur": 0.14 },
+    { "at": 19.30, "s": 1 },
+    { "at": 24.72, "s": 1.1 },
+    { "at": 26.78, "s": 1.2, "dur": 0.14 },
+    { "at": 27.26, "s": 1 },
+    { "at": 28.34, "s": 1.1, "dur": 0.14 },
+    { "at": 29.36, "s": 1 },
+    { "at": 33.04, "s": 1.14 },
+    { "at": 34.16, "s": 1.24, "dur": 0.14 },
+    { "at": 35.94, "s": 1 },
+    { "at": 37.10, "s": 1.1, "dur": 0.14 },
+    { "at": 37.62, "s": 1.28 },
+    { "at": 41.56, "s": 1.4, "dur": 0.16 },
+    { "at": 44.36, "s": 1 },
+    { "at": 46.90, "s": 1.08, "dur": 0.14 },
+    { "at": 50.78, "s": 1.12 },
+    { "at": 56.5, "s": 1 },
+    { "at": 61.44, "s": 1 },
+    { "at": 62.94, "s": 1.07, "dur": 0.12 },
+    { "at": 63.48, "s": 1.14, "dur": 0.12 },
+    { "at": 64.04, "s": 1.21, "dur": 0.12 },
+    { "at": 64.44, "s": 1 },
+    { "at": 66.08, "s": 1.12, "dur": 0.14 }
+  ],
+  "beats": [
+    { "caption": "This is *Elena*", "say": "This is Elena" },
+    { "caption": "She restores", "say": "She restores" },
+    { "caption": "old *film cameras*", "say": "old film cameras" },
+    { "caption": "This is *Marcus*", "say": "This is Marcus" },
+    { "caption": "He makes *hot sauce*", "say": "He makes hot sauce" },
+    { "caption": "in his garage", "say": "in his garage" },
+    { "caption": "And this is *Dot*", "say": "And this is Dot" },
+    { "caption": "She's *eighty-three*", "say": "She's 83" },
+    { "caption": "and she just started", "say": "and she just started" },
+    { "caption": "*skating*", "say": "skating" },
+    { "caption": "So what do all these people", "say": "So what do all these people" },
+    { "caption": "have in *common*?", "say": "have in common" },
+    { "caption": "None of them *exist*", "say": "None of them exist" },
+    { "caption": "and I got every single one", "say": "and I got every single one", "dark": true },
+    { "caption": "on the *first try*", "say": "on the first try", "dark": true },
+
+    { "small": "the biggest myth about", "big": "AI realism", "x": 1250, "y": 250, "align": "left", "scale": 0.9, "hold": 0.45 },
+    { "small": "it comes down to", "big": "just luck", "x": 1250, "y": 250, "align": "left", "scale": 0.9 },
+
+    { "label": ["CREDITS:", "GONE"], "colors": ["w", "y"], "x": 140, "y": 300, "align": "left", "size": 80, "say": ["your credits", "gone"], "hold": 0.25 },
+    { "label": ["BANK ACCOUNT:", "DRAINED"], "colors": ["w", "y"], "x": 140, "y": 300, "align": "left", "size": 80, "say": ["your bank account", "drained"] },
+    { "small": "and it still looks like", "big": "plastic garbage", "x": 1230, "y": 300, "align": "left", "scale": 0.82 },
+
+    { "title": "ONE GENERATION.", "x": 960, "y": 26, "size": 120, "say": "one generation", "hold": 0.8 },
+    { "small": "thanks to", "smallStyle": "yellow", "big": "1 skipped step", "bigColor": "white", "x": 120, "y": 300, "align": "left", "scale": 0.82,
+      "say": { "small": "thanks to", "big": "one step" } },
+    { "label": ["BEFORE YOU", "HIT GENERATE"], "colors": ["w", "y"], "x": 140, "y": 330, "align": "left", "size": 80, "say": ["before you even", "hit Generate#2"] },
+
+    { "label": ["DONE BURNING", "CREDITS?"], "colors": ["w", "y"], "x": 110, "y": 260, "align": "left", "size": 70, "say": ["done burning", "credits#2"], "hold": 0.7 },
+    { "label": ["NEVER MADE", "AN AI VIDEO?"], "colors": ["w", "y"], "x": 110, "y": 260, "align": "left", "size": 70, "say": ["never made", "AI video"] },
+    { "note": ["we're building one", "from scratch, together!"], "x": 110, "y": 300, "align": "left",
+      "say": "we're building one from scratch together", "tail": 0.7 },
+
+    { "big": "what's up", "bigColor": "white", "small": "I'm Aidan ~", "smallStyle": "note", "order": "big-small",
+      "x": 150, "y": 230, "align": "left", "scale": 0.86, "say": { "big": "What's up", "small": "I'm Aiden" }, "hold": 0.5 },
+    { "small": "I teach people", "big": "AI creative workflows", "x": 110, "y": 500, "align": "left", "scale": 0.52 },
+
+    { "label": ["IN THIS VIDEO"], "colors": ["y"], "x": 140, "y": 300, "align": "left", "size": 80, "say": "In this video", "until": "I'm breaking" },
+    { "title": "PHOTOREAL AI VIDEO", "sub": "my whole workflow, step by step", "x": 110, "y": 740, "align": "left", "size": 140, "say": "photoreal",
+      "t": { "out": 56.5 } },
+
+    { "small": "instead of regenerating", "big": ["over", "and over", "and over"], "x": 1240, "y": 300, "align": "left", "scale": 0.8,
+      "say": { "small": "instead of you regenerating", "big": ["over#2", "over#3", "over#4"] } },
+
+    { "note": ["open your laptop ~"], "x": 140, "y": 300, "align": "left", "say": "open your laptop", "until": "step one" },
+    { "title": "STEP #1", "x": 130, "y": 390, "align": "left", "size": 190, "say": "step one" }
+  ]
+}

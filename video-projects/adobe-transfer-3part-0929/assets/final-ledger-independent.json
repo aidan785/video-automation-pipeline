@@ -1,0 +1,205 @@
+{
+  "result": "PASS",
+  "version": "v2",
+  "scope": "Independent source ledger and fresh clean-v2.wav transcription audit; rendered MP4 verification is separate.",
+  "checks": {
+    "manifest_math": true,
+    "source_duration": true,
+    "normalization_matches_original_video_starts": true,
+    "combined_source_transcript_normalization_exact": true,
+    "aligned_source_audio_lengths": true,
+    "complete_partition": true,
+    "integer_source_frame_ranges": true,
+    "expected_32765_output_frames": true,
+    "duration_and_removed_math": true,
+    "all_77_approved_cuts_absent": true,
+    "all_cut_local_coordinates_correct": true,
+    "expected_transcript_exact_from_retained_source": true,
+    "all_12_gameplay_demos_retained": true,
+    "audio_length_exact": true,
+    "all_47_fresh_audio_phrase_checks": true,
+    "fresh_audio_no_gap_over_075s": true
+  },
+  "source_duration_seconds": 2785.366666666667,
+  "edited_duration_seconds": 1092.1666666666667,
+  "expected_output_frames": 32765,
+  "keep_segments": 463,
+  "approved_cuts": 77,
+  "maximum_approved_cut_boundary_overlap_seconds": 0.026666666666642413,
+  "rounding_tolerance_seconds": 0.03333333333333333,
+  "source_manifest": [
+    {
+      "name": "part1.mov",
+      "frames": 17065,
+      "frame_offset": 0,
+      "offset_seconds": 0.0,
+      "duration_seconds": 568.8333333333334,
+      "cumulative_offset_correct": true,
+      "duration_correct": true,
+      "original_video_start_seconds": 0.066667,
+      "audio_adjust_samples": 3200,
+      "normalization_correct": true
+    },
+    {
+      "name": "part2.mov",
+      "frames": 36422,
+      "frame_offset": 17065,
+      "offset_seconds": 568.8333333333334,
+      "duration_seconds": 1214.0666666666666,
+      "cumulative_offset_correct": true,
+      "duration_correct": true,
+      "original_video_start_seconds": 0.0,
+      "audio_adjust_samples": 0,
+      "normalization_correct": true
+    },
+    {
+      "name": "part3.mov",
+      "frames": 30074,
+      "frame_offset": 53487,
+      "offset_seconds": 1782.9,
+      "duration_seconds": 1002.4666666666667,
+      "cumulative_offset_correct": true,
+      "duration_correct": true,
+      "original_video_start_seconds": 0.0,
+      "audio_adjust_samples": 0,
+      "normalization_correct": true
+    }
+  ],
+  "aligned_source_audio": [
+    {
+      "name": "part1.mov",
+      "samples": 27304000,
+      "exact_frame_length": true,
+      "sample_rate": 48000
+    },
+    {
+      "name": "part2.mov",
+      "samples": 58275200,
+      "exact_frame_length": true,
+      "sample_rate": 48000
+    },
+    {
+      "name": "part3.mov",
+      "samples": 48118400,
+      "exact_frame_length": true,
+      "sample_rate": 48000
+    }
+  ],
+  "source_words": 4312,
+  "retained_expected_words": 3884,
+  "fresh_audio_words": 3871,
+  "fresh_audio_duration_seconds": 1092.1666875,
+  "maximum_fresh_interword_gap_seconds": 0.7400000000000091,
+  "phrase_checks_passed": 47,
+  "phrase_failures": [],
+  "gameplay_coverage": [
+    {
+      "game": "Tumble Party",
+      "anchor": "So let's start with Tumble Party",
+      "retained_source_time": 402.65666666666755,
+      "fresh_audio_time": 402.66,
+      "pass_check": true
+    },
+    {
+      "game": "Storm Fall / Fortnite",
+      "anchor": "Next is Storm Fall",
+      "retained_source_time": 480.71533333333434,
+      "fresh_audio_time": 480.732,
+      "pass_check": true
+    },
+    {
+      "game": "Polus / Cities Skylines",
+      "anchor": "We can change our city from modern",
+      "retained_source_time": 560.215333333335,
+      "fresh_audio_time": 560.212,
+      "pass_check": true
+    },
+    {
+      "game": "Drift Karts / Mario Kart",
+      "anchor": "Let's go into Drift Karts",
+      "retained_source_time": 688.9553333333357,
+      "fresh_audio_time": 688.972,
+      "pass_check": true
+    },
+    {
+      "game": "Block Hop Obby / Roblox",
+      "anchor": "here's Block Hop Obby",
+      "retained_source_time": 757.1800000000034,
+      "fresh_audio_time": 757.192,
+      "pass_check": true
+    },
+    {
+      "game": "Metro Dash / Subway Surfers",
+      "anchor": "Now we can test out Metro Dash",
+      "retained_source_time": 818.2133333333373,
+      "fresh_audio_time": 818.22,
+      "pass_check": true
+    },
+    {
+      "game": "Block World / Minecraft",
+      "anchor": "here's like a Minecraft replica",
+      "retained_source_time": 854.6433333333372,
+      "fresh_audio_time": 854.64,
+      "pass_check": true
+    },
+    {
+      "game": "Cannibal Kings / Angry Birds",
+      "anchor": "Here is Cannibal Kings",
+      "retained_source_time": 893.5033333333382,
+      "fresh_audio_time": 893.5,
+      "pass_check": true
+    },
+    {
+      "game": "Street Kings / GTA",
+      "anchor": "Now let's try a GTA one",
+      "retained_source_time": 959.0366666666724,
+      "fresh_audio_time": 959.04,
+      "pass_check": true
+    },
+    {
+      "game": "Beach Point / CS:GO",
+      "anchor": "Then we have one for CS:GO",
+      "retained_source_time": 994.163333333339,
+      "fresh_audio_time": 994.16,
+      "pass_check": true
+    },
+    {
+      "game": "Dead Zone / Call of Duty Zombies",
+      "anchor": "Here's Dead Zone",
+      "retained_source_time": 1014.6353333333383,
+      "fresh_audio_time": 1014.62,
+      "pass_check": true
+    },
+    {
+      "game": "Turbo Goal / Rocket League",
+      "anchor": "the last one is Rocket League",
+      "retained_source_time": 1029.1420000000048,
+      "fresh_audio_time": 1029.14,
+      "pass_check": true
+    }
+  ],
+  "editorial_judgment": "Fresh audio transcript read from beginning to end. Setup, optional Blender/Aura, all twelve live gameplay demonstrations, and outro remain coherent. No additional abandoned take or editing chatter found. Preserve gameplay reactions and normal sentence-boundary repeats.",
+  "adjudicated_asr_artifacts": [
+    {
+      "fresh_time_seconds": 976.78,
+      "suspect": "I'm, I'm a Magic Mouse",
+      "actual": "I'm on my Magic Mouse",
+      "evidence": "assets/p3-isolate-5.json",
+      "judgment": "Preserve; isolated source transcription confirms on/my, no spoken repeat."
+    },
+    {
+      "fresh_time_seconds": 1017.14,
+      "suspect": "i- is insanely fast",
+      "actual": "This one is insanely fast",
+      "evidence": "assets/p3-isolate-6.json and p3-residual-recommendations.json",
+      "judgment": "Preserve; source acoustic review identifies one decay and one is onset, no distinct restart."
+    }
+  ],
+  "artifact_sha256": {
+    "clean-v2.union-edl.json": "7584f5bb05642f5065b1af6bdd8eb5de9b9e4a82180cf83a594e91fa5d6013db",
+    "approved-cuts.json": "ad2703c69028bee246616a7065ab27d92c36d7e9ca61d1ee03f2fbd9f1a073a7",
+    "source.json": "92a8056a5d3e254b94f1b28907a799c7056ac981bcde34d3c714b1332e48cb2d",
+    "expected-final-transcript.json": "dc72b51284ed233a391dad297ce5447c3304acf19f49949531d8b8bd45ce407b",
+    "clean-v2-audio.json": "a6e41cc07b28a475068b50b42664f4605638145c419edcd5ac06ceaf85889784"
+  }
+}

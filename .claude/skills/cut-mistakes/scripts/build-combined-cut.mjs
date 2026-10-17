@@ -103,6 +103,6 @@ const cutlist = mistakeDeletes.map((d, i) => `${String(i + 1).padStart(2)}. src 
 fs.writeFileSync(stem + '.cutlist.md', `# Mistake cuts (source timecodes)\n\n${cutlist}\n`);
 
 const args = ['-y', '-i', srcVideo, '-/filter_complex', filterPath, '-map', '[v]', '-map', '[a]',
-  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outVideo];
+  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-g', '30', '-keyint_min', '30', '-sc_threshold', '0', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outVideo];
 console.log('ffmpeg ' + args.join(' '));
 if (apply) execFileSync('ffmpeg', args, { stdio: 'inherit' });

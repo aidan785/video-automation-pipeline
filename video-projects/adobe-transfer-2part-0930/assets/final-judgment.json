@@ -1,0 +1,32 @@
+{
+  "result": "PASS",
+  "fresh_transcript": "assets/final-video.json",
+  "passes": [
+    {
+      "name": "silence",
+      "words": 2131,
+      "residual_gaps_over_0_75": 0,
+      "longest_gap_seconds": 0.5520000000000209,
+      "head_seconds": 0.1,
+      "tail_seconds": 0.38799999999991996,
+      "judgment": "Entire fresh transcript reviewed for unintended waiting; no remaining dead-air gaps."
+    },
+    {
+      "name": "cuts",
+      "approved_cuts": 50,
+      "source_refinements": 1,
+      "phrase_checks_passed": 35,
+      "phrase_checks_total": 35,
+      "judgment": "Entire 130-sentence transcript reviewed. Very very is emphasis; you You and Blender Blender cross sentence boundaries. Similar-sentence pairs are separate explanatory transitions and different race positions. No abandoned take remains."
+    },
+    {
+      "name": "ledger",
+      "expected_frames": 17349,
+      "actual_frames": 17349,
+      "duration_drift_seconds": 0,
+      "audio_video_difference_seconds": 0,
+      "source_clip_join_seconds": 272.433333,
+      "judgment": "Full source partition, source-frame samples, and transcript coverage confirm tutorial sequence, both game demos, setup instructions, custom-prompt explanation, and outro remain."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "intro",
+  "fps": 30,
+  "duration": 51.1333,
+  "video": "assets/clean-bg30.mp4",
+  "audio": "assets/clean-audio.m4a",
+  "cutout": "assets/roto/aidan-30u.webm",
+  "transcript": "assets/clean.fresh.json",
+  "plateIn": { "at": 16.0333, "blur": 16, "dur": 0.42 },
+  "filmFrame": [[0, 16.2333]],
+  "inject": { "html": "intro.extra.html", "behind": "intro.behind.html", "css": "intro.extra.css", "js": "intro.extra.js" },
+  "clips": [
+    { "src": "assets/co/creatures.mp4", "in": 3.9333, "out": 13.7, "mediaStart": 0 }
+  ],
+  "cues": {
+    "mc": 16.0333, "sheetLand": 16.5, "sheetOut": 18.8667,
+    "didnt": "I didn't build", "build": "build a single", "single": "single one", "scenes": "these scenes",
+    "ref": "reference picture", "letit": "and I let it work", "refsOut": 25.8,
+    "pgIn": 28.5, "looked": "looked at them", "fixed": "fixed its own", "mistakes": "mistakes inside", "pgOut": 31.7667,
+    "threw": "threw out", "some": "some shots", "shots": "shots that", "wasnt": "wasn't good enough",
+    "montIn": 39.4, "montV": 40.7333, "montOut": 43.3333
+  },
+  "cam": [
+    { "at": 0, "s": 1, "oy": 34 },
+    { "at": 20.35, "s": 1.11, "dur": 0.47 },
+    { "at": 23.6333, "s": 1, "oy": 34 },
+    { "at": 47.75, "s": 1.11, "dur": 0.47 }
+  ],
+  "beats": [
+    { "caption": "This *space station*", "say": "This space station" },
+    { "caption": "has *1.4 million* polygons", "say": "has 14 million polygons" },
+    { "caption": "This *creature*", "t": [3.9333, 4.84] },
+    { "caption": "has *115 bones*", "say": "has 115 bones" },
+    { "caption": "It *breathes*,", "say": "It breathes" },
+    { "caption": "it *blinks*,", "say": "it blinks" },
+    { "caption": "and it even tracks", "say": "and it even tracks" },
+    { "caption": "a little *bug*", "say": "a little bug" },
+    { "caption": "And this *little guy*", "t": [9.7333, 10.6] },
+    { "caption": "is just *happy* to be here", "say": "is just happy to be here" },
+    { "caption": "And the craziest thing", "say": "And the craziest thing" },
+    { "caption": "about this is", "say": "about this is" },
+    { "caption": "I didn't build", "t": [13.7, 14.24], "dark": true },
+    { "caption": "a *single one* of these scenes", "t": [14.34, 15.82], "dark": true },
+
+    { "small": "I let Claude run Blender for", "big": "one day", "x": 1445, "y": 200, "align": "left", "scale": 0.86,
+      "say": { "big": "one day" }, "t": { "small": [16.4, 17.6] } },
+
+    { "small": "I never touched", "big": "a single vertex", "x": 40, "y": 230, "align": "left", "scale": 0.74,
+      "say": { "small": "and I never touched", "big": "a single vertex" } },
+
+    { "small": "it looked at them and fixed", "big": "its own mistakes", "x": 40, "y": 220, "align": "left", "scale": 0.7,
+      "say": { "small": "even looked at them and fixed", "big": "its own mistakes" }, "t": { "out": 31.72 } },
+
+    { "small": "every single frame", "big": "straight from Blender", "x": 110, "y": 770, "align": "left", "scale": 0.8,
+      "say": { "small": "Every single one of these frames", "big": "come straight from a Blender" }, "t": { "out": 43.3 } },
+
+    { "small": "I'm Aidan, I'll show you", "big": ["how I built these", "how to set it up"], "x": 40, "y": 230, "align": "left", "scale": 0.6,
+      "say": { "small": "I'm Aiden, and today I'm gonna show you", "big": ["how I built these", "how you can set it up"] }, "t": { "out": 51.08 } }
+  ]
+}

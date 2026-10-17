@@ -1,0 +1,52 @@
+{
+  "clip": "06",
+  "role": "Scrollcraft intro",
+  "source_file": "06 VSL INTRO - Scrollcraft.mp4",
+  "source_duration": 66.943188,
+  "status": "PROPOSED — not approved, not rendered; millisecond boundaries require frame/audio checks",
+  "edited_duration_estimate": 59.26,
+  "pacing": {
+    "gap_threshold": 1.2,
+    "retained_gap": 0.52,
+    "head_pad": 0.28,
+    "tail_pad": 0.4
+  },
+  "retakes": [],
+  "delete": [
+    {
+      "start": 0,
+      "end": 2.66,
+      "reasons": [
+        "Head trim; retain lead-in before first word."
+      ]
+    },
+    {
+      "start": 23.72,
+      "end": 26.62,
+      "reasons": [
+        "Gap 3.42s → 0.52s; preserve shorter natural pauses."
+      ]
+    },
+    {
+      "start": 64.82,
+      "end": 66.943188,
+      "reasons": [
+        "Tail trim; retain natural release after last word."
+      ]
+    }
+  ],
+  "keep": [
+    {
+      "source_start": 2.66,
+      "source_end": 23.72,
+      "edit_start": 0,
+      "edit_end": 21.06
+    },
+    {
+      "source_start": 26.62,
+      "source_end": 64.82,
+      "edit_start": 21.06,
+      "edit_end": 59.26
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+const raw = JSON.parse(fs.readFileSync('assets/transcript-raw.json', 'utf8')).words.filter(w => w.type === 'word');
+console.log('raw 1429-1433:', raw.filter(w => w.end > 1429 && w.start < 1433).map(w => `${w.start.toFixed(2)}-${w.end.toFixed(2)} ${w.text}`).join(' | '));
+const iso = JSON.parse(fs.readFileSync('assets/iso/ctx5.json', 'utf8')).words.filter(w => w.type === 'word'); const A = 1431.28 - 0.7;
+console.log('iso heard:', iso.map(w => `${(w.start + A).toFixed(2)}-${(w.end + A).toFixed(2)} ${w.text}`).join(' | '));
+const p = JSON.parse(fs.readFileSync('assets/protect-clips.json', 'utf8'));
+p.push({ start: 1431.1, end: 1431.9, label: "skip trim: isolate-transcribe heard a word inside ('say Claude.' -> 'a colon'), quiet-speech suspect; pause is under the 0.75s verify threshold anyway" });
+const v = JSON.parse(fs.readFileSync('assets/verify-phrases.json', 'utf8'));
+const fix = { 'I built a full workflow utilizing the Unreal MCP': 'workflow utilizing the Unreal MCP', 'and the reason why I want to test Fable 5.1': 'the reason why I wanted to test Fable 5.1', 'and then again kind of like that line graph': 'like that line graph I showed you' };
+for (const x of v) if (fix[x.phrase]) x.phrase = fix[x.phrase];
+v.push({ phrase: 'verify it for you', expect: 0 }, { phrase: 'it will say yes or no', expect: 0 }, { phrase: 'so we are connected', expect: 1 }, { phrase: 'effectively with Fable', expect: 1 }, { phrase: 'or any MCP client', expect: 1 }, { phrase: "it'll walk you through", expect: 1 });
+fs.writeFileSync('assets/verify-phrases.json', JSON.stringify(v, null, 2)); console.log('phrases:', v.length);
+fs.writeFileSync('assets/patch-protect.json', JSON.stringify(p, null, 2)); console.log('patch-protect windows:', p.length);

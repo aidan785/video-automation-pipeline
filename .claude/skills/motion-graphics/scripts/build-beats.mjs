@@ -264,7 +264,7 @@ ${cardStyles.join("\n\n")}
   </style>
 </head>
 <body>
-  <div id="${slug}" data-composition-id="${slug}" data-start="0" data-width="${W}" data-height="${H}">
+  <div id="${slug}" data-composition-id="${slug}" data-start="0" data-duration="${round(TOTAL)}" data-width="${W}" data-height="${H}">
     <div id="video-stage">
       <video id="bg-video" muted data-start="0" data-duration="${round(TOTAL)}" data-track-index="0" src="${pipCfg ? pipCfg.bg : videoSrc}"></video>
       <audio id="bg-audio" data-start="0" data-duration="${round(TOTAL)}" data-track-index="1" src="${pipCfg ? pipCfg.audio : videoSrc}"></audio>

@@ -53,8 +53,11 @@ for (const w of t.words) {
     else continue;
     clamped++;
     console.log(`CLAMP "${w.text}" ${before} -> ${w.start.toFixed(2)}-${w.end.toFixed(2)}`);
-    break;
+    // no break: a token stretched across SEVERAL silences (an 80s "So" spanning a window-switching wait)
+    // needs every overlapping silence applied in turn — the head clamp alone left 74s of dead air inside it
+    if (w.end - w.start <= MIN_TOKEN) break;
   }
+  if (w.end - w.start < 0.25 && clamped) console.log(`  ^ SUSPECT: clamped token is only ${(w.end - w.start).toFixed(2)}s — a quiet word tail may have been chopped; RMS/isolate-check it (seen: "backflip." was really "back ... flip.")`);
 }
 console.log(clamped ? `${clamped} tokens clamped` : 'no stretched tokens found');
 if (!dry && clamped) {

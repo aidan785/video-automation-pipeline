@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Automation Society</title>
+<meta name="description" content="AI Automation Society is a community of 450,000+ people learning to build with AI. Courses, live sessions, events, and a certification, all in one place.">
+<style>
+  :root {
+    --bg: #F7F7F4;
+    --surface: #FFFFFF;
+    --ink: #0C111D;
+    --ink-2: #3A4254;
+    --muted: #6B7385;
+    --line: #E3E4DE;
+    --accent: #2B5BFF;
+    --accent-2: #7C5CFF;
+    --accent-ink: #1B3FD6;
+    --accent-soft: #EAEFFF;
+    --dark: #0A0E18;
+    --dark-2: #121829;
+    --dark-line: #232B40;
+    --radius: 22px;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 18px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 17px; letter-spacing: -0.01em;
+    padding: 16px 26px; border-radius: 999px;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    cursor: pointer; border: 0;
+  }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 10px 30px -10px rgba(43, 91, 255, .65), inset 0 1px 0 rgba(255,255,255,.2);
+  }
+  .btn-primary:hover { transform: translateY(-2px); background: var(--accent-ink); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); background: rgba(255,255,255,.6); }
+  .btn-ghost:hover { border-color: #C9CBC3; transform: translateY(-2px); }
+  .btn-light { background: #fff; color: var(--ink); }
+  .btn-light:hover { transform: translateY(-2px); }
+  .btn .arrow { transition: transform .2s ease; }
+  .btn:hover .arrow { transform: translateX(3px); }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(247, 247, 244, .78);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .nav.scrolled { border-bottom-color: var(--line); background: rgba(247, 247, 244, .92); }
+  .nav-inner { height: 76px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -0.02em; font-size: 18px; }
+  .logo {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; color: #fff;
+    font-size: 12px; font-weight: 800; letter-spacing: .02em;
+    box-shadow: 0 6px 18px -6px rgba(43, 91, 255, .7);
+  }
+  .nav-links { display: flex; gap: 36px; font-size: 15px; color: var(--ink-2); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav .btn { padding: 11px 20px; font-size: 15px; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; padding: 110px 0 140px; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(12,17,29,.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(12,17,29,.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+    pointer-events: none;
+  }
+  .glow { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; }
+  .glow.g1 { width: 620px; height: 620px; background: rgba(43, 91, 255, .20); top: -180px; right: -80px; }
+  .glow.g2 { width: 520px; height: 520px; background: rgba(124, 92, 255, .16); bottom: -200px; right: 380px; }
+
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 72px; align-items: center; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 16px 8px 10px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: 14px; font-weight: 500; color: var(--ink-2);
+    box-shadow: 0 2px 10px -4px rgba(12,17,29,.08);
+  }
+  .pill .dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent-soft); display: grid; place-items: center;
+  }
+  .pill .dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(43,91,255,.18); }
+
+  h1 {
+    margin-top: 28px;
+    font-size: 96px; line-height: .98; letter-spacing: -0.045em; font-weight: 750;
+  }
+  h1 .hl {
+    background: linear-gradient(100deg, var(--accent) 10%, var(--accent-2) 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-bottom: .08em;
+  }
+  .lede { margin-top: 30px; font-size: 22px; line-height: 1.5; color: var(--ink-2); max-width: 600px; }
+  .hero-ctas { margin-top: 40px; display: flex; gap: 14px; align-items: center; }
+  .hero-note { margin-top: 22px; font-size: 15px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .hero-note .check { color: var(--accent); font-weight: 700; }
+
+  /* Hero visual */
+  .panel {
+    position: relative;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 28px;
+    padding: 28px; box-shadow: 0 40px 80px -40px rgba(12,17,29,.35), 0 2px 0 rgba(255,255,255,.8) inset;
+  }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .panel-head .dots { display: flex; gap: 7px; }
+  .panel-head .dots span { width: 11px; height: 11px; border-radius: 50%; background: #E4E5DF; }
+  .panel-head .label { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .stat {
+    border-radius: 20px; padding: 30px 28px;
+    background: linear-gradient(135deg, #0F1A3D 0%, #1B2E7A 55%, #3A3FB8 100%);
+    color: #fff; position: relative; overflow: hidden;
+  }
+  .stat::after {
+    content: ""; position: absolute; width: 260px; height: 260px; right: -80px; top: -90px;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 0 0 40px rgba(255,255,255,.04), 0 0 0 80px rgba(255,255,255,.03);
+  }
+  .stat .num { font-size: 64px; font-weight: 750; letter-spacing: -0.04em; line-height: 1; }
+  .stat .cap { margin-top: 10px; font-size: 16px; color: rgba(255,255,255,.75); max-width: 260px; }
+  .tiles { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px; border-radius: 16px; background: var(--bg); border: 1px solid var(--line);
+    font-weight: 600; font-size: 16px;
+  }
+  .tile .ico {
+    width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--surface); border: 1px solid var(--line); font-size: 20px;
+  }
+  .float-chip {
+    position: absolute; right: -28px; bottom: -44px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 20px 40px -20px rgba(12,17,29,.35); font-size: 15px; font-weight: 600;
+  }
+  .float-chip .badge {
+    width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+    background: var(--accent-soft); font-size: 17px;
+  }
+  .float-chip small { display: block; font-weight: 500; color: var(--muted); font-size: 13px; }
+
+  /* ---------- Sections (shared) ---------- */
+  section { position: relative; }
+  .section { padding: 140px 0; }
+  .eyebrow {
+    display: inline-block; font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  h2 { font-size: 64px; line-height: 1.04; letter-spacing: -0.04em; font-weight: 750; margin-top: 18px; }
+  .sub { margin-top: 22px; font-size: 21px; color: var(--ink-2); max-width: 680px; }
+  .section-head { max-width: 860px; }
+  .section-head.center { margin: 0 auto; text-align: center; }
+  .section-head.center .sub { margin-left: auto; margin-right: auto; }
+
+  /* ---------- Contrast (dark) ---------- */
+  .dark { background: var(--dark); color: #fff; }
+  .dark .eyebrow { color: #8FA8FF; }
+  .dark .sub { color: rgba(255,255,255,.68); }
+  .versus { margin-top: 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .vcard {
+    border-radius: var(--radius); padding: 44px; min-height: 340px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .vcard.alone { background: var(--dark-2); border: 1px solid var(--dark-line); }
+  .vcard.here {
+    background: linear-gradient(145deg, #2B5BFF 0%, #5B4BFF 60%, #7C5CFF 100%);
+    box-shadow: 0 40px 80px -40px rgba(43, 91, 255, .8);
+  }
+  .vtag {
+    display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+    font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .alone .vtag { background: rgba(255,255,255,.06); color: rgba(255,255,255,.6); }
+  .here .vtag { background: rgba(255,255,255,.18); color: #fff; }
+  .vcard p { font-size: 28px; line-height: 1.35; letter-spacing: -0.02em; font-weight: 600; margin-top: 40px; }
+  .alone p { color: rgba(255,255,255,.62); }
+  .alone p strong { color: #fff; font-weight: 600; }
+  .vfoot { margin-top: 36px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .vfoot span { font-size: 14px; padding: 8px 14px; border-radius: 999px; }
+  .alone .vfoot span { background: rgba(255,255,255,.05); color: rgba(255,255,255,.5); border: 1px dashed rgba(255,255,255,.14); }
+  .here .vfoot span { background: rgba(255,255,255,.16); color: #fff; }
+
+  /* ---------- What you get ---------- */
+  .features { margin-top: 72px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .feature {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 32px 28px 36px; min-height: 360px; display: flex; flex-direction: column;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .feature:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -30px rgba(12,17,29,.25); border-color: #D6D8D0; }
+  .feature .num { font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: .06em; }
+  .feature .ico {
+    margin-top: 28px; width: 64px; height: 64px; border-radius: 18px;
+    display: grid; place-items: center; font-size: 30px;
+    background: var(--accent-soft);
+  }
+  .feature:nth-child(2) .ico { background: #F1ECFF; }
+  .feature:nth-child(3) .ico { background: #E8F7F0; }
+  .feature:nth-child(4) .ico { background: #FFF3E3; }
+  .feature h3 { margin-top: auto; padding-top: 40px; font-size: 28px; letter-spacing: -0.025em; font-weight: 700; }
+  .feature p { margin-top: 10px; font-size: 17px; color: var(--ink-2); }
+  .allinone {
+    margin-top: 20px; border-radius: var(--radius); border: 1px dashed #CFD2C8;
+    padding: 26px 32px; display: flex; align-items: center; justify-content: space-between;
+    font-size: 19px; color: var(--ink-2);
+  }
+  .allinone strong { color: var(--ink); }
+
+  /* ---------- Who it's for ---------- */
+  .who { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .who-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 80px; align-items: start; }
+  .who-grid .section-head { position: sticky; top: 140px; }
+  .who-list { display: flex; flex-direction: column; gap: 18px; }
+  .who-item {
+    display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start;
+    padding: 34px; border-radius: var(--radius); background: var(--bg); border: 1px solid var(--line);
+  }
+  .who-item .mark {
+    width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--surface); border: 1px solid var(--line); font-size: 28px;
+  }
+  .who-item h3 { font-size: 26px; letter-spacing: -0.02em; font-weight: 700; line-height: 1.2; }
+  .who-item p { margin-top: 10px; font-size: 18px; color: var(--ink-2); }
+
+  /* ---------- About Nate ---------- */
+  .about-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 90px; align-items: center; }
+  .portrait {
+    position: relative; aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden;
+    background: linear-gradient(160deg, #DDE5FF 0%, #ECE6FF 50%, #F7F7F4 100%);
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+  }
+  .portrait::before {
+    content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%;
+    border: 1px solid rgba(43,91,255,.18); box-shadow: 0 0 0 60px rgba(43,91,255,.04), 0 0 0 120px rgba(43,91,255,.03);
+  }
+  .avatar {
+    position: relative; width: 220px; height: 220px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; color: #fff; font-size: 76px; font-weight: 750; letter-spacing: -0.03em;
+    box-shadow: 0 30px 60px -20px rgba(43,91,255,.6), inset 0 0 0 8px rgba(255,255,255,.2);
+  }
+  .nameplate {
+    position: absolute; left: 28px; right: 28px; bottom: 28px;
+    background: rgba(255,255,255,.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .nameplate strong { font-size: 20px; letter-spacing: -0.02em; }
+  .nameplate span { font-size: 14px; color: var(--muted); }
+  .about h2 { font-size: 60px; }
+  .about .lede { max-width: 640px; }
+  .path { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; position: relative; }
+  .path::before {
+    content: ""; position: absolute; left: 22px; right: 22px; top: 22px; height: 2px;
+    background: linear-gradient(to right, var(--line), var(--accent), var(--accent-2));
+  }
+  .step { position: relative; padding-right: 20px; }
+  .step .node {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line);
+    display: grid; place-items: center; font-size: 15px; font-weight: 700; color: var(--muted);
+  }
+  .step:nth-child(2) .node { border-color: var(--accent); color: var(--accent); }
+  .step:nth-child(3) .node { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; color: #fff; }
+  .step h4 { margin-top: 18px; font-size: 20px; letter-spacing: -0.015em; }
+  .step p { margin-top: 6px; font-size: 16px; color: var(--muted); }
+
+  /* ---------- FAQ ---------- */
+  .faq { background: var(--surface); border-top: 1px solid var(--line); }
+  .faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; align-items: start; }
+  .faq-list { border-top: 1px solid var(--line); }
+  details { border-bottom: 1px solid var(--line); }
+  summary {
+    list-style: none; cursor: pointer; padding: 32px 0;
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    font-size: 25px; font-weight: 650; letter-spacing: -0.02em;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary .pm {
+    flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
+    position: relative; transition: background .2s ease, border-color .2s ease, transform .3s ease;
+  }
+  summary .pm::before, summary .pm::after {
+    content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 2px; background: var(--ink);
+    transform: translate(-50%, -50%); border-radius: 2px; transition: transform .3s ease, background .2s ease;
+  }
+  summary .pm::after { transform: translate(-50%, -50%) rotate(90deg); }
+  details[open] summary .pm { background: var(--ink); border-color: var(--ink); }
+  details[open] summary .pm::before, details[open] summary .pm::after { background: #fff; }
+  details[open] summary .pm::after { transform: translate(-50%, -50%) rotate(0deg); }
+  .answer { padding: 0 80px 34px 0; font-size: 19px; color: var(--ink-2); }
+
+  /* ---------- Final CTA ---------- */
+  .final { padding: 140px 0; }
+  .cta-card {
+    position: relative; overflow: hidden; border-radius: 36px; padding: 110px 80px;
+    background: var(--dark); color: #fff; text-align: center;
+  }
+  .cta-card::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(600px 300px at 20% 0%, rgba(43,91,255,.45), transparent 70%),
+      radial-gradient(600px 320px at 85% 100%, rgba(124,92,255,.40), transparent 70%);
+  }
+  .cta-card::after {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000, transparent 80%);
+            mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000, transparent 80%);
+  }
+  .cta-card > * { position: relative; z-index: 1; }
+  .cta-card h2 { font-size: 76px; margin-top: 0; }
+  .cta-card .sub { margin: 24px auto 0; color: rgba(255,255,255,.72); }
+  .cta-card .btn { margin-top: 44px; padding: 20px 34px; font-size: 19px; }
+  .cta-card .fine { margin-top: 20px; font-size: 15px; color: rgba(255,255,255,.5); }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--line); padding: 56px 0 64px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+  .foot-links { display: flex; gap: 32px; font-size: 15px; color: var(--ink-2); }
+  .foot-links a:hover { color: var(--ink); }
+  .foot-meta { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+
+  /* ---------- Responsive fallback ---------- */
+  @media (max-width: 1100px) {
+    h1 { font-size: 72px; }
+    h2 { font-size: 48px; }
+    .hero-grid, .who-grid, .about-grid, .faq-grid { grid-template-columns: 1fr; gap: 56px; }
+    .features { grid-template-columns: 1fr 1fr; }
+    .versus { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .float-chip { right: 16px; }
+    .who-grid .section-head { position: static; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 16px; }
+    h1 { font-size: 52px; }
+    h2, .about h2, .cta-card h2 { font-size: 38px; }
+    .features, .tiles { grid-template-columns: 1fr; }
+    .section, .final { padding: 90px 0; }
+    .cta-card { padding: 70px 24px; }
+    .foot, .foot-meta { flex-direction: column; align-items: flex-start; }
+    .answer { padding-right: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="brand"><span class="logo">AIS</span>AI Automation Society</a>
+      <nav class="nav-links">
+        <a href="#what">What you get</a>
+        <a href="#who">Who it's for</a>
+        <a href="#about">About Nate</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a href="#join" class="btn btn-primary">Join free</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill"><span class="dot"></span>A community of 450,000+ people learning to build with AI</span>
+        <h1>Learn to use AI for <span class="hl">real work.</span></h1>
+        <p class="lede">AI Automation Society is where people learn to build with AI. Courses, live sessions, events, and a certification, all in one place.</p>
+        <div class="hero-ctas">
+          <a href="#join" class="btn btn-primary">Join free <span class="arrow">&rarr;</span></a>
+          <a href="#what" class="btn btn-ghost">See what's inside</a>
+        </div>
+        <p class="hero-note"><span class="check">&#10003;</span> No technical background needed</p>
+      </div>
+
+      <div style="position:relative">
+        <div class="panel">
+          <div class="panel-head">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span class="label">Inside AIS</span>
+          </div>
+          <div class="stat">
+            <div class="num">450,000+</div>
+            <div class="cap">people learning to build with AI</div>
+          </div>
+          <div class="tiles">
+            <div class="tile"><span class="ico">&#128218;</span>Courses</div>
+            <div class="tile"><span class="ico">&#127908;</span>Live sessions</div>
+            <div class="tile"><span class="ico">&#128197;</span>Events</div>
+            <div class="tile"><span class="ico">&#127891;</span>Certification</div>
+          </div>
+        </div>
+        <div class="float-chip">
+          <span class="badge">&#128075;</span>
+          <div>If you can read, you can start<small>The idea AIS is built on</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contrast -->
+  <section class="section dark" id="why">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Why AIS</span>
+        <h2>Most people learn AI alone.<br>You don't have to.</h2>
+      </div>
+      <div class="versus">
+        <div class="vcard alone">
+          <span class="vtag">&#10005;&nbsp; Learning alone</span>
+          <p>Most people learning AI are doing it <strong>alone</strong>, from tool reviews and threads pushed by people with something to sell.</p>
+          <div class="vfoot"><span>Tool reviews</span><span>Threads</span><span>Someone selling something</span></div>
+        </div>
+        <div class="vcard here">
+          <span class="vtag">&#10003;&nbsp; Learning at AIS</span>
+          <p>Here you learn from practitioners who ship this work for clients every week, and from members one step ahead of you.</p>
+          <div class="vfoot"><span>Practitioners</span><span>Client work, every week</span><span>Members one step ahead</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What you get -->
+  <section class="section" id="what">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">What you get</span>
+        <h2>Everything you need to learn, in one place.</h2>
+        <p class="sub">Four ways to learn to build with AI, alongside a community of 450,000+ people doing the same.</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <span class="num">01</span>
+          <div class="ico">&#128218;</div>
+          <h3>Courses</h3>
+          <p>Learn to build with AI, step by step.</p>
+        </div>
+        <div class="feature">
+          <span class="num">02</span>
+          <div class="ico">&#127908;</div>
+          <h3>Live sessions</h3>
+          <p>Learn live, from practitioners who ship this work for clients every week.</p>
+        </div>
+        <div class="feature">
+          <span class="num">03</span>
+          <div class="ico">&#128197;</div>
+          <h3>Events</h3>
+          <p>Show up and learn alongside the rest of the community.</p>
+        </div>
+        <div class="feature">
+          <span class="num">04</span>
+          <div class="ico">&#127891;</div>
+          <h3>Certification</h3>
+          <p>Put what you've learned on the record.</p>
+        </div>
+      </div>
+      <div class="allinone">
+        <span><strong>Courses, live sessions, events, and a certification,</strong> all in one place.</span>
+        <a href="#join" class="btn btn-primary">Join free <span class="arrow">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who it's for -->
+  <section class="section who" id="who">
+    <div class="wrap who-grid">
+      <div class="section-head">
+        <span class="eyebrow">Who it's for</span>
+        <h2>For anyone who wants AI to do real work.</h2>
+        <p class="sub">You don't need a technical background. You need to be able to read, and to want to start.</p>
+      </div>
+      <div class="who-list">
+        <div class="who-item">
+          <span class="mark">&#129517;</span>
+          <div>
+            <h3>You've been learning AI on your own</h3>
+            <p>Piecing it together from tool reviews and threads. Here you learn next to members one step ahead of you.</p>
+          </div>
+        </div>
+        <div class="who-item">
+          <span class="mark">&#128188;</span>
+          <div>
+            <h3>You don't have a technical background</h3>
+            <p>You don't need one. If you can read, you can start.</p>
+          </div>
+        </div>
+        <div class="who-item">
+          <span class="mark">&#128295;</span>
+          <div>
+            <h3>You want to use AI for real work</h3>
+            <p>Learn from practitioners who ship this work for clients every week, not from people with something to sell.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Nate -->
+  <section class="section about" id="about">
+    <div class="wrap about-grid">
+      <div class="portrait">
+        <div class="avatar">NH</div>
+        <div class="nameplate">
+          <strong>Nate Herk</strong>
+          <span>Built AI Automation Society</span>
+        </div>
+      </div>
+      <div>
+        <span class="eyebrow">About Nate</span>
+        <h2>If you can read,<br>you can start.</h2>
+        <p class="lede">Nate Herk started in a business role, taught himself, and built this community around one idea: if you can read, you can start.</p>
+        <div class="path">
+          <div class="step">
+            <div class="node">1</div>
+            <h4>Business role</h4>
+            <p>Where Nate started</p>
+          </div>
+          <div class="step">
+            <div class="node">2</div>
+            <h4>Taught himself</h4>
+            <p>Learned to build with AI</p>
+          </div>
+          <div class="step">
+            <div class="node">3</div>
+            <h4>Built AIS</h4>
+            <p>450,000+ people and counting</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq" id="faq">
+    <div class="wrap faq-grid">
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Questions, answered.</h2>
+      </div>
+      <div class="faq-list">
+        <details open>
+          <summary>Do I need a technical background?<span class="pm"></span></summary>
+          <p class="answer">No. Nate Herk started in a business role and taught himself. The community is built around one idea: if you can read, you can start.</p>
+        </details>
+        <details>
+          <summary>What's included?<span class="pm"></span></summary>
+          <p class="answer">Courses, live sessions, events, and a certification, all in one place, alongside a community of 450,000+ people learning to build with AI.</p>
+        </details>
+        <details>
+          <summary>Who will I be learning from?<span class="pm"></span></summary>
+          <p class="answer">Practitioners who ship this work for clients every week, and members who are one step ahead of you.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final" id="join">
+    <div class="wrap">
+      <div class="cta-card">
+        <span class="eyebrow">AI Automation Society</span>
+        <h2 style="margin-top:18px">Stop learning AI alone.</h2>
+        <p class="sub">Join 450,000+ people learning to build with AI. Courses, live sessions, events, and a certification, all in one place.</p>
+        <a href="#join" class="btn btn-light">Join free <span class="arrow">&rarr;</span></a>
+        <p class="fine">No technical background needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <a href="#top" class="brand"><span class="logo">AIS</span>AI Automation Society</a>
+        <nav class="foot-links">
+          <a href="#what">What you get</a>
+          <a href="#who">Who it's for</a>
+          <a href="#about">About Nate</a>
+          <a href="#faq">FAQ</a>
+          <a href="#join">Join free</a>
+        </nav>
+      </div>
+      <div class="foot-meta">
+        <span>&copy; AI Automation Society</span>
+        <span>Learn to use AI for real work.</span>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  (function () {
+    var nav = document.getElementById('nav');
+    function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 8); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Keep one FAQ item open at a time
+    var items = document.querySelectorAll('.faq-list details');
+    items.forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        if (d.open) items.forEach(function (o) { if (o !== d) o.open = false; });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "status": "Reviewed and resolved",
+  "findings": {
+    "button_css": 6.714644626812108,
+    "body_css": 5.383542425930181,
+    "rendered_button_background": [
+      71,
+      88,
+      132
+    ],
+    "rendered_page_background": [
+      242,
+      246,
+      247
+    ],
+    "button_against_rendered_bg": 7.0070148658812235,
+    "body_against_rendered_bg": 5.394104191289051
+  },
+  "explanation": [
+    "30 automated contrast sample flags concern two elements in the illustrative generic webpage only. The button sampler incorrectly used the surrounding light page instead of the blue button background. Measured actual CSS and rendered button background both pass.",
+    "The lower paragraph is outside the clipped viewport at the audit\u2019s initial pose; it is not visible on the dark video background. Once revealed by scrolling it is on the light page and passes.",
+    "Four overflow warnings describe the intentional scrollable/cropped generic page; marked data-layout-allow-overflow. The actual grid clipping error was separately corrected, re-rendered, and visually verified."
+  ],
+  "unresolved_visual_issues": 0
+}

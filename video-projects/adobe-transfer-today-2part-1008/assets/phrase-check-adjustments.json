@@ -1,0 +1,50 @@
+[
+  {
+    "original": "which is eight hundred",
+    "updated": "which is $840 a year",
+    "expected_count": 1,
+    "reason": "Equivalent ASR number formatting, hyphenation or joined product name; count unchanged."
+  },
+  {
+    "original": "nine minute and one second video,",
+    "updated": "nine-minute and one-second video",
+    "expected_count": 1,
+    "reason": "Equivalent ASR number formatting, hyphenation or joined product name; count unchanged."
+  },
+  {
+    "original": "three minutes and thirty-seven...",
+    "updated": "three minutes and 37",
+    "expected_count": 1,
+    "reason": "Equivalent ASR number formatting, hyphenation or joined product name; count unchanged."
+  },
+  {
+    "original": "three minutes and thirty-seven seconds",
+    "updated": "three minutes and 37 seconds",
+    "expected_count": 1,
+    "reason": "Equivalent ASR number formatting, hyphenation or joined product name; count unchanged."
+  },
+  {
+    "original": "I have yet to find the Effects Craft",
+    "updated": "I have yet to find the Effectscraft",
+    "expected_count": 1,
+    "reason": "Equivalent ASR number formatting, hyphenation or joined product name; count unchanged."
+  },
+  {
+    "original": "About eighty percent of my watchers aren't subscribed,",
+    "updated": "About 80% of my watchers aren't subscribed",
+    "expected_count": 1,
+    "reason": "Equivalent ASR number formatting, hyphenation or joined product name; count unchanged."
+  },
+  {
+    "original": "Okay, so this build has no speech-to-text.",
+    "updated": "Okay so this build has no speech to text",
+    "expected_count": 1,
+    "reason": "Final MP4 ASR omitted hyphens; wording and expected count unchanged."
+  },
+  {
+    "original": "nine-minute and one-second video",
+    "updated": "nine minute and one second video",
+    "expected_count": 1,
+    "reason": "Final MP4 ASR omitted hyphens; wording and expected count unchanged."
+  }
+]

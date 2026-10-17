@@ -1,0 +1,84 @@
+{
+  "source_order": [
+    {
+      "path": "/Users/aidanstanik/Projects/Adobe Transfer Folder/1.mov",
+      "name": "part1.mov",
+      "duration": 952.5333333333333,
+      "offset": 0,
+      "bytes": 992953908,
+      "sha256": "2e19c10e1745afc05fe340f46de7cc5fcac662ef5faffbd94b1b909025b86dc4"
+    },
+    {
+      "path": "/Users/aidanstanik/Projects/Adobe Transfer Folder/2.mov",
+      "name": "part2.mov",
+      "duration": 27.033333333333335,
+      "offset": 952.5333333333333,
+      "bytes": 25267764,
+      "sha256": "9be77f829267d41cbb093b155414b8fe02cde4b1e1a6aebdedf05e8c997c1fe5"
+    },
+    {
+      "path": "/Users/aidanstanik/Projects/Adobe Transfer Folder/3.mov",
+      "name": "part3.mov",
+      "duration": 222.3,
+      "offset": 979.5666666666666,
+      "bytes": 213017160,
+      "sha256": "62e4ca3c2ddb76dd4b9198cc60ca148bb2c17c417777dd44eb00054e23fceb79"
+    }
+  ],
+  "source_duration": 1201.8666666666666,
+  "pipeline": [
+    "cut-silences",
+    "cut-mistakes",
+    "verify-cuts"
+  ],
+  "completed_at": "2026-09-14T03:58:19.683678+00:00",
+  "final_result": "PASS",
+  "final_duration_seconds": 598.1666666666669,
+  "final_sha256": "4133a46883c29d4a7bf9e6840832bab67a630b6606cfebb787e1dcce3b256cbb",
+  "deliveries": [
+    {
+      "path": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-3part-0913/renders/final/After Effects GPT-6 Astra Tutorial - Edited.mp4",
+      "bytes": 711687114,
+      "sha256": "4133a46883c29d4a7bf9e6840832bab67a630b6606cfebb787e1dcce3b256cbb"
+    },
+    {
+      "path": "/Users/aidanstanik/Projects/Adobe Transfer Folder/After Effects GPT-6 Astra Tutorial - Edited.mp4",
+      "bytes": 711687114,
+      "sha256": "4133a46883c29d4a7bf9e6840832bab67a630b6606cfebb787e1dcce3b256cbb"
+    }
+  ],
+  "final_qa": "assets/final-qa.json",
+  "verification_report": "assets/verify-report.md",
+  "picture_in_picture_delivery": {
+    "result": "PASS",
+    "output": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-3part-0913/renders/final/After Effects GPT-6 Astra Tutorial - 1080p Picture in Picture.mp4",
+    "width": 1920,
+    "height": 1080,
+    "frames": 17945,
+    "duration": 598.166667,
+    "av_difference": 0.0006669999999076026,
+    "audio_identical_to_passing_agent_verified_edit": true,
+    "audio_packet_hash": "SHA256=5ab541b8abfe580d0840fe68a279690269ee3ab84a92aa0b951a0716ecb625e3",
+    "full_decode": "PASS",
+    "sha256": "79842904110af350b9572086ac88476013e138789ddf984607a60a9b66f7d9d9",
+    "delivery": "/Users/aidanstanik/Projects/Adobe Transfer Folder/After Effects GPT-6 Astra Tutorial - 1080p Picture in Picture.mp4",
+    "delivery_hash_verified": true,
+    "visual_review": "PASS: original opening, middle, both later source clips, outro; bottom-right camera visible with full screen background"
+  },
+  "rounded_square_delivery": {
+    "result": "PASS",
+    "output": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-3part-0913/renders/final/After Effects GPT-6 Astra Tutorial - 1080p Rounded Square.mp4",
+    "width": 1920,
+    "height": 1080,
+    "frames": 17945,
+    "duration": 598.166667,
+    "av_difference": 0.0006669999999076026,
+    "audio_identical_to_passing_agent_verified_edit": true,
+    "audio_packet_hash": "SHA256=5ab541b8abfe580d0840fe68a279690269ee3ab84a92aa0b951a0716ecb625e3",
+    "full_decode": "PASS",
+    "sha256": "271ec9e2366f84756ddd1fdfed68c6ec300a7bc4aadb088b745c2115b8fe9313",
+    "delivery": "/Users/aidanstanik/Projects/Adobe Transfer Folder/After Effects GPT-6 Astra Tutorial - 1080p Rounded Square.mp4",
+    "delivery_hash_verified": true,
+    "visual_review": "PASS: square face inset with rounded transparent corners, full screen background, correct bottom-right placement"
+  }
+}

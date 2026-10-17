@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1920,height=1080"><title>cp2-sop-16x9</title><script src="assets/gsap.min.js"></script><style>
+@font-face{font-family:Inter;src:url('assets/Inter-Variable.ttf');font-weight:100 900}
+*{box-sizing:border-box}
+html,body{margin:0;overflow:hidden;background:#070B12;font-family:Inter,sans-serif;color:#F2F6FA}
+#main{position:relative;overflow:hidden;background:#070B12}
+.pool{position:absolute;border-radius:50%;pointer-events:none}
+.pool-a{background:radial-gradient(ellipse,rgba(38,120,190,.22),rgba(38,120,190,0) 68%);filter:blur(30px)}
+.pool-b{background:radial-gradient(ellipse,rgba(55,189,248,.12),rgba(55,189,248,0) 66%);filter:blur(40px)}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at 50% 45%,rgba(7,11,18,0) 55%,rgba(3,5,9,.55) 100%)}
+.brand{position:absolute;display:flex;align-items:center;gap:6px;z-index:6}
+.brand .logo{width:72px;height:72px;display:block;margin:-12px 0 -12px -14px}
+.brand .word{font-size:20px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#C9D6E2}
+.header-note{position:absolute;color:#A6B6C6;letter-spacing:-.3px;z-index:6}
+.speaker-window{position:absolute;overflow:hidden;background:#0d1520;z-index:2;border:1.5px solid rgba(255,255,255,.14);box-shadow:0 34px 90px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35)}
+.speaker-window video{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.speaker-edge{position:absolute;z-index:3;pointer-events:none;box-shadow:inset 0 1px 1px rgba(255,255,255,.28),inset 0 0 0 1px rgba(255,255,255,.04)}
+.scene{position:absolute;inset:0;pointer-events:none;z-index:4}
+.scene-inner{width:100%;height:100%;display:flex;flex-direction:column;gap:23px}
+.eyebrow{font-size:25px;font-weight:520;color:#37BDF8;letter-spacing:-.3px}
+h1{font-size:88px;line-height:1.06;font-weight:630;letter-spacing:-4.6px;margin:0;color:#F2F6FA}
+h1 span{display:block;white-space:nowrap}
+h1.long{font-size:78px;letter-spacing:-4px}
+h1.compact{font-size:64px;letter-spacing:-3.2px}
+.ui{position:relative;flex-shrink:0;margin-top:30px;isolation:isolate}
+.reflection{position:absolute;z-index:-1;width:540px;height:300px;left:80px;top:40px;filter:blur(46px);border-radius:50%;background:radial-gradient(ellipse at 35% 30%,rgba(55,189,248,.30),rgba(40,110,190,.16) 45%,rgba(40,110,190,0) 72%)}
+.glass{position:relative;background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04) 55%,rgba(110,190,240,.07));border:1px solid rgba(255,255,255,.13);border-radius:26px;backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);box-shadow:inset 0 1px 1px rgba(255,255,255,.22),inset 0 -1px 2px rgba(0,0,0,.25),0 26px 60px rgba(0,0,0,.42),0 2px 6px rgba(0,0,0,.25);overflow:hidden}
+.sheen{position:absolute;top:0;bottom:0;left:-70%;width:60%;pointer-events:none;background:linear-gradient(105deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.10) 50%,rgba(255,255,255,0) 70%)}
+.tile{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;flex-shrink:0;background:rgba(55,189,248,.13);color:#37BDF8;box-shadow:inset 0 1px 1px rgba(255,255,255,.14)}
+.tile svg{width:32px;height:32px}.tile.big{width:78px;height:78px;border-radius:22px}.tile.big svg{width:42px;height:42px}
+.tile.sm{width:40px;height:40px;border-radius:12px}.tile.sm svg{width:22px;height:22px}
+.tile.dim{background:rgba(255,255,255,.06);color:#8397AA}
+.num{font-variant-numeric:tabular-nums}
+.status{margin-left:auto;font-size:18px;font-weight:520;color:#37BDF8;background:rgba(55,189,248,.13);padding:8px 14px;border-radius:20px;white-space:nowrap}
+/* channel stat panel */
+.stat-stack{display:flex;flex-direction:column;gap:16px}
+.stat-panel{width:560px;padding:4px 30px}
+.stat-row{display:flex;align-items:center;gap:22px;padding:20px 0}
+.stat-row small{display:block;font-size:19px;color:#A6B6C6;letter-spacing:-.2px}
+.stat-row strong{display:block;font-size:64px;line-height:1.05;font-weight:620;letter-spacing:-3px;color:#F2F6FA}.stat-row .num-2{font-size:52px}
+/* not-technical chips */
+.chip-row{display:flex;gap:22px}
+.chip{display:flex;align-items:center;gap:18px;padding:22px 26px 22px 22px;font-size:28px;font-weight:500;letter-spacing:-.8px;height:104px}
+.muted-chip{color:#A6B6C6}
+.strike{position:absolute;left:92px;right:22px;top:51px;height:2px;border-radius:2px;background:#37BDF8;transform-origin:0 50%;display:block}
+.note{font-size:24px;color:#8397AA;margin:30px 4px 0;letter-spacing:-.4px}
+/* money card */
+.money-card{display:flex;align-items:center;gap:24px;padding:26px 28px;width:790px}
+.money-card strong{display:block;font-size:30px;font-weight:580;letter-spacing:-1px}
+.money-card small{display:block;font-size:20px;color:#A6B6C6;margin-top:6px}
+/* offer card (VSL) */
+.offer-card{width:820px;padding:26px 34px 26px}
+.offer-head{display:flex;align-items:center}.plan{font-size:30px;font-weight:600;letter-spacing:-.8px}
+.price-row{display:flex;align-items:flex-end;gap:28px;margin:8px 0 18px}
+.price b{font-size:96px;line-height:.95;font-weight:640;letter-spacing:-5px}.price span{font-size:28px;color:#A6B6C6;margin-left:6px}
+.per-mo{font-size:30px;color:#A6B6C6;padding-bottom:12px;letter-spacing:-.6px}.per-mo b{color:#37BDF8;font-weight:620}
+.perks{display:flex;flex-direction:column;gap:12px;border-top:1px solid rgba(255,255,255,.09);padding-top:20px}
+.perk{display:flex;align-items:center;gap:16px;font-size:23px;line-height:1.2;color:#E4ECF3;letter-spacing:-.4px}
+.monthly-card{width:820px;margin-top:16px;display:flex;align-items:baseline;gap:14px;padding:22px 34px}
+.monthly-card .plan{font-size:26px;color:#C9D6E2;margin-right:10px}.monthly-card b{font-size:40px;font-weight:620;letter-spacing:-1.5px}
+.monthly-card .mo{font-size:22px;color:#A6B6C6}.monthly-card small{margin-left:auto;font-size:20px;color:#A6B6C6}
+.offer-light{left:40px;top:120px;width:640px;height:360px}
+/* captions */
+.caption{position:absolute;left:0;text-align:center;z-index:10}
+.caption span{display:inline-block;padding:10px 24px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(9,14,22,.70);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 1px rgba(255,255,255,.10);font-size:35px;font-weight:500;letter-spacing:-.5px;white-space:nowrap;color:#F2F6FA}
+.caption b{color:#37BDF8;font-weight:600}
+
+html,body,#main{width:1920px;height:1080px}
+.pool-a{left:-120px;top:420px;width:1100px;height:700px}.pool-b{left:1000px;top:120px;width:960px;height:900px}
+.brand{left:96px;top:50px}.header-note{right:98px;top:66px;font-size:23px}
+.speaker-window,.speaker-edge{left:1080px;top:151px;width:744px;height:773px;border-radius:40px}
+.scene-inner{padding:177px 900px 155px 96px}
+.ui{width:830px}
+.caption{top:965px;width:1920px}.caption span{max-width:1700px}
+</style></head><body>
+<main id="main" data-composition-id="main" data-start="0" data-duration="14.4" data-width="1920" data-height="1080">
+<div class="pool pool-a"></div><div class="pool pool-b"></div><div class="vignette"></div>
+<div class="brand"><img class="logo" src="assets/ais-logo.png" alt="AIS"><span class="word">AI Automation Society</span></div><div class="header-note">The First Client SOP</div>
+<div class="speaker-window"><video id="speaker" src="assets/speaker.mp4" muted playsinline data-start="0" data-duration="14.4" data-track-index="0"></video></div><div class="speaker-edge"></div>
+<audio id="speech" src="assets/speaker.mp4" data-start="0" data-duration="14.4" data-track-index="1" data-volume="1"></audio>
+<section id="s0" class="scene clip" data-start="0.000" data-duration="7.670" data-track-index="3"><div class="scene-inner"><div class="eyebrow">AI Automation on YouTube</div><h1 class=""><span>Over a million</span><span>subscribers.</span></h1><div class="ui ui-channel"><div class="reflection"></div>
+    <div class="stat-stack">
+      <div class="glass stat-panel reveal"><div class="stat-row"><span class="tile"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="38" height="28" rx="8"/><path d="m21 18 9 6-9 6Z"/></svg></span><div><small>Subscribers</small><strong class="num">1M+</strong></div></div><div class="sheen" data-layout-allow-overflow></div></div>
+      <div class="glass stat-panel reveal" data-at="5.6"><div class="stat-row"><span class="tile"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="14" height="14" rx="3"/><rect x="27" y="7" width="14" height="14" rx="3"/><rect x="7" y="27" width="14" height="14" rx="3"/><rect x="27" y="27" width="14" height="14" rx="3"/></svg></span><div><small>Videos on the channel</small><strong class="num num-2">526</strong></div></div></div>
+    </div></div></div></section>
+<section id="s1" class="scene clip" data-start="7.400" data-duration="3.700" data-track-index="4"><div class="scene-inner"><div class="eyebrow">The most frequent comments</div><h1 class=""><span>Not a technical</span><span>question.</span></h1><div class="ui ui-notTech"><div class="reflection"></div>
+    <div class="chip-row">
+      <div class="glass chip muted-chip reveal"><span class="tile dim"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 7a9 9 0 0 0-8.5 12L8 32.5a3.5 3.5 0 0 0 5 5L26.5 24A9 9 0 0 0 38 14.5l-5.5 5.5-5-1.5-1.5-5 5.5-5A9 9 0 0 0 30 7Z"/></svg></span><span>Which tools?</span><i class="strike" data-at="9.28"></i></div>
+      <div class="glass chip muted-chip reveal"><span class="tile dim"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="17" y="4" width="14" height="10" rx="3"/><rect x="4" y="33" width="14" height="10" rx="3"/><rect x="30" y="33" width="14" height="10" rx="3"/><path d="M24 14v10M11 33v-9h26v9"/></svg></span><span>Which workflows?</span><i class="strike" data-at="9.88"></i></div>
+    </div>
+    <div class="note reveal">Not the questions people ask most.</div></div></div></section>
+<section id="s2" class="scene clip" data-start="10.830" data-duration="3.570" data-track-index="5"><div class="scene-inner"><div class="eyebrow">What people actually ask</div><h1 class="long"><span>How to make money</span><span>with AI skills.</span></h1><div class="ui ui-money"><div class="reflection"></div>
+    <div class="glass money-card reveal" data-at="12.45">
+      <span class="tile big"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M29.5 17.5c-1.3-1.6-3.2-2.4-5.5-2.4-3.2 0-5.4 1.6-5.4 4.1 0 5.9 11.4 3.2 11.4 9.3 0 2.6-2.4 4.3-5.9 4.3-2.6 0-4.8-1-6.1-2.8M24 11v4M24 33v4"/></svg></span>
+      <div><strong>Making money with AI skills</strong><small>What people ask about most</small></div>
+      <span class="status">Most asked</span>
+      <div class="sheen" data-layout-allow-overflow></div>
+    </div></div></div></section>
+<div id="cap0" class="caption clip" data-start="0.140" data-duration="1.600" data-track-index="30"><span>My YouTube channel on AI automation</span></div>
+<div id="cap1" class="caption clip" data-start="1.740" data-duration="1.850" data-track-index="30"><span>has over a <b>million</b> subscribers.</span></div>
+<div id="cap2" class="caption clip" data-start="3.590" data-duration="0.760" data-track-index="30"><span>And the most frequent</span></div>
+<div id="cap3" class="caption clip" data-start="4.350" data-duration="0.900" data-track-index="30"><span>comments people make</span></div>
+<div id="cap4" class="caption clip" data-start="5.250" data-duration="2.580" data-track-index="30"><span>across the <b>526</b> videos on the channel</span></div>
+<div id="cap5" class="caption clip" data-start="7.830" data-duration="0.980" data-track-index="30"><span>aren't technical questions</span></div>
+<div id="cap6" class="caption clip" data-start="8.810" data-duration="2.399" data-track-index="30"><span>about which tools or workflows to use.</span></div>
+<div id="cap7" class="caption clip" data-start="11.209" data-duration="1.201" data-track-index="30"><span>They ask about how to actually</span></div>
+<div id="cap8" class="caption clip" data-start="12.410" data-duration="1.920" data-track-index="30"><span>make money with their AI skills.</span></div>
+</main><script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+const SCENES = [[0,7.62],[7.62,11.05],[11.05,14.4]];
+const D = 14.4;
+SCENES.forEach((s, i) => {
+  const root = "#s" + i;
+  const at = Math.max(0, s[0] - 0.08);
+  if (i > 0) {
+    tl.fromTo(root, { opacity: 0, x: 26, filter: "blur(11px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.58, ease: "power3.out" }, at);
+    tl.from(root + " .eyebrow", { y: 12, opacity: 0, duration: 0.5, ease: "power2.out" }, at + 0.05);
+    tl.from(root + " h1 span", { y: 22, opacity: 0, filter: "blur(6px)", stagger: 0.1, duration: 0.65, ease: "expo.out" }, at + 0.1);
+  }
+  const free = [...document.querySelectorAll(root + " .reveal:not([data-at])")];
+  if (free.length) tl.from(free, { y: 23, opacity: 0, filter: "blur(6px)", stagger: 0.085, duration: 0.7, ease: "power3.out" }, at + 0.22);
+  document.querySelectorAll(root + " .reveal[data-at]").forEach((el) => {
+    tl.from(el, { y: 18, opacity: 0, filter: "blur(6px)", duration: 0.6, ease: "power3.out" }, Number(el.dataset.at));
+  });
+  document.querySelectorAll(root + " .light[data-at]").forEach((el) => {
+    tl.fromTo(el, { opacity: 0.3 }, { opacity: 1, duration: 0.45, ease: "power2.out" }, Number(el.dataset.at));
+    const tile = el.querySelector(".tile");
+    if (tile) tl.fromTo(tile, { scale: 0.85 }, { scale: 1, duration: 0.5, ease: "back.out(1.6)" }, Number(el.dataset.at));
+  });
+  document.querySelectorAll(root + " .strike").forEach((el) => {
+    tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power2.inOut" }, Number(el.dataset.at));
+  });
+  const sheens = document.querySelectorAll(root + " .sheen");
+  if (sheens.length) tl.fromTo(sheens, { x: 0 }, { x: 1400, duration: 1.8, ease: "sine.inOut" }, at + 1.1);
+  tl.fromTo(root + " .reflection", { x: -10, opacity: 0.75 }, { x: 18, opacity: 1, duration: Math.max(1, s[1] - s[0] - 0.4), ease: "sine.inOut" }, at);
+  if (i < SCENES.length - 1) tl.fromTo(root, { opacity: 1, x: 0, filter: "blur(0px)" }, { opacity: 0, x: -22, filter: "blur(10px)", duration: 0.3, ease: "power2.inOut", immediateRender: false }, s[1] - 0.3);
+});
+document.querySelectorAll(".caption").forEach((el) => {
+  tl.from(el.querySelector("span"), { y: 8, opacity: 0, duration: 0.16, ease: "power2.out" }, Number(el.dataset.start));
+});
+tl.to({}, { duration: D }, 0);
+window.__timelines.main = tl;
+</script></body></html>

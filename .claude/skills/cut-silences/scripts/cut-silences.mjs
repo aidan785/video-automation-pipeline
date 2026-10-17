@@ -279,7 +279,7 @@ if (opts.video) {
     "-y", "-i", videoPath,
     "-/filter_complex", scriptPath,
     "-map", "[v]", "-map", "[a]",
-    "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+    "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-g", "30", "-keyint_min", "30", "-sc_threshold", "0",
     "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart",
     outputPath,
   ];

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p43 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit (Kallaway) ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .chipx b { color: var(--white); }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx b { color: var(--alert); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 20px; padding: 16px 26px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 21px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 31px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: var(--text-dim); margin-top: 5px; }
+  .qrow .tx .sub b { color: var(--text); }
+  .qrow.bad .n { color: var(--alert); border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 12px rgba(var(--alert-rgb), .3); }
+  .qrow.lit { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+
+  .kc { padding: 24px 30px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc.dead { border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 16px rgba(var(--alert-rgb), .22), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 8px; }
+  .kc.dead .lab { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 23px; color: var(--text-dim); margin-top: 8px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  /* rails / pills (module map, ladder, zones) */
+  .rail { display: flex; align-items: center; gap: 14px; }
+  .mpill { padding: 16px 28px; border-radius: 999px; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 28px; color: var(--text-dim); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  .mpill.on { color: var(--white); border-color: rgba(var(--accent-rgb), .7); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.done { color: var(--white); }
+  .mpill.done::before { content: "✓ "; color: var(--accent); }
+  .mpill.bad { border-color: rgba(var(--alert-rgb), .6); color: var(--white); }
+  .conn { width: 34px; height: 2px; background: rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* takeover / outro centering */
+  .center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .center .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 88px; line-height: 1.12; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  .center .kick { margin-bottom: 26px; }
+  .center .rail { justify-content: center; }
+  .center .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; color: var(--white); text-shadow: var(--textglow); }
+  .caps { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 40px; }
+
+  /* under-plane PIP layouts: content stays left of x~1200 */
+  .head { position: absolute; left: 110px; top: 56px; }
+  .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 52px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  .pstack { position: absolute; left: 110px; top: 200px; width: 1060px; display: flex; flex-direction: column; gap: 14px; }
+  .pstack > div { align-self: flex-start; max-width: 1040px; }
+  .pstack .qrow { width: 1000px; }
+
+  /* over-plane shift layouts: left column, video shifted right */
+  .sstack { position: absolute; left: 80px; top: 190px; display: flex; flex-direction: column; gap: 15px; }
+  .sstack > div { align-self: flex-start; max-width: 760px; }
+  .sstack .chipx { font-size: 28px; padding: 14px 26px; }
+  .sstack .punchx { font-size: 30px; line-height: 1.35; }
+  .sstack .warnx { font-size: 28px; }
+
+#b1 .names { display: flex; gap: 22px; justify-content: center; margin-top: 30px; flex-wrap: wrap; max-width: 1500px; }
+  #b1 .names .word { padding: 18px 34px; border-radius: 999px; font-family: var(--font-display); font-weight: var(--wt-black); font-size: 58px; color: var(--white); text-shadow: var(--textglow); background: var(--glass-bg-dark); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b1 .l1 { font-size: 78px; }
+
+#b4 .cols { position: absolute; left: 110px; top: 196px; width: 1090px; display: flex; gap: 22px; align-items: flex-start; }
+  #b4 .col { flex: 1 1 0; display: flex; flex-direction: column; gap: 10px; }
+  #b4 .ch { padding: 16px 20px; border-radius: var(--radius-sm); background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12,17,27,.94); border: 1.5px solid rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  #b4 .ch .n { font-family: var(--font-mono); font-size: 18px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b4 .ch .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 34px; color: var(--white); text-shadow: var(--textglow); margin-top: 4px; }
+  #b4 .ch .s { font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 21px; color: var(--text-dim); margin-top: 4px; }
+  #b4 .r { padding: 12px 18px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-med); font-size: 21px; line-height: 1.3; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b4 .r b { color: var(--white); }
+  #b4 .r.bad { border-color: rgba(var(--alert-rgb), .55); }
+  #b4 .r.bad b { color: var(--alert); }
+
+#b6 .pstack { top: 178px; gap: 12px; }
+  #b6 .kc .det { font-size: 22px; }
+
+#b7 .sstack { top: 150px; gap: 13px; }
+  #b7 .qrow { max-width: 740px; padding: 14px 24px; }
+  #b7 .qrow .tx { font-size: 29px; }
+  #b7 .qrow .tx .sub { font-size: 21px; }
+  #b7 .quote { font-size: 25px; max-width: 740px; }
+
+#b8 .rail { margin-bottom: 44px; }
+  #b8 .t { font-size: 84px; }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-c1zo" id="p43" data-composition-id="p43" data-start="0" data-duration="367.1" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-1b7e" id="bg" class="clip" data-start="0" data-duration="367.1" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (tracks 4/5) ============ -->
+
+  <div data-hf-id="hf-vz7g" id="b1" class="under clip" data-start="0" data-duration="16.17" data-track-index="4">
+    <div data-hf-id="hf-n6rz" class="center inner"><div data-hf-id="hf-yeow"><div data-hf-id="hf-jyvg" class="kick">Pillar Four · Governance · Lesson 4</div><div data-hf-id="hf-10m5" class="l1">The names you will hear<br data-hf-id="hf-x5px">the moment an <span data-hf-id="hf-fhms" class="grad">expert joins</span></div><div data-hf-id="hf-yie8" class="names"><span data-hf-id="hf-dkpn" class="word">NIST</span><span data-hf-id="hf-ptai" class="word">ISO</span><span data-hf-id="hf-cdv2" class="word">SOC 2</span><span data-hf-id="hf-u1tj" class="word">EU AI Act</span><span data-hf-id="hf-7sk8" class="word">HIPAA</span></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-mzvy" id="b3" class="under clip" data-start="48.27" data-duration="22.95" data-track-index="4">
+    <div data-hf-id="hf-d6im" class="head x"><div data-hf-id="hf-1abs" class="kick">The depth behind this lesson</div><div data-hf-id="hf-yuqc" class="t">Two <span data-hf-id="hf-njk2" class="grad">experts</span>, two interviews</div></div><div data-hf-id="hf-3j2g" class="pstack x"><div data-hf-id="hf-jt39" class="kc hot k1"><div data-hf-id="hf-ak76" class="lab">Aaron Alva</div><div data-hf-id="hf-r7mj" class="val">Ten years at the FTC</div><div data-hf-id="hf-f0c2" class="det">Worked on <b data-hf-id="hf-22kj">some of the biggest tech enforcement cases</b> in the country</div></div><div data-hf-id="hf-pyt2" class="kc hot k2"><div data-hf-id="hf-1cqu" class="lab">Katharina Koerner</div><div data-hf-id="hf-8l8d" class="val">AI governance advisor</div><div data-hf-id="hf-ajvq" class="det">Years in <b data-hf-id="hf-tsbu">privacy compliance</b> before that</div></div><div data-hf-id="hf-u2a3" class="punchx p1">Every expert quote in this lesson comes from those two interviews. Watch both.</div></div>
+  </div>
+
+  <div data-hf-id="hf-wm4g" id="b4" class="under clip" data-start="71.07" data-duration="106.85" data-track-index="5">
+    <div data-hf-id="hf-ytk2" class="head x"><div data-hf-id="hf-cnil" class="kick">The sorting insight</div><div data-hf-id="hf-4m1k" class="t">Three kinds of <span data-hf-id="hf-50ks" class="grad">rules</span></div></div><div data-hf-id="hf-0qf5" class="cols x"><div data-hf-id="hf-fjfa" class="col c1"><div data-hf-id="hf-88eq" class="ch h1"><div data-hf-id="hf-kqxw" class="n">Kind one</div><div data-hf-id="hf-pmmf" class="t">Recommendation</div><div data-hf-id="hf-22rv" class="s">NIST AI Risk Management Framework</div></div><div data-hf-id="hf-qgw3" class="r r11">Voluntary guide from a US standards body. <b data-hf-id="hf-p9jb">Nobody can fine you.</b></div><div data-hf-id="hf-05qy" class="r r12">Shared vocabulary and <b data-hf-id="hf-e2pf">a checklist to think with</b>. Skip implementing all of it.</div><div data-hf-id="hf-6xj0" class="r r13">“<b data-hf-id="hf-pwej">It's absolutely not a checkbox.</b>” The framework helps you ask how risky your system is.</div><div data-hf-id="hf-q54y" class="r r14">Implement the parts that apply and you're <b data-hf-id="hf-9qeq">already covering a lot of laws</b>.</div></div><div data-hf-id="hf-blb9" class="col c2"><div data-hf-id="hf-4aap" class="ch h2"><div data-hf-id="hf-enp6" class="n">Kind two</div><div data-hf-id="hf-yipu" class="t">Certification</div><div data-hf-id="hf-0g9l" class="s">ISO 42001</div></div><div data-hf-id="hf-m3lx" class="r r21">Audited and certified against it, <b data-hf-id="hf-l0oq">like information security</b>.</div><div data-hf-id="hf-61b5" class="r r22">Costs money. Matters to <b data-hf-id="hf-8334">enterprises that need the badge</b>.</div><div data-hf-id="hf-85wj" class="r r23">A two-location dental practice <b data-hf-id="hf-wsmw">doesn't need it</b>. Know it so you can say so.</div><div data-hf-id="hf-ak7t" class="r r24 bad"><b data-hf-id="hf-p738">Near miss: SOC 2</b> is general security assurance, not assurance about your AI system.</div></div><div data-hf-id="hf-atng" class="col c3"><div data-hf-id="hf-1b14" class="ch h3"><div data-hf-id="hf-o5ig" class="n">Kind three</div><div data-hf-id="hf-ws1t" class="t">Legislation</div><div data-hf-id="hf-vf5u" class="s">EU AI Act · US state laws</div></div><div data-hf-id="hf-ylgv" class="r r31">Sorts AI uses by risk. <b data-hf-id="hf-27pu">Bans a few outright.</b></div><div data-hf-id="hf-757f" class="r r32">Piles requirements on <b data-hf-id="hf-rc21">high-risk uses</b>: employment and health decisions.</div><div data-hf-id="hf-b4y1" class="r r33">State laws keep changing: <b data-hf-id="hf-bdbr">passed, repealed, replaced</b> within two years.</div><div data-hf-id="hf-fsd8" class="r r34">High-risk decisions about people in a regulated place: <b data-hf-id="hf-9exn">a zone two conversation</b>.</div></div></div>
+  </div>
+
+  <div data-hf-id="hf-6q6v" id="b6" class="under clip" data-start="210.97" data-duration="65.63" data-track-index="4">
+    <div data-hf-id="hf-z7v3" class="head x"><div data-hf-id="hf-v1vz" class="kick">What an AI case looks like under rules that old</div><div data-hf-id="hf-i7y4" class="t"><span data-hf-id="hf-l62r" class="grad">Overclaiming</span></div></div><div data-hf-id="hf-qzls" class="pstack x"><div data-hf-id="hf-az2w" class="chipx c1">“Our tool is 95% accurate,” with nothing behind it, <b data-hf-id="hf-kjyl">is a deceptive claim</b></div><div data-hf-id="hf-e9le" class="chipx c2">The fix is a habit: <b data-hf-id="hf-i5h3">keep the internal write-up</b> that shows the testing</div><div data-hf-id="hf-5o9v" class="warnx w1"><b data-hf-id="hf-oegz">The gas-leak flag:</b> marketing that doesn't match how the product actually works</div><div data-hf-id="hf-6fio" class="kc dead k1"><div data-hf-id="hf-kejz" class="lab">The case that shows the stakes</div><div data-hf-id="hf-s0o0" class="val">A pharmacy chain deploys facial recognition to catch shoplifters</div><div data-hf-id="hf-k5e4" class="det">Bought from a vendor. <b data-hf-id="hf-blvw">Never verified its accuracy.</b> Pixelated photos. Untrained staff. It falsely accused customers, <b data-hf-id="hf-hn58">disproportionately women and people of color</b>.</div></div><div data-hf-id="hf-dqkn" class="punchx p1">A 20-year enforcement order, opening with a 5-year total ban</div><div data-hf-id="hf-8wzt" class="chipx c3">You are the vendor in that story: <b data-hf-id="hf-ii2r">sell honestly, back up your claims, test before deployment</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-0ms8" id="b8" class="under clip" data-start="348.91" data-duration="18.19" data-track-index="4">
+    <div data-hf-id="hf-qdkf" class="center inner"><div data-hf-id="hf-y7yw"><div data-hf-id="hf-8uq4" class="kick kicker">Pillar Four · Governance · the four-step process</div><div data-hf-id="hf-qzq8" class="rail"><span data-hf-id="hf-s5y3" class="mpill done s1">Diagnose</span><span data-hf-id="hf-qy5c" class="conn s1c"></span><span data-hf-id="hf-yxrg" class="mpill done s2">Screen</span><span data-hf-id="hf-dqlx" class="conn s2c"></span><span data-hf-id="hf-6htt" class="mpill on s3">Choose</span><span data-hf-id="hf-dfw2" class="conn s3c"></span><span data-hf-id="hf-mfr4" class="mpill s4">Apply</span></div><div data-hf-id="hf-qltp" class="t">Next: <span data-hf-id="hf-815d" class="grad">The AI Control Ladder</span></div></div></div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-3lgl" id="p43-video" src="assets/clean.mp4" muted data-start="0" data-duration="362.1" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-7se7" id="p43-audio" src="assets/audio.m4a" data-start="0" data-duration="362.1" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <div data-hf-id="hf-j6vs" id="b2" class="over clip" data-start="16.02" data-duration="32.4" data-track-index="6">
+    <div data-hf-id="hf-1hoh" class="sstack x"><div data-hf-id="hf-v0ic" class="kick k1">The moment the acronyms show up</div><div data-hf-id="hf-2x8g" class="quote q1">“Everyone else in this room assumes <b data-hf-id="hf-hwfp">I know what all of those mean.</b>”</div><div data-hf-id="hf-r06q" class="chipx c1">You don't need to <b data-hf-id="hf-3xd7">memorize</b> the rules</div><div data-hf-id="hf-qqax" class="punchx p1">You need the map</div><div data-hf-id="hf-qxqu" class="chipx c2">Recognize when a step needs the <b data-hf-id="hf-plbd">zone two</b> or <b data-hf-id="hf-hbcz">zone three</b> expert, and explain it without the jargon</div></div>
+  </div>
+
+  <div data-hf-id="hf-gmw4" id="b5" class="over clip" data-start="177.77" data-duration="33.35" data-track-index="6">
+    <div data-hf-id="hf-9dqt" class="sstack x"><div data-hf-id="hf-ae5d" class="kick k1">The enforcement that actually reaches small businesses</div><div data-hf-id="hf-s40r" class="chipx c1">Mostly runs on a law that predates AI by a century. <b data-hf-id="hf-5gq5">The FTC: the regulator of all commerce in America.</b></div><div data-hf-id="hf-a02i" class="kc hot k2"><div data-hf-id="hf-k1eu" class="lab">Aaron Alva</div><div data-hf-id="hf-igxl" class="val">A 110-year-old law with two rules</div><div data-hf-id="hf-4lvz" class="det"><b data-hf-id="hf-2pvl">Don't be deceptive.</b> <b data-hf-id="hf-14mr">Don't be unfair.</b></div></div><div data-hf-id="hf-npga" class="warnx w1">Applies to any technology, including yours, <b data-hf-id="hf-u0rf">and to small companies</b></div><div data-hf-id="hf-ikt9" class="punchx p1">Cases against much smaller companies than you'd expect</div></div>
+  </div>
+
+  <div data-hf-id="hf-c9ud" id="b7" class="over clip" data-start="276.45" data-duration="72.61" data-track-index="6">
+    <div data-hf-id="hf-aknw" class="sstack x"><div data-hf-id="hf-ye6r" class="kick k1">When the names come up · three moves, none of them becoming a lawyer</div><div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-mq0o" class="tx">Explain what the term means<span data-hf-id="hf-bqft" class="sub">One calm, correct sentence <b data-hf-id="hf-mil4">is worth more trust than an hour of jargon</b></span></div></div><div data-hf-id="hf-sufx" class="quote q1">“That's a voluntary framework. We'll use it as a checklist where it fits, <b data-hf-id="hf-bqby">and it can't fine anyone.</b>”</div><div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-rtvy" class="tx">Keep evidence of the practices you follow<span data-hf-id="hf-kjai" class="sub">Enforcement comes down to a <b data-hf-id="hf-pnhw">reasonable standard of care</b></span></div></div><div data-hf-id="hf-im49" class="chipx c1">Scoped access · human gates · logging · honest claims: <b data-hf-id="hf-m3jr">the evidence, as a side effect of building well</b></div><div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-zsmo" class="tx">A named standard applies? Bring in the zone two expert<span data-hf-id="hf-t6ty" class="sub">Recognize it, make the referral, <b data-hf-id="hf-h6fg">build to their requirements</b></span></div></div><div data-hf-id="hf-xaha" class="punchx p1">Be honest. Say what your system does. Only claim what you can prove.</div></div>
+  </div>
+
+  <div data-hf-id="hf-xt4u" id="vig" class="clip" data-start="0" data-duration="367.1" data-track-index="10"></div>
+  <div data-hf-id="hf-v00i" id="grain" class="clip" data-start="0" data-duration="367.1" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 367.1;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+  const SHIFT_X = 400;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  // PIP corner -> shifted full frame in ONE wrap tween (scrim trails in); never pair with toFULL/clearLeft on the same window
+  const toSHIFT     = (t) => { move(t, { x: SHIFT_X, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0, d: 0.8 });
+                               tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+
+  /* shot plan (generated): b2 shift 16.02-48.42 · b3 pip 48.27-71.22 · b4 pip 71.07-177.92 · b5 shift 177.77-211.12 · b6 pip 210.97-276.6 · b7 shift 276.45-349.06 */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(15.77, { x: 0, y: 0, scale: 1 });
+  clearLeft(15.92);
+  toPIP(48.42); shadeOut(48.67);
+  toSHIFT(177.22);
+  toPIP(211.12); shadeOut(211.37);
+  toSHIFT(275.9);
+  toOFF(349.06); shadeOut(349.66);
+
+  // ambient loops must FIT inside DUR (floor, not ceil) or tl.duration() overshoots and the render grows a dead tail
+  const AMB = Math.floor(DUR / 8);
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: Math.floor(DUR / 10) * 2 - 1, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* b1 takeover 0-16.17 · cold open: the names */
+  inUp(0.3, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 0.8);
+  tl.fromTo('#b1 .names .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.75 }, 11.09);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 15.12);
+  tl.set('#b1 .inner', { opacity: 0 }, 16.02);
+  /* b2 shift 16.02-48.42 · you need the map, not a memory */
+  inUp(16.22, '#b2 .k1', 0.6, 18);
+  spring(17.32, '#b2 .q1', 0.7);
+  inLeft(27.81, '#b2 .c1', 0.7);
+  spring(29.39, '#b2 .p1', 0.7);
+  inLeft(36.51, '#b2 .c2', 0.7);
+  outBlur(47.87, '#b2 .x', 0.45);
+  /* b3 pip 48.27-71.22 · two experts */
+  inUp(48.57, '#b3 .head', 0.7, 26);
+  spring(53.11, '#b3 .k1', 0.7);
+  spring(58.91, '#b3 .k2', 0.7);
+  spring(66.75, '#b3 .p1', 0.7);
+  outBlur(70.67, '#b3 .x', 0.45);
+  /* b4 pip 71.07-177.92 · three kinds of rules (ON SCREEN card) */
+  inUp(71.37, '#b4 .head', 0.7, 26);
+  spring(76.95, '#b4 .h1', 0.7);
+  inLeft(81.97, '#b4 .r11', 0.6);
+  inLeft(86.61, '#b4 .r12', 0.6);
+  inLeft(95.28, '#b4 .r13', 0.6);
+  inLeft(106.57, '#b4 .r14', 0.6);
+  spring(110.48, '#b4 .h2', 0.7);
+  inLeft(116.01, '#b4 .r21', 0.6);
+  inLeft(121.68, '#b4 .r22', 0.6);
+  inLeft(126.75, '#b4 .r23', 0.6);
+  inLeft(132.89, '#b4 .r24', 0.6);
+  spring(140.93, '#b4 .h3', 0.7);
+  inLeft(149.53, '#b4 .r31', 0.6);
+  inLeft(152.95, '#b4 .r32', 0.6);
+  inLeft(161.65, '#b4 .r33', 0.6);
+  inLeft(174.29, '#b4 .r34', 0.6);
+  outBlur(177.37, '#b4 .x', 0.45);
+  /* b5 shift 177.77-211.12 · the enforcer that needs no new law */
+  inUp(177.97, '#b5 .k1', 0.6, 18);
+  inLeft(189.59, '#b5 .c1', 0.7);
+  spring(193.65, '#b5 .k2', 0.7);
+  inLeft(200.47, '#b5 .w1', 0.7);
+  spring(207.29, '#b5 .p1', 0.7);
+  outBlur(210.57, '#b5 .x', 0.45);
+  /* b6 pip 210.97-276.6 · overclaiming + the pharmacy case */
+  inUp(211.27, '#b6 .head', 0.7, 26);
+  inLeft(215.57, '#b6 .c1', 0.7);
+  inLeft(220.85, '#b6 .c2', 0.7);
+  inLeft(226.29, '#b6 .w1', 0.7);
+  spring(237.75, '#b6 .k1', 0.7);
+  spring(254.63, '#b6 .p1', 0.7);
+  inLeft(265.15, '#b6 .c3', 0.7);
+  outBlur(276.05, '#b6 .x', 0.45);
+  /* b7 shift 276.45-349.06 · three things you do within your role */
+  inUp(276.65, '#b7 .k1', 0.6, 18);
+  inLeft(280.55, '#b7 .r1', 0.7);
+  spring(287.92, '#b7 .q1', 0.7);
+  inLeft(296.93, '#b7 .r2', 0.7);
+  inLeft(313.64, '#b7 .c1', 0.7);
+  inLeft(319.79, '#b7 .r3', 0.7);
+  spring(333.95, '#b7 .p1', 0.7);
+  outBlur(348.51, '#b7 .x', 0.45);
+  /* b8 outro 348.91-367.1 · module rail: Choose is next */
+  inUp(349.41, '#b8 .kicker', 0.6, 20);
+  spring(350.11, '#b8 .s1', 0.55);
+  inLeft(350.41, '#b8 .s1c', 0.4);
+  spring(350.61, '#b8 .s2', 0.55);
+  inLeft(350.91, '#b8 .s2c', 0.4);
+  spring(351.11, '#b8 .s3', 0.55);
+  inLeft(351.41, '#b8 .s3c', 0.4);
+  spring(351.61, '#b8 .s4', 0.55);
+  tl.fromTo('#b8 .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 359.19);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p43'] = tl;
+})();
+</script>
+</body>
+</html>

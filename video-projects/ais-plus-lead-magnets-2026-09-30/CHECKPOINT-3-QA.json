@@ -1,0 +1,107 @@
+{
+  "checkpoint": 3,
+  "scope": "First AI Client SOP ad, both formats; review exports",
+  "status": "PASS \u2014 technical and editorial QA complete; awaiting user review",
+  "duration": 54.36666666666667,
+  "exports": [
+    {
+      "file": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-lead-magnets-2026-09-30/previews/CHECKPOINT-3_First-AI-Client-SOP_16x9.mp4",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "frames": 1631,
+      "duration": 54.366667,
+      "audio_duration": 54.366,
+      "loudness_lufs": -16.1,
+      "true_peak_dbfs": -1.3,
+      "decode": "PASS",
+      "unintended_black_frames": "none",
+      "freeze_detector": "No freezes lasting 1.5 seconds detected.",
+      "audio_identical_to_verified_master": true,
+      "audio_pcm_sha256": "8245b63d2a183e1ecea9b084c4518091df7f80f989eb394786b0d7b2b87a2b61",
+      "hero_contact": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-lead-magnets-2026-09-30/compositions/sop-ad/qc/16x9-scenes.jpg",
+      "transition_contact": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-lead-magnets-2026-09-30/compositions/sop-ad/qc/16x9-transitions.jpg"
+    },
+    {
+      "file": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-lead-magnets-2026-09-30/previews/CHECKPOINT-3_First-AI-Client-SOP_9x16.mp4",
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "fps": 30,
+      "frames": 1631,
+      "duration": 54.366667,
+      "audio_duration": 54.366,
+      "loudness_lufs": -16.1,
+      "true_peak_dbfs": -1.3,
+      "decode": "PASS",
+      "unintended_black_frames": "none",
+      "freeze_detector": "No freezes lasting 1.5 seconds detected.",
+      "audio_identical_to_verified_master": true,
+      "audio_pcm_sha256": "8245b63d2a183e1ecea9b084c4518091df7f80f989eb394786b0d7b2b87a2b61",
+      "hero_contact": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-lead-magnets-2026-09-30/compositions/sop-ad/qc/9x16-scenes.jpg",
+      "transition_contact": "/Users/aidanstanik/Projects/Video Automation/video-projects/ais-plus-lead-magnets-2026-09-30/compositions/sop-ad/qc/9x16-transitions.jpg"
+    }
+  ],
+  "cut_verification": {
+    "status": "PASS",
+    "fresh_transcript_words": 205,
+    "phrase_checks": "8/8",
+    "repeated_takes": 0,
+    "longest_fresh_gap_seconds": 0.82,
+    "edl": "edit-decisions/01.final-edl.json",
+    "report": "compositions/sop-ad/qc/verify-report.md",
+    "editorial_read": "compositions/sop-ad/qc/editorial-review.txt",
+    "container_duration_difference_seconds": 0.000667
+  },
+  "captions": {
+    "groups": 41,
+    "all_selected_words_covered": true,
+    "overlapping_groups": 0,
+    "editable_json": "compositions/sop-ad/captions.json",
+    "srt_sidecars": true
+  },
+  "motion": {
+    "beat_sync": "PASS",
+    "cta_hold_seconds": 4.200000000000003,
+    "scene_count": 9,
+    "animation_map": "The optional helper is unavailable because this CLI bundle does not expose @hyperframes/producer. Explicit anchor checks, live Studio checks and rendered seam review are used."
+  },
+  "audio": "Original selected speech, normalized; no music. Final MP4 audio is byte-identical after decoding to the master checked with fresh transcription.",
+  "brand": "Actual AIS PNG sourced from official website; no typeset substitute.",
+  "layout_audit": {
+    "status": "PASS",
+    "scene_format_combinations": 18,
+    "text_contrast_samples": 920,
+    "minimum_contrast_ratio": 5.83,
+    "contrast_failures": 0,
+    "layout_errors": 0,
+    "layout_warnings": 0,
+    "method": "Native HyperFrames validate/inspect on fully settled static copies of all 9 scenes in both formats, with longest caption. Motion checked separately in live Studio and rendered frames.",
+    "report": "compositions/sop-ad/qc/static-layout-audit.json"
+  },
+  "visual_review": {
+    "status": "PASS",
+    "hero_frames_reviewed": 18,
+    "transition_frames_reviewed": 48,
+    "notes": [
+      "Nate, captions and graphics remain within the composition.",
+      "No headline collision or unintended blank transition found in reviewed seam frames.",
+      "Both aspect ratios reflowed; original AIS asset preserved.",
+      "CTA holds for 4.2 seconds.",
+      "Motion discipline checked against the approved restrained dark adaptation."
+    ]
+  },
+  "remaining_approval": "User review of pacing, cuts, captions, graphics and CTA; required by Checkpoint 3 in REQUEST.txt.",
+  "browser_playback": {
+    "status": "PASS",
+    "both_exports_reached_end": true,
+    "duration_seconds": 54.366667,
+    "media_errors": 0,
+    "chapter_seeking": "PASS",
+    "http_range_status": 206,
+    "review_page_links_missing": 0
+  }
+}

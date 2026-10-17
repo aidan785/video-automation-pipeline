@@ -13,8 +13,12 @@
 // re-renders from the original source in one encode.
 //
 // usage: node patch-residual-silences.mjs <union-edl.json> <source-video> <output>
-//        [--noise -30] [--min-sil 0.6] [--flubs flubs.json] [--apply]
-// flubs.json: [{ "start": <src s>, "end": <src s>, "reason": "..." }]
+//        [--noise -30] [--min-sil 0.6] [--flubs flubs.json] [--protect protect.json] [--apply]
+// flubs.json:   [{ "start": <src s>, "end": <src s>, "reason": "..." }]
+// protect.json: [{ "start": <src s>, "end": <src s>, "label": "..." }] — intentional silent beats
+//               (demo clips playing muted); silence trims overlapping them are skipped.
+// The dry run prints every proposed deletion with its source coords — review each one against
+// the transcript (quiet speech can sit under -30dB: isolate-transcribe before trusting a trim).
 
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -25,6 +29,9 @@ const opt = (name, dflt) => { const i = args.indexOf('--' + name); return i >= 0
 const NOISE = parseFloat(opt('noise', -30));
 const SIL_MIN = parseFloat(opt('min-sil', 0.6));
 const flubsPath = opt('flubs', null);
+const protectPath = opt('protect', null);
+const protects = protectPath ? JSON.parse(fs.readFileSync(protectPath, 'utf8')) : [];
+if (protectPath) console.log(`protecting ${protects.length} window(s) from silence trims`);
 const apply = args.includes('--apply');
 if (!edlPath || !srcVideo || !outVideo) {
   console.error('usage: patch-residual-silences.mjs <union-edl.json> <source-video> <output> [--noise -30] [--min-sil 0.6] [--flubs flubs.json] [--apply]');
@@ -46,20 +53,22 @@ const lastKeepEnd = keeps[keeps.length - 1].end;
 const deletions = [];
 if (flubsPath) {
   const flubs = JSON.parse(fs.readFileSync(flubsPath, 'utf8'));
-  deletions.push(...flubs.map(f => ({ start: f.start, end: f.end })));
+  deletions.push(...flubs.map(f => ({ start: f.start, end: f.end, why: 'flub: ' + (f.reason ?? '') })));
   console.log(`+ ${flubs.length} manual flub cuts`);
 }
 for (const k of keeps) {
   for (const s of silences) {
     const lo = Math.max(s.start, k.start), hi = Math.min(s.end, k.end);
     if (hi - lo < SIL_MIN) continue;                       // intentional breaths at joins stay
+    if (protects.some(p => lo < p.end && hi > p.start)) continue; // protected demo beat
     const isTail = Math.abs(hi - lastKeepEnd) < 0.05;
     const ds = lo + (isTail ? 0.30 : 0.12);                // keep speech decay / tail pad
     const de = isTail ? hi : hi - 0.10;                    // keep next word's onset
-    if (de - ds > 0.15) deletions.push({ start: ds, end: de });
+    if (de - ds > 0.15) deletions.push({ start: ds, end: de, why: `silence ${(hi - lo).toFixed(2)}s in keep ${k.start.toFixed(2)}-${k.end.toFixed(2)}` });
   }
 }
 deletions.sort((a, b) => a.start - b.start);
+for (const d of deletions) console.log(`  del ${d.start.toFixed(2)}-${d.end.toFixed(2)} (${(d.end - d.start).toFixed(2)}s) ${d.why ?? ''}`);
 
 const MIN_KEEP = 0.3;
 let finalKeeps = [];
@@ -94,6 +103,6 @@ const filterPath = outVideo.replace(/\.[^.]+$/, '') + '.patch-filter.txt';
 fs.writeFileSync(filterPath, lines.join('\n'));
 
 const ff = ['-y', '-i', srcVideo, '-/filter_complex', filterPath, '-map', '[v]', '-map', '[a]',
-  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outVideo];
+  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-g', '30', '-keyint_min', '30', '-sc_threshold', '0', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outVideo];
 console.log('ffmpeg ' + ff.join(' '));
 execFileSync('ffmpeg', ff, { stdio: 'inherit' });

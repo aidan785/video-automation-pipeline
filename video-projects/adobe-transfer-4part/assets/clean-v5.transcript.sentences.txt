@@ -1,0 +1,121 @@
+0:00.2  Today I'm gonna show you exactly how to get AI outputs with Blender and CDance 2.5 just like this.
+0:07.3  As you can see, super realistic camera movement, super realistic realism of my face, and it doesn't just stop there.
+0:13.4  You can create these really intense or insane scenes with my likeness and some wild addition to the video using Blender and CDance.
+0:28.1  And the great thing about CDance 2.5, you get these amazing 30-second outputs with 1080p quality, and it matches your likeness and your scene exactly.
+0:37.0  For example, this scene of me walking in the back rooms, I'm kind of skittish and scared.
+0:40.9  The camera movement, the scene environment, my face was all generated in Blender.
+0:54.4  For example, this was the render that I fed to CDance 2.5 with some really good prompting.
+1:01.2  And again, you can see it matches the camera movement, the style of the video.
+1:04.6  And as you can see, if we put these side by side, you can see the camera movement matches exactly to how I had it in the Blender render.
+1:12.7  This is a little bit delayed side by side, but you kind of get the point, right?
+1:15.8  So today I'm gonna show you a skill that I built that builds these types of scenes for you inside of Blender, no matter the scene construction you're going for.
+1:23.5  For example, this was the draft one I showed you in the very beginning of the video.
+1:26.3  And again, Claude builds everything inside of your open Blender viewport session.
+1:30.8  It then gives you a prompt for your characters to build character sheets, and then it gives CDance 2.5 a prompt for you to actually generate your upload.
+1:39.8  Okay, so there's a few things that you need downloaded to get this set up.
+1:43.5  Firstly, obviously you're going to need Claude.
+1:45.2  This is where we're going to be installing the skill into our Claude code session, and then running that skill to create our Blender connection and our generations inside of Blender.
+1:54.6  Next, you're going to obviously need Blender.
+1:56.5  Blender 5.2 LTS has just been released, and it includes some incredible new features.
+2:01.3  I highly recommend downloading the most recent Blender version for this, just so your Blender connection is set up and safe.
+2:08.3  And then finally, we're gonna be utilizing Artlist to generate our Blender renders to CDance 2.5 generations.
+2:14.1  Also, if you want the free skill, it is linked in my free skill community in the link below.
+2:19.0  In the description where it says, "All of my free resources," you will find a post tied with the Previz to CDance skill MD file.
+2:26.5  This is what is going to walk Claude through interviewing you on your type of scene that you want, and then implementing that realism into Blender with camera movements and block characters, which I'll show you how to do later in
+2:37.1  this video, and then actually generating character sheets.
+2:40.0  And if you do have a Higgsfield MCP connected, you can use Claude to generate your character sheets for you based on the prompts it gives you.
+2:47.3  And then finally, at the very end, giving you a prompt to give CDance 2.5 to generate your video.
+2:52.1  So let's hop into Claude Code, just on the desktop app.
+2:55.3  You can also use VS Code, which is an IDE or any other platform that you like.
+3:00.1  But I'm just gonna be using the Claude desktop app, and I'm gonna make sure that I am on bypass permissions right here inside of a Blender folder that I constantly work with Blender in, and I'm on Fable 5 or
+3:10.2  Opus 5 for the best outputs.
+3:12.8  Now, to connect your skill, you're gonna wanna go to the description below, download the free skill, then head into your settings.
+3:19.9  Inside of your settings, you will find skills, and then we can add our skills in here.
+3:24.1  So let's add and upload a skill from our computer.
+3:27.3  I'll just navigate to my downloads and then upload the Previz to CDance skill.md file.
+3:32.4  Now that we have that downloaded, we can exit out of here, and we can see if we run the slash command and we type in Previz, we can see the Previz to CDance skill is right here with the full
+3:42.6  pipeline.
+3:43.4  Next, we are gonna wanna open up a brand-new Blender session.
+3:46.3  We can just A, X, D, delete everything inside of this scene.
+3:50.0  Now we come to the iteration process of building inside of Blender.
+3:54.5  So inside Claude, make sure that you type in /MCP to see all of your connected tools and search up Blender.
+4:00.7  I have Blender connected.
+4:01.7  If you do not have Blender enabled or connected, make sure that you do using the official Blender connector.
+4:06.5  This is how Claude is going to talk to Blender.
+4:09.4  Now, how we run this skill, again, is just how we run any other skill.
+4:12.9  I'm just going to call the skill, so Previz to CDance.
+4:16.2  I will shift down just a few lines and say, "I want to ideate a scene we can create in Blender that then can be referenced in CDance 2.5." Okay, so it's now saying, "Let's ideate," and it's gonna pull some
+4:33.3  examples that I already created for this video, like the T-Rex morning walk, wrong floor elevator, giant in the fog, rooftop landing.
+4:40.3  So these are some things that I've created, uh, for this video.
+4:43.0  But maybe let's do something else.
+4:44.8  I do like this wrong elevator floor, but I wanna go for, like, that liminal space.
+4:49.1  This is very popular right now on Instagram or on Reels.
+4:52.9  A lot of people are creating these AI generations of, like, this, like, realistic liminal space with AI, and they are utilizing some sort of Blender to CDance workflow, or they're just really, really good at prompting.
+5:03.0  But in my opinion, the Blender to CDance workflow is better 'cause you have better camera control and control over your scene.
+5:07.9  So let's go other.
+5:08.7  So what I'm gonna put in this other tab is I want to create a six-second Previz of a block character walking down the back rooms hallways, continuous motion from the camera, different angles.
+5:19.5  I want to create a 30-second Previz of a block character walking down the back rooms open space, continuous motion from the camera, different angles.
+5:27.4  So what I can do is I can also go and find a reference.
+5:29.8  So I really like this, like, outdoor vibe of, like, this liminal space.
+5:33.2  So I'll just copy this image.
+5:35.1  I'll go back into Claude, and I'll paste that in.
+5:38.0  I'll just copy this other tab right here, make sure I am specifying other, and then I'll just say, "Use the reference image as a guide." Shoot that off, then head into my Blender session to watch it build out.
+5:50.6  And so with that very simple prompt, we get an output like this.
+5:53.9  And again, this is a Previz, so my character is going to replace this walking block, and the camera movement will be replaced exactly with the added textures, lighting, and everything else we wanna add inside of the CDance 2.5 render.
+6:06.9  So I've just rendered this Previz out, and now I need to start creating my character board of what we want the scene to look like.
+6:13.0  So I can go back into Claude.
+6:15.3  So as you can see, it's creating my character sheet prompt.
+6:17.6  If you have Higgsfield connected, the Higgsfield MCP, you can generate this right inside of Higgsfield.
+6:21.6  I'm not gonna be doing that today.
+6:22.5  I'm just gonna be using the basic ChatGPT Image 2.
+6:26.2  And so what I'm gonna do is for my character sheet, I'm going to copy this prompt, and it will give you this style, this format of prompt every single time.
+6:33.6  And if you need more to reference, you can just prompt it too.
+6:36.6  So make sure you copy this prompt, and then just head to ChatGPT, and then we're just going to upload a photo of myself.
+6:41.7  Shoot that prompt off, and this is going to generate our character sheet board.
+6:45.1  Okay, this is my character sheet board.
+6:46.5  So this is what I will look like inside of the generation.
+6:50.2  Looks pretty close to what I look like, so I will use it.
+6:53.0  I'm going to copy this image, and then I'm going to head into Artlist IO.
+6:57.0  Inside of Artlist IO, this is where we're gonna generate our CDance 2.5 output.
+7:00.9  So firstly, we need to paste in that first reference image of the house of my character.
+7:06.6  I'm then gonna go back into Claude, and I'm going to create a scene reference image.
+7:11.8  So what I'm gonna do is I'm just going to paste in that image that I took before of the low-poly scene that we're gonna be recreating.
+7:17.2  I'm just gonna say, "I need a- Reference board for this scene as well.
+7:23.3  The more references we give to CDance 2.5, the better the output.
+7:26.9  So it's just good to generate your scene as well, especially if it's a more detailed scene like this where we're gonna have, like, grass moving and clouds and a sky and multiple items and multiple houses like this.
+7:36.4  So what we can do is copy this prompt, head back into ChatGPT image generation, paste in that prompt, and then paste in our image, and then just generate a storyboard for what our environment's gonna look like.
+7:47.9  While that is generating, let's upload our video.
+7:50.6  So we just need to click this button right here and click Video Reference and then Upload Video, and then we're gonna find that video that we just rendered out in the previz view like this.
+7:59.3  Upload that, and then we're gonna go back into ChatGPT, copy our scene reference, and paste that in.
+8:05.5  So now we have image one, which is my character reference board, image two, which is the scene reference board, and then video one.
+8:11.2  All we need to prompt is, "Write me a 30-second CDance 2.5 prompt from the video blocking.
+8:16.3  Read the input video and write out the prompt second by second to match the camera move to the clip.
+8:21.3  Make sure you tag image one, image two, and video one." We will shoot this off, and it will give us a super detailed prompt we will throw into CDance.
+8:28.1  So now what we need to do is copy this positive prompt and this negative prompt.
+8:31.7  Head back into Artlist, where we're going to generate our video, paste in the positive prompt, and then copy that negative prompt, and then paste in that negative prompt.
+8:39.5  Now, one of the most important things is referencing your videos and images.
+8:43.4  So as you can see, we have this @ video one.
+8:45.9  We wanna make sure that these are all clicked.
+8:47.8  This will make sure that the AI model is referencing exactly what we are picking from our reference images and videos.
+8:54.8  So just go through here and click on image one or image two or video one, video two, based on what you have generated for references.
+9:02.6  Okay, so it looks like I have got everything labeled, and then we're going to make sure that we have 1080p with auto duration on with a 16-by-nine ratio.
+9:11.8  The auto feature does it perfectly fine with the reference video.
+9:14.4  And now all we have to do is click Generate.
+9:16.5  Now I'm gonna come back when it's done generating, and we will review the video.
+9:19.4  And boom, we get a video just like this, where you can see the camera movement is replicated exactly.
+9:24.6  We have some nice textures with the grass.
+9:26.7  All of the houses look the same.
+9:28.4  One thing I am noting, uh, my arms look a little weird, and my face looks a little bit disproportionate to, like, my full body, but it's, like, almost there.
+9:36.1  So in my previous runs, it was a lot of, like, quick camera movement.
+9:38.5  That's maybe why in this v-video is a lot more smooth camera motion.
+9:41.5  It's a lot more cinematic, um, of, like, a full landscape, but it got everything right.
+9:45.8  Got this castle in the background, got all of, like, the liminal space houses on these rolling hills, it looks like.
+9:52.1  And again, the textures and materials and the lighting all look great.
+9:55.5  You just would need to do some iterating with the actual hands and arms of your character, it looks like, for this scene specifically.
+10:03.5  But this is how you can start creating these really realistic 3D AI renders with Blender and CDance and utilizing Blender as essentially your machine or your engine to power your CDance generations.
+10:15.8  Again, all of my free resources are in the Creative AI Network, which is a free school community where you can gain all of my resources in the Claude Skills vault right here.
+10:23.9  And if you have any questions, you can reach out to me personally, and I will help you set up the system.
+10:28.5  So grab your free skill in the description below.
+10:31.5  I hope you guys enjoyed.
+10:32.5  If you did, subscribe and leave a like on this video.
+10:35.3  And as always, I will see you guys in the next one.

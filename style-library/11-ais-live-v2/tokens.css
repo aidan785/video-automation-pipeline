@@ -1,0 +1,130 @@
+/* ============================================================================
+   AIS LIVE v2 — style tokens
+   Evolution of 03-ais-live for the October VSL wave. Same command-deck DNA
+   (onyx canvas, perspective-grid tunnel, conic beam, chrome/blue type, whips)
+   PLUS a shared icon vocabulary: liquid-glass chips, stroke-drawn line icons,
+   diagram connectors, energy pulses. Cards reference these vars and never
+   hardcode colors/fonts/easings/glows/textures. See DESIGN.md for the why.
+   ============================================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@500;700;800&display=swap");
+
+:root {
+  /* --- palette (all-blue accent directive: coral is AMBIENT-ONLY) ---------- */
+  --onyx:       #07121C;
+  --onyx-deep:  #040A11;
+  --white:      #FFFFFF;
+
+  --text:       #FFFFFF;
+  --text-dim:   rgba(209, 220, 232, 0.85);
+  --text-faint: rgba(180, 214, 238, 0.72);
+
+  --blue:       #37BDF8;
+  --coral:      #FF8A5C;   /* ambient bg glow wells ONLY — never text */
+  --red-live:   #FF3B30;   /* the LIVE dot only */
+
+  --blue-rgb:   55, 189, 248;
+  --coral-rgb:  255, 138, 92;
+  --red-rgb:    255, 59, 48;
+
+  --bg:     var(--onyx);
+  --fg:     var(--text);
+  --accent: var(--blue);
+  --muted:  var(--text-dim);
+
+  /* --- typography ---------------------------------------------------------- */
+  --font-display: "Montserrat", system-ui, -apple-system, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --font-label:   var(--font-mono);
+
+  --wt-light:  300;
+  --wt-reg:    400;
+  --wt-med:    500;
+  --wt-bold:   700;
+  --wt-black:  900;
+
+  --size-mega:     320px;
+  --size-hero:     176px;
+  --size-display:  122px;
+  --size-panel:    92px;    /* headline size tuned for diagram/side layouts */
+  --size-quote:    78px;
+  --size-track:    60px;
+  --size-agenda:   50px;
+  --size-row:      44px;    /* icon-row / checklist body line */
+  --size-sub:      41px;
+  --size-desc:     30px;    /* row description under a label */
+  --size-label:    27px;
+  --size-tiny:     24px;
+  --size-chiplabel:22px;    /* mono label under an icon chip */
+
+  --track-tight:   -0.03em;
+  --track-num:     -0.04em;
+  --track-wide:    0.30em;
+  --track-eyebrow: 0.34em;
+
+  /* --- gradients ------------------------------------------------------------ */
+  --grad-chrome:  linear-gradient(180deg, #ffffff 0%, #d4dee8 50%, #9fb3c4 100%);
+  --grad-blue:    linear-gradient(180deg, #b3ecff 0%, #37bdf8 56%, #1487c9 100%);
+
+  /* --- glow ------------------------------------------------------------------ */
+  --glow-chrome:  0 0 34px rgba(255, 255, 255, 0.22);
+  --glow-blue:    0 0 48px rgba(var(--blue-rgb), 0.62);
+  --glow-num:     0 0 90px rgba(var(--blue-rgb), 0.60);
+  --glow-eyebrow: 0 0 16px rgba(var(--blue-rgb), 0.45);
+
+  /* --- ICON SYSTEM (new in v2) ---------------------------------------------- */
+  /* Liquid-glass chip: 4-stop diagonal glass + inner top highlight + hairline.
+     Icons are 24x24 stroke line art (pathLength=100 → dashoffset draw-on),
+     stroked in blue with a soft halo. */
+  --chip-glass: linear-gradient(135deg,
+      rgba(255,255,255,0.085) 0%, rgba(255,255,255,0.028) 34%,
+      rgba(255,255,255,0.012) 62%, rgba(var(--blue-rgb),0.10) 100%);
+  --chip-border:    rgba(255, 255, 255, 0.16);
+  --chip-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --chip-shadow:    0 18px 44px rgba(0, 0, 0, 0.45);
+  --chip-glow:      0 0 34px rgba(var(--blue-rgb), 0.22);
+  --icon-stroke:    2.2px;
+  --icon-color:     var(--blue);
+  --icon-halo:      drop-shadow(0 0 10px rgba(var(--blue-rgb), 0.65));
+
+  /* overlay chips (t2 iconpop, sits over live video): darker, always legible */
+  --chip-overlay-bg: linear-gradient(135deg,
+      rgba(4,10,17,0.82) 0%, rgba(7,18,28,0.72) 60%, rgba(var(--blue-rgb),0.14) 100%);
+  --chip-overlay-border: rgba(255, 255, 255, 0.20);
+
+  /* diagram connectors + energy pulse */
+  --line-dim:   rgba(209, 220, 232, 0.28);
+  --line-blue:  rgba(var(--blue-rgb), 0.85);
+  --pulse:      #b3ecff;
+
+  /* --- shape ----------------------------------------------------------------- */
+  --radius:      20px;
+  --radius-chip: 26px;
+  --pad-y:       96px;
+  --pad-x:       120px;
+  --card-shadow: 0 34px 80px rgba(0, 0, 0, 0.50);
+
+  /* --- motion ---------------------------------------------------------------- */
+  --ease-word:   expo.out;
+  --ease-pop:    back.out(1.6);
+  --ease-flip:   power3.out;
+  --ease-whip:   power2.in;
+  --ease-drift:  sine.inOut;
+  --dur-in:   0.55s;
+  --dur-out:  0.33s;
+  --dur-whip: 0.22s;
+  --dur-draw: 0.6s;   /* icon stroke draw-on */
+
+  /* --- textures (deterministic) ---------------------------------------------- */
+  --grid-lines:
+    repeating-linear-gradient(0deg,  rgba(var(--blue-rgb), 0.16) 0 1px, transparent 1px 66px),
+    repeating-linear-gradient(90deg, rgba(var(--blue-rgb), 0.09) 0 1px, transparent 1px 66px);
+
+  --beam: conic-gradient(from 180deg at 50% 0%,
+            transparent 0deg, rgba(var(--blue-rgb), 0.14) 22deg, transparent 44deg);
+
+  --vignette: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.62) 96%);
+
+  --tex-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}

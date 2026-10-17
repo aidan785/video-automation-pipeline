@@ -1,0 +1,55 @@
+import json
+from pathlib import Path
+b=Path(__file__).parent;a=b/'assets';m=json.loads((b/'run-manifest.json').read_text())
+p1=[
+[10.44,'I created the','I created a interactive'],
+[16,'with Opus 5 point','with Opus 5.5'],
+[20,'Higgsfield Blender','Higgsfield and Blender'],
+[32,"and it's scattered throughout the map","and these fuses are scattered"],
+[43,'before the mons','before a entity'],
+[60.6,"And honestly it's a little freaky because And honestly it's a little f","And honestly I'm a little freaked out"],
+[87.5,'I can','I take that energy fuse'],
+[94.94,'I have this I have this flashlight to','Oh shoot'],
+[104.5,"There's the end And the entity",'and the entity got me'],
+[145,'I wanted there to feel','I want it to feel very interactive'],
+[149,'I wanted the carpet and the wallpaper to feel','I wanted the carpet and the wallpaper to feel worn down'],
+[161,'I also wanted the light to be able','I also wanted the light to reflect'],
+[182,'taking an image and dis','taking an image and essentially'],
+[206.6,"And then obviously So so if you're looking to create this","so if you're looking to create games like this"],
+[241,"AI can't just output a AI can't output a r AI can't","AI can't output a story"],
+[266.6,"So if you're looking to build","so if you're looking to build games like this"],
+[281.2,"Firstly you're gonna need","firstly you're gonna need Blender"],
+[291.0,"Secondly you're going to need Claude Code Actually scratch that","We're gonna be using Blender"],
+[300.2,"So instead of writing everyth So essentially we're gonna be writing everything i","So essentially we're gonna be writing everything as code"],
+[318.1,'So this entire Blender','So this entire scene'],
+[328.5,'And then we have','and then we have these images'],
+[390.6,'Next is obviously','the next thing is obviously Claude'],
+[435.1,'Higgsfield','But then also our images'],
+[601.7,'And then how to generate your entire scene',"Oh God there's the entity"],
+]
+p2=[
+[10.2,'So when you open up your Claude session just make','So jumping into actually how I prompted this'],
+[22.5,"there's a few different setup","There's a few different things"],
+[52.8,'with all of the','with all the understanding'],
+[106.2,'The first way is you can go into the','The first way is you can go into the link'],
+[111.9,"You'll see a","you'll see a line that says"],
+[125,"essentially it's a essentially it's a work","It's a game workshop builder"],
+[177,"and you don't have H","and you don't have the Hagfield MCP"],
+[180.9,'your','your Claude session'],
+[188.8,'and it will set all those conne',"and it'll set all those connections up for you"],
+[203.7,'And then of course','and of course Hagfield'],
+[226,'Super Mario Bros or a','Super Mario Kart game'],
+[496.2,'And boom now we have Super Mario Kart And boom now we have Super Mario Kart','And boom now we have Super Mario Kart'],
+[669.8,'But as you can see','but as you can see we have this little car model'],
+[789.4,'Now','Now how I made the actual Backrooms game'],
+[816.7,"I originally didn't start with the game preview I","I originally didn't start with the game building skill"],
+[834,'that then generated assets','that then generated assets from Higgsfield'],
+[859.4,'And I was given this last circuit box','And I was given this last circuit browser'],
+[897.1,'I had to iterate that upon I had that','I had to add that in as an extra'],
+[931.5,'You need to',"Oh there's the entity"],
+[981,'He\'s','he looks a little fake right now'],
+[1009.8,"Maybe it's Mario Kart","Maybe it's Mario Kart maybe it's Fortnite"],
+]
+specs=p1+[[x[0]+m['source_order'][1]['offset'],x[1],x[2]] for x in p2]
+(b/'edit-specs.json').write_text(json.dumps(specs,indent=2))
+print(len(specs),'editorial decisions')

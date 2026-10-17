@@ -1,0 +1,186 @@
+{
+  "result": "PASS",
+  "version": "v2",
+  "render": "assets/clean-v2.mp4",
+  "fresh_transcript": "assets/final-video.json",
+  "sweep": "Ledger and script coverage on fresh transcription of the actual final MP4",
+  "checks": {
+    "final_entire_transcript_read": true,
+    "no_substantive_script_loss": true,
+    "all_12_gameplay_blocks_present": true,
+    "all_setup_and_outro_blocks_present": true,
+    "prior_source_ledger_matches_current": true,
+    "current_render_integrity": true,
+    "frame_source_comparisons": true,
+    "source_seek_normalization": true
+  },
+  "judgment": "Read the entire actual MP4 transcript and all 51 coverage differences. No substantive introduction, setup, gameplay, or outro block is absent. All twelve demos retain their narrative and gameplay observations. Differences are contractions, numeral/name conventions, isolated function-word recognitions, game-sound artifacts, or the two source-adjudicated Magic Mouse/on and single-is ASR errors. The discovery question about individual city-building stats and the ball-follow camera description retain their meaning.",
+  "coverage": {
+    "alignment_ratio": 0.9860524632117722,
+    "alignment_percent": 98.60524632117722,
+    "matched_tokens": 3853,
+    "expected_tokens": 3915,
+    "fresh_tokens": 3900,
+    "difference_groups": 51,
+    "substantive_missing_blocks": []
+  },
+  "gameplay_blocks": [
+    {
+      "game": "Tumble Party",
+      "final_video_anchor_seconds": 402.66,
+      "pass_check": true
+    },
+    {
+      "game": "Storm Fall / Fortnite",
+      "final_video_anchor_seconds": 480.732,
+      "pass_check": true
+    },
+    {
+      "game": "Polus / Cities Skylines",
+      "final_video_anchor_seconds": 560.232,
+      "pass_check": true
+    },
+    {
+      "game": "Drift Karts / Mario Kart",
+      "final_video_anchor_seconds": 688.972,
+      "pass_check": true
+    },
+    {
+      "game": "Block Hop Obby / Roblox",
+      "final_video_anchor_seconds": 757.192,
+      "pass_check": true
+    },
+    {
+      "game": "Metro Dash / Subway Surfers",
+      "final_video_anchor_seconds": 818.22,
+      "pass_check": true
+    },
+    {
+      "game": "Block World / Minecraft",
+      "final_video_anchor_seconds": 854.64,
+      "pass_check": true
+    },
+    {
+      "game": "Cannibal Kings / Angry Birds",
+      "final_video_anchor_seconds": 893.5,
+      "pass_check": true
+    },
+    {
+      "game": "Street Kings / GTA",
+      "final_video_anchor_seconds": 959.04,
+      "pass_check": true
+    },
+    {
+      "game": "Beach Point / CS:GO",
+      "final_video_anchor_seconds": 994.16,
+      "pass_check": true
+    },
+    {
+      "game": "Dead Zone / Call of Duty Zombies",
+      "final_video_anchor_seconds": 1014.62,
+      "pass_check": true
+    },
+    {
+      "game": "Turbo Goal / Rocket League",
+      "final_video_anchor_seconds": 1029.14,
+      "pass_check": true
+    }
+  ],
+  "setup_and_outro_blocks": [
+    {
+      "block": "Overnight result",
+      "final_video_anchor_seconds": 9.06,
+      "pass_check": true
+    },
+    {
+      "block": "Claude access",
+      "final_video_anchor_seconds": 125.98,
+      "pass_check": true
+    },
+    {
+      "block": "Unreal Engine",
+      "final_video_anchor_seconds": 128.72,
+      "pass_check": true
+    },
+    {
+      "block": "MCP connection",
+      "final_video_anchor_seconds": 146.26,
+      "pass_check": true
+    },
+    {
+      "block": "Download/setup resources",
+      "final_video_anchor_seconds": 196.98,
+      "pass_check": true
+    },
+    {
+      "block": "Optional Blender assets",
+      "final_video_anchor_seconds": 249.88,
+      "pass_check": true
+    },
+    {
+      "block": "Aura capabilities",
+      "final_video_anchor_seconds": 306,
+      "pass_check": true
+    },
+    {
+      "block": "Aura installation",
+      "final_video_anchor_seconds": 355.6,
+      "pass_check": true
+    },
+    {
+      "block": "Outro recommendation",
+      "final_video_anchor_seconds": 1068.28,
+      "pass_check": true
+    },
+    {
+      "block": "Outro setup resource",
+      "final_video_anchor_seconds": 1078.1,
+      "pass_check": true
+    },
+    {
+      "block": "Closing",
+      "final_video_anchor_seconds": 1090.06,
+      "pass_check": true
+    }
+  ],
+  "render_integrity": {
+    "expected_frames": 32765,
+    "actual_frames": 32765,
+    "expected_duration_seconds": 1092.1666666666667,
+    "video_duration_seconds": 1092.166667,
+    "audio_duration_seconds": 1092.166,
+    "av_duration_difference_ms": 0.6670000000212895,
+    "keep_segments": 463
+  },
+  "frame_evidence": {
+    "samples": 37,
+    "min_psnr_db": 51.478056309285314,
+    "all_comparisons_pass": true,
+    "source_file_joins_included": true,
+    "part1_original_video_start_seconds": 0.06666666666666667,
+    "part1_audio_start_adjust_samples": 3200
+  },
+  "adjudicated_transcription_artifacts": [
+    {
+      "fresh_time_seconds": 976.78,
+      "suspect": "I'm, I'm a Magic Mouse",
+      "actual": "I'm on my Magic Mouse",
+      "evidence": "assets/p3-isolate-5.json",
+      "judgment": "Preserve; isolated source transcription confirms on/my, no spoken repeat."
+    },
+    {
+      "fresh_time_seconds": 1017.14,
+      "suspect": "i- is insanely fast",
+      "actual": "This one is insanely fast",
+      "evidence": "assets/p3-isolate-6.json and p3-residual-recommendations.json",
+      "judgment": "Preserve; source acoustic review identifies one decay and one is onset, no distinct restart."
+    }
+  ],
+  "artifact_sha256": {
+    "final-video.json": "f71e49db1a9fd585dd5cf87b4ff775740ab3486ce1dda22f481d12699ce1221d",
+    "transcript-coverage.json": "be60dff99f656d6ae854da39a68d472f694a1c2cf6b76a4be6cb8ac3f4a7ca9d",
+    "clean-v2.integrity.json": "1f72057b7e4664e5249a06559ae5286602de1f8e4b5610322d525a03ef1e6a63",
+    "frame-checks-v2.json": "f7696894d55ae3f486771f48a8aea08c1d095e510d8c7a02222a5ffc78a9753b",
+    "clean-v2.union-edl.json": "7584f5bb05642f5065b1af6bdd8eb5de9b9e4a82180cf83a594e91fa5d6013db"
+  }
+}

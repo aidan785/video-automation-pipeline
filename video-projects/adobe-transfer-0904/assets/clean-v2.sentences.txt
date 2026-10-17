@@ -1,0 +1,84 @@
+0:00.1  I connected Fable 5.1 to Blender-rigged characters and animated facial expressions just like this, gave the character some walking movements, even gave him this nice backflip Spider-Man land animation, which I thought was really cool, all prompting Fable 5.1.
+0:21.2  Gave him a nice little wave animation, and then even animated the character in a real environment built by Claude with some camera movements, some camera zooms And personally, I think it turned out really well for just being able to
+0:39.5  sit down, connect my blender session to Claude into the rig, animate the characters, animate the camera movement, and then create a scene in under thirty minutes.
+0:51.2  And if you're not familiar, I'm talking about Claude Fable 5.1, which is the newest model from Anthropic.
+0:57.1  I've gone over some videos in Blender and Unreal Engine and how this connects, but again, just to mention the agentic coding stats, and this is how Claude creates code for your programs.
+1:06.7  It performs significantly higher and costs a lot less than the normal Fable five model.
+1:12.6  And then again, there is a bump in computer use, which is how Claude communicates with your computer, with your applications.
+1:19.0  It's essentially how it's going to communicate and build inside of Blender and see the interface, click on the buttons, and understand, "I'm clicking on this button for this reason," and it's going to do this.
+1:29.2  Now, the animations from the characters are far from perfect.
+1:31.5  The whole purpose of this test was to see how well Claude understands character movement based off of references.
+1:38.4  I didn't upload anything from a mocap library or a template style.
+1:42.6  This is just an official rig from Blender Studio.
+1:45.7  It's rigged very, very nicely, so Claude has a lot better understanding of how the rig can work.
+1:50.1  And obviously there are some caveats.
+1:52.7  For example, right here, the eyes.
+1:54.5  When he turns his head, the eyes fade away.
+1:56.7  That's obviously not great.
+1:58.3  But its general understanding of animation is getting a lot better compared to older models, which I'll show right now.
+2:04.2  For example, here's Opus four point eight with that same exact character, same exact rig.
+2:08.8  Also, again, the same exact model, Opus Four Point Eight, which is a few months old.
+2:13.6  It's an older model.
+2:14.6  But look at how he jumps.
+2:15.5  It doesn't make sense.
+2:16.9  It looks super unrealistic.
+2:18.3  So the models are definitely getting better, and Fable Five Point One has a much better understanding of animation and how it plays-- and how it can execute animation on rigged characters inside of Blender.
+2:28.2  If you're wondering how I set this system up, I'm gonna walk you through the two tools that I used.
+2:32.5  Firstly is Claude.
+2:34.1  You're gonna need a Claude subscription to access Claude Code, and this is where we're gonna be running the actual session inside of Blender.
+2:40.6  Next, you're gonna obviously need Blender.
+2:42.7  Make sure that you have the newest one downloaded.
+2:44.5  It just is going to have the newest features.
+2:46.2  So on the left here, I have Claude Code, and this is just in VS Code, which is an IDE.
+2:50.5  You can also run this on the Cloud Desktop app.
+2:52.6  It works the exact same.
+2:53.9  I just prefer using Claude Code inside of VS Code.
+2:57.1  You can see I'm in a Blender folder right here with all of my Blender files and skills and knowledge on Blender.
+3:03.9  And then I have this empty rig right here.
+3:05.8  And if you're wondering where I got this rig, if you go over to Blender Studio - this is a paid subscription platform; I believe it's about fifteen dollars a month.
+3:13.6  But do remember that Blender is a free platform, so highly suggest supporting the free platform that lets us create.
+3:20.1  And it's in this Project Storm category where you can find the actual rig.
+3:23.4  If you're having trouble finding this exact rig, you can go to Assets and scroll down and find storm right here.
+3:28.7  You can download it right here.
+3:29.8  You just need to make sure that you are subscribed to Download.
+3:32.4  And then you can download it in this section.
+3:34.2  So now that we have the rig loaded in and we have Claude here on the side, I just wanna make sure if we do /MCP, we can see that we have twenty-one MCP servers connected.
+3:43.6  We need to make sure our actual Blender session is connected.
+3:45.7  So how we do that is we can bring up our terminal right here.
+3:48.3  Just type in Claude.
+3:49.6  That will open up Claude in the terminal.
+3:51.1  These are both exactly the same thing.
+3:53.0  This is just a prettier version.
+3:54.0  This is the CLI with like the nicer interface, and this is your actual terminal with Claude loaded in.
+3:58.7  We can type in /MCP.
+4:00.2  That will open up our user MCPs, and you'll see Blender is connected and ready to go with twenty-six tools.
+4:06.0  So it's good that we verify that just in case we send off a giant prompt and then we're not connected.
+4:10.2  Now what we can do is literally natural language text prompts to animation.
+4:15.2  So if I want him to do that wave, all I have to say is, "Can you make the storm character inside of the Open Blender Session do a nice wave?" And then boom, you get an output just like this
+4:24.4  where you can play it and watch him wave just like this.
+4:27.7  So the motions are a lot more fluid.
+4:29.5  His hand is going through his hair right now, so that's something that we need to fix.
+4:33.6  But it just feels a lot more natural compared to Opus four point eight, which is just a few months old.
+4:38.8  And you can tell it's getting better consistency with these outputs in animation.
+4:42.6  It even animated his face where he like smiles a little bit, he blinks, he moves his eyes.
+4:47.3  It's getting much, much better.
+4:48.6  Okay, so this is not done officially, but I will just stop it right here because it's pretty much gotten to the point of what we want with the wave.
+4:55.5  Now let's just ask Claude to --now make him jump and do a back flip.
+5:01.2  He lands on his feet.
+5:03.7  I'll shoot that off, and we will wait for that output.
+5:06.0  And then, of course, as this is building out, we can open up our dope sheet to play with any of the keyframes inside of this animation.
+5:13.0  It looks like it even added motion blur to the hand movement, which is kinda cool.
+5:17.0  I wonder if it added a camera.
+5:18.0  Oh yeah, it did.
+5:18.6  So yeah, that's pretty cool.
+5:20.0  So with literally one prompt, and it's a very simple natural text prompt that I did with talking to my computer, we get an output like that for the wave.
+5:26.4  Now let's wait for the backflip.
+5:27.8  And boom, we get a backflip.
+5:29.5  It's a little choppy, so I definitely want to update kind of like the body dynamics of like pushing off the floor and then landing with some weight with the gravity and stuff.
+5:38.7  But off of one simple prompt like that, you can give it a generation in Blender that's editable, completely editable, of your character rig animation like this.
+5:48.1  So just like that, you can utilize Claude Fable 5.1 to animate your rigid characters inside of Blender.
+5:55.8  It's a super cool and useful feature, and I can definitely see it advancing in the future as these models get better and better at visual reasoning and understanding the human movement inside of a character like this inside of Blender.
+6:08.2  So lemme know what you're going to make with this new Claude Fable 5.1 connection, and drop it in the comments.
+6:13.8  If you found this video resourceful or useful at all feel free to subscribe and like this video and gimme some suggestions in the comments below.
+6:20.2  I'm gonna leave you guys with that and as always I will see you guys in the next one.
+6:24.1  Thanks

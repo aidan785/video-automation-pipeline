@@ -1,32 +1,102 @@
 {
-  "style": "ais-live",
+  "style": "ais-live-v2",
   "video": "assets/clean.mp4",
   "width": 1920,
   "height": 1080,
   "fps": 30,
-  "seed": "ais-live-october-vsl",
+  "seed": "ais-live-october-vsl-v2",
   "beats": [
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 8.2,
+      "duration": 7.3,
+      "anchor": "plan what to do next",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
     {
       "tier": 1,
       "purpose": "thesis",
-      "cardId": "ais-live.t1.thesis.hero",
+      "cardId": "ais-live-v2.t1.thesis.hero",
+      "mode": "takeover",
       "start": 16.9,
       "duration": 6,
       "anchor": "called an AI OS",
       "slots": {
         "eyebrow": "START AND SCALE WITH AI",
-        "headline": "BUILD YOUR <em>AI OS</em>"
+        "headline": "BUILD YOUR <em>AI OS</em>",
+        "sub": ""
       },
-      "card": "03-ais-live/cards/tier1/t1-thesis-hero.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-hero.html",
       "cardSlots": [
         "eyebrow",
-        "headline"
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 28.15,
+      "duration": 5.4,
+      "anchor": "opening those systems",
+      "slots": {
+        "eyebrow": "FOR TWO DAYS",
+        "headline": "OUR SYSTEMS,<br><em>OPENED UP</em>",
+        "sub": "Build your own alongside us"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 39.3,
+      "duration": 7.2,
+      "anchor": "our own content",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "title",
+      "cardId": "ais-live-v2.t1.title.event",
+      "mode": "takeover",
+      "start": 46.7,
+      "duration": 8.3,
+      "anchor": "the event is called",
+      "slots": {
+        "eyebrow": "THE EVENT",
+        "headline": "BUILD YOUR <em>AI OS</em>",
+        "badge1": "OCTOBER 17 + 18",
+        "badge2": "FULLY VIRTUAL"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-event-title.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "badge1",
+        "badge2"
       ]
     },
     {
       "tier": 1,
       "purpose": "stat",
-      "cardId": "ais-live.t1.stat.countup",
+      "cardId": "ais-live-v2.t1.stat.countup",
+      "mode": "takeover",
       "start": 62.9,
       "duration": 7,
       "anchor": "four hundred and twenty",
@@ -36,10 +106,9 @@
         "unit": "/MO",
         "sub": "FEWER THAN 10 EMPLOYEES"
       },
-      "card": "03-ais-live/cards/tier1/t1-stat-countup.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-stat-countup.html",
       "cardSlots": [
         "kicker",
-        "stat",
         "unit",
         "sub"
       ]
@@ -47,33 +116,159 @@
     {
       "tier": 1,
       "purpose": "thesis",
-      "cardId": "ais-live.t1.thesis.hero",
+      "cardId": "ais-live-v2.t1.thesis.hero",
+      "mode": "pip",
       "start": 70.16,
-      "duration": 5.5,
+      "duration": 3.6,
       "anchor": "means every person on our team",
       "slots": {
         "eyebrow": "HOW IT WORKS",
-        "headline": "ONE AI OS <em>PER PERSON</em>"
+        "headline": "ONE <em>AI OS</em> PER PERSON",
+        "sub": ""
       },
-      "card": "03-ais-live/cards/tier1/t1-thesis-hero.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-hero.html",
       "cardSlots": [
         "eyebrow",
-        "headline"
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "overview",
+      "cardId": "ais-live-v2.t1.overview.agenda",
+      "mode": "sidepanel",
+      "start": 74,
+      "duration": 27,
+      "anchor": "our content systems",
+      "slots": {
+        "eyebrow": "INSIDE OUR COMPANY",
+        "caption": "Every department runs on its own AI OS"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-agenda-icons.html",
+      "cardSlots": [
+        "eyebrow",
+        "caption"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.decouple",
+      "mode": "sidepanel",
+      "start": 104.3,
+      "duration": 16,
+      "anchor": "company where every person",
+      "slots": {
+        "eyebrow": "THE NEW ECONOMICS",
+        "headline": "MORE REVENUE, <em>SAME TEAM</em>",
+        "sub": "Growth without growing the payroll"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-decouple.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
       ]
     },
     {
       "tier": 1,
       "purpose": "thesis",
-      "cardId": "ais-live.t1.thesis.chrome",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 121.2,
+      "duration": 4.7,
+      "anchor": "might be thinking",
+      "slots": {
+        "eyebrow": "YOU MIGHT BE THINKING",
+        "headline": "“I ALREADY<br>USE <em>AI”</em>",
+        "sub": "But is it actually making you money?"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 126.8,
+      "duration": 6.4,
+      "anchor": "an email faster",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.versus",
+      "mode": "pip",
       "start": 139.4,
-      "duration": 6.5,
+      "duration": 4.2,
       "anchor": "difference between having AI",
       "slots": {
         "eyebrow": "THE DIFFERENCE",
-        "headline": "AI TOOLS VS AN <em>AI OS</em>",
-        "sub": "Turn AI into capacity"
+        "leftTitle": "AI TOOLS",
+        "rightTitle": "AN AI OS",
+        "verdict": "ONE SYSTEM THAT ACTUALLY OPERATES"
       },
-      "card": "03-ais-live/cards/tier1/t1-thesis-chrome.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-versus.html",
+      "cardSlots": [
+        "eyebrow",
+        "leftTitle",
+        "rightTitle",
+        "verdict"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.ladder",
+      "mode": "sidepanel",
+      "start": 144.2,
+      "duration": 10.2,
+      "anchor": "A prompt helps",
+      "slots": {
+        "eyebrow": "TOOLS VS SYSTEMS",
+        "caption": "Turn AI into capacity"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-ladder.html",
+      "cardSlots": [
+        "eyebrow",
+        "caption"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 155.9,
+      "duration": 9,
+      "anchor": "knows what matters",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.hero",
+      "mode": "takeover",
+      "start": 175.5,
+      "duration": 2.55,
+      "anchor": "turn AI into capacity",
+      "slots": {
+        "eyebrow": "THE ENTIRE EVENT IN ONE SENTENCE",
+        "headline": "TURN AI INTO <em>CAPACITY</em>",
+        "sub": ""
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-hero.html",
       "cardSlots": [
         "eyebrow",
         "headline",
@@ -83,46 +278,65 @@
     {
       "tier": 1,
       "purpose": "section",
-      "cardId": "ais-live.t1.section.markflash",
+      "cardId": "ais-live-v2.t1.section.markflash",
+      "mode": "flash",
       "start": 178.9,
       "duration": 3,
       "anchor": "if you haven't started your business",
       "slots": {
         "sub": "STARTING A BUSINESS"
       },
-      "card": "03-ais-live/cards/tier1/t1-section-markflash.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-section-markflash.html",
       "cardSlots": [
         "sub"
       ]
     },
     {
       "tier": 1,
-      "purpose": "section",
-      "cardId": "ais-live.t1.section.markflash",
-      "start": 228.6,
-      "duration": 3,
-      "anchor": "on the other side and you already",
+      "purpose": "icons",
+      "cardId": "ais-live-v2.t1.icons.row",
+      "mode": "pip",
+      "start": 185.9,
+      "duration": 6,
+      "anchor": "You can start a consulting business",
       "slots": {
-        "sub": "SCALING AN EXISTING BUSINESS"
+        "eyebrow": "NO AI COMPANY REQUIRED",
+        "headline": "THE TEAM BEHIND WHAT YOU <em>SELL</em>",
+        "sub": ""
       },
-      "card": "03-ais-live/cards/tier1/t1-section-markflash.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-icon-row.html",
       "cardSlots": [
+        "eyebrow",
+        "headline",
         "sub"
       ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 202.3,
+      "duration": 7.2,
+      "anchor": "capabilities in content",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
     },
     {
       "tier": 1,
       "purpose": "thesis",
-      "cardId": "ais-live.t1.thesis.chrome",
-      "start": 238.46,
-      "duration": 6,
-      "anchor": "if doubling revenue also means",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 222.2,
+      "duration": 5.6,
+      "anchor": "working blueprint",
       "slots": {
-        "eyebrow": "THE SCALING TRAP",
-        "headline": "2X REVENUE, 2X <em>HEADACHES</em>",
-        "sub": "Unless you change the model"
+        "eyebrow": "NOT 100 TOOLS TO GO LEARN",
+        "headline": "A WORKING<br><em>BLUEPRINT</em>",
+        "sub": "And a clear first system to activate"
       },
-      "card": "03-ais-live/cards/tier1/t1-thesis-chrome.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
       "cardSlots": [
         "eyebrow",
         "headline",
@@ -131,42 +345,259 @@
     },
     {
       "tier": 1,
-      "purpose": "overview",
-      "cardId": "ais-live.t1.overview.agenda",
-      "start": 288.2,
+      "purpose": "section",
+      "cardId": "ais-live-v2.t1.section.markflash",
+      "mode": "flash",
+      "start": 228.6,
+      "duration": 3,
+      "anchor": "on the other side and you already",
+      "slots": {
+        "sub": "SCALING AN EXISTING BUSINESS"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-section-markflash.html",
+      "cardSlots": [
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 238.46,
+      "duration": 6,
+      "anchor": "if doubling revenue also means",
+      "slots": {
+        "eyebrow": "THE SCALING TRAP",
+        "headline": "2X REVENUE,<br>2X <em>HEADACHES</em>",
+        "sub": "Unless you change the model"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 252.1,
+      "duration": 6.4,
+      "anchor": "marketing",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 263.4,
       "duration": 6.5,
+      "anchor": "identify the constraints that are actually",
+      "slots": {
+        "eyebrow": "THE SCALE TRACK",
+        "headline": "FIND THE REAL<br><em>CONSTRAINT</em>",
+        "sub": "Then aim AI capacity right at it"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 276.4,
+      "duration": 4.6,
+      "anchor": "stop treating another hire",
+      "slots": {
+        "eyebrow": "THE GOAL",
+        "headline": "STOP DEFAULTING TO<br><em>ANOTHER HIRE</em>",
+        "sub": "Not automating everything. Not replacing everyone."
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 281.85,
+      "duration": 5.35,
+      "anchor": "time on judgment",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.versus",
+      "mode": "pip",
+      "start": 288.2,
+      "duration": 12.8,
       "anchor": "AI should carry more of the",
       "slots": {
         "eyebrow": "THE DIVISION OF LABOR",
-        "caption": "A small team that operates like a much larger one"
+        "leftTitle": "PEOPLE",
+        "rightTitle": "AI OS",
+        "verdict": "A SMALL TEAM THAT OPERATES MUCH LARGER"
       },
-      "card": "03-ais-live/cards/tier1/t1-overview-agenda.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-versus.html",
       "cardSlots": [
         "eyebrow",
-        "rows",
+        "leftTitle",
+        "rightTitle",
+        "verdict"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "overview",
+      "cardId": "ais-live-v2.t1.overview.checklist",
+      "mode": "sidepanel",
+      "start": 304.9,
+      "duration": 12.1,
+      "anchor": "Every session has to answer",
+      "slots": {
+        "eyebrow": "EVERY SESSION MUST ANSWER",
+        "caption": "Not another tour of shiny AI tools"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-checklist.html",
+      "cardSlots": [
+        "eyebrow",
+        "caption"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 320.1,
+      "duration": 5.7,
+      "anchor": "remembers what matters",
+      "slots": {
+        "eyebrow": "YOUR PERSONAL AI OS",
+        "headline": "AN AI OS THAT<br><em>REMEMBERS</em>",
+        "sub": "Execute at a higher level"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.hub",
+      "mode": "pip",
+      "start": 329.4,
+      "duration": 5.9,
+      "anchor": "agents, memory, workflows",
+      "slots": {
+        "eyebrow": "HOW IT FITS TOGETHER",
+        "core": "AI OS",
+        "coresub": "ONE SYSTEM",
+        "sub": "Business context, without becoming a programmer"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-hub.html",
+      "cardSlots": [
+        "eyebrow",
+        "core",
+        "coresub",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "icons",
+      "cardId": "ais-live-v2.t1.icons.row",
+      "mode": "sidepanel",
+      "start": 336.2,
+      "duration": 7,
+      "anchor": "follow the start or the scale",
+      "slots": {
+        "eyebrow": "TWO PATHS, ONE BLUEPRINT",
+        "headline": "",
+        "sub": "Your first AI OS installed free, or capacity across the whole team"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-icon-row.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.ladder",
+      "mode": "sidepanel",
+      "start": 350,
+      "duration": 7,
+      "anchor": "give you the architecture",
+      "slots": {
+        "eyebrow": "THE PROMISE",
+        "caption": "More than a bunch of notes"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-ladder.html",
+      "cardSlots": [
+        "eyebrow",
         "caption"
       ]
     },
     {
       "tier": 1,
       "purpose": "overview",
-      "cardId": "ais-live.t1.overview.tracks",
-      "start": 336.2,
-      "duration": 7,
-      "anchor": "follow the start or the scale",
+      "cardId": "ais-live-v2.t1.overview.checklist",
+      "mode": "sidepanel",
+      "start": 360.2,
+      "duration": 6.5,
+      "anchor": "knowing what to build",
       "slots": {
-        "eyebrow": "TWO PATHS, ONE BLUEPRINT"
+        "eyebrow": "YOU LEAVE KNOWING",
+        "caption": ""
       },
-      "card": "03-ais-live/cards/tier1/t1-overview-tracks.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-checklist.html",
       "cardSlots": [
         "eyebrow",
-        "rows"
+        "caption"
       ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 367.9,
+      "duration": 9.1,
+      "anchor": "both days",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
     },
     {
       "tier": 1,
       "purpose": "stat",
-      "cardId": "ais-live.t1.stat.countup",
+      "cardId": "ais-live-v2.t1.stat.countup",
+      "mode": "pip",
       "start": 377.2,
       "duration": 6,
       "anchor": "General admission ranges",
@@ -176,20 +607,64 @@
         "unit": "+",
         "sub": "BOTH DAYS + 7-DAY REPLAY ACCESS"
       },
-      "card": "03-ais-live/cards/tier1/t1-stat-countup.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-stat-countup.html",
       "cardSlots": [
         "kicker",
-        "stat",
         "unit",
         "sub"
       ]
     },
     {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 388,
+      "duration": 6,
+      "anchor": "permanent access",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 394.1,
+      "duration": 8.5,
+      "anchor": "generic conversations about everyone's",
+      "slots": {
+        "eyebrow": "THE VIP Q&AS",
+        "headline": "ASK THE <em>OPERATORS</em>",
+        "sub": "The people actually running our systems"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 403.3,
+      "duration": 3.8,
+      "anchor": "content or marketing or sales",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
       "tier": 1,
       "purpose": "stat",
-      "cardId": "ais-live.t1.stat.countup",
+      "cardId": "ais-live-v2.t1.stat.countup",
+      "mode": "pip",
       "start": 407.3,
-      "duration": 6,
+      "duration": 4.9,
       "anchor": "VIP tickets range",
       "slots": {
         "kicker": "VIP",
@@ -197,47 +672,216 @@
         "unit": "+",
         "sub": "PERMANENT RECORDINGS + PRIVATE Q&AS"
       },
-      "card": "03-ais-live/cards/tier1/t1-stat-countup.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-stat-countup.html",
       "cardSlots": [
         "kicker",
-        "stat",
         "unit",
+        "sub"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 412.4,
+      "duration": 5.4,
+      "anchor": "current ticket price",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "overview",
+      "cardId": "ais-live-v2.t1.overview.agenda",
+      "mode": "sidepanel",
+      "start": 421.9,
+      "duration": 7.5,
+      "anchor": "active AIS Plus member",
+      "slots": {
+        "eyebrow": "MEMBER REGISTRATION",
+        "caption": "Watch for the separate member instructions"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-agenda-icons.html",
+      "cardSlots": [
+        "eyebrow",
+        "caption"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.hero",
+      "mode": "takeover",
+      "start": 430.72,
+      "duration": 5,
+      "anchor": "want you guys to know that the risk",
+      "slots": {
+        "eyebrow": "THE GUARANTEE",
+        "headline": "THE RISK IS <em>ON US</em>",
+        "sub": ""
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-hero.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "diagram",
+      "cardId": "ais-live-v2.t1.diagram.timeline",
+      "mode": "pip",
+      "start": 436.6,
+      "duration": 7,
+      "anchor": "then email us before the last session",
+      "slots": {
+        "eyebrow": "HOW THE GUARANTEE WORKS",
+        "caption": "Almost the entire event to decide"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-timeline.html",
+      "cardSlots": [
+        "eyebrow",
+        "caption"
+      ]
+    },
+    {
+      "tier": 2,
+      "purpose": "label",
+      "cardId": "ais-live-v2.t2.label.iconpop",
+      "mode": "overlay",
+      "start": 444,
+      "duration": 5.8,
+      "anchor": "no questionnaire",
+      "slots": {},
+      "card": "11-ais-live-v2/cards/tier2/t2-iconpop.html",
+      "cardSlots": []
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 452,
+      "duration": 6,
+      "anchor": "know what these systems",
+      "slots": {
+        "eyebrow": "WHY WE CAN OFFER THIS",
+        "headline": "PROVEN INSIDE<br><em>OUR COMPANY</em>",
+        "sub": "The pieces, finally working together"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
         "sub"
       ]
     },
     {
       "tier": 1,
       "purpose": "thesis",
-      "cardId": "ais-live.t1.thesis.hero",
-      "start": 430.72,
-      "duration": 5,
-      "anchor": "want you guys to know that the risk",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "takeover",
+      "start": 458.2,
+      "duration": 7.8,
+      "anchor": "here is the reality",
       "slots": {
-        "eyebrow": "THE GUARANTEE",
-        "headline": "THE RISK IS <em>ON US</em>"
+        "eyebrow": "THE REALITY",
+        "headline": "SAVE MINUTES OR<br><em>REDESIGN THE BUSINESS</em>",
+        "sub": "That is the choice"
       },
-      "card": "03-ais-live/cards/tier1/t1-thesis-hero.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
       "cardSlots": [
         "eyebrow",
-        "headline"
+        "headline",
+        "sub"
       ]
     },
     {
       "tier": 1,
       "purpose": "thesis",
-      "cardId": "ais-live.t1.thesis.chrome",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 466.2,
+      "duration": 4.2,
+      "anchor": "starting, that means building",
+      "slots": {
+        "eyebrow": "IF YOU'RE STARTING",
+        "headline": "CAPABILITY BEFORE<br><em>HEADCOUNT</em>",
+        "sub": "Build before you can afford the team"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.chrome",
+      "mode": "sidepanel",
+      "start": 470.4,
+      "duration": 5.7,
+      "anchor": "scaling",
+      "slots": {
+        "eyebrow": "IF YOU'RE SCALING",
+        "headline": "CAPACITY WITHOUT<br><em>PAYROLL</em>",
+        "sub": "New revenue without new complexity"
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-chrome.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "thesis",
+      "cardId": "ais-live-v2.t1.thesis.hero",
+      "mode": "takeover",
+      "start": 479.2,
+      "duration": 4.4,
+      "anchor": "highly profitable company",
+      "slots": {
+        "eyebrow": "EITHER WAY",
+        "headline": "HIGH PROFIT, <em>SMALL TEAM</em>",
+        "sub": ""
+      },
+      "card": "11-ais-live-v2/cards/tier1/t1-thesis-hero.html",
+      "cardSlots": [
+        "eyebrow",
+        "headline",
+        "sub"
+      ]
+    },
+    {
+      "tier": 1,
+      "purpose": "cta",
+      "cardId": "ais-live-v2.t1.cta.date",
+      "mode": "takeover",
       "start": 491.8,
       "duration": 7,
       "anchor": "two days long, October",
       "slots": {
         "eyebrow": "AIS LIVE · BUILD YOUR AI OS",
         "headline": "OCTOBER <em>17 + 18</em>",
-        "sub": "Fully virtual. Claim your seat below."
+        "badge1": "FULLY VIRTUAL",
+        "badge2": "REPLAY ACCESS",
+        "cta": "CLAIM YOUR SEAT BELOW",
+        "sub": ""
       },
-      "card": "03-ais-live/cards/tier1/t1-thesis-chrome.html",
+      "card": "11-ais-live-v2/cards/tier1/t1-cta-date.html",
       "cardSlots": [
         "eyebrow",
         "headline",
+        "badge1",
+        "badge2",
+        "cta",
         "sub"
       ]
     }

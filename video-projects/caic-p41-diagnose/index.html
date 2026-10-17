@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p41 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit (Kallaway) ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .chipx b { color: var(--white); }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx b { color: var(--alert); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 20px; padding: 16px 26px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 21px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 31px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: var(--text-dim); margin-top: 5px; }
+  .qrow .tx .sub b { color: var(--text); }
+  .qrow.bad .n { color: var(--alert); border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 12px rgba(var(--alert-rgb), .3); }
+  .qrow.lit { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+
+  .kc { padding: 24px 30px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc.dead { border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 16px rgba(var(--alert-rgb), .22), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 8px; }
+  .kc.dead .lab { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 23px; color: var(--text-dim); margin-top: 8px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  /* rails / pills (module map, ladder, zones) */
+  .rail { display: flex; align-items: center; gap: 14px; }
+  .mpill { padding: 16px 28px; border-radius: 999px; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 28px; color: var(--text-dim); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  .mpill.on { color: var(--white); border-color: rgba(var(--accent-rgb), .7); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.done { color: var(--white); }
+  .mpill.done::before { content: "✓ "; color: var(--accent); }
+  .mpill.bad { border-color: rgba(var(--alert-rgb), .6); color: var(--white); }
+  .conn { width: 34px; height: 2px; background: rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* takeover / outro centering */
+  .center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .center .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 88px; line-height: 1.12; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  .center .kick { margin-bottom: 26px; }
+  .center .rail { justify-content: center; }
+  .center .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; color: var(--white); text-shadow: var(--textglow); }
+  .caps { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 40px; }
+
+  /* under-plane PIP layouts: content stays left of x~1200 */
+  .head { position: absolute; left: 110px; top: 56px; }
+  .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 52px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  .pstack { position: absolute; left: 110px; top: 200px; width: 1060px; display: flex; flex-direction: column; gap: 14px; }
+  .pstack > div { align-self: flex-start; max-width: 1040px; }
+  .pstack .qrow { width: 1000px; }
+
+  /* over-plane shift layouts: left column, video shifted right */
+  .sstack { position: absolute; left: 80px; top: 190px; display: flex; flex-direction: column; gap: 15px; }
+  .sstack > div { align-self: flex-start; max-width: 760px; }
+  .sstack .chipx { font-size: 28px; padding: 14px 26px; }
+  .sstack .punchx { font-size: 30px; line-height: 1.35; }
+  .sstack .warnx { font-size: 28px; }
+
+#b1 .rail { justify-content: center; margin-top: 40px; }
+  #b1 .l1 { font-size: 84px; }
+
+#b2 .kc .det { font-size: 22px; }
+
+#b3 .pstack { top: 176px; gap: 11px; }
+  #b3 .qrow { padding: 12px 22px; }
+  #b3 .qrow .tx { font-size: 28px; }
+  #b3 .qrow .tx .sub { font-size: 20px; }
+  #b3 .quote { font-size: 27px; }
+
+#b4 .qrow { max-width: 740px; }
+
+#b5 .pstack { top: 176px; gap: 12px; }
+  #b5 .kc .det { font-size: 22px; }
+  #b5 .quote { font-size: 26px; }
+
+#b6 .kc .det { font-size: 22px; }
+
+#b7 .grid { position: absolute; left: 110px; top: 178px; width: 1080px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  #b7 .tile { padding: 18px 22px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); min-height: 250px; }
+  #b7 .tile .n { font-family: var(--font-mono); font-size: 19px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b7 .tile .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 36px; color: var(--white); text-shadow: var(--textglow); margin-top: 2px; }
+  #b7 .tile .q { margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 21px; line-height: 1.3; color: var(--text); background: rgba(var(--accent-rgb), .10); border: 1px solid rgba(var(--accent-rgb), .45); }
+  #b7 .tile .e { margin-top: 10px; font-family: var(--font-body); font-size: 20px; line-height: 1.3; color: var(--text-dim); }
+  #b7 .tile .e b { color: var(--text); }
+
+#b8 .sstack { top: 150px; gap: 13px; }
+  #b8 .kc .det { font-size: 22px; }
+
+#b9 .pstack { top: 176px; gap: 12px; }
+  #b9 .kc .det { font-size: 22px; }
+
+#b10 .sstack { top: 150px; gap: 12px; }
+  #b10 .qrow { max-width: 740px; padding: 12px 22px; }
+  #b10 .qrow .tx { font-size: 28px; }
+
+#b11 .rail { margin-bottom: 40px; }
+  #b11 .q { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 42px; color: var(--text); text-shadow: var(--textglow); margin-bottom: 44px; max-width: 1400px; line-height: 1.25; }
+  #b11 .q b { color: var(--white); }
+  #b11 .t { font-size: 84px; }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-y18t" id="p41" data-composition-id="p41" data-start="0" data-duration="532.2" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-rbo1" id="bg" class="clip" data-start="0" data-duration="532.2" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (tracks 4/5) ============ -->
+
+  <div data-hf-id="hf-8fes" id="b1" class="under clip" data-start="0" data-duration="16.84" data-track-index="4">
+    <div data-hf-id="hf-n6rz" class="center inner"><div data-hf-id="hf-yeow"><div data-hf-id="hf-lseq" class="kick">Pillar Four · Governance · Step One</div><div data-hf-id="hf-pizm" class="l1">Before you can set a boundary,<br data-hf-id="hf-x5px"><span data-hf-id="hf-lt87" class="grad">name the failure</span></div><div data-hf-id="hf-qzq8" class="rail"><span data-hf-id="hf-djp6" class="mpill on s1">Diagnose</span><span data-hf-id="hf-8c37" class="conn"></span><span data-hf-id="hf-imwu" class="mpill s2">Screen</span><span data-hf-id="hf-bv6b" class="conn"></span><span data-hf-id="hf-b592" class="mpill s3">Choose</span><span data-hf-id="hf-bgva" class="conn"></span><span data-hf-id="hf-mfr4" class="mpill s4">Apply</span></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-ik4x" id="b3" class="under clip" data-start="47.45" data-duration="61.03" data-track-index="4">
+    <div data-hf-id="hf-d6im" class="head x"><div data-hf-id="hf-b6vl" class="kick">The mistake that matters today</div><div data-hf-id="hf-evt9" class="t">We designed to hit the goal. <span data-hf-id="hf-k0b2" class="grad">We did.</span></div></div><div data-hf-id="hf-3j2g" class="pstack x"><div data-hf-id="hf-jd2a" class="chipx c1">We knew really well <b data-hf-id="hf-zsct">what the system should do</b></div><div data-hf-id="hf-idw3" class="warnx w1">We didn't know, or think about, <b data-hf-id="hf-y93x">what it shouldn't do</b></div><div data-hf-id="hf-iahl" class="quote q1">“<b data-hf-id="hf-0ea9">What should this system never be able to do?</b>”</div><div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-jukn" class="tx">How has this process gone wrong before?</div></div><div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-i9h4" class="tx">How could it go wrong?<span data-hf-id="hf-jjzu" class="sub">Their answers are <b data-hf-id="hf-jn0t">the never-list</b></span></div></div><div data-hf-id="hf-2z6e" class="chipx c2">The client told us exactly one rule: <b data-hf-id="hf-l18v">never share one member's information with another</b>. Everything else we discovered in production.</div><div data-hf-id="hf-dt0e" class="punchx p1">Before you can control a system, you have to name what failure looks like</div></div>
+  </div>
+
+  <div data-hf-id="hf-bsn2" id="b5" class="under clip" data-start="138.67" data-duration="83.56" data-track-index="4">
+    <div data-hf-id="hf-ytk2" class="head x"><div data-hf-id="hf-0ccb" class="kick">The diagnose step</div><div data-hf-id="hf-ok6o" class="t">Walk the map <span data-hf-id="hf-ttn3" class="grad">twice</span></div></div><div data-hf-id="hf-qzls" class="pstack x"><div data-hf-id="hf-jt39" class="kc hot k1"><div data-hf-id="hf-om00" class="lab">Walk one · forward</div><div data-hf-id="hf-h6rd" class="val">At every step: what could happen here that would be wrong?</div><div data-hf-id="hf-rvp2" class="det">No clever technique. Brute force it, step by step. <b data-hf-id="hf-950w">The should-never-happen list is short and gets clear fast.</b></div></div><div data-hf-id="hf-zhtk" class="quote q1">“My tooth is killing me, do I need to come in?” filed as a reschedule request. <b data-hf-id="hf-w34m">One wrong category, a patient in pain sitting in a queue.</b></div><div data-hf-id="hf-pyt2" class="kc hot k2"><div data-hf-id="hf-hdjs" class="lab">Walk two · backward</div><div data-hf-id="hf-6su6" class="val">Start with the stakeholder: what version of this going wrong gets somebody fired?</div><div data-hf-id="hf-nktt" class="det">Take the never-event and <b data-hf-id="hf-dy24">trace it back through the flow</b> to where the mistake would be born</div></div><div data-hf-id="hf-w6yr" class="punchx p1">Both walks land on the sorting step. That's where the protection goes.</div></div>
+  </div>
+
+  <div data-hf-id="hf-3dla" id="b7" class="under clip" data-start="252.93" data-duration="128.03" data-track-index="4">
+    <div data-hf-id="hf-z7v3" class="head x"><div data-hf-id="hf-kawy" class="kick">Every finding lands in one of four</div><div data-hf-id="hf-palp" class="t">The four <span data-hf-id="hf-k0w1" class="grad">failure modes</span></div></div><div data-hf-id="hf-ll2g" class="grid x"><div data-hf-id="hf-xjeh" class="tile t1"><div data-hf-id="hf-yf5p" class="n">Mode one</div><div data-hf-id="hf-q5om" class="t">Wrong output</div><div data-hf-id="hf-wf8z" class="q q1">Would a competent human have produced something materially different here?</div><div data-hf-id="hf-6vf5" class="e">Misfiles the message, invents a fact, drafts a reply nobody would write. <b data-hf-id="hf-v3r2">The tooth-pain text in the reschedule pile.</b></div></div><div data-hf-id="hf-1hii" class="tile t2"><div data-hf-id="hf-n9o7" class="n">Mode two</div><div data-hf-id="hf-h7l0" class="t">Exposed data</div><div data-hf-id="hf-k0by" class="q q2">List everything that can see the data at this step: every tool, model, API, person. Then look at the list.</div><div data-hf-id="hf-ock9" class="e">Retrieval needs one patient's status. <b data-hf-id="hf-hdy0">If its credential reaches the full chart or payment history, those go on the list.</b></div></div><div data-hf-id="hf-5fmj" class="tile t3"><div data-hf-id="hf-rxnx" class="n">Mode three</div><div data-hf-id="hf-3sjc" class="t">Bad action taken</div><div data-hf-id="hf-erkl" class="q q3">What can this step alter that a human would have to undo?</div><div data-hf-id="hf-md9m" class="e">An AIS email agent misread its task and <b data-hf-id="hf-o4vk">sent roughly 150,000 emails</b>. It had a send tool it never should have had. Brightwater's version: the booking step.</div></div><div data-hf-id="hf-hy50" class="tile t4"><div data-hf-id="hf-dvgr" class="n">Mode four</div><div data-hf-id="hf-2uo0" class="t">No audit trail</div><div data-hf-id="hf-709y" class="q q4">If the practice called about one case from six weeks ago and asked why, could I answer with evidence?</div><div data-hf-id="hf-yzn7" class="e">Something happened and <b data-hf-id="hf-of0f">you can't explain it afterward</b>. Go look at the logs.</div></div></div>
+  </div>
+
+  <div data-hf-id="hf-mrfk" id="b9" class="under clip" data-start="426.12" data-duration="48.64" data-track-index="4">
+    <div data-hf-id="hf-zm64" class="head x"><div data-hf-id="hf-jvlp" class="kick">You won't prevent every failure</div><div data-hf-id="hf-ztqj" class="t">When this fails, <span data-hf-id="hf-q5y3" class="grad">how bad is the bad?</span></div></div><div data-hf-id="hf-psop" class="pstack x"><div data-hf-id="hf-nyu2" class="kc k1"><div data-hf-id="hf-bm2d" class="lab">Same step · safe failure</div><div data-hf-id="hf-2eyw" class="val">A reschedule request filed under general questions</div><div data-hf-id="hf-hni9" class="det">A few minutes of front-desk cleanup. <b data-hf-id="hf-0wwp">Annoying, cheap, recoverable.</b></div></div><div data-hf-id="hf-hb0b" class="kc dead k2"><div data-hf-id="hf-zhke" class="lab">Same step · seriously bad failure</div><div data-hf-id="hf-dxm9" class="val">The tooth-pain message filed as a reschedule</div><div data-hf-id="hf-9ni8" class="det">Same kind of mistake. <b data-hf-id="hf-p8lo">The cost lands on a patient's health.</b></div></div><div data-hf-id="hf-ibq8" class="chipx c1">Sort failures by what they cost, and design so <b data-hf-id="hf-ry8r">the expensive ones can't complete on their own</b></div><div data-hf-id="hf-aorq" class="punchx p1">Make failures loud, not invisible. A system that fails and tells you is a system you can run.</div></div>
+  </div>
+
+  <div data-hf-id="hf-er8n" id="b11" class="under clip" data-start="510.35" data-duration="21.82" data-track-index="4">
+    <div data-hf-id="hf-qdkf" class="center inner"><div data-hf-id="hf-y7yw"><div data-hf-id="hf-jw3y" class="kick kicker">One warning before the next lesson</div><div data-hf-id="hf-72w7" class="q">Patients are texting health information to an AI system. <b data-hf-id="hf-81ry">That isn't a question you should be answering alone.</b></div><div data-hf-id="hf-wyfs" class="rail"><span data-hf-id="hf-s5y3" class="mpill done s1">Diagnose</span><span data-hf-id="hf-qy5c" class="conn s1c"></span><span data-hf-id="hf-w02d" class="mpill on s2">Screen</span><span data-hf-id="hf-dqlx" class="conn s2c"></span><span data-hf-id="hf-i1iy" class="mpill s3">Choose</span><span data-hf-id="hf-dfw2" class="conn s3c"></span><span data-hf-id="hf-mn20" class="mpill s4">Apply</span></div><div data-hf-id="hf-qltp" class="t">Next: <span data-hf-id="hf-tdlw" class="grad">The Screen</span></div></div></div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-87s7" id="p41-video" src="assets/clean.mp4" muted data-start="0" data-duration="527.17" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-r51b" id="p41-audio" src="assets/audio.m4a" data-start="0" data-duration="527.17" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <div data-hf-id="hf-7npx" id="b2" class="over clip" data-start="16.69" data-duration="30.91" data-track-index="6">
+    <div data-hf-id="hf-1hoh" class="sstack x"><div data-hf-id="hf-jhua" class="kick k1">The build that taught us · the board game cafe</div><div data-hf-id="hf-lazp" class="chipx c1">Paid membership. Members text in, the system matches the number to a profile, <b data-hf-id="hf-xv08">routes members one way and new people another</b>, and generates the replies</div><div data-hf-id="hf-8ssb" class="kc dead k2"><div data-hf-id="hf-225w" class="lab">The hardest build of my career</div><div data-hf-id="hf-6dfx" class="val">Quoted at $12,000</div><div data-hf-id="hf-aeeg" class="det">We made <b data-hf-id="hf-biwq">most of the mistakes this module now exists to prevent</b></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-7qb7" id="b4" class="over clip" data-start="108.33" data-duration="30.49" data-track-index="6">
+    <div data-hf-id="hf-9dqt" class="sstack x"><div data-hf-id="hf-4jry" class="kick k1">How this lesson runs</div><div data-hf-id="hf-8466" class="qrow r1"><div data-hf-id="hf-4kdh" class="n">01</div><div data-hf-id="hf-nu9g" class="tx">The diagnose step itself<span data-hf-id="hf-6o5w" class="sub"><b data-hf-id="hf-sfen">Two walks</b> through your workflow map</span></div></div><div data-hf-id="hf-fb3x" class="qrow r2"><div data-hf-id="hf-83m8" class="n">02</div><div data-hf-id="hf-3f7n" class="tx">The four categories<span data-hf-id="hf-hizw" class="sub">Every finding sorts into one. <b data-hf-id="hf-quuy">The rest of the process runs on them.</b></span></div></div><div data-hf-id="hf-lt8o" class="chipx c1">All of it on the Brightwater triage agent: reminders out, patients text back, the agent <b data-hf-id="hf-kk0o">reads, sorts, retrieves, drafts, acts, and branches anything clinical to a human</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-ncas" id="b6" class="over clip" data-start="222.08" data-duration="31" data-track-index="6">
+    <div data-hf-id="hf-aknw" class="sstack x"><div data-hf-id="hf-9i88" class="kick k1">The source beginners skip</div><div data-hf-id="hf-zm09" class="chipx c1">Ask <b data-hf-id="hf-xh4r">the person who actually runs the process every day</b>, not just the manager who booked the call</div><div data-hf-id="hf-a02i" class="kc hot k2"><div data-hf-id="hf-ebtn" class="lab">At Brightwater</div><div data-hf-id="hf-ixrp" class="val">The front desk, not the owner</div><div data-hf-id="hf-neeq" class="det">Patients text their whole medical history to a scheduling number. The same three people cancel every week. <b data-hf-id="hf-4xs2">What went wrong last March that nobody wrote down.</b></div></div><div data-hf-id="hf-g5sk" class="punchx p1">Ask for ten minutes with the operator. Their answers go straight onto your map.</div></div>
+  </div>
+
+  <div data-hf-id="hf-hasx" id="b8" class="over clip" data-start="380.81" data-duration="45.46" data-track-index="6">
+    <div data-hf-id="hf-a6cv" class="sstack x"><div data-hf-id="hf-hl6f" class="kick k1">Why only four?</div><div data-hf-id="hf-e8ia" class="chipx c1">Everything folds into these four. Too much context <b data-hf-id="hf-xv0o">produces a wrong output, exposes data, or triggers a bad action</b></div><div data-hf-id="hf-8uz0" class="punchx p1">At every step of any build, you only have four checks to run</div><div data-hf-id="hf-sjn6" class="chipx c2">Diagnosis stops being an open-ended worry session and becomes <b data-hf-id="hf-6q6o">a checklist you can finish</b></div><div data-hf-id="hf-aedj" class="kc hot k2"><div data-hf-id="hf-suy6" class="lab">Two will dominate your working life</div><div data-hf-id="hf-daca" class="val">Wrong output and bad action taken</div><div data-hf-id="hf-ex3n" class="det">Nearly every build goes through both. <b data-hf-id="hf-kjj5">Hunt for those hardest.</b></div></div><div data-hf-id="hf-c8qs" class="warnx w1">Audit trail is the most solvable of the four, <b data-hf-id="hf-gob0">but only from day one</b>. You can't retrofit March once it's September.</div></div>
+  </div>
+
+  <div data-hf-id="hf-52jg" id="b10" class="over clip" data-start="474.61" data-duration="35.89" data-track-index="6">
+    <div data-hf-id="hf-bd9y" class="sstack x"><div data-hf-id="hf-lda4" class="kick k1">What the diagnose step leaves you with</div><div data-hf-id="hf-l6xk" class="chipx c1">Your workflow map, with <b data-hf-id="hf-feue">a short set of notes on every step</b></div><div data-hf-id="hf-8ih7" class="qrow r1"><div data-hf-id="hf-5rak" class="n">01</div><div data-hf-id="hf-d2ij" class="tx">Which of the four failure modes can happen there</div></div><div data-hf-id="hf-gi10" class="qrow r2"><div data-hf-id="hf-6wp5" class="n">02</div><div data-hf-id="hf-wl7h" class="tx">Roughly what each would cost</div></div><div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-umqg" class="tx">Which ones the stakeholder named as never-events</div></div><div data-hf-id="hf-pkew" class="chipx c2">Write them on the map: <b data-hf-id="hf-w5yw">the screening, the controls, and the Boundary Map all get built from them</b></div><div data-hf-id="hf-wnq5" class="chipx c3">Employed track: run the same walk with <b data-hf-id="hf-jrhc">your process owner</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-c3cp" id="vig" class="clip" data-start="0" data-duration="532.2" data-track-index="10"></div>
+  <div data-hf-id="hf-6dux" id="grain" class="clip" data-start="0" data-duration="532.2" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 532.2;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+  const SHIFT_X = 400;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  // PIP corner -> shifted full frame in ONE wrap tween (scrim trails in); never pair with toFULL/clearLeft on the same window
+  const toSHIFT     = (t) => { move(t, { x: SHIFT_X, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0, d: 0.8 });
+                               tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+
+  /* shot plan (generated): b2 shift 16.69-47.6 · b3 pip 47.45-108.48 · b4 shift 108.33-138.82 · b5 pip 138.67-222.23 · b6 shift 222.08-253.08 · b7 pip 252.93-380.96 · b8 shift 380.81-426.27 · b9 pip 426.12-474.76 · b10 shift 474.61-510.5 */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(16.44, { x: 0, y: 0, scale: 1 });
+  clearLeft(16.59);
+  toPIP(47.6); shadeOut(47.85);
+  toSHIFT(107.78);
+  toPIP(138.82); shadeOut(139.07);
+  toSHIFT(221.53);
+  toPIP(253.08); shadeOut(253.33);
+  toSHIFT(380.26);
+  toPIP(426.27); shadeOut(426.52);
+  toSHIFT(474.06);
+  toOFF(510.5); shadeOut(511.1);
+
+  // ambient loops must FIT inside DUR (floor, not ceil) or tl.duration() overshoots and the render grows a dead tail
+  const AMB = Math.floor(DUR / 8);
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: Math.floor(DUR / 10) * 2 - 1, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* b1 takeover 0-16.84 · cold open: step one */
+  inUp(0.3, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 0.8);
+  tl.fromTo('#b1 .mpill, #b1 .conn', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.12 }, 6.05);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 15.79);
+  tl.set('#b1 .inner', { opacity: 0 }, 16.69);
+  /* b2 shift 16.69-47.6 · the board game cafe recall */
+  inUp(16.89, '#b2 .k1', 0.6, 18);
+  inLeft(25.29, '#b2 .c1', 0.7);
+  spring(41.91, '#b2 .k2', 0.7);
+  outBlur(47.05, '#b2 .x', 0.45);
+  /* b3 pip 47.45-108.48 · the goal mistake and the never-list */
+  inUp(47.75, '#b3 .head', 0.7, 26);
+  inLeft(51.65, '#b3 .c1', 0.7);
+  inLeft(59.91, '#b3 .w1', 0.7);
+  spring(71.17, '#b3 .q1', 0.7);
+  inLeft(77.17, '#b3 .r1', 0.7);
+  inLeft(78.94, '#b3 .r2', 0.7);
+  inLeft(89.93, '#b3 .c2', 0.7);
+  spring(105.65, '#b3 .p1', 0.7);
+  outBlur(107.93, '#b3 .x', 0.45);
+  /* b4 shift 108.33-138.82 · how this lesson runs + the Brightwater build */
+  inUp(108.53, '#b4 .k1', 0.6, 18);
+  inLeft(113.17, '#b4 .r1', 0.7);
+  inLeft(115.35, '#b4 .r2', 0.7);
+  inLeft(126.39, '#b4 .c1', 0.7);
+  outBlur(138.27, '#b4 .x', 0.45);
+  /* b5 pip 138.67-222.23 · the two walks */
+  inUp(138.97, '#b5 .head', 0.7, 26);
+  spring(145.89, '#b5 .k1', 0.7);
+  spring(177.12, '#b5 .q1', 0.7);
+  spring(185.21, '#b5 .k2', 0.7);
+  spring(218.03, '#b5 .p1', 0.7);
+  outBlur(221.68, '#b5 .x', 0.45);
+  /* b6 shift 222.08-253.08 · one more source: the operator */
+  inUp(222.28, '#b6 .k1', 0.6, 18);
+  inLeft(225.87, '#b6 .c1', 0.7);
+  spring(233.37, '#b6 .k2', 0.7);
+  spring(248.41, '#b6 .p1', 0.7);
+  outBlur(252.53, '#b6 .x', 0.45);
+  /* b7 pip 252.93-380.96 · the four failure modes (ON SCREEN 4 tiles) */
+  inUp(253.23, '#b7 .head', 0.7, 26);
+  spring(273.89, '#b7 .t1', 0.7);
+  inUp(294.95, '#b7 .q1', 0.6, 14);
+  spring(298.93, '#b7 .t2', 0.7);
+  inUp(307.03, '#b7 .q2', 0.6, 14);
+  spring(324.27, '#b7 .t3', 0.7);
+  inUp(359.27, '#b7 .q3', 0.6, 14);
+  spring(362.75, '#b7 .t4', 0.7);
+  inUp(371.95, '#b7 .q4', 0.6, 14);
+  outBlur(380.41, '#b7 .x', 0.45);
+  /* b8 shift 380.81-426.27 · why four is the whole list */
+  inUp(381.01, '#b8 .k1', 0.6, 18);
+  inLeft(386.93, '#b8 .c1', 0.7);
+  spring(400.95, '#b8 .p1', 0.7);
+  inLeft(402.85, '#b8 .c2', 0.7);
+  spring(407.45, '#b8 .k2', 0.7);
+  inLeft(415.8, '#b8 .w1', 0.7);
+  outBlur(425.72, '#b8 .x', 0.45);
+  /* b9 pip 426.12-474.76 · how bad is the bad */
+  inUp(426.42, '#b9 .head', 0.7, 26);
+  spring(442.27, '#b9 .k1', 0.7);
+  spring(450.23, '#b9 .k2', 0.7);
+  inLeft(459.39, '#b9 .c1', 0.7);
+  spring(469.47, '#b9 .p1', 0.7);
+  outBlur(474.21, '#b9 .x', 0.45);
+  /* b10 shift 474.61-510.5 · what the step leaves you holding */
+  inUp(474.81, '#b10 .k1', 0.6, 18);
+  inLeft(477.59, '#b10 .c1', 0.7);
+  inLeft(480.93, '#b10 .r1', 0.7);
+  inLeft(482.79, '#b10 .r2', 0.7);
+  inLeft(484.91, '#b10 .r3', 0.7);
+  inLeft(488.04, '#b10 .c2', 0.7);
+  inLeft(498.57, '#b10 .c3', 0.7);
+  outBlur(509.95, '#b10 .x', 0.45);
+  /* b11 outro 510.35-532.17 · one warning + Screen is next */
+  inUp(510.65, '#b11 .kicker', 0.6, 20);
+  tl.fromTo('#b11 .q', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 516.55);
+  tl.fromTo('#b11 .mpill, #b11 .conn', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.12 }, 522.01);
+  tl.fromTo('#b11 .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 524.63);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p41'] = tl;
+})();
+</script>
+</body>
+</html>

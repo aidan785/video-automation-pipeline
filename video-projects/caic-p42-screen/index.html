@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p42 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit (Kallaway) ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .chipx b { color: var(--white); }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx b { color: var(--alert); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 20px; padding: 16px 26px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 21px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 31px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: var(--text-dim); margin-top: 5px; }
+  .qrow .tx .sub b { color: var(--text); }
+  .qrow.bad .n { color: var(--alert); border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 12px rgba(var(--alert-rgb), .3); }
+  .qrow.lit { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+
+  .kc { padding: 24px 30px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc.dead { border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 16px rgba(var(--alert-rgb), .22), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 8px; }
+  .kc.dead .lab { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 23px; color: var(--text-dim); margin-top: 8px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  /* rails / pills (module map, ladder, zones) */
+  .rail { display: flex; align-items: center; gap: 14px; }
+  .mpill { padding: 16px 28px; border-radius: 999px; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 28px; color: var(--text-dim); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  .mpill.on { color: var(--white); border-color: rgba(var(--accent-rgb), .7); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.done { color: var(--white); }
+  .mpill.done::before { content: "✓ "; color: var(--accent); }
+  .mpill.bad { border-color: rgba(var(--alert-rgb), .6); color: var(--white); }
+  .conn { width: 34px; height: 2px; background: rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* takeover / outro centering */
+  .center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .center .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 88px; line-height: 1.12; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  .center .kick { margin-bottom: 26px; }
+  .center .rail { justify-content: center; }
+  .center .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; color: var(--white); text-shadow: var(--textglow); }
+  .caps { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 40px; }
+
+  /* under-plane PIP layouts: content stays left of x~1200 */
+  .head { position: absolute; left: 110px; top: 56px; }
+  .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 52px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  .pstack { position: absolute; left: 110px; top: 200px; width: 1060px; display: flex; flex-direction: column; gap: 14px; }
+  .pstack > div { align-self: flex-start; max-width: 1040px; }
+  .pstack .qrow { width: 1000px; }
+
+  /* over-plane shift layouts: left column, video shifted right */
+  .sstack { position: absolute; left: 80px; top: 190px; display: flex; flex-direction: column; gap: 15px; }
+  .sstack > div { align-self: flex-start; max-width: 760px; }
+  .sstack .chipx { font-size: 28px; padding: 14px 26px; }
+  .sstack .punchx { font-size: 30px; line-height: 1.35; }
+  .sstack .warnx { font-size: 28px; }
+
+#b1 .l1 { font-size: 84px; }
+  #b1 .sub { margin-top: 34px; font-size: 28px; max-width: 1300px; }
+
+#b2 .sstack { top: 140px; gap: 12px; }
+  #b2 .kc .det { font-size: 21px; }
+  #b2 .kc .val { font-size: 31px; }
+
+#b3 .pstack { top: 178px; gap: 12px; }
+  #b3 .kc .det { font-size: 22px; }
+  #b3 .quote { font-size: 27px; }
+
+#b4 .sstack { top: 150px; gap: 13px; }
+  #b4 .qrow { max-width: 740px; }
+  #b4 .labels { display: flex; flex-direction: column; gap: 8px; }
+  #b4 .labels .mpill { font-size: 25px; padding: 12px 22px; }
+
+#b5 .pstack { top: 176px; gap: 12px; }
+  #b5 .pair { display: flex; gap: 12px; width: 1040px; }
+  #b5 .pair .kc { flex: 1 1 0; }
+  #b5 .kc .det { font-size: 21px; }
+  #b5 .kc .val { font-size: 30px; }
+
+#b6 .kc .det { font-size: 22px; }
+
+#b7 .pstack { top: 178px; gap: 12px; }
+  #b7 .kc .det { font-size: 22px; }
+
+#b8 .sstack { top: 150px; gap: 12px; }
+  #b8 .qrow { max-width: 740px; padding: 13px 24px; }
+  #b8 .qrow .tx { font-size: 29px; }
+  #b8 .qrow .tx .sub { font-size: 21px; }
+
+#b9 .pstack { top: 176px; gap: 12px; }
+  #b9 .signs { display: flex; gap: 12px; }
+  #b9 .signs .mpill { font-size: 27px; }
+  #b9 .kc .det { font-size: 21px; }
+
+#b10 .sstack { top: 130px; gap: 11px; }
+  #b10 .qrow { max-width: 740px; padding: 11px 22px; }
+  #b10 .qrow .tx { font-size: 28px; }
+  #b10 .qrow .tx .sub { font-size: 20px; margin-top: 2px; }
+  #b10 .warnx { font-size: 25px; }
+
+#b11 .pstack { top: 178px; gap: 12px; }
+  #b11 .kc .det { font-size: 21px; }
+  #b11 .kc .val { font-size: 31px; }
+
+#b12 .sstack { top: 150px; gap: 12px; }
+  #b12 .qrow { max-width: 740px; padding: 12px 22px; }
+  #b12 .qrow .tx { font-size: 27px; }
+  #b12 .qrow .tx .sub { font-size: 20px; }
+
+#b13 .pstack { top: 176px; gap: 12px; }
+  #b13 .kc .det { font-size: 22px; }
+
+#b14 .kc .det { font-size: 22px; }
+
+#b15 .names { display: flex; gap: 18px; justify-content: center; margin-bottom: 40px; }
+  #b15 .names .word { padding: 14px 28px; border-radius: 999px; font-family: var(--font-display); font-weight: var(--wt-black); font-size: 44px; color: var(--white); text-shadow: var(--textglow); background: var(--glass-bg-dark); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  #b15 .rail { margin-bottom: 40px; }
+  #b15 .t { font-size: 80px; }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-z1s8" id="p42" data-composition-id="p42" data-start="0" data-duration="640.3" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-n794" id="bg" class="clip" data-start="0" data-duration="640.3" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (tracks 4/5) ============ -->
+
+  <div data-hf-id="hf-8hq7" id="b1" class="under clip" data-start="0" data-duration="19" data-track-index="4">
+    <div data-hf-id="hf-n6rz" class="center inner"><div data-hf-id="hf-yeow"><div data-hf-id="hf-t4a0" class="kick">Pillar Four · Governance · Step Two</div><div data-hf-id="hf-yt6j" class="l1">The build we didn't get to<br data-hf-id="hf-x5px"><span data-hf-id="hf-5koi" class="grad">decide alone</span></div><div data-hf-id="hf-f3ib" class="chipx sub">A phone voice agent for a healthcare business: <b data-hf-id="hf-9aer">income, address, Social Security number, insurance eligibility</b></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-td7u" id="b3" class="under clip" data-start="75.23" data-duration="45.09" data-track-index="4">
+    <div data-hf-id="hf-d6im" class="head x"><div data-hf-id="hf-t1ei" class="kick">Step two</div><div data-hf-id="hf-hj7z" class="t">The <span data-hf-id="hf-h3h1" class="grad">screen</span></div></div><div data-hf-id="hf-3j2g" class="pstack x"><div data-hf-id="hf-qjok" class="chipx c1">Some risks on your map are ordinary design problems. <b data-hf-id="hf-18ab">You'll fix those yourself in steps three and four.</b></div><div data-hf-id="hf-akzl" class="warnx w1">Others touch health records, hiring decisions, or the law. Deciding those alone is <b data-hf-id="hf-ijm2">doing a specialist's job without the specialty</b></div><div data-hf-id="hf-jt39" class="kc hot k1"><div data-hf-id="hf-4l1t" class="lab">Why the word “screen”</div><div data-hf-id="hf-o1du" class="val">Same reason medicine uses it</div><div data-hf-id="hf-1dtv" class="det">A screening test doesn't treat you. <b data-hf-id="hf-kr0n">It decides whether you need a specialist.</b></div></div><div data-hf-id="hf-ipot" class="quote q1">“I can handle this part, <b data-hf-id="hf-dprg">but I'm going to need to refer you to someone else for this part.</b>”</div></div>
+  </div>
+
+  <div data-hf-id="hf-4rj5" id="b5" class="under clip" data-start="149.97" data-duration="69.01" data-track-index="4">
+    <div data-hf-id="hf-ytk2" class="head x"><div data-hf-id="hf-wjhi" class="kick">Question one</div><div data-hf-id="hf-etnf" class="t">What data is <span data-hf-id="hf-xouw" class="grad">in play</span>?</div></div><div data-hf-id="hf-qzls" class="pstack x"><div data-hf-id="hf-7lqw" class="chipx c1">What the step <b data-hf-id="hf-v2qx">can actually reach</b>, not what it's supposed to use</div><div data-hf-id="hf-5lku" class="warnx w1">Patients text their symptoms, medications, and billing complaints to a scheduling bot. <b data-hf-id="hf-4dsb">This step can reach health information whether we invited it or not.</b></div><div data-hf-id="hf-vt1w" class="pair"><div data-hf-id="hf-nyu2" class="kc k1"><div data-hf-id="hf-5k1f" class="lab">Non-sensitive PII</div><div data-hf-id="hf-tava" class="val">Name, email, phone, zip code</div><div data-hf-id="hf-nz0l" class="det">Handle it with care, <b data-hf-id="hf-jtbn">but you can work with it</b></div></div><div data-hf-id="hf-hb0b" class="kc dead k2"><div data-hf-id="hf-vd69" class="lab">Sensitive PII</div><div data-hf-id="hf-5gca" class="val">SSNs, bank accounts, licenses, health records</div><div data-hf-id="hf-ce7x" class="det"><b data-hf-id="hf-cc5h">Different rules.</b> Raw sensitive PII should not flow into an AI model.</div></div></div><div data-hf-id="hf-3acu" class="punchx p1">Brightwater's message text just landed in the sensitive category</div></div>
+  </div>
+
+  <div data-hf-id="hf-4q9q" id="b7" class="under clip" data-start="242.83" data-duration="42.51" data-track-index="4">
+    <div data-hf-id="hf-z7v3" class="head x"><div data-hf-id="hf-do26" class="kick">Question three</div><div data-hf-id="hf-bdpu" class="t">Who is the client, and <span data-hf-id="hf-dr56" class="grad">what have they promised</span>?</div></div><div data-hf-id="hf-psop" class="pstack x"><div data-hf-id="hf-wcdy" class="chipx c1">Every business carries obligations before you arrive: <b data-hf-id="hf-x6wt">their industry sets some, their location others, their own privacy policies and contracts the rest</b></div><div data-hf-id="hf-ku32" class="chipx c2">You inherit all of it <b data-hf-id="hf-m8fc">the moment you touch their data</b></div><div data-hf-id="hf-jiah" class="kc hot k1"><div data-hf-id="hf-b83s" class="lab">Brightwater</div><div data-hf-id="hf-osew" class="val">A dental practice sits inside healthcare's rules</div><div data-hf-id="hf-wjcw" class="det">Whether anyone at the practice has ever thought about that <b data-hf-id="hf-vup9">or not</b></div></div><div data-hf-id="hf-k7k2" class="chipx c3">Expect paperwork. An <b data-hf-id="hf-1gbe">NDA before you even scope</b> is normal, and it tells you how much this client cares where their information goes.</div></div>
+  </div>
+
+  <div data-hf-id="hf-3v2v" id="b9" class="under clip" data-start="333.01" data-duration="69.34" data-track-index="4">
+    <div data-hf-id="hf-zm64" class="head x"><div data-hf-id="hf-eqn0" class="kick">Run Brightwater against the list</div><div data-hf-id="hf-pmyc" class="t">Two signs <span data-hf-id="hf-y3f8" class="grad">light up</span></div></div><div data-hf-id="hf-q6zq" class="pstack x"><div data-hf-id="hf-opw2" class="signs"><span data-hf-id="hf-958o" class="mpill on s1">✓ Healthcare sector</span><span data-hf-id="hf-qk86" class="mpill on s2">✓ Sensitive data type</span></div><div data-hf-id="hf-qxnj" class="punchx p1">The message-handling steps don't stay in zone one alone</div><div data-hf-id="hf-dq2v" class="chipx c1">Say it to the client, out loud, and <b data-hf-id="hf-t07c">bring in someone who translates standards for a living</b>. Keep building while they work.</div><div data-hf-id="hf-kp7k" class="kc hot k1"><div data-hf-id="hf-5aiu" class="lab">The division of labor</div><div data-hf-id="hf-ba0u" class="val">They tell you where the wall has to go. You build the wall.</div><div data-hf-id="hf-s2uo" class="det">The expert defines what must be true about the data. You <b data-hf-id="hf-obwa">filter fields, strip identifiers, encrypt a step</b>. On the voice agent: the data must never reach the model provider, so we ran a local model.</div></div></div>
+  </div>
+
+  <div data-hf-id="hf-h12s" id="b11" class="under clip" data-start="470.93" data-duration="72.13" data-track-index="4">
+    <div data-hf-id="hf-00h5" class="head x"><div data-hf-id="hf-thhj" class="kick">Pressure-tested with the two experts</div><div data-hf-id="hf-au62" class="t">Two signs the questions <span data-hf-id="hf-zq3b" class="grad">can miss</span></div></div><div data-hf-id="hf-p02n" class="pstack x"><div data-hf-id="hf-kawj" class="kc hot k1"><div data-hf-id="hf-aj5g" class="lab">Katharina Koerner · purpose creep</div><div data-hf-id="hf-mzhu" class="val">Data collected for one purpose, used for another</div><div data-hf-id="hf-kvfp" class="det">Patient records gathered for treatment, now <b data-hf-id="hf-nrgm">a list of diabetic patients for a marketing campaign</b>. What a company told people at collection time draws a line around what it can do later. Repurposing is the moment to check with legal.</div></div><div data-hf-id="hf-pyt2" class="kc hot k2"><div data-hf-id="hf-wogw" class="lab">Aaron Alva · context crossing</div><div data-hf-id="hf-0bzm" class="val">Data showing up where its owners would never expect</div><div data-hf-id="hf-4tas" class="det">The test: <b data-hf-id="hf-1ffm">would the people the data describes be surprised?</b></div></div><div data-hf-id="hf-pz51" class="punchx p1">Client hears the risk and says proceed anyway? Get that acceptance in writing.</div></div>
+  </div>
+
+  <div data-hf-id="hf-2lxk" id="b13" class="under clip" data-start="568.33" data-duration="42.67" data-track-index="4">
+    <div data-hf-id="hf-0es6" class="head x"><div data-hf-id="hf-3d5d" class="kick">Brightwater · the screen took about fifteen minutes</div><div data-hf-id="hf-7gge" class="t">One big <span data-hf-id="hf-b7fm" class="grad">finding</span></div></div><div data-hf-id="hf-pedo" class="pstack x"><div data-hf-id="hf-ibde" class="kc hot k1"><div data-hf-id="hf-fzp5" class="lab">The finding</div><div data-hf-id="hf-30f3" class="val">The patient-message steps involve health data</div><div data-hf-id="hf-slbs" class="det">A real engagement brings in <b data-hf-id="hf-m9uw">a HIPAA-literate expert</b> to define the data handling. Everything else on the map stays ours.</div></div><div data-hf-id="hf-7bn3" class="warnx w1">Keep the scale honest: <b data-hf-id="hf-33a3">a message-sorting system for a dental office</b> with a human catching everything sensitive</div><div data-hf-id="hf-gq2m" class="chipx c1">It needs real guardrails and real logging. <b data-hf-id="hf-ertf">It doesn't need a hospital's compliance apparatus</b>, and the client shouldn't pay for one.</div><div data-hf-id="hf-t360" class="punchx p1">The screen almost never kills the project. Removing the risk is usually what gets it into production.</div></div>
+  </div>
+
+  <div data-hf-id="hf-nez0" id="b15" class="under clip" data-start="621.81" data-duration="18.49" data-track-index="4">
+    <div data-hf-id="hf-qdkf" class="center inner"><div data-hf-id="hf-y7yw"><div data-hf-id="hf-nfnd" class="kick kicker">You now have a process for knowing when to react to them</div><div data-hf-id="hf-yie8" class="names"><span data-hf-id="hf-dkpn" class="word">NIST</span><span data-hf-id="hf-ptai" class="word">ISO</span><span data-hf-id="hf-u1tj" class="word">EU AI Act</span><span data-hf-id="hf-7sk8" class="word">HIPAA</span></div><div data-hf-id="hf-qzq8" class="rail"><span data-hf-id="hf-s5y3" class="mpill done s1">Diagnose</span><span data-hf-id="hf-8c37" class="conn"></span><span data-hf-id="hf-yxrg" class="mpill done s2">Screen</span><span data-hf-id="hf-bv6b" class="conn"></span><span data-hf-id="hf-b592" class="mpill s3">Choose</span><span data-hf-id="hf-bgva" class="conn"></span><span data-hf-id="hf-mfr4" class="mpill s4">Apply</span></div><div data-hf-id="hf-qltp" class="t">Next: <span data-hf-id="hf-tian" class="grad">The Rules of the World</span></div></div></div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-h8b5" id="p42-video" src="assets/clean.mp4" muted data-start="0" data-duration="635.3" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-4e3b" id="p42-audio" src="assets/audio.m4a" data-start="0" data-duration="635.3" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <div data-hf-id="hf-owtj" id="b2" class="over clip" data-start="18.85" data-duration="56.53" data-track-index="6">
+    <div data-hf-id="hf-1hoh" class="sstack x"><div data-hf-id="hf-wpv4" class="kick k1">The two biggest conversations weren't about architecture</div><div data-hf-id="hf-a02i" class="kc hot k2"><div data-hf-id="hf-i73y" class="lab">The contract</div><div data-hf-id="hf-7441" class="val">“We are not HIPAA experts”</div><div data-hf-id="hf-aldo" class="det">The client brings one in to consult with us. <b data-hf-id="hf-mlgw">HIPAA: the American law that protects health information.</b></div></div><div data-hf-id="hf-twx3" class="kc hot k3"><div data-hf-id="hf-vhv8" class="lab">The data</div><div data-hf-id="hf-yu02" class="val">A model on the client's own hardware</div><div data-hf-id="hf-dhr2" class="det">Its only job: <b data-hf-id="hf-mor4">strip names, addresses, and PII out of the data</b> before it went anywhere else</div></div><div data-hf-id="hf-3nk9" class="chipx c1">We were already <b data-hf-id="hf-x7vg">screening the build</b>, before we had a name for it</div><div data-hf-id="hf-l6wm" class="punchx p1">Catching it early is what kept the project safe and the client protected</div></div>
+  </div>
+
+  <div data-hf-id="hf-idzw" id="b4" class="over clip" data-start="120.17" data-duration="29.95" data-track-index="6">
+    <div data-hf-id="hf-9dqt" class="sstack x"><div data-hf-id="hf-504z" class="kick k1">Running the screen · two moves</div><div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-s2j8" class="tx">Ask three questions about the step</div></div><div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-k4ed" class="tx">Check the answers against two short lists of warning signs</div></div><div data-hf-id="hf-rzer" class="labels rail"><span data-hf-id="hf-g8bv" class="mpill on">Zone one · it stays with you</span><span data-hf-id="hf-wt8a" class="mpill">Zone two · an expert joins</span><span data-hf-id="hf-kwcg" class="mpill bad">Zone three · it waits for a lawyer</span></div><div data-hf-id="hf-izpz" class="chipx c1">Working example: the <b data-hf-id="hf-awfo">Brightwater patient-message triage agent</b>. Reminders out, patients text back, the agent reads, sorts, routes, books.</div></div>
+  </div>
+
+  <div data-hf-id="hf-fb4k" id="b6" class="over clip" data-start="218.83" data-duration="24.15" data-track-index="6">
+    <div data-hf-id="hf-aknw" class="sstack x"><div data-hf-id="hf-4s30" class="kick k1">Question two · what is the system deciding, and about whom?</div><div data-hf-id="hf-ivv3" class="chipx c1">The question <b data-hf-id="hf-fett">people skip</b></div><div data-hf-id="hf-119m" class="chipx c2">A system that summarizes documents <b data-hf-id="hf-2jxl">decides almost nothing</b></div><div data-hf-id="hf-aedj" class="kc hot k2"><div data-hf-id="hf-tka3" class="lab">Brightwater's agent</div><div data-hf-id="hf-aky1" class="val">Decides which patient messages are urgent</div><div data-hf-id="hf-3asv" class="det">An urgency call is <b data-hf-id="hf-n8p5">a judgment about a person's health</b>, even when it's dressed up as sorting</div></div><div data-hf-id="hf-bt0f" class="punchx p1">A decision about someone's health, money, or livelihood changes everything downstream</div></div>
+  </div>
+
+  <div data-hf-id="hf-xgpw" id="b8" class="over clip" data-start="285.19" data-duration="47.97" data-track-index="6">
+    <div data-hf-id="hf-a6cv" class="sstack x"><div data-hf-id="hf-ihis" class="kick k1">List one · four signs a standard applies · zone two</div><div data-hf-id="hf-8466" class="qrow r1"><div data-hf-id="hf-4kdh" class="n">01</div><div data-hf-id="hf-0mpq" class="tx">Sector<span data-hf-id="hf-xx7s" class="sub">Health, finance, legal, <b data-hf-id="hf-fn9z">anything with a regulator attached</b></span></div></div><div data-hf-id="hf-fb3x" class="qrow r2"><div data-hf-id="hf-83m8" class="n">02</div><div data-hf-id="hf-s11o" class="tx">Data type<span data-hf-id="hf-1f0p" class="sub">Sensitive PII anywhere in the workflow, <b data-hf-id="hf-fm1c">even at a roofing company</b></span></div></div><div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-l5cy" class="tx">Decision domain<span data-hf-id="hf-d1y5" class="sub">The system shapes decisions about someone's <b data-hf-id="hf-dwt0">job, health, or credit</b></span></div></div><div data-hf-id="hf-dy1b" class="qrow r4"><div data-hf-id="hf-6a5m" class="n">04</div><div data-hf-id="hf-6bou" class="tx">Geography<span data-hf-id="hf-id6z" class="sub">Customers in Europe bring <b data-hf-id="hf-zd1t">the EU's AI rules</b> into scope</span></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-n41v" id="b10" class="over clip" data-start="402.2" data-duration="68.88" data-track-index="6">
+    <div data-hf-id="hf-bd9y" class="sstack x"><div data-hf-id="hf-j4tg" class="kick k1">List two · four signs you need a lawyer · zone three</div><div data-hf-id="hf-r3gh" class="qrow bad r1"><div data-hf-id="hf-5rak" class="n">01</div><div data-hf-id="hf-chvk" class="tx">Lawfulness<span data-hf-id="hf-qifu" class="sub">Any version of <b data-hf-id="hf-xqay">“is this legal here?”</b></span></div></div><div data-hf-id="hf-v1ki" class="qrow bad r2"><div data-hf-id="hf-6wp5" class="n">02</div><div data-hf-id="hf-vza7" class="tx">Liability<span data-hf-id="hf-dsxp" class="sub"><b data-hf-id="hf-8b8d">Who's responsible</b> if this hurts someone?</span></div></div><div data-hf-id="hf-yzoj" class="qrow bad r3"><div data-hf-id="hf-ew6j" class="n">03</div><div data-hf-id="hf-twxl" class="tx">Contract meaning<span data-hf-id="hf-wb63" class="sub">Does their vendor agreement or terms of service <b data-hf-id="hf-attn">actually allow this</b>?</span></div></div><div data-hf-id="hf-bi70" class="qrow bad r4"><div data-hf-id="hf-2mcu" class="n">04</div><div data-hf-id="hf-dowx" class="tx">Legal status<span data-hf-id="hf-hrfm" class="sub">HIPAA's covered entities and business associates: <b data-hf-id="hf-7eh3">is my client, or am I, one?</b> A lawyer's question.</span></div></div><div data-hf-id="hf-cz5n" class="warnx w1">A consultant supplying an answer <b data-hf-id="hf-dq9w">is itself the problem</b>. Don't research it, don't estimate it, don't reassure. Flag it, send it to counsel.</div></div>
+  </div>
+
+  <div data-hf-id="hf-jva5" id="b12" class="over clip" data-start="542.91" data-duration="25.57" data-track-index="6">
+    <div data-hf-id="hf-ayyx" class="sstack x"><div data-hf-id="hf-mpbk" class="kick k1">The whole screen, together</div><div data-hf-id="hf-6rtz" class="chipx c1">For each risky step: <b data-hf-id="hf-iwue">three questions</b>, <b data-hf-id="hf-15p1">two lists of four signs</b>, plus purpose creep and context crossing</div><div data-hf-id="hf-gqb3" class="qrow lit r1"><div data-hf-id="hf-9vnb" class="n">Z1</div><div data-hf-id="hf-975e" class="tx">Most steps stay in zone one<span data-hf-id="hf-1s8q" class="sub">You design their controls yourself, starting next lesson</span></div></div><div data-hf-id="hf-gi10" class="qrow r2"><div data-hf-id="hf-9hca" class="n">Z2</div><div data-hf-id="hf-xaf0" class="tx">A zone two sign: an expert joins<span data-hf-id="hf-to0p" class="sub">They define the requirements, <b data-hf-id="hf-9uz9">you build to them</b></span></div></div><div data-hf-id="hf-wrhf" class="qrow bad r3"><div data-hf-id="hf-9319" class="n">Z3</div><div data-hf-id="hf-ibaj" class="tx">A zone three question: it parks<span data-hf-id="hf-rbnf" class="sub">Until <b data-hf-id="hf-ypff">counsel answers</b></span></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-9tgf" id="b14" class="over clip" data-start="610.85" data-duration="11.11" data-track-index="6">
+    <div data-hf-id="hf-c5w0" class="sstack x"><div data-hf-id="hf-nff6" class="kick k1">Employed track</div><div data-hf-id="hf-mm8b" class="chipx c1">The screen runs <b data-hf-id="hf-b2b1">the same way</b></div><div data-hf-id="hf-asok" class="kc hot k2"><div data-hf-id="hf-oi36" class="lab">Your zone two expert</div><div data-hf-id="hf-0zo4" class="val">May already work down the hall, in compliance or security</div><div data-hf-id="hf-6zhd" class="det">Looping them in at this step turns them into <b data-hf-id="hf-b8sl">allies instead of blockers</b></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-rhn4" id="vig" class="clip" data-start="0" data-duration="640.3" data-track-index="10"></div>
+  <div data-hf-id="hf-69sg" id="grain" class="clip" data-start="0" data-duration="640.3" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 640.3;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+  const SHIFT_X = 400;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  // PIP corner -> shifted full frame in ONE wrap tween (scrim trails in); never pair with toFULL/clearLeft on the same window
+  const toSHIFT     = (t) => { move(t, { x: SHIFT_X, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0, d: 0.8 });
+                               tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+
+  /* shot plan (generated): b2 shift 18.85-75.38 · b3 pip 75.23-120.32 · b4 shift 120.17-150.12 · b5 pip 149.97-218.98 · b6 shift 218.83-242.98 · b7 pip 242.83-285.34 · b8 shift 285.19-333.16 · b9 pip 333.01-402.35 · b10 shift 402.2-471.08 · b11 pip 470.93-543.06 · b12 shift 542.91-568.48 · b13 pip 568.33-611 · b14 shift 610.85-621.96 */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(18.6, { x: 0, y: 0, scale: 1 });
+  clearLeft(18.75);
+  toPIP(75.38); shadeOut(75.63);
+  toSHIFT(119.62);
+  toPIP(150.12); shadeOut(150.37);
+  toSHIFT(218.28);
+  toPIP(242.98); shadeOut(243.23);
+  toSHIFT(284.64);
+  toPIP(333.16); shadeOut(333.41);
+  toSHIFT(401.65);
+  toPIP(471.08); shadeOut(471.33);
+  toSHIFT(542.36);
+  toPIP(568.48); shadeOut(568.73);
+  toSHIFT(610.3);
+  toOFF(621.96); shadeOut(622.56);
+
+  // ambient loops must FIT inside DUR (floor, not ceil) or tl.duration() overshoots and the render grows a dead tail
+  const AMB = Math.floor(DUR / 8);
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: Math.floor(DUR / 10) * 2 - 1, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* b1 takeover 0-19 · cold open: the build we didn't decide alone */
+  inUp(0.3, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 0.8);
+  spring(12.13, '#b1 .sub', 0.7);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 17.95);
+  tl.set('#b1 .inner', { opacity: 0 }, 18.85);
+  /* b2 shift 18.85-75.38 · the two conversations that weren't about architecture */
+  inUp(19.05, '#b2 .k1', 0.6, 18);
+  spring(34.41, '#b2 .k2', 0.7);
+  spring(49.37, '#b2 .k3', 0.7);
+  inLeft(62.77, '#b2 .c1', 0.7);
+  spring(71.71, '#b2 .p1', 0.7);
+  outBlur(74.83, '#b2 .x', 0.45);
+  /* b3 pip 75.23-120.32 · step two: what the screen is */
+  inUp(75.53, '#b3 .head', 0.7, 26);
+  inLeft(87.57, '#b3 .c1', 0.7);
+  inLeft(92.01, '#b3 .w1', 0.7);
+  spring(100.49, '#b3 .k1', 0.7);
+  spring(116.51, '#b3 .q1', 0.7);
+  outBlur(119.77, '#b3 .x', 0.45);
+  /* b4 shift 120.17-150.12 · two moves, three labels */
+  inUp(120.37, '#b4 .k1', 0.6, 18);
+  inLeft(122.05, '#b4 .r1', 0.7);
+  inLeft(124.89, '#b4 .r2', 0.7);
+  tl.fromTo('#b4 .labels .mpill', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.9 }, 130.05);
+  inLeft(136.39, '#b4 .c1', 0.7);
+  outBlur(149.57, '#b4 .x', 0.45);
+  /* b5 pip 149.97-218.98 · question one + the PII split (ON SCREEN) */
+  inUp(150.27, '#b5 .head', 0.7, 26);
+  inLeft(151.99, '#b5 .c1', 0.7);
+  inLeft(169.67, '#b5 .w1', 0.7);
+  spring(191.45, '#b5 .k1', 0.7);
+  spring(200.17, '#b5 .k2', 0.7);
+  spring(209.91, '#b5 .p1', 0.7);
+  outBlur(218.43, '#b5 .x', 0.45);
+  /* b6 shift 218.83-242.98 · question two */
+  inUp(219.03, '#b6 .k1', 0.6, 18);
+  inLeft(222.95, '#b6 .c1', 0.7);
+  inLeft(224.45, '#b6 .c2', 0.7);
+  spring(227.59, '#b6 .k2', 0.7);
+  spring(238.27, '#b6 .p1', 0.7);
+  outBlur(242.43, '#b6 .x', 0.45);
+  /* b7 pip 242.83-285.34 · question three */
+  inUp(243.13, '#b7 .head', 0.7, 26);
+  inLeft(249.19, '#b7 .c1', 0.7);
+  inLeft(257.81, '#b7 .c2', 0.7);
+  spring(260.59, '#b7 .k1', 0.7);
+  inLeft(268.79, '#b7 .c3', 0.7);
+  outBlur(284.79, '#b7 .x', 0.45);
+  /* b8 shift 285.19-333.16 · list one: four signs a standard applies */
+  inUp(285.39, '#b8 .k1', 0.6, 18);
+  inLeft(304.07, '#b8 .r1', 0.7);
+  inLeft(309.07, '#b8 .r2', 0.7);
+  inLeft(318.01, '#b8 .r3', 0.7);
+  inLeft(323.24, '#b8 .r4', 0.7);
+  outBlur(332.61, '#b8 .x', 0.45);
+  /* b9 pip 333.01-402.35 · Brightwater verdict + the division of labor */
+  inUp(333.31, '#b9 .head', 0.7, 26);
+  spring(345.05, '#b9 .s1', 0.7);
+  spring(346.27, '#b9 .s2', 0.7);
+  spring(348.13, '#b9 .p1', 0.7);
+  inLeft(351.52, '#b9 .c1', 0.7);
+  spring(365.45, '#b9 .k1', 0.7);
+  outBlur(401.8, '#b9 .x', 0.45);
+  /* b10 shift 402.2-471.08 · list two: four signs you need a lawyer */
+  inUp(402.4, '#b10 .k1', 0.6, 18);
+  inLeft(409.43, '#b10 .r1', 0.7);
+  inLeft(413.08, '#b10 .r2', 0.7);
+  inLeft(416.43, '#b10 .r3', 0.7);
+  inLeft(421.49, '#b10 .r4', 0.7);
+  inLeft(441.37, '#b10 .w1', 0.7);
+  outBlur(470.53, '#b10 .x', 0.45);
+  /* b11 pip 470.93-543.06 · two signs the questions can miss */
+  inUp(471.23, '#b11 .head', 0.7, 26);
+  spring(495.07, '#b11 .k1', 0.7);
+  spring(520.33, '#b11 .k2', 0.7);
+  spring(536.27, '#b11 .p1', 0.7);
+  outBlur(542.51, '#b11 .x', 0.45);
+  /* b12 shift 542.91-568.48 · the whole screen together */
+  inUp(543.11, '#b12 .k1', 0.6, 18);
+  inLeft(545.35, '#b12 .c1', 0.7);
+  inLeft(554.99, '#b12 .r1', 0.7);
+  inLeft(559.73, '#b12 .r2', 0.7);
+  inLeft(564.27, '#b12 .r3', 0.7);
+  outBlur(567.93, '#b12 .x', 0.45);
+  /* b13 pip 568.33-611 · Brightwater result + keep the scale honest */
+  inUp(568.63, '#b13 .head', 0.7, 26);
+  spring(571.25, '#b13 .k1', 0.7);
+  inLeft(587.47, '#b13 .w1', 0.7);
+  inLeft(592.29, '#b13 .c1', 0.7);
+  spring(602.21, '#b13 .p1', 0.7);
+  outBlur(610.45, '#b13 .x', 0.45);
+  /* b14 shift 610.85-621.96 · employed track */
+  inUp(611.05, '#b14 .k1', 0.6, 18);
+  inLeft(611.35, '#b14 .c1', 0.7);
+  spring(613.83, '#b14 .k2', 0.7);
+  outBlur(621.41, '#b14 .x', 0.45);
+  /* b15 outro 621.81-640.3 · the names + Rules of the World is next */
+  inUp(622.11, '#b15 .kicker', 0.6, 20);
+  tl.fromTo('#b15 .names .word', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.45 }, 623.63);
+  tl.fromTo('#b15 .mpill, #b15 .conn', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.12 }, 627.13);
+  tl.fromTo('#b15 .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 630.65);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p42'] = tl;
+})();
+</script>
+</body>
+</html>

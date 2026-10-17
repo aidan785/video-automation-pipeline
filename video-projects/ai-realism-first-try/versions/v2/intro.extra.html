@@ -1,0 +1,59 @@
+  <!-- ===== cold open extras: black backing, triptych that breaks into pixels, contact sheet that lands behind Aidan ===== -->
+  <div id="co-back" class="clip" data-start="0" data-duration="15.56" data-track-index="2"></div>
+  <div id="trip" class="clip" data-start="10.14" data-duration="3.22" data-track-index="6">
+    <div class="col" id="tc1"><img class="s0" src="assets/co/elena-col.jpg" alt=""><img class="px s1" src="assets/co/elena-col-px1.png" alt=""><img class="px s2" src="assets/co/elena-col-px2.png" alt=""><img class="px s3" src="assets/co/elena-col-px3.png" alt=""></div>
+    <div class="col" id="tc2"><img class="s0" src="assets/co/marcus-col.jpg" alt=""><img class="px s1" src="assets/co/marcus-col-px1.png" alt=""><img class="px s2" src="assets/co/marcus-col-px2.png" alt=""><img class="px s3" src="assets/co/marcus-col-px3.png" alt=""></div>
+    <div class="col" id="tc3"><img class="s0" src="assets/co/dot-col.jpg" alt=""><img class="px s1" src="assets/co/dot-col-px1.png" alt=""><img class="px s2" src="assets/co/dot-col-px2.png" alt=""><img class="px s3" src="assets/co/dot-col-px3.png" alt=""></div>
+  </div>
+  <div id="sheet" class="clip" data-start="13.36" data-duration="2.66" data-track-index="7">
+    <div class="print" id="pr1" style="left:72px"><img src="assets/co/elena-print.jpg" alt=""><div class="nm">Elena</div><div class="tk">take 1 of 1</div></div>
+    <div class="print" id="pr2" style="left:512px"><img src="assets/co/marcus-print.jpg" alt=""><div class="nm">Marcus</div><div class="tk">take 1 of 1</div></div>
+    <div class="print" id="pr3" style="left:952px"><img src="assets/co/dot-print.jpg" alt=""><div class="nm">Dot</div><div class="tk">take 1 of 1</div></div>
+  </div>
+
+  <!-- ===== "write a prompt, hit generate, and hope": prompt box over the blurred shot ===== -->
+  <div id="ui-scrim" class="clip" data-start="{{most-0.08}}" data-duration="3.62" data-track-index="8"></div>
+  <div id="ui" class="clip" data-start="{{most-0.08}}" data-duration="3.62" data-track-index="9">
+    <div class="ui-card">
+      <img class="ui-av" src="assets/co/elena-print.jpg" alt="">
+      <div class="ui-text" id="ui-text"></div>
+      <div class="ui-chips"><span>+</span><span>@</span><span class="wide">Image model &rsaquo;</span><span>Auto</span><span>2K</span><span>1/4</span></div>
+      <div class="ui-btn" id="ui-btn"><span class="l1">GENERATE</span><span class="l2">GENERATING</span><i>&#10022; 2.5</i></div>
+      <div class="ui-bar"><div id="ui-fill"></div></div>
+    </div>
+    <svg id="ui-cur" viewBox="0 0 24 24" width="84" height="84"><path d="M5 2l14 11h-7l4 8-3 1.5-4-8-4 5z" fill="#fff" stroke="#141414" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    <div class="ui-hope" id="ui-hope"><span id="ui-hope-t"></span><b id="ui-pray">&#128591;</b></div>
+  </div>
+
+  <!-- ===== "50 re-rolls later": full-screen yellow card ===== -->
+  <div id="rr" class="clip ycard" data-start="{{then-0.14}}" data-duration="1.72" data-track-index="8">
+    <div class="ytitle" id="rr-title">50 RE-ROLLS LATER</div>
+    <div class="rr-grid">
+      <div class="tile"><img src="assets/bad/bad1.jpg" alt=""></div><div class="tile"><img src="assets/bad/bad2.jpg" alt=""></div><div class="tile"><img src="assets/bad/bad3.jpg" alt=""></div><div class="tile"><img src="assets/bad/bad4.jpg" alt=""></div><div class="tile"><img src="assets/bad/bad5.jpg" alt=""></div>
+      <div class="tile"><img src="assets/bad/bad6.jpg" alt=""></div><div class="tile"><img src="assets/bad/bad3.jpg" alt="" style="transform:scaleX(-1)"></div><div class="tile"><img src="assets/bad/bad5.jpg" alt="" style="transform:scaleX(-1)"></div><div class="tile"><img src="assets/bad/bad2.jpg" alt="" style="transform:scaleX(-1)"></div><div class="tile"><img src="assets/bad/bad4.jpg" alt="" style="transform:scaleX(-1)"></div>
+    </div>
+    <div class="rr-count">RE-ROLL #<span class="win"><span class="strip" id="rr-strip"></span></span></div>
+  </div>
+
+  <!-- ===== credits pill: drains on "your credits are completely gone", comes back on fire later ===== -->
+  <div id="cred" class="clip pill" data-start="{{credits-0.06}}" data-duration="1.22" data-track-index="9">
+    <span class="coin"></span><span class="win"><span class="strip" id="cred-strip"><span>300</span><span>262</span><span>215</span><span>170</span><span>121</span><span>84</span><span>42</span><span>17</span><span>3</span><span>0</span></span></span><em>credits</em>
+  </div>
+  <div id="cred2" class="clip pill red" data-start="{{burning-0.12}}" data-duration="1.4" data-track-index="9">
+    <b class="fire">&#128293;</b><span>0</span><em>credits</em>
+  </div>
+
+  <!-- ===== montage: the clips full frame on "photoreal AI video outputs" ===== -->
+  <div id="mont-back" class="clip" data-start="{{whole-0.06}}" data-duration="4.26" data-track-index="14"></div>
+  <div class="mont" id="montw1"><video id="mont1" src="assets/mont/marcus-work.mp4" data-start="{{whole-0.06}}" data-duration="1.2" data-media-start="0.6" data-track-index="13" muted playsinline></video></div>
+  <div class="mont" id="montw2"><video id="mont2" src="assets/mont/dot-skate.mp4" data-start="{{whole+1.14}}" data-duration="1.45" data-media-start="0.9" data-track-index="13" muted playsinline></video></div>
+  <div class="mont" id="montw3"><video id="mont3" src="assets/mont/elena-work.mp4" data-start="{{whole+2.59}}" data-duration="1.6" data-media-start="0.6" data-track-index="13" muted playsinline></video></div>
+
+  <!-- ===== "the setup, the prompts, and the one step": full-screen yellow card ===== -->
+  <div id="steps" class="clip ycard" data-start="{{sowell-0.1}}" data-duration="4.86" data-track-index="8">
+    <div class="ytitle" id="st-title">WHAT WE&rsquo;LL COVER</div>
+    <div class="scard" id="sc1" style="left:150px"><small>STEP 01</small><h3>The setup</h3><p>before you prompt</p><div class="pic"><img src="assets/co/elena-work-still.jpg" alt=""></div></div>
+    <div class="scard" id="sc2" style="left:730px"><small>STEP 02</small><h3>The prompts</h3><p>copy mine, word for word</p><div class="pic dark"><span>cinematic 35mm film still,<br>tight close-up portrait,<br>natural unretouched skin,<br>soft window light&hellip;</span></div></div>
+    <div class="scard" id="sc3" style="left:1310px"><small>STEP 03</small><h3>The one step</h3><p>the part everyone skips</p><div class="pic"><img class="blur" src="assets/co/dot-print.jpg" alt=""><b class="q">?</b></div><div class="keeper" id="keeper">KEEPER</div></div>
+    <div class="pills"><span id="pl1">the setup</span><span id="pl2">the prompts</span><span id="pl3">the one step</span></div>
+  </div>

@@ -1,0 +1,88 @@
+# Cut-Mistakes Decisions (applied)
+
+Input duration: 24:57.32 (1497.32s)
+Output duration: 21:11.15 (1271.15s)
+Removed: 226.17s across 82 cuts
+
+- 00:00.19–00:03.25 (3.06s): Remove abandoned/repeated take: You can create realistic Blender animations
+- 00:09.26–00:10.75 (1.49s): Remove abandoned/repeated take: For example here's like a
+- 00:18.03–00:25.22 (7.18s): Remove abandoned/repeated take: Or you can or or you can even create these realistic colli Or you can create something like this with me and say my coworker and
+- 00:56.85–00:59.65 (2.79s): Remove abandoned/repeated take: And then using the Higgsfield Blender MCP
+- 01:04.33–01:04.97 (0.63s): Remove abandoned/repeated take: and I'm gonna
+- 01:13.73–01:14.58 (0.85s): Remove abandoned/repeated take: So I'm today
+- 01:21.64–01:23.96 (2.32s): Remove abandoned/repeated take: So all this was generated with GPT Astra 6
+- 01:36.84–01:38.46 (1.61s): Remove abandoned/repeated take: You can also create stuff like this
+- 03:38.54–03:39.49 (0.95s): Remove abandoned/repeated take: they're also building fun
+- 03:47.25–03:48.59 (1.33s): Remove abandoned/repeated take: this is a sta
+- 03:55.41–03:55.88 (0.46s): Remove abandoned/repeated take: So with this
+- 04:01.54–04:02.17 (0.63s): Remove abandoned/repeated take: that are actually
+- 04:04.77–04:09.63 (4.85s): Remove abandoned/repeated take: Now I'm gonna show you two different workflows of how I usually prompt Claude and it's two
+- 04:26.18–04:28.01 (1.83s): Remove abandoned/repeated take: When you do connect that that gives
+- 04:39.81–04:40.51 (0.70s): Remove abandoned/repeated take: with all of
+- 05:14.87–05:16.91 (2.03s): Remove abandoned/repeated take: And if again you're confused that
+- 05:29.95–05:34.49 (4.54s): Remove abandoned/repeated take: Also I do Also in the Creative AI Network I do have a lot of projects f
+- 05:47.19–05:47.48 (0.29s): Remove abandoned/repeated take: Now the
+- 06:03.28–06:04.36 (1.08s): Remove abandoned/repeated take: it's essentially think of
+- 06:44.34–06:45.24 (0.90s): Remove abandoned/repeated take: um uti utilizing
+- 06:46.38–06:49.82 (3.44s): Remove abandoned/repeated take: So all I need to do is to prompt to my So all I need to do
+- 06:54.13–06:55.44 (1.32s): Remove abandoned/repeated take: So let's just create a
+- 06:56.84–06:59.38 (2.53s): Remove abandoned/repeated take: And then go back into your Codex g
+- 07:38.12–07:40.86 (2.74s): Remove abandoned/repeated take: This this cursor is
+- 08:11.48–08:12.44 (0.95s): Remove abandoned/repeated take: in any
+- 08:16.50–08:17.07 (0.56s): Remove abandoned/repeated take: you can write
+- 08:25.36–08:25.75 (0.38s): Remove abandoned/repeated take: the
+- 08:26.60–08:27.81 (1.20s): Remove abandoned/repeated take: or the output reports
+- 08:32.98–08:35.10 (2.11s): Remove abandoned/repeated take: and then I will get into
+- 08:35.14–08:39.99 (4.85s): Remove abandoned/repeated take: And then and then stick around because I'm gonna go over how we can turn these into pre-vis generat And then stick around
+- 08:54.53–08:56.11 (1.57s): Remove abandoned/repeated take: Oh and just to show you um
+- 09:00.27–09:01.70 (1.42s): Remove abandoned/repeated take: And boom within seconds
+- 09:11.03–09:11.57 (0.53s): Remove abandoned/repeated take: But
+- 09:19.34–09:20.31 (0.97s): Remove abandoned/repeated take: I don't know really
+- 09:20.54–09:20.77 (0.23s): Remove abandoned/repeated take: the
+- 09:33.20–09:33.38 (0.17s): Remove abandoned/repeated take: we
+- 09:34.10–09:38.52 (4.42s): Remove abandoned/repeated take: So everything is now editable on And this is this is what I love about
+- 09:49.74–09:51.64 (1.89s): Remove abandoned/repeated take: And then I'm gonna head back to Google
+- 09:56.16–10:00.32 (4.16s): Remove abandoned/repeated take: What I wanna do is What I wanna do is recreate either what I wa
+- 10:25.26–10:33.02 (7.76s): Remove abandoned/repeated take: For example I just wanna give you for example I just wanna give you a What was that image that I used So what I'm gonna do is I'm gonna go to Google and I'm gonna search up
+- 10:38.69–10:39.61 (0.92s): Remove abandoned/repeated take: just like we had
+- 10:49.97–10:52.10 (2.13s): Remove abandoned/repeated take: I want to create a
+- 11:20.57–11:24.30 (3.73s): Remove abandoned/repeated take: It's g it says it's using the v Blender It's saying it's using the Blender
+- 11:35.11–11:36.00 (0.90s): Remove abandoned/repeated take: So we need to create
+- 11:39.40–11:40.01 (0.62s): Remove abandoned/repeated take: Oh my God
+- 11:45.16–11:45.97 (0.82s): Remove abandoned/repeated take: Next is act
+- 12:10.24–12:13.24 (3.01s): Remove abandoned/repeated take: This will be very smooth camera movement This will be
+- 12:25.81–12:27.63 (1.82s): Remove abandoned/repeated take: So it's important that you note that to
+- 12:30.21–12:30.95 (0.74s): Remove abandoned/repeated take: the char
+- 12:31.99–12:34.71 (2.73s): Remove abandoned/repeated take: And if you're com and if you're and if you're confused at
+- 13:06.55–13:07.14 (0.59s): Remove abandoned/repeated take: char
+- 13:10.51–13:12.20 (1.69s): Remove abandoned/repeated take: and then I also added some like VA shits
+- 13:14.20–13:14.69 (0.50s): Remove abandoned/repeated take: um uh
+- 13:33.66–13:35.43 (1.77s): Remove abandoned/repeated take: So let me just navigate back to that
+- 13:36.66–13:37.50 (0.84s): Remove abandoned/repeated take: that Blen
+- 13:44.72–13:45.39 (0.67s): Remove abandoned/repeated take: Everything uh
+- 13:55.61–13:56.13 (0.52s): Remove abandoned/repeated take: Blender
+- 14:12.13–14:16.08 (3.95s): Remove abandoned/repeated take: Let's do Let's do stand near the doorway throughout Actually no
+- 14:44.58–14:45.79 (1.21s): Remove abandoned/repeated take: 'Cause as you can see I mean it's
+- 14:49.78–15:59.36 (69.59s): Remove abandoned/repeated take: Go ahead and Ladies and gentlemen welcome to
+- 16:13.13–16:14.87 (1.74s): Remove abandoned/repeated take: So you can see I have these three images Okay
+- 17:23.99–17:25.30 (1.32s): Remove abandoned/repeated take: Okay And boom it gives us
+- 18:01.51–18:03.44 (1.94s): Remove abandoned/repeated take: It's very stiff and rigid right down here
+- 18:03.49–18:04.86 (1.38s): Remove abandoned/repeated take: And we don't want it to be feel
+- 18:49.03–18:50.38 (1.35s): Remove abandoned/repeated take: It's great to have that in
+- 18:53.60–19:00.12 (6.52s): Remove abandoned/repeated take: Or and I'm gonna show you and I'm not gonna And you can just generate it So everything is So everything could be
+- 19:11.98–19:13.00 (1.03s): Remove abandoned/repeated take: Go into
+- 19:39.37–19:39.75 (0.38s): Remove abandoned/repeated take: without
+- 19:43.86–19:45.68 (1.82s): Remove abandoned/repeated take: And when you're in Blender and then when you
+- 19:47.68–19:50.22 (2.54s): Remove abandoned/repeated take: you're going to drag that zip file into
+- 19:56.32–19:57.46 (1.13s): Remove abandoned/repeated take: When you click Authorize
+- 20:31.20–20:34.00 (2.80s): Remove abandoned/repeated take: So so to set this up we want to create a
+- 20:53.90–20:58.66 (4.77s): Remove abandoned/repeated take: And then as I move as I move you can see I get different As I move
+- 21:24.15–21:27.47 (3.32s): Remove abandoned/repeated take: Our input will be the viewport or we can just upload an actual
+- 21:31.36–21:31.63 (0.28s): Remove abandoned/repeated take: fi
+- 21:39.25–21:41.12 (1.88s): Remove abandoned/repeated take: You can It's saved in your
+- 21:59.30–22:00.40 (1.09s): Remove abandoned/repeated take: but then I have
+- 22:21.95–22:22.97 (1.03s): Remove abandoned/repeated take: So I'm gonna downl
+- 22:41.07–22:43.52 (2.46s): Remove abandoned/repeated take: oh my God projects Is it there No
+- 24:01.60–24:03.87 (2.27s): Remove abandoned/repeated take: but with a real-time character
+- 24:07.34–24:10.64 (3.30s): Remove abandoned/repeated take: So I'm pretty happy with what this turned out to be as
+- 24:30.84–24:31.15 (0.31s): Remove abandoned/repeated take: this is

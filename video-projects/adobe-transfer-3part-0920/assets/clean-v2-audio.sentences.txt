@@ -1,0 +1,134 @@
+0:00.3  Would you believe me that GPT-6 Astra can create games in Unreal Engine?
+0:05.8  For example, I recreated the first level in Super Mario Bros, and everything was generated with GPT-6 Astra and Unreal Engine.
+0:13.6  All of the assets like the background, the leaves, the pipes, the character itself, to all of the motion, like moving forward and backwards, jumping.
+0:21.7  But it doesn't stop there because I started recreating some of my like childhood favorite games.
+0:25.8  So this is like Flappy Bird, and within two minutes I was able to get an output like this.
+0:30.1  We have like, you know, the levels.
+0:31.6  It gets harder as we continue going on, all built with GPT-6 Astra and Unreal Engine.
+0:37.3  And so stick around because I'm gonna go over how I set this connection up, the tools that I use to get actual outputs like this.
+0:43.8  This is Minecraft.
+0:45.0  I tried to replicate it as closely as possible to the original game where like you have different breaking modes.
+0:50.7  It takes a little bit longer to break wood than it does dirt.
+0:53.5  We have like the nice floating animations.
+0:55.3  We have an inventory.
+0:56.4  We have a health bar and a hunger bar.
+0:58.3  We can place objects just like we can in Minecraft.
+1:00.9  And this is definitely one of the coolest things I've done with GPT-6 Astra is building these games and kind of having fun and kind of getting creative with what I can build here.
+1:10.0  And so today I'm gonna showcase that connection and then a tool that I use that's built for building games with AI in Unreal Engine and Unity to start creating your assets to have a structured plan when it comes to
+1:22.5  building simulation games or first-person shooter games, creating your assets and your game story.
+1:27.8  So I'm gonna be focusing today on this city builder game, which is just a very basic vanilla build that I've built with GPT-6 Astra.
+1:34.3  We've got an industry.
+1:35.2  We have residents that are working.
+1:37.0  We have jobs.
+1:37.9  We have happiness scores, and then we have the option to build stuff inside of the city builder game.
+1:42.8  So it's a simulation.
+1:44.1  How profitable can we make this little mini city, and how big can we grow it?
+1:47.9  We have residential, commercial, i- industry, and then like the basic resources like power, water, and then some parks that we can throw in and bulldoze if we want to get rid of stuff.
+1:57.1  So let's jump into setting up the connection with Unreal Engine and GPT-6 Astra and start building our first game.
+2:02.5  So the tool I'm using for this workflow is utilizing GPT-6 Astra.
+2:07.1  It's just through a platform called Aura, and if you're not familiar with Aura, they just recently launched their first version of the platform.
+2:14.2  And if you're curious and asking what is Aura, what purpose does it serve, it's essentially a super-powered agent that lives inside of your Unreal Engine sessions and can build things utilizing AI models such as GPT-6 Astra, Fable 5.1 to
+2:29.6  then execute inside of those sessions.
+2:32.1  Something that I really like that they have is this unlimited auto mode where you can utilize the AI completely for free while using the auto mode inside of the platform.
+2:41.1  Now we're not gonna be focusing on the auto mode today.
+2:43.5  I will show you how you can use it.
+2:44.8  We're gonna be focusing on GPT-6 Astra inside of the Aura platform.
+2:48.3  You can test it out for two weeks completely for free, and it's only ten dollars a month, and you get a lot of usage out of it.
+2:53.2  You get access to the unlimited usage with auto mode, and you also get access to all of the AI models like GPT-6 Astra, Fable 5.1 for ten dollars a month with that two-week free trial.
+3:02.5  And you might be wondering who is this for?
+3:04.0  What is like the ideal client profile of this platform?
+3:07.8  This is for two types of people.
+3:09.2  From what I've seen, it's for people who regularly build inside of Unreal Engine or Unity.
+3:14.1  We'll be focusing on Unreal Engine today.
+3:15.9  Or you're a complete beginner and wanna start building games inside of Unreal Engine, and you want to use AI to help you out with building those games.
+3:24.1  It's a great gateway into the AI game dev space with a ton of barricades for you to enter in.
+3:30.4  So it comes with helping you build up blueprints, building up material tools, your asset generation, essentially replacing like the really long process of setting up a game, like the foundations of the game, and all of the custom scripting that
+3:42.0  goes into game development, or is there to be your AI assistant to help build out those games for you the right way.
+3:49.0  Instead of just jumping straight into a Codex session completely uninformed or uneducated on game development, it helps walk you through the game development process, starting with your blueprints all the way to like the final output.
+4:00.0  So how we're going to download the MCP connection to Codex and set up Aura inside of our Unreal session, I'm on Mac, so you just need to sign in with your account, and then you're going to download based on
+4:12.1  your operating system.
+4:12.9  Again, I'm on Mac.
+4:13.8  And when you download that, make sure that you throw it into your applications.
+4:17.0  Now when you are inside of Unreal Engine, you're not gonna see this Open Aura chat right here.
+4:21.6  If I do click this, you can see this is where we can open up the actual chatbot.
+4:24.9  But if you don't see this, you haven't connected your plugin.
+4:27.4  And how we connect plugins, we just go to Edit, Plugins, then you're gonna search up Aura.
+4:31.3  You can see Aura will be clicked right here.
+4:33.5  Check that box, and then what you're gonna have to do is you're gonna have to close out of Unreal Engine and then reopen it to restart the interface, and then Unreal Engine will recognize that Aura plugin.
+4:43.3  Now that you've closed your session and you've opened up a new Unreal Engine project, whether it's a brand new one, there's nothing in the session, or you're working on a project already, click on the Aura tab.
+4:52.7  It's going to take you to a login and authentication tab where you just log in with your account, and then you're authorized.
+4:58.3  And now you have access to Aura's tools.
+5:01.3  So this looks like a very normal chatbot at first, but I'm just gonna show you some of the features really quick.
+5:06.5  We have the agent mode, ask mode, and plan mode.
+5:09.0  This is, like, very similar to like plan mode in Cloud Code or in Codex, and then agent mode is kind of like how it's gonna execute and create scripts.
+5:16.7  We can pick our models here.
+5:17.7  So here's the auto mode.
+5:18.8  This is where you will have access to unlimited AI credits.
+5:22.0  And then we have access to all of these other AI models, a lot of the flagship models, so Fable 5.1 and GPT-6 Astra, Kimi K3, all great models that will help build inside of Unreal Engine for you.
+5:32.1  I'm just going to stick to GPT-6 Astra.
+5:34.4  Now you can see we have this interface where we can generate a blueprint Fix a compile error, plan a feature, explain this actor, build landscape.
+5:42.5  So you have some options to get started.
+5:44.6  So I'm gonna show you how I am utilizing Aura for these builds.
+5:48.5  So I just started this game, and like I was showing you in the intro, we have like industry over here, we have residential, we have commercial that we can set up.
+5:55.7  But something about city-building games is I love the simulation aspect of it, and I love the customability of downloading DLC packs or creating new buildings.
+6:04.9  And so like all of these right now, they just look like very normal buildings or like all apartment buildings.
+6:08.8  So what I can do is maybe I wanna create a more lived-in aesthetic or vibe to the game, um, with maybe a custom DLC or...
+6:16.5  Because cities are never the exact same.
+6:18.4  They never look exactly like this.
+6:19.9  And so we want some variety to what the actual city can look like.
+6:23.9  So I'm gonna drop in this prompt, and this prompt is essentially a more stylized city block.
+6:29.3  I want there to be an upgraded downtown block with nice benches, bins, street signs, bus stop shelters, parked cars, a variety of different trees.
+6:37.6  And so I'm gonna shoot this off, and I'm gonna let it build inside of my Unreal session.
+6:42.0  The great thing is, you don't have to go and scour through the Unreal Engine MCP documents because Aura works in Unity and Unreal Engine and understands game development and game building.
+6:52.7  It's gonna utilize the Unreal Engine MCP that's built into the platform and use the computer, and with that knowledge, will execute inside of Unreal Engine a lot more effectively, and it will save you a lot of time on the
+7:05.3  back and forth with like a normal chat agent in maybe your Codex app.
+7:09.6  When you're trying to figure out, how can I build this exact thing, this upgraded city block, it'll run through its foundational documents on game design and game building to build this the most efficient way possible.
+7:19.8  Also, while this is building, I just wanna show you kind of what I've built in here.
+7:22.9  So I can obviously build roads, and it's all just like by blocks.
+7:26.7  So maybe I want a nice little road around my water treatment plant here.
+7:30.0  If I wanna add more water stations, I can do that just by adding another water station.
+7:35.0  I can add some residential here.
+7:36.8  There's a nice little build animation.
+7:38.8  Got some more residential in here.
+7:40.8  Maybe I'll add a park.
+7:42.0  And then these people need some places to work, so we'll add some commercial buildings right here.
+7:47.0  Add some roads that go around there.
+7:49.3  Now I can kind of just, as this is building out, I can test out my game and see what I can update as it's building out this new city block for me.
+7:57.3  And if there's a certain thing I want to change, so for example, maybe I wanna change a certain building or a certain asset that I maybe imported, all you gotta do is @, and it will pull up all of
+8:08.3  your assets that you can customize with the agent.
+8:12.2  So it's saying that it has no separate downtown block marker.
+8:15.9  Please mark the intended block in a screenshot.
+8:18.9  So let's maybe do this little block right here, right next to the water station.
+8:23.0  Drop that screenshot in.
+8:24.1  And while that city block is being updated, I went ahead and started creating custom assets for the game.
+8:30.0  So in a lot of city builder games, you can download like DLCs, or there's like extension packs of like, okay, you get like the basic vanilla build or the basic vanilla game, but then you can buy add-ons for extra
+8:42.0  money to get access to special things.
+8:44.8  And so like here's like a custom build.
+8:46.8  This is built by GPT-6 Astra using Aura.
+8:50.2  You can see it's currently building out right now, so there's pop-up peeps coming up.
+8:53.6  But now I have a custom building.
+8:55.6  This is my first custom building.
+8:56.7  It's a lot more realistic, a lot more detail on the actual building.
+8:59.8  And I'm gonna create a tab inside of the original game to add in these custom buildings.
+9:05.0  So I could sell this as an extra cost for more customized buildings instead of like the vanilla builds.
+9:10.6  So I'm really happy with how this turned out, and I will continue to keep building out some more custom skyscrapers or apartment buildings or commercial blocks for my city-building game.
+9:21.3  So now what I'm able to do is if I go inside of my game and maybe I find somewhere where I wanna place this new building, I have this new buildings tab right here.
+9:29.1  We can zoom in right here, move to exactly where we wanna put that new building, go into that buildings tab, and then drag that in.
+9:36.7  And now I have my first custom building inside of my game.
+9:41.7  So we get the nice balconies, we get the nice brick texture, and now I can create hundreds upon thousands of different buildings for my city-building game, whether this is for like an additional DLC or it's for just the basic
+9:53.0  vanilla gameplay.
+9:54.3  So super happy with how that turned out.
+9:56.2  Okay, and it just finished up this upgraded block.
+9:59.0  So Aura created this new city block for me.
+10:01.8  And if I just zoom in here, you can see that we have some like benches, some nice little bushes, or I guess like plants, an actual sidewalk for pedestrians to walk on.
+10:12.8  And then my favorite part is more vanilla buildings.
+10:15.0  So we have these nice new modern glass buildings, like office buildings, which I am a huge fan of.
+10:20.1  I really like that modern look.
+10:21.5  And then sidewalks are scattered throughout all of the downtown now.
+10:25.6  So I could obviously keep iterating upon this, but I wanna showcase how you can actually start building games inside of Unreal Engine using GPT-6 Astra and the Aura connection.
+10:35.5  I'm going to leave you guys with that, and let me know what you're gonna build in the comments below.
+10:39.4  If you found this video resourceful or useful in any way, please feel free to leave a like on this video.
+10:43.7  It helps me out a ton.
+10:45.0  And subscribe to the channel.
+10:46.4  As always, I will see you guys in the next one.
+10:48.5  Thanks for sticking to the end.

@@ -1,0 +1,415 @@
+0:00.3  I let Claude Opus 5.5 run completely overnight to essentially create a Steam library of games, custom games for me.
+0:09.1  It gave me back 12 fully playable games with sub-levels in each of them, stories, audio, game assets.
+0:16.5  And as you can see, it's everything from like Battlefield games like Fortnite or CS:GO, which they rebranded to Stormfall and Beach Point, to open world or story games like GTA or Street Kings.
+0:28.7  It created this game called Turbo Goal, which is essentially like Rocket League, Tumble Party, and Block Hop Obby, so like Stumble Guys or Fall Guys or a Roblox obstacle course game, Subway, Subway Surfers or Metro Dash, simulation games like
+0:42.5  City Skylines or SimCity.
+0:44.8  This one's just called Polus.
+0:46.1  I'm guessing like a Minneapolis building game.
+0:48.6  Minecraft or Block World, Mario Kart, Drift Karts, Call of Duty Zombies, the Dead Zone, and even Angry Bird Cannibal Kings.
+0:57.0  And the coolest part too is it created all of the packaging and all the branding around each of these.
+1:01.8  I literally sent off one prompt, went to bed, woke up, and I was gifted this inside of my Unreal Engine viewport.
+1:08.7  Now, before I jump in and show you each of these games, 'cause they're each very unique, they all have their own levels, and I wanna be able to showcase all of the unique functionalities that Claude put into the games,
+1:19.4  I wanna show you how I set this up.
+1:20.8  So there's going to be three things that you definitely need to set up the Claude Opus 5.5 model with the Unreal Engine MCP, and then some extra tools that we will plug in to create all of our packaging, Unreal
+1:32.7  understanding, game development.
+1:34.5  So if you have no game development experience, you can jump into building games like I'm about to show you super easily and kind of create ideas and kind of turn your ideas into tangible assets on your screen.
+1:47.2  So the first thing we're gonna be utilizing is obviously Anthropic.
+1:49.9  We're gonna be using Claude Opus 5.5, which is Anthropic's newest flagship cheap model.
+1:55.2  You could also use Fable 5.1, but Opus 5.5 does a great job with building complex games like this, along with prompting, saving context and tokens, and ultimately saving you money.
+2:05.9  So you will need a subscription to Claude to get access to Claude Code.
+2:09.1  The second thing you're going to need access to is Unreal Engine.
+2:11.7  This is where we're going to build our games.
+2:14.4  So everything that Claude will build for your game will be implemented into Unreal Engine, so it's actually playable and you can see it on your screen.
+2:20.3  As you can see, Unreal Engine has a ton of capability.
+2:22.7  If you've ever played Fortnite, Unreal Engine is the back end that supports that.
+2:26.7  The next thing you're going to need is the Unreal Engine MCP.
+2:30.4  And if you do download Unreal Engine, make sure you're downloading the most recent version, which is 5.8, and you're downloading the Unreal Engine 5.8 MCP.
+2:38.9  Now, I'm not gonna go through this entire document, and this is why I mentioned there is required things that you need downloaded, and then there's some optional things that you can have downloaded as well.
+2:48.1  If you're not familiar with AI models, MCP connections, and you're just jumping into this, I recommend going into the description link below where it says All My Free Resources.
+2:57.5  Join the free school community.
+2:58.9  This is where I put all of my free resources.
+3:00.8  You can go to the Classroom tab, go to the Cloud Skills Vault, scroll down until you find the Unreal Engine skills right here, and then click on Fable 5.1 and Unreal Engine 5.8.
+3:09.9  This is where you can find a zip file to throw inside of your Claude session that will connect the Unreal Engine MCP for you.
+3:17.4  It will teach your agent to go scrape the internet, find all the resources it needs to download, and set up the actual connection for you.
+3:24.6  Whether you're running on Windows or Mac, there's differences.
+3:28.1  For example, if you're running on Mac, you're gonna need to download Xcode, but it will help you with that process.
+3:33.3  So all you gotta do is download it, open that up in your downloads or wherever you saved it.
+3:37.2  You can look inside if you want, but it's just going to be a skill MD file.
+3:40.8  This walks the agent through all that is required, whether you're running Windows or Mac, scripts that it needs to download, references that I use to set up a secure and efficient connection, and then finally a README file for the
+3:53.1  agent to understand what this project is about.
+3:56.6  So if you've never created a Unreal Engine or even Blender project inside of Claude, like a separate subfolder that your Claude agents can work through, this is a great way to start out that first MCP connection to Unreal Engine.
+4:10.2  Now, this part is optional, but you can download Blender into this type of workflow if you wanna create your own game assets.
+4:17.2  So if that's maybe like swords or guns or backpacks, any type of asset or any type of custom asset, that could even be stuff in your environment like rocks, trees, or certain buildings that you want to implement, which I
+4:30.2  did in my workflow, you can download that as well.
+4:32.9  It just makes it a little bit easier organizing all of your assets.
+4:35.9  Instead of having Unreal Engine build everything, you can easily build assets inside of Blender without wasting as much context, time, and tokens using Unreal Engine.
+4:45.3  Now, another thing that you should download into this workflow is a tool called Aura, and Aura is essentially this all-in-one Unreal Engine AI-powered game building machine for your AI agents to build your game.
+4:58.6  It builds, it tests, and it verifies parts of your game, and there's a lot of studios that are jumping on Aura to build their games out faster.
+5:06.4  Also, Aura has access to all of the flagship AI models from Anthropic to OpenAI to even Kimi K three, and Aura also generated all of my image assets for the packaging of my games, all of the audio, such as
+5:21.0  little things like creating reloading audio sound effects to walking, jumping.
+5:26.4  It's a very powerful harness for your AI agents to actually build a usable game instead of jumping in blindly.
+5:33.3  So how you set this up is click the Start Building and create an account.
+5:36.7  Once you create an account, you can download for your operating system.
+5:39.8  So I am on Unreal Engine Mac OS.
+5:42.7  It gives you a walkthrough video.
+5:44.2  It's very simple to set up, and essentially is like a little chatbot that lives inside of your Unreal Engine- Sessions.
+5:51.0  Download that, and then when you open Unreal Engine, you can just click on your edit tab up here, go to your plugins, and search up Aura.
+5:58.5  You'll find the documentation right here.
+6:01.0  And once you enable that, you can see you get this pop-up right here, which brings up the Aura chat window, which again, you get access to generate a blueprint, explain an actor, fix a compile error, build a landscape, or
+6:13.2  plan a feature.
+6:14.1  So it gives you some features right off the bat to start building, and you can use the agent inside of Aura, or you can use it with your harness, like your Unreal Engine project using Opus 5.5 or ChatGPT Astra
+6:26.5  6, while this plugin is connected to build out a full game library like this.
+6:32.4  Now, before I show you my prompts, I wanna jump into some of these games of what I have created.
+6:36.6  Again, this ran overnight.
+6:38.0  I didn't interfere with it at all.
+6:39.5  I haven't iterated once, and I was given these 12 games.
+6:43.1  So let's start with Tumble Party.
+6:44.5  This was like my favorite one.
+6:46.0  I'm not gonna play audio just because it's extremely loud.
+6:48.3  I will play this the first round with no audio.
+6:50.8  But as you can see, it's like a collision course where you need to find your way through these doors, and you're racing everybody.
+6:57.1  I press W to go forward.
+6:58.5  I press space to jump.
+6:59.8  Maybe I'm terrible at this game, or there's too many characters, and I believe these are all little AI characters that I'm racing against.
+7:06.5  But here we go.
+7:07.2  I'm about to be one of the qualified people.
+7:09.6  Okay.
+7:09.8  As people are qualifying, I'm going to turn on my audio, and hopefully this is not too loud.
+7:14.0  But I can spectate people as they're completing the levels.
+7:17.3  So it's a full game so far.
+7:19.1  Okay, this next is a spin cycle, so this is the next round since I made it past the first one.
+7:23.5  All right, just gotta jump over this.
+7:24.8  Pretty easy.
+7:25.7  Okay.
+7:26.1  Well, I qualified.
+7:26.8  That was a very quick round.
+7:27.8  It usually took longer than that.
+7:29.2  All right.
+7:29.6  Round three of four, hoop hurdles.
+7:31.3  All right, can I do it?
+7:32.1  Can I do it?
+7:32.9  Oh, no.
+7:33.7  Oh, shoot.
+7:34.5  This is actually a lot harder than I thought it would be.
+7:36.4  Okay, so don't get blown over by this wind.
+7:38.4  So don't jump, it looks like.
+7:39.8  All right.
+7:40.2  I will qualify.
+7:40.9  Let's go.
+7:41.6  All right.
+7:41.9  Layer down the last round of this set.
+7:45.2  So if you've ever played Stumble Guys or, um, Fall Guys, it's very, very similar, and I believe that's the inspiration that it pulled from.
+7:51.6  Opus 5.5 did a bunch of research on popular games.
+7:54.9  Oh, no.
+7:55.5  Oh, shoot.
+7:56.3  Well, I was eliminated.
+7:57.3  Okay.
+7:57.6  They crown a winner.
+7:58.5  Cool.
+7:59.0  That's how you do it.
+7:59.9  So that was Tumble Party.
+8:01.1  Next is Storm Fall, which is like a Fortnite kind of, uh, replicate.
+8:05.0  This one, I realized there's a lot of problems with.
+8:07.5  So, okay, we got the parachute.
+8:09.4  We're flying down.
+8:10.6  It does not feel super realistic.
+8:12.6  But again, there's no iteration on this.
+8:13.9  This was all generated with that one prompt, which I don't know, honestly, how to pick up weapons.
+8:19.6  Oh, is this a chest?
+8:20.7  E to open.
+8:21.4  Uh, E to pick up.
+8:22.3  And then I can switch one, two, three.
+8:25.7  Okay.
+8:26.0  Eliminated him.
+8:27.1  I haven't played Fortnite in years.
+8:28.9  I definitely need to lower my mouse sensitivity.
+8:31.4  But look at...
+8:31.7  We even got, like, these little chug jugs.
+8:34.4  The storm's moving in.
+8:35.7  Please do not make fun of how terrible I am at this.
+8:38.5  Let's see.
+8:38.9  If I want to drink the chug jug, I'm using that.
+8:41.5  And will that give me a shield?
+8:42.6  Yep, gave me 50 shield.
+8:43.9  Let's see if we can find some more ammo.
+8:45.7  Oh, there's a guy over there.
+8:46.7  So it's a very quick version of Fortnite, I can tell.
+8:49.5  It's about 30 second intervals.
+8:51.3  Can I break down this tree?
+8:52.4  Yes, I can, and I get 49 wood from that.
+8:56.0  Oh, no.
+8:56.5  I got no ammo.
+8:57.5  Give me ammo, give me ammo.
+8:59.0  Sniper.
+8:59.6  Can I zoom in?
+9:02.4  Oh, yeah, I can zoom in.
+9:03.3  That's awesome.
+9:04.1  I'm playing on a Magic Mouse, an Apple Magic Mouse, so this is, like, insanely sensitive.
+9:09.0  Oh, I got one piece of ammo from that.
+9:10.9  Oh, no.
+9:11.5  I hope you guys are enjoying this as much as I am.
+9:13.8  Oh, shoot.
+9:14.5  All right.
+9:14.8  Seventh.
+9:15.3  Okay.
+9:15.8  First time playing, not bad.
+9:17.3  Okay, so that was, like, Storm Fall or Fortnite.
+9:19.7  One of my favorite games, City Skylines.
+9:21.6  We'll go into a simulation type game now.
+9:23.7  This is a simulation, so a city simulation.
+9:25.6  We can change our city from modern to maybe a more sci-fi look or jungle.
+9:31.7  We're in the jungle now.
+9:32.7  Temple, so, like, an Aztec city or something like Egypt.
+9:37.0  A nice little village.
+9:38.4  Um, one thing I will say is there's some glitching going on with the roofs, but that's something that we could iterate on later.
+9:44.6  Again, this is no iteration at all.
+9:46.5  So this is all off of one prompt, all 12 of these games.
+9:49.3  European, very cool.
+9:50.9  Looks like we have a little industrial area over here.
+9:52.7  Do those change as well?
+9:53.8  Oh, yeah, they do.
+9:54.6  Nice.
+9:55.3  So even the foliage changes.
+9:58.0  So temple's more tropical.
+9:59.8  Desert-like.
+10:00.7  Village is more like these green shrubbery.
+10:04.0  European looks like skinny normal trees.
+10:06.7  Then American, again, normal trees.
+10:09.3  Normal trees from what I've seen.
+10:11.3  Looks like we can speed up our traffic and our time, and we can even create stuff.
+10:15.7  So roads, if we want to create, like, a new neighborhood maybe, we can create this new neighborhood with some residential maybe.
+10:22.3  So let's add some residential here.
+10:24.0  Oh, it even added some nice building simulation.
+10:26.7  So let's add maybe a road right here.
+10:28.9  Add some commercial.
+10:29.9  People gotta shop somewhere, right?
+10:31.6  Now let's create maybe some parks.
+10:34.1  So add one more road like this and then a road going through here, and then we'll add some nice little parks for our citizens.
+10:41.4  And then we can just keep building.
+10:43.0  And if we ever want to change it, we can look at a different type of city style.
+10:47.4  We see we have population rising 'cause we added more residential.
+10:50.9  Jobs have increased because we added more commercial.
+10:53.1  We have a happiness score.
+10:54.2  We have power, zone view, and we even have fun.
+10:57.0  So there's an economy with this.
+10:58.8  So it's like a strategy simulation game, just like City Skylines or Sim City.
+11:02.5  But if we want to add more industrial, we can definitely do that just like this.
+11:06.0  Boom, we have more industrial.
+11:07.4  Or inspect.
+11:08.2  Can we inspect?
+11:09.0  We can inspect individual buildings.
+11:10.7  So we'll just give this individual stats on...
+11:13.1  Oh, yeah.
+11:13.6  So there's 42 workers out of 65 in this building.
+11:16.1  This looks like a residential building right here.
+11:18.0  Apartment block.
+11:18.8  Yep, residence.
+11:19.8  Gives us land value.
+11:21.1  So it seems like it's a very simplified City Skylines, almost like 8-bit City Skylines.
+11:27.1  Very, very impressed with this.
+11:28.7  It looks like we can even load old games, create new games, or save this game if we want to save our progress, so awesome.
+11:34.4  Let's go into Drift Karts, which is the Mario Kart replica.
+11:38.5  We can choose from different speedways that it had created, which is awesome.
+11:41.7  So Neon Light, Candy Canyon, and Sunny Speedway.
+11:45.5  Let's maybe do just for the visuals, Neon or Sunny Speedway.
+11:50.2  But let's do this.
+11:51.1  I loved Mario Kart as a kid.
+11:53.0  You can see we have, like, the little boxes to give us power ups.
+11:56.2  We have speed ramps right here.
+11:57.9  Looks like this guy above me has a shield.
+12:00.1  No.
+12:00.5  All right.
+12:00.7  This is something I can definitely get behind.
+12:02.4  I need to power up really bad.
+12:03.7  No, no, no.
+12:04.4  Even if we go in the grass, we slow down.
+12:06.4  That's crazy.
+12:07.4  All right, lap two out of three.
+12:08.6  I am in eighth place.
+12:09.8  That is terrible.
+12:10.8  Let's ramp this up.
+12:11.6  All right.
+12:11.8  I got a power up.
+12:12.3  Let's see what I get.
+12:13.2  A banana.
+12:14.1  Oh, no.
+12:14.5  Power up.
+12:15.0  Oh, no.
+12:15.6  Rescue drone.
+12:16.0  Rescue drone.
+12:16.8  I need these.
+12:17.5  All right.
+12:17.6  This is super embarrassing.
+12:18.5  I'm showing off how bad maybe I am at playing video games on Mac.
+12:22.7  All right, final lap.
+12:23.4  Can I clutch up?
+12:24.4  Can I clutch up?
+12:25.3  I'm still in eighth place.
+12:26.8  Give me that power up.
+12:27.6  Don't slow me down.
+12:28.3  Come on.
+12:29.0  Shield, I don't need that right now.
+12:30.6  I'm in eighth place.
+12:31.3  I think I'm literally in last place.
+12:32.9  Shield is running out here.
+12:34.2  Can I clutch up with some boosters?
+12:36.2  Yes.
+12:36.8  All right.
+12:37.5  I didn't finish last, but I got second to last.
+12:40.2  Gives us a little scoreboard right here, but that was pretty fun.
+12:42.4  All right, here's Block Hop Obby.
+12:44.1  So I used to love these when I was a kid.
+12:45.8  It's like obstacle courses.
+12:47.3  My mouse is so sensitive, and I promise you I'm not saying that because I'm terrible at these games, but I just have to be careful about moving my mouse.
+12:56.4  No.
+12:57.3  Do I get a starting point?
+12:58.7  Yes, I do.
+12:59.2  So if you're a Roblox developer, this is definitely something that you could play around with.
+13:03.1  And I'm curious on how this performs on mobile phones and mobile gaming as a whole, 'cause this I could see as an amazing use case to sell a game on a platform like Roblox, where people are making this crazy
+13:15.8  money, and it's so easy now to create a game.
+13:18.7  All right, just gotta go straight, gotta go straight.
+13:20.2  Sorry, I'm getting distracted.
+13:21.3  Okay, hit that checkpoint.
+13:23.4  Can't touch the red.
+13:24.2  Nice little death animation.
+13:26.0  No.
+13:27.3  Well, you guys can probably call me the worst egg creator at playing video games that I created myself, um, 'cause I'm embarrassing myself right now.
+13:35.7  Oh, I just missed the checkpoint.
+13:37.1  Okay, you guys get the point.
+13:37.9  It looks like the objectives, there's about 11 levels way over there, so it's pretty crazy.
+13:44.2  Now we can test out Metro Dash, which is kind of like a Subway Surfers.
+13:48.4  Okay, W to jump.
+13:49.6  Oh, shoot.
+13:50.2  Collecting some coins here.
+13:51.6  Train moving in.
+13:52.6  Okay, and again, nice little wipe-out animation too, so that's pretty cool.
+13:56.3  Now, I wonder if there's any power-ups that it added like in normal Subway Surfers.
+14:01.1  So let's keep going until we find a power-up.
+14:03.2  Okay, looks like we got a jetpack.
+14:04.8  Nice.
+14:05.2  So we can collect all these coins up here with our jetpack.
+14:07.9  I like this little train animation that's coming in too.
+14:10.2  It's pretty cool.
+14:10.8  Another jetpack, let's go.
+14:12.4  See how far we can go with this.
+14:13.8  I just saw a magnet as well, so there's another power-up you can get in the game.
+14:17.9  Magnet.
+14:18.6  Oh.
+14:19.4  Okay.
+14:19.8  Well, cool.
+14:20.4  Okay, here's like a Minecraft replica.
+14:22.9  So it looks like if I break wood, maybe...
+14:24.7  Yep, we got a nice little animation floating block.
+14:27.4  I can pick that up.
+14:28.3  Now let's see if I can get some pig meat.
+14:31.5  Come here, buddy.
+14:32.1  Nice.
+14:32.6  I did not get anything from that.
+14:33.9  I got an apple.
+14:34.8  That's cool.
+14:35.2  I get an apple, some dirt.
+14:37.0  Does not look like it's giving me any, like, pork chops in, like, a normal Minecraft game.
+14:40.8  But it is giving me XP, and I do have hunger.
+14:43.6  But if I can't eat, I guess maybe...
+14:45.5  Oh, it's giving me apples instead of pork chops.
+14:48.2  So how do I eat this?
+14:49.4  Yeah, there you go.
+14:50.1  If I eat it, it goes up one hunger bar.
+14:52.2  Definitely need a better water simulation, but it kind of got the point, right?
+14:55.9  Can I get out of this?
+14:56.8  Is that the real question?
+14:58.0  Yes, I can.
+14:58.7  Okay, cool.
+14:59.5  Here is Cannibal Kings, which is like Angry Birds.
+15:03.8  So I have my red ruffle, and my objective is to destroy all of this over here and make sure that the green guys are eliminated.
+15:11.5  All right, let's shoot this off.
+15:12.5  Can I get it in one shot?
+15:13.6  No, I can't.
+15:14.3  Okay, let's get this guy.
+15:15.7  Oh, it even saved my last throw, which is kind of cool.
+15:17.8  Boom, popped them all.
+15:18.9  Let's go to the next step.
+15:20.0  Check them off.
+15:20.9  Cool, I like this.
+15:21.7  This is fun.
+15:22.5  Oh, and that was a different bird as well, so...
+15:24.4  Now I need to hit this guy.
+15:25.6  Make sure I crush him right here.
+15:26.8  Boom.
+15:27.3  I cannot believe Opus 5 created this all overnight for me.
+15:30.7  So insane.
+15:31.5  Oh, that's gonna be tough getting him.
+15:32.8  So I have this yellow fluffle.
+15:34.6  Turbo dash in the air.
+15:35.8  Let's see.
+15:36.5  Click midair for turbo dash.
+15:38.3  Oh, okay, so if you double-click the space bar, he goes faster.
+15:41.2  That's really cool that Opus 5.5 implemented that.
+15:44.6  I don't know if I'm gonna be able to beat this level.
+15:45.9  Oh, yeah, I did.
+15:46.6  Okay, red fluffle.
+15:48.3  Let's get this first guy out of the way.
+15:49.9  Blue fluffle.
+15:51.1  Click midair, split into three.
+15:53.0  Okay, let's utilize this.
+15:54.6  Boom, split into three.
+15:56.1  Oh, I thought that was going to be it.
+15:57.7  All right, we just need to hit this green guy right here.
+15:59.4  Let's go down a little bit.
+16:00.6  Oh, just barely.
+16:01.5  And we got him.
+16:02.2  So there's Angry Birds.
+16:03.3  It looks like there's a lot more levels.
+16:05.0  Now let's try a GTA one that it created.
+16:07.4  The characters are just, like, the default Unreal characters.
+16:11.5  But here is where Blender came into play.
+16:13.7  It created these assets for us in Blender, I believe, which definitely needs some iteration, but I can zoom in here.
+16:20.0  I wonder if there's cops and how they react.
+16:22.8  Again, I'm, I'm a magic mouse, so it's hard to aim and shoot at the same time.
+16:27.2  If you're not familiar, this is what a magic mouse look like, so it's not really a gaming mouse.
+16:30.8  Let's see.
+16:31.4  So this one definitely needs a lot of work.
+16:33.5  Okay, now I see the cops.
+16:35.2  Where are they?
+16:35.9  There they are.
+16:36.5  Knocked out.
+16:37.3  Classic GTA animation.
+16:39.0  Cool.
+16:39.5  That's awesome.
+16:40.2  Then we have one for CS:GO, which is very similar to GTA, where it's two teams fighting.
+16:45.5  So we can see right over here, here is our Blender-created weapon.
+16:48.7  Does not look very awesome, but we could always update that with some iteration.
+16:51.9  And then I can see on the map where the enemies are, these red dots on the left up here.
+16:55.8  Is that an enemy?
+16:56.5  No.
+16:56.9  Oh yeah, it is.
+16:57.5  Okay, shoot.
+16:58.5  Okay, now I'm spectating.
+16:59.6  Okay, so you guys get the point.
+17:00.6  Here's Dead Zone, which is like Call of Duty: Zombies.
+17:03.1  This one i- is insanely fast, so I probably will not survive very long.
+17:07.4  But it has that Call of Duty vibe to it.
+17:09.8  And I can buy, like, new weapons and stuff based off of kills.
+17:12.9  And I die.
+17:13.7  Cool.
+17:14.0  You guys get the point.
+17:14.8  And I believe the last one is Rocket League.
+17:17.7  Let's see if we can score a goal here.
+17:19.4  Okay, I got stuck behind a wall for a second there.
+17:21.9  I need some more boosts.
+17:23.2  But it's nice, it's got this nice camera animation that follows the ball around.
+17:26.3  And I keep getting stuck behind this wall, so definitely need some iteration upon the game mechanics.
+17:31.3  Shoot.
+17:31.9  We are losing now.
+17:32.9  Boom, get out of my way, bro.
+17:34.3  Okay, but you guys get the point.
+17:35.7  So just like that, we can create a category of games, whether that's 12 like I created here for you guys just to get some inspiration, or one full stack game utilizing the Unreal Engine MCP, flagship models like Opus 5.5,
+17:49.2  and then Aura as our agent harness for building full-scale games like this.
+17:54.3  So I hope you guys enjoyed this video.
+17:55.9  I highly recommend that you test this out.
+17:58.2  Plug in Aura into your Unreal Engine projects and start building legit games in your agent sessions.
+18:03.9  Again, that free skill is in my free school community to set up the Unreal Engine.
+18:07.9  It'll also plug in anything about Aura.
+18:10.5  So if you need help setting that up, feel free to reach out in the comments, ask your agent.
+18:14.3  I'm gonna leave you guys with that, and as always, I will see you in the next one.
+18:17.6  Thanks.

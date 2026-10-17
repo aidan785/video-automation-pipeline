@@ -1,0 +1,47 @@
+{
+  "result": "PASS",
+  "render": "clean-v2.mp4",
+  "fresh_transcript": "final-video.json",
+  "editorial_cuts": 77,
+  "phrase_checks": 47,
+  "retake_read": "Complete392sentence transcript read top-to-bottom; setup, all12gameplay demos, and outro remain coherent. Similar-sentence list contains intentional gameplay questions and repeated observations across separate events.",
+  "repeat_warning_judgments": [
+    {
+      "pattern": "very very",
+      "count": 2,
+      "verdict": "Intentional emphasis"
+    },
+    {
+      "pattern": "this This",
+      "count": 2,
+      "verdict": "Complete sentence boundaries"
+    },
+    {
+      "pattern": "No no no",
+      "count": 2,
+      "verdict": "Gameplay reaction; retain all three words"
+    },
+    {
+      "pattern": "it it",
+      "count": 1,
+      "verdict": "First it is object of eat, second is subject of goes; preserve grammatical transition"
+    },
+    {
+      "pattern": "I'm I'm",
+      "count": 1,
+      "verdict": "ASR misrecognizes on as second Im; isolated raw678s confirms one Im followed by on"
+    },
+    {
+      "pattern": "here Here",
+      "count": 1,
+      "verdict": "Complete sentence boundary"
+    }
+  ],
+  "additional_asr_judgment": "Fresh i-is before insanelyfast is ASR split; raw isolated776.7-779.1 confirms single is. Retained source frames contain complete speech.",
+  "visual_checks": {
+    "inspected_frames": 5,
+    "split_screen": "Speaker and desktop/game framing intact at beginning, quarter points, and ending",
+    "source_frame_comparisons": 37,
+    "min_psnr_db": 51.478056309285314
+  }
+}

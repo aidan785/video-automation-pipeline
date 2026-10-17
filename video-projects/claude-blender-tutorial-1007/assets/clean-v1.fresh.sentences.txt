@@ -1,0 +1,116 @@
+0:00.2  So jumping straight into how this is possible, there's only two things you need for this setup.
+0:05.8  That is access to Claude, specifically Opus 5.5.
+0:09.0  It's not required, but that is the newest model from Claude, and it performs so well inside of Blender.
+0:14.2  And then naturally off of that, you are going to need Blender.
+0:16.8  This is where we're going to build all of our animations, our scenes, and this is we're gonna let Opus 5.5 or any Claude model run and execute inside of our Blender session.
+0:27.0  So there's a ton of tutorials out there right now where we turn a Blender render into a pre-viz, and then we feed that to an AI video model like CDance 2.5 and generate a video off of our pre-viz.
+0:37.2  I mean, myself specifically, I have been hammering the Blender pre-viz to CDance 2.5 workflow for the past month now, and I've pretty much mastered how to actually do it.
+0:47.0  But in this video today, the whole purpose is to not use an AI model and to just use our Blender viewport.
+0:52.0  Let's push Claude to the absolute limit of what it knows about animation, textures, environment design, realism, without using an AI model.
+1:00.8  Because using an AI model like CDance 2.5 can get, one, very expensive.
+1:05.3  Two, it's just a hassle because you're constantly re-prompting and regenerating because your outputs are never consistent.
+1:11.2  But with a Blender viewport like this, everything is in a 3D environment inside Blender.
+1:15.7  So we can try to get it as realistic as possible and obtain all of the characteristics and styles and objects inside of our scene without losing it in an AI video generation.
+1:25.0  And this viewport is just a sneak peek of what we're creating today, by the way.
+1:28.4  So before you go in the comments and say this is all AI hype and AI models can't generate realistic scenes inside of Blender, I'm just gonna show you some of the outputs that I have been getting in images.
+1:38.3  I will show you the videos at the very end.
+1:40.4  So this is like a spaceship scene.
+1:42.0  The spaceship is going through some nebula of some sort, and I had it generate multiple different angles to kind of signify, okay, this is like an action shot.
+1:57.3  Here's more of like a depth shot where we have the asteroids or meteors.
+2:01.5  I don't understand the space terminology yet, but if you do know, let me know in the comments.
+2:06.0  But we have these rocks that are floating around the spaceship, some more angles of some action shots.
+2:10.7  And again, an AI generated all this inside of Blender without using a single image or video model.
+2:16.1  Or even this shot, what I just showed you about one minute ago, an alien-looking lizard on a branch, but there's a depth of field, there's realism.
+2:23.9  It also is animated, which I won't show you yet because I wanna show you the process of how we can animate and rig a character.
+2:29.4  But again, the AI model is getting so good, we honestly don't even need a video generation model for the specific tasks that we're trying to achieve with our Blender viewport.
+2:38.1  Or here's another one.
+2:38.9  This one I actually was least happy about.
+2:40.7  It doesn't look like a caterpillar, and maybe the style that I prompted Claude was not specific enough, but it just looks a little bit too toyish and too unrealistic.
+2:50.3  But again, this was all generated with Opus 5.5 and Blender.
+2:53.7  This one was also animated as well.
+2:55.2  As you can see, it goes through this very smooth head turn, turns to the camera, which again, I'll show you in the very end of the video.
+3:01.5  But this is what we can do with AI now without an AI video model.
+3:05.0  So how we're going to do this, it's very simple.
+3:07.2  It's just like all the workflows I've done on my channel, having Claude connected to Blender.
+3:11.2  So if we want to make sure that our Blender connection is set up, we just do /MCP, and that will open up our list of MCPs.
+3:17.4  We can search Blender right here, and you can see we are connected to Blender.
+3:21.3  You also wanna have an empty Blender viewport open.
+3:23.9  I will clear this.
+3:24.9  So now we have a completely empty Blender session that we can start building in.
+3:28.9  And so if you're looking to just create still shots, it makes your life really easy.
+3:32.7  Opus 5.5 does a great job pulling references from the internet or even pulling references from a prompt that you create.
+3:39.0  But when it comes to rigging, this is where it gets a little bit more difficult because this character has different ligaments.
+3:43.8  It has arms, legs, a tail.
+3:45.8  It has individual fingers.
+3:47.4  It has eyebrows.
+3:48.4  It has these tentacles at the top of its head, or I guess antennas.
+3:51.7  If we're creating a video, we wanna add motion to that character.
+3:54.9  Just a sneak peek, if I play this, you can see that the fingers are moving down here.
+3:58.2  So let me just zoom in right here.
+3:59.7  Let me get out of pose mode so we can just select the actual fingers, but we can see that his fingers move, and he is merging with a vine right here, so we will need to fix that.
+4:08.8  Or even his throat croaking.
+4:11.6  He's a lizard of some sort, so it was able to pick that up.
+4:14.6  His head moves as this little bug flies by, which if you can't see, the bug is right here.
+4:18.7  You can barely even see it, but it does float right by him, and it's like he's almost tracking it if we go into our camera view.
+4:24.2  He's tracking the bug as it flies by, but he still has all of the natural motion.
+4:28.7  And AI did this.
+4:29.6  AI was able to pull this, and I honestly didn't even reference, like, this is how a lizard moves, this is what I want it to happen.
+4:35.5  It added the little bug to fly by, and then it tracked the bug and animated that in my viewport.
+4:40.2  And so what I like to do when prompting these types of scenes, if I want inspiration from something, I always pull from the internet.
+4:46.1  And so this right here from the actual Blender website was my inspiration.
+4:50.2  All I did was copy this image, go back into my Claude session, and paste that image in, and give it this very natural language text prompt.
+4:57.2  This is not a structured prompt.
+4:59.2  You don't need to be wasting your time giving structured prompts to Claude to generate in Blender.
+5:04.3  Maybe you do when it comes to image generation or video generation, but because we're skipping that part entirely and relying only on the Blender viewport, you can talk to it naturally as you would maybe a junior 3D designer.
+5:15.4  And that's how I treat my Claude when it's working inside of Blender.
+5:18.2  I always think of it as, okay, it's in its training session of building inside of Blender, so we have to talk to it naturally.
+5:24.5  And so all I said is, I want you to create this type of creature scene.
+5:27.1  Again, keep it as realistic as possible with the goal of this creature being rigged in the future, then animated very smoothly.
+5:33.3  If you're having any trouble with the rig stuff, maybe there is something that you can find online, so go search references, like a free character model for this, or build it yourself.
+5:41.5  This is going to be a very difficult build because of the rigging and the realism and how unique it is.
+5:46.2  And that is all I shot off.
+5:47.5  There's no special trick that you need to prompt Claude to generate these types of scenes.
+5:52.7  And with that one prompt, it gave me these reference images, and then finally the actual reference video, which is in 480p, so it's very low quality.
+6:00.3  I just wanted to render out fast 'cause it takes about like an hour to two hours to render out.
+6:04.2  But you can see you have the animation of the actual lizard.
+6:07.0  He sees the bug fly by.
+6:08.4  It's out of the depth of the camera, so it's a little blurred out.
+6:10.9  But you can see he seems very natural.
+6:13.0  He's moving like a normal lizard.
+6:14.7  His antennas are flowing as he moves his head.
+6:17.7  He taps his fingers.
+6:18.8  Now, the one thing obviously is right here in this bottom right corner, his fingers are merging through this vine, this branch, so we need to update that.
+6:27.2  But the great thing is, because this is rigged, we can go back into Blender, zoom in on that finger that was interacting or interfering with the vine, and then just move it up.
+6:39.0  All right, and now we have the hand not interfering within the branch anymore.
+6:44.0  Oh, I guess maybe just a little bit right here, which we can fix just by turning this, grabbing it, and shifting it forward.
+6:50.7  Go back to our main camera view, and you can see And now that finger is not interfering with our branch.
+7:00.8  So because Claude rigged it for us, and say I had no rigging experience, I can then iterate myself after Claude is done finished.
+7:07.2  So I'm really happy with how this turned out.
+7:09.1  I think it's really cool that Open 5.5, a Claude model, can generate something like this inside of Blender, and it's getting closer and closer to actually being implemented in real 3D workflows.
+7:19.0  And so here's the 1080 output.
+7:21.1  One thing I'm noticing that I need to fix is about halfway through the video, he turns black, his character completely glitches out.
+7:28.2  But as you can see, it's so much cleaner with the 1080p version for these first like four seconds before he changes his color, which that's a glitch inside of Blender that Claude definitely messed up on.
+7:37.4  But again, I can reiterate in the future.
+7:39.4  I just had that run for about two hours though, so I'm not going to rerun that.
+7:42.8  But it looks so clean, and it's getting so good at the actual animation side of Blender.
+7:49.3  So I'm really ha- So I'm really happy with how this animation turned out in this scene.
+7:53.7  It's something I would honestly post on like my social media.
+7:56.1  Maybe not the glitch, but a full rendered out video clean.
+7:59.3  And here's that caterpillar scene with its little rig.
+8:01.7  So this is how it animated it.
+8:03.3  It just is like walking around.
+8:04.8  It's like a jiggly caterpillar, and then it turns its head.
+8:07.6  Very fluid motion.
+8:08.8  Let me just denoise this so you guys can actually see.
+8:10.8  But it's a very bright environment.
+8:12.2  There's some depth of field to the camera, which I'm always a huge fan of.
+8:16.1  But it is pretty cute, and it's kind of cool to see that it was able to generate this like blobby texture for our caterpillar.
+8:22.7  And so what that animation looks like within Eevee generation, so this is not cycles, but this is what we get, this like flowy, gooey caterpillar.
+8:29.6  He kind of turns, his antennas move as he's like bouncing around and turning.
+8:35.6  But it's really cool that this entire scene was generated with Claude inside of Blender, and now I can go inside of Blender and iterate upon it without even touching AI video generation models like Cdance 2.5 and wasting my money
+8:47.6  there.
+8:48.0  So I'm just testing out these capabilities, and I'm sure that they're going to get better and better and better as time goes on.
+8:53.2  But I highly recommend that you stick around to see more AI Blender workflows like this.
+8:57.7  If you guys enjoyed this video, please feel free to give this video a like.
+9:00.6  It helps me out a ton.
+9:01.6  I'm gonna leave you guys with that, and as always, I will see you in the next one.

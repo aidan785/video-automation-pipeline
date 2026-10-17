@@ -1,0 +1,193 @@
+{
+  "result": "PASS",
+  "actual_video": "assets/clean-v2.mp4",
+  "fresh_transcript": "assets/final-video.json",
+  "fresh_sentences": "assets/final-video.sentences.txt",
+  "acoustic_log": "assets/final-video.silencedetect.log",
+  "review_scope": "Read entire final sentence dump top to bottom from the opening Steam-library sentence through the closing Thanks; scanned every adjacent fresh word gap. Decoded actual final MP4 PCM for 50 ms RMS samples around all three acoustic candidates. Reused the previous raw-source isolate transcription evidence for quiet words.",
+  "word_count": 3867,
+  "word_gap_threshold_seconds": 0.75,
+  "word_gaps_exceeding_threshold": [],
+  "largest_word_gaps": [
+    {
+      "start": 797.252,
+      "end": 797.992,
+      "duration": 0.74,
+      "previous": "checkpoint.",
+      "next": "Can't"
+    },
+    {
+      "start": 547.692,
+      "end": 548.412,
+      "duration": 0.72,
+      "previous": "am.",
+      "next": "Oh,"
+    },
+    {
+      "start": 509.172,
+      "end": 509.852,
+      "duration": 0.68,
+      "previous": "sensitivity.",
+      "next": "But"
+    },
+    {
+      "start": 800.712,
+      "end": 801.34,
+      "duration": 0.628,
+      "previous": "No.",
+      "next": "Well,"
+    },
+    {
+      "start": 771.252,
+      "end": 771.872,
+      "duration": 0.62,
+      "previous": "No.",
+      "next": "Do"
+    },
+    {
+      "start": 452.732,
+      "end": 453.292,
+      "duration": 0.56,
+      "previous": "no.",
+      "next": "Oh,"
+    },
+    {
+      "start": 536.292,
+      "end": 536.852,
+      "duration": 0.56,
+      "previous": "Can",
+      "next": "I"
+    },
+    {
+      "start": 544.972,
+      "end": 545.532,
+      "duration": 0.56,
+      "previous": "that.",
+      "next": "Oh,"
+    },
+    {
+      "start": 634.372,
+      "end": 634.932,
+      "duration": 0.56,
+      "previous": "parks",
+      "next": "for"
+    },
+    {
+      "start": 1034.48,
+      "end": 1035.04,
+      "duration": 0.56,
+      "previous": "wall",
+      "next": "for"
+    }
+  ],
+  "largest_gap_adjudication": [
+    {
+      "gap": [
+        797.252,
+        797.992
+      ],
+      "duration": 0.74,
+      "context": "Okay, hit that checkpoint. Can't touch the red.",
+      "judgment": "Brief gameplay action transition; under0.75s and consistent with live demonstration rhythm."
+    },
+    {
+      "gap": [
+        547.692,
+        548.412
+      ],
+      "duration": 0.72,
+      "context": "I hope you guys are enjoying this as much as I am. Oh, shoot.",
+      "judgment": "Brief live reaction transition; under0.75s and contextually intentional."
+    },
+    {
+      "gap": [
+        800.712,
+        801.34
+      ],
+      "duration": 0.628,
+      "context": "No. Well, you guys can probably call me the worst...",
+      "judgment": "Previously investigated game-sound remnant was trimmed; resulting voice gap is below0.75s."
+    }
+  ],
+  "leading_speech_gap_seconds": 0.3,
+  "trailing_speech_gap_seconds": 0.346667,
+  "actual_duration_seconds": 1092.166667,
+  "acoustic_candidates": [
+    {
+      "start": 544.902917,
+      "end": 545.510188,
+      "duration": 0.607271,
+      "result": "PASS",
+      "context": "one piece of ammo from that. Oh, no.",
+      "fresh_words": {
+        "that.": [
+          544.812,
+          544.972
+        ],
+        "Oh,": [
+          545.532,
+          545.572
+        ]
+      },
+      "actual_interword_gap_seconds": 0.56,
+      "evidence": "The -30dB span starts69ms before the fresh that token ends. Final PCM RMS is -38.9dB at544.90\u2013544.95 and -46.7dB at544.95\u2013545.00, confirming its quiet decay; Oh rises to -33.5dB at545.50\u2013545.55. Raw part2 isolate found that\u2192Oh gap0.54s. This is a short gameplay reaction pause plus quiet-word tails, not >0.75s deadair.",
+      "action": "Preserve."
+    },
+    {
+      "start": 937.096958,
+      "end": 937.697854,
+      "duration": 0.600896,
+      "result": "PASS",
+      "context": "Opus5.5 implemented that.",
+      "fresh_words": {
+        "5.5": [
+          936.74,
+          937.24
+        ],
+        "implemented": [
+          937.72,
+          938.04
+        ]
+      },
+      "actual_interword_gap_seconds": 0.48,
+      "evidence": "Candidate begins during the final five decay. Final RMS remains -41.1 to -45.5dB through937.10\u2013937.30; implemented rises at937.65\u2013937.75. Raw source isolate584\u2013589 confirmed the complete5.5 and implemented with no hidden words, and quieter thresholds broke the broad -30dB span into shorter pieces. Actual voice gap is0.48s.",
+      "raw_evidence": [
+        "assets/p3-isolate-3.json",
+        "p3-residual-recommendations.json"
+      ],
+      "action": "Preserve quiet syllables and the short natural pause."
+    },
+    {
+      "start": 1034.475854,
+      "end": 1035.146438,
+      "duration": 0.670583,
+      "result": "PASS",
+      "context": "behind a wall for a second there.",
+      "fresh_words": {
+        "wall": [
+          1034.22,
+          1034.48
+        ],
+        "for": [
+          1035.04,
+          1035.1
+        ],
+        "a": [
+          1035.12,
+          1035.16
+        ]
+      },
+      "actual_interword_gap_seconds": 0.56,
+      "evidence": "The -30dB span covers the wall tail, the entire quiet for token, and the beginning of a. Final RMS is -41.1dB at1034.50\u20131034.55, -41.3dB at1035.05\u20131035.10, and -39.1dB at1035.10\u20131035.15. Raw source isolate850\u2013856 confirmed wall for a second there; the apparent silence was quiet speech at the noise threshold. Actual wall\u2192for gap is0.56s.",
+      "raw_evidence": [
+        "assets/p3-isolate-4.json",
+        "p3-residual-recommendations.json"
+      ],
+      "action": "Preserve the complete sentence and short natural pause."
+    }
+  ],
+  "noise_floor_judgment": "A fixed -30dB detector includes quiet consonants, word decays, and some low-level speech. Its three >=0.6s spans are false positives for uncut voice gaps; no blanket -30dB0.6s editing target was applied.",
+  "recommended_new_edits": [],
+  "failures": [],
+  "conclusion": "Final silence sweep passes. No fresh word gap exceeds0.75s; all three acoustic candidates preserve confirmed quiet words and contain only shorter natural voice pauses."
+}

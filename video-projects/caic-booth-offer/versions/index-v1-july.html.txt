@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>CAIC — Booth Offer (motion graphics, Oct 2026)</title>
+    <link href="assets/fonts/fonts.css" rel="stylesheet">
+    <script src="assets/gsap.min.js"></script>
+    <script src="assets/caic/seal.js"></script>
+    <style>
+      :root {
+        /* CAIC design system tokens (caic-design-system/tokens) */
+        --bg: #07121c;
+        --panel: #0d2031;
+        --bg-raised: rgba(13, 32, 49, 0.6);
+        --fg: #ffffff;
+        --fg-muted: #d1dce8;
+        --fg-quiet: rgba(209, 220, 232, 0.62);
+        --accent: #37bdf8;
+        --accent-10: rgba(55, 189, 248, 0.1);
+        --accent-15: rgba(55, 189, 248, 0.15);
+        --accent-30: rgba(55, 189, 248, 0.3);
+        --accent-deep: #19506c;
+        --border-soft: rgba(55, 189, 248, 0.3);
+        --font-sans: "Montserrat", sans-serif;
+        --font-mono: "Roboto Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; color: var(--fg); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); isolation: isolate; }
+      #root > .clip { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+      /* ---------- the command deck (background world) ---------- */
+      .bg { z-index: 0; }
+      .bg .radial { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% -10%, var(--accent-deep) 0%, var(--bg) 58%, var(--bg) 100%); }
+      .bg .grid {
+        position: absolute; inset: 0;
+        background-image:
+          linear-gradient(rgba(55, 189, 248, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(55, 189, 248, 0.08) 1px, transparent 1px);
+        background-size: 48px 48px;
+        -webkit-mask-image: radial-gradient(ellipse at 32% 42%, black 0%, transparent 72%);
+                mask-image: radial-gradient(ellipse at 32% 42%, black 0%, transparent 72%);
+      }
+      .bg .edge-glow { position: absolute; inset: 0; box-shadow: inset 0 0 110px 0 var(--accent-10); border: 1px solid var(--accent-10); }
+
+      /* ---------- Nate — zoomed, pinned right, feathered left edge ---------- */
+      .video-slot { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 1; overflow: hidden; pointer-events: none;
+        -webkit-mask-image: linear-gradient(90deg, transparent 170px, black 660px);
+                mask-image: linear-gradient(90deg, transparent 170px, black 660px);
+      }
+      /* outer places the frame; video sizing/offset baked from Aidan's Studio placement (no animated zoom) */
+      .video-pos { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+        transform: translate(158px, 0px) scale(1.15); transform-origin: 0 0; }
+      .video-push { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 902px 356px; }
+      .video-push video { display: block; width: 1920px; height: 1080px; object-fit: cover; }
+
+      /* seats the left column: navy scrim over the video's left region */
+      .scrim { z-index: 2; background: linear-gradient(90deg, rgba(7, 18, 28, 0.97) 0%, rgba(7, 18, 28, 0.82) 28%, rgba(7, 18, 28, 0.35) 48%, transparent 66%); }
+
+      .vignette { z-index: 4; background: radial-gradient(ellipse at 55% 45%, transparent 55%, rgba(2, 8, 14, 0.5) 100%); }
+
+      /* ---------- left column beats ---------- */
+      .beat { z-index: 3; }
+      .beat .col { position: absolute; left: 120px; top: 0; width: 720px; height: 1080px;
+        display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+
+      .eyebrow { font-family: var(--font-mono); font-size: 27px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
+      .eyebrow .chars { display: inline; white-space: nowrap; }
+      .eyebrow .ch { display: inline-block; }
+
+      .headline { font-family: var(--font-sans); font-weight: 500; font-size: 74px; line-height: 1.16; letter-spacing: -0.01em; color: var(--fg); margin-top: 28px; }
+      .headline em { font-style: italic; font-weight: 700; color: var(--accent); text-shadow: 0 0 50px rgba(55, 189, 248, 0.5); }
+
+      .caption { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--fg-muted); margin-top: 34px; }
+
+      /* mono checklist / numbered module rows */
+      .rows { display: flex; flex-direction: column; gap: 22px; margin-top: 38px; }
+      .row { display: flex; align-items: center; gap: 22px;
+        padding: 26px 30px; width: 700px;
+        background: var(--bg-raised); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border: 2px solid var(--border-soft); border-radius: 16px; }
+      .row .tick { flex-shrink: 0; width: 36px; height: 36px; color: var(--accent); }
+      .row .num { flex-shrink: 0; font-family: var(--font-mono); font-size: 30px; font-weight: 500; color: rgba(209, 220, 232, 0.55); }
+      .row .txt { font-family: var(--font-mono); font-size: 28px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-muted); }
+      .row .txt strong { color: var(--fg); font-weight: 700; }
+
+      /* knowing vs proving cards */
+      .duel { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
+      .duel-card { width: 700px; padding: 32px 36px; border-radius: 20px;
+        background: var(--bg-raised); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border: 2px solid rgba(255, 255, 255, 0.18); }
+      .duel-card .label { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--fg-quiet); }
+      .duel-card .line { font-family: var(--font-sans); font-weight: 500; font-size: 40px; color: var(--fg-muted); margin-top: 12px; }
+      .duel-card.win { border: 2px solid var(--accent); box-shadow: 0 0 40px -10px var(--accent-30); }
+      .duel-card.win .label { color: var(--accent); }
+      .duel-card.win .line { color: var(--fg); }
+
+      /* program reveal */
+      .designation { font-family: var(--font-mono); font-size: 29px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-top: 30px; white-space: nowrap; }
+      .wordmark { font-family: var(--font-sans); font-style: italic; font-weight: 700; font-size: 190px; line-height: 1; letter-spacing: -0.02em; color: var(--fg); text-shadow: 0 0 80px rgba(55, 189, 248, 0.5); margin-top: 10px; margin-left: -6px; padding-right: 40px; }
+      .attribution { font-family: var(--font-mono); font-size: 21px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-muted); margin-top: 26px; }
+
+      /* stats */
+      .stat-value { font-family: var(--font-sans); font-weight: 700; font-size: 210px; line-height: 0.95; letter-spacing: -0.02em; color: var(--fg); text-shadow: 0 0 30px rgba(55, 189, 248, 0.6); }
+      .stat-label { font-family: var(--font-mono); font-size: 27px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-top: 16px; }
+      .stat-sub { display: flex; align-items: baseline; gap: 26px; margin-top: 52px; }
+      .stat-sub .v { font-family: var(--font-sans); font-weight: 700; font-size: 96px; letter-spacing: -0.01em; color: var(--fg); text-shadow: 0 0 30px rgba(55, 189, 248, 0.4); }
+      .stat-sub .l { font-family: var(--font-mono); font-size: 25px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-muted); }
+
+      /* CTA pill */
+      .cta-pill { display: inline-block; padding: 36px 68px;
+        background: linear-gradient(180deg, var(--accent-15) 0%, rgba(13, 32, 49, 0.8) 100%);
+        border: 2px solid var(--accent); border-radius: 9999px;
+        box-shadow: 0 0 20px rgba(55, 189, 248, 0.3);
+        font-family: var(--font-sans); font-size: 38px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--fg); }
+
+      /* closing seal */
+      .seal-wrap { position: relative; width: 380px; height: 380px; }
+      .seal-halo { position: absolute; inset: -60px; border-radius: 50%; background: radial-gradient(circle, rgba(55, 189, 248, 0.22) 0%, transparent 65%); }
+      .close-headline { font-family: var(--font-sans); font-weight: 500; font-size: 62px; line-height: 1.2; color: var(--fg); margin-top: 48px; }
+      .close-headline em { font-style: italic; font-weight: 700; color: var(--accent); text-shadow: 0 0 50px rgba(55, 189, 248, 0.5); }
+      .close-caption { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--fg-muted); margin-top: 30px; }
+
+      /* Oct 2026 additions (same system): warn card for the "amateur" side, smaller headline variant */
+      .duel-card.warn { border: 2px solid rgba(255, 144, 37, 0.55); box-shadow: 0 0 40px -14px rgba(255, 144, 37, 0.35); }
+      .duel-card.warn .label { color: #ff9025; }
+      .duel-card.warn .line { color: var(--fg); }
+      .headline.sm { font-size: 52px; }
+      .row .txt.wrap { white-space: normal; line-height: 1.35; }
+      .stat-pre { font-family: var(--font-mono); font-size: 27px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-muted); margin-top: 40px; }
+      .stat-value small { font-size: 96px; letter-spacing: 0; margin-left: 18px; color: var(--fg-muted); text-shadow: none; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="caic-booth-offer" data-start="0" data-width="1920" data-height="1080">
+      <div class="clip bg" id="bg-deck" data-start="0" data-duration="58.04" data-track-index="2">
+        <div class="radial"></div><div class="grid"></div><div class="edge-glow"></div>
+      </div>
+
+      <!-- Nate: zoomed 1.3x, pinned right, feathered into the deck (wrappers are non-timed containers) -->
+      <div class="video-slot"><div class="video-pos"><div class="video-push" id="vidPush">
+        <video id="nate-video" src="assets/clip.mp4" data-start="0" data-duration="58.04" data-track-index="0" muted></video>
+      </div></div></div>
+      <audio id="nate-audio" src="assets/clip.mp4" data-start="0" data-duration="58.04" data-track-index="1"></audio>
+      <div class="clip scrim" id="left-scrim" data-start="0" data-duration="58.04" data-track-index="3"></div>
+
+      <!-- B1 · the problem -->
+      <div class="clip beat" id="b1" data-anchor="every company wants an AI person" data-start="0.25" data-duration="4.5" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b1-eyebrow">THE PROBLEM</div>
+        <div class="headline" id="b1-headline">Every Company<br>Wants an <em>AI&#160;Person</em></div>
+        <div class="caption" id="b1-caption">You already have the skills</div>
+      </div></div>
+
+      <!-- B2 · the hiring question -->
+      <div class="clip beat" id="b2" data-anchor="when a business asks why they should hire you" data-start="4.85" data-duration="4.65" data-track-index="4"><div class="col">
+        <div class="duel">
+          <div class="duel-card" id="b2-ask"><div class="label">The Business Asks</div><div class="line">Why hire you over the next person?</div></div>
+          <div class="duel-card warn" id="b2-most"><div class="label">Most People</div><div class="line">Don&#8217;t have a real answer</div></div>
+        </div>
+      </div></div>
+
+      <!-- B3 · the reveal -->
+      <div class="clip beat" id="b3" data-anchor="Certified AI Consultant program" data-start="9.65" data-duration="5.15" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b3-eyebrow">OUR PROGRAM</div>
+        <div class="designation" id="b3-designation">Certified AI Consultant</div>
+        <div class="wordmark" id="b3-wordmark">CAIC</div>
+        <div class="attribution" id="b3-attribution">Built to give you that answer</div>
+      </div></div>
+
+      <!-- B4 · two paths -->
+      <div class="clip beat" id="b4" data-anchor="whether you want to work with clients" data-start="14.9" data-duration="4.4" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b4-eyebrow">WHETHER YOU WANT TO</div>
+        <div class="rows">
+          <div class="row b4-row"><div class="num">01</div><div class="txt">Work with <strong>clients</strong></div></div>
+          <div class="row b4-row"><div class="num">02</div><div class="txt wrap">Be the <strong>AI person</strong> inside your company</div></div>
+        </div>
+      </div></div>
+
+      <!-- B5 · the work -->
+      <div class="clip beat" id="b5" data-anchor="run discovery against an AI" data-start="19.45" data-duration="8.5" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b5-eyebrow">THE WORK</div>
+        <div class="rows">
+          <div class="row b5-row"><div class="num">01</div><div class="txt">Run <strong>discovery</strong></div></div>
+          <div class="row b5-row"><div class="num">02</div><div class="txt">Build the <strong>system</strong></div></div>
+          <div class="row b5-row"><div class="num">03</div><div class="txt">Prove it with <strong>evals</strong></div></div>
+          <div class="row b5-row"><div class="num">04</div><div class="txt">Is it <strong>worth the cost</strong>?</div></div>
+        </div>
+      </div></div>
+
+      <!-- B6 · certification case -->
+      <div class="clip beat" id="b6" data-anchor="to get certified" data-start="28.3" data-duration="8.2" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b6-eyebrow">TO GET CERTIFIED</div>
+        <div class="headline sm" id="b6-headline">A Brand-New Client Case.<br><em>On Your Own.</em></div>
+        <div class="rows">
+          <div class="row b6-row"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg><div class="txt">Scope <strong>it</strong></div></div>
+          <div class="row b6-row"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg><div class="txt">Find what&#8217;s <strong>failing</strong></div></div>
+          <div class="row b6-row"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg><div class="txt">Explain your <strong>reasoning</strong></div></div>
+        </div>
+      </div></div>
+
+      <!-- B7 · live call -->
+      <div class="clip beat" id="b7" data-anchor="live call with our team" data-start="36.75" data-duration="4.0" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b7-eyebrow">THE FINAL STEP</div>
+        <div class="headline" id="b7-headline">A <em>Live Call</em><br>With Our Team</div>
+        <div class="caption" id="b7-caption">Walk us through every decision</div>
+      </div></div>
+
+      <!-- B8 · what you get -->
+      <div class="clip beat" id="b8" data-anchor="when you certify" data-start="40.85" data-duration="6.5" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b8-eyebrow">WHEN YOU CERTIFY</div>
+        <div class="rows">
+          <div class="row b8-row"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg><div class="txt wrap">A personal <strong>letter of recommendation</strong> from Nate</div></div>
+          <div class="row b8-row"><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg><div class="txt wrap">AIS as a <strong>reference</strong> clients and employers can call</div></div>
+        </div>
+      </div></div>
+
+      <!-- B9 · proof + next cohort -->
+      <div class="clip beat" id="b9" data-anchor="our first cohort filled up" data-start="47.45" data-duration="4.2" data-track-index="4"><div class="col">
+        <div class="eyebrow" id="b9-eyebrow">COHORT 001</div>
+        <div class="stat-pre" id="b9-pre">Filled in under</div>
+        <div id="b9-hours" style="margin-top: 6px;"><div class="stat-value">36<small>hours</small></div></div>
+        <div class="stat-sub" id="b9-next"><div class="v">NOV</div><div class="l">Next cohort</div></div>
+      </div></div>
+
+      <!-- B10 · CTA -->
+      <div class="clip beat" id="b10" data-anchor="join the waitlist below" data-start="51.6" data-duration="3.0" data-track-index="4"><div class="col">
+        <div class="cta-pill" id="b10-pill">Join the Waitlist</div>
+        <div class="caption" id="b10-caption">Hear about it before anyone else</div>
+      </div></div>
+
+      <!-- B11 · close: the seal -->
+      <div class="clip beat" id="b11" data-anchor="hope to see you guys in there" data-start="54.5" data-duration="3.54" data-track-index="4"><div class="col">
+        <div class="seal-wrap" id="b11-seal"><div class="seal-halo" id="b11-halo"></div><div id="sealBox" style="position: absolute; inset: 0;"></div></div>
+        <div class="close-headline" id="b11-headline">Hope to See You<br><em>In There</em></div>
+        <div class="close-caption" id="b11-caption">Next cohort · November</div>
+      </div></div>
+
+      <div class="clip vignette" id="frame-vignette" data-start="0" data-duration="58.04" data-track-index="5"></div>
+    </div>
+    <script>
+      // build the locked seal (deterministic, runtime)
+      document.getElementById("sealBox").innerHTML = window.AISseal.build({
+        top: "CERTIFIED · PROFESSIONAL · CREDENTIAL",
+        bottom: "CERTIFIED AI CONSULTANT",
+        abbr: "CAIC",
+      });
+
+      // split eyebrows into chars for the mono type-on (~24 chars/sec)
+      // chars live inside ONE wrapper span so the flex gap only separates dot + text
+      document.querySelectorAll(".eyebrow").forEach((el) => {
+        const text = el.textContent;
+        el.textContent = "";
+        const wrap = document.createElement("span");
+        wrap.className = "chars";
+        for (const c of text) {
+          const s = document.createElement("span");
+          s.className = "ch";
+          s.innerHTML = c === " " ? "&nbsp;" : c;
+          wrap.appendChild(s);
+        }
+        el.appendChild(wrap);
+      });
+
+      (() => {
+        const DUR = 58.04;
+        const tl = gsap.timeline({ paused: true });
+        const rise = (target, at, d = 1.1) => {
+          tl.fromTo(target, { autoAlpha: 0, y: 28, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: d, ease: "power3.out" }, at);
+        };
+        const fall = (target, at) => {
+          tl.to(target, { autoAlpha: 0, y: -18, filter: "blur(8px)", duration: 0.45, ease: "power2.in" }, at);
+        };
+        const typeOn = (sel, at) => {
+          const chars = document.querySelectorAll(sel + " .ch");
+          tl.fromTo(chars, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.02, stagger: 1 / 24, ease: "none" }, at);
+        };
+
+        // ---- B1 · the problem (anchors "every" 0.42 / "AI person" 1.40 / "already have the skills" 3.10)
+        typeOn("#b1-eyebrow", 0.25);
+        rise("#b1-headline", 0.5);
+        rise("#b1-caption", 2.85, 0.9);
+        fall("#b1 .col", 4.3);
+
+        // ---- B2 · the hiring question ("business" 5.22 / "hire" 6.50 / "most people" 8.02)
+        rise("#b2-ask", 5.0, 1.0);
+        rise("#b2-most", 7.75, 1.0);
+        fall("#b2 .col", 9.05);
+
+        // ---- B3 · the reveal ("Certified" 10.32 / "CAIC" 12.06 / "built" 14.08)
+        typeOn("#b3-eyebrow", 9.7);
+        rise("#b3-designation", 10.1);
+        rise("#b3-wordmark", 11.75, 1.3);
+        rise("#b3-attribution", 13.75, 0.9);
+        fall("#b3 .col", 14.4);
+
+        // ---- B4 · two paths ("clients" 16.50 / "AI person" 17.66)
+        typeOn("#b4-eyebrow", 14.95);
+        rise(".b4-row:nth-child(1)", 16.2, 0.9);
+        rise(".b4-row:nth-child(2)", 17.35, 0.9);
+        fall("#b4 .col", 18.85);
+
+        // ---- B5 · the work ("discovery" 19.76 / "build" 22.70 / "evals" 24.22 / "worth" 26.06)
+        typeOn("#b5-eyebrow", 19.5);
+        rise(".b5-row:nth-child(1)", 19.6, 0.9);
+        rise(".b5-row:nth-child(2)", 22.4, 0.9);
+        rise(".b5-row:nth-child(3)", 23.85, 0.9);
+        rise(".b5-row:nth-child(4)", 25.75, 0.9);
+        fall("#b5 .col", 27.5);
+
+        // ---- B6 · certification case ("certified" 28.76 / "brand-new" 29.76 / "scope" 32.02 / "failing" 32.94 / "reasoning" 35.96)
+        typeOn("#b6-eyebrow", 28.35);
+        rise("#b6-headline", 29.45, 1.1);
+        rise(".b6-row:nth-child(1)", 31.75, 0.9);
+        rise(".b6-row:nth-child(2)", 32.65, 0.9);
+        rise(".b6-row:nth-child(3)", 35.1, 0.9);
+        fall("#b6 .col", 36.05);
+
+        // ---- B7 · live call ("live" 37.54 / "walk" 38.86)
+        typeOn("#b7-eyebrow", 36.8);
+        rise("#b7-headline", 37.2);
+        rise("#b7-caption", 38.55, 0.9);
+        fall("#b7 .col", 40.3);
+
+        // ---- B8 · what you get ("certify" 41.14 / "personal" 41.86 / "reference" 44.72)
+        typeOn("#b8-eyebrow", 40.9);
+        rise(".b8-row:nth-child(1)", 41.55, 0.9);
+        rise(".b8-row:nth-child(2)", 44.4, 0.9);
+        fall("#b8 .col", 46.9);
+
+        // ---- B9 · proof + next cohort ("cohort" 47.80 / "thirty-six" 49.00 / "November" 50.92)
+        typeOn("#b9-eyebrow", 47.5);
+        rise("#b9-pre", 48.3, 0.8);
+        rise("#b9-hours", 48.7, 1.1);
+        rise("#b9-next", 50.6, 0.9);
+        fall("#b9 .col", 51.2);
+
+        // ---- B10 · CTA ("join the waitlist" 51.82 / "anyone" 54.64)
+        rise("#b10-pill", 51.65, 1.0);
+        tl.to("#b10-pill", { boxShadow: "0 0 34px rgba(55,189,248,0.55)", duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: 1 }, 52.7);
+        rise("#b10-caption", 53.0, 0.8);
+        fall("#b10 .col", 54.15);
+
+        // ---- B11 · close ("hope" 55.98; hold to end)
+        tl.fromTo("#b11-seal", { autoAlpha: 0, scale: 0.9, filter: "blur(12px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 1.5, ease: "power3.out" }, 54.55);
+        rise("#b11-headline", 55.7, 1.1);
+        rise("#b11-caption", 56.5, 0.9);
+        tl.fromTo("#b11-halo", { opacity: 0.55 }, { opacity: 1, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 55.2); // ends 58.0 <= DUR
+
+        tl.to({}, { duration: DUR }, 0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["caic-booth-offer"] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,67 @@
+0:04.1  I connected Fable 5.1 to blender-rigged characters and animated facial expressions just like this.
+0:32.1  Gave him, gave him some walking movements-- gave the character some walking movements.
+0:52.7  Even gave him this nice backflip Spider-Man land animation, which I thought was really cool, all prompting Fable 5.1.
+1:49.1  Gave him a nice little wave animation.
+2:27.4  And then even animated him...
+2:30.4  And then even animated the character in a real environment built by Claude with some camera movements, some camera zooms.
+2:43.0  And personally, I think it turned out really well for just being able to sit down, connect my Blender session to Claude and to the rig, animate the characters, animate the camera movement, and then create a scene in under thirty
+2:56.2  minutes.
+3:13.7  And if you're not familiar, I'm talking about Claude Fable 5.1, which is the newest in-- which is the newest model from Anthropic.
+3:21.4  I've gone over some videos in Blender and Unreal Engine of...
+3:24.6  and how this connects, but again, just to mention the agentic coding stats, and this is how Claude creates code for your programs.
+3:32.1  It performs significantly higher and is-- and costs a lot less than the normal Fable five model.
+3:39.5  And then again, computer use is-- And then again, there is a bump in computer use, which is how Claude communicates with your computer, with your applications.
+3:48.3  It's essentially how it's going to communicate and build inside of Blender and see the interface, click on the buttons, and understand I'm clicking on this button for this reason, and it's going to do this.
+4:25.5  Now, the animations are not-- Now, the animations from the characters are far from perfect.
+4:30.5  The whole purpose of this test was to see how well Claude can get the g- get an under-- The whole purpose of this test was to see how well Claude understands character movement based off of references.
+4:45.5  I didn't upload any-- I didn't upload anything from a mocab lib-- From a mocab library or a template style.
+4:55.6  This is just an official rig from Blender Studio.
+4:58.6  It's rigged very, very nicely, so Claude has a lot better understanding of how the, how the rig can work.
+5:05.3  And obviously, there are some caveats.
+5:08.6  For example, right here, the eyes.
+5:10.4  When he turns his head, he turns, the eyes fade away.
+5:13.6  That's obviously not great.
+5:23.9  But its general understanding of animation is getting a lot better compared to older models, which I'll show right now For example, here is for example, here is for example, here's Opus 4.8 with that same exact character, same exact rig
+6:24.0  Also again the same exact model opus four point eight which is a few months old It's an older model but look at how he jumps it doesn't make sense.
+6:43.2  It looks super unrealistic So the point so the models are definitely getting better and fable five point one has a much better understanding I think Has a much better understanding of animation and how it plays and how it can
+6:55.7  execute animation on rigged characters inside of blender And if you're wondering how I set this system up i'm going to just walk you through the two tools that I used obviously we I'm gonna walk you through the two tools
+7:24.8  that I use firstly Is Claude you're gonna need a cloud subscription To access clod code This is where we're gonna be running The actual session inside of our Inside of Blender Next You're Gonna Obviously Need Blender Make Sure That
+7:38.2  You Have The Newest One Downloaded It Just Is Going To Have The Newest Features So On the left here I have Cloud Code and this is just in VSCode Which is an IDE you can also run this on the
+9:31.3  cloud desktop app If works Exact Same I just prefer using clock Cladcode inside Of Vs Code You Can See I'M In A Blender Folder Right Here With All Of My Blender Files And Skills And Knowledge On Blender And Then
+9:46.4  I Have This Empty Rig Right Here And If You'Re Wondering Where I Got This Rig If you go over to Blender Studio, this is a paid subscription platform.
+10:03.7  I believe it's about fifteen dollars a month or maybe eleven dollar-- it's about fifteen dollars a month But do remember that Blender is a free platform So highly suggest supporting the free platform that lets us create And it's in
+10:16.9  this Project Storm category where you can find the actual rig If you're having trouble finding this exact rig you can go to Assets And then scroll down and find storm right here You can download it right here You just
+10:30.6  need to make sure that you are subscribed to download And then you can d-and then you can download it in this section So now that we have the rig loaded in and we have Claude here on the side I
+10:46.3  just want to make sure if we do slash MCP We can see that we have twenty -one MCP servers connected We need to make sure our actual claude Our Actual Blender Session Is Connected So How We Do That Is
+10:57.6  We Can Bring Up Our Terminal Right Here Just Type In Clawd That Will Open Up Claudd In The Terminal These Are Both Exactly The Same Thing This Is Just A Prettier Version This Is The Cli With Like The Nicer
+11:07.9  Interface And This Is Your Actual Terminal With Claud Loaded In We Can Type In Slash Mcp That Will Open Up Our User Mcps And You'Ll See Blender Is Connected And Ready To Go With Twenty Six Tools So It'S Good
+11:19.5  That We Verify That Just In Case We Send Off A Giant Prompt And Then We'Re Not Connected Now What We Can Do Is Literally Natural Language Text Prompts To Animation So If I Want Him To Do That Wave All
+11:30.6  I Have To Say Is Can You Make The Storm Character Inside Of The Open Blender Session Do A Nice Wave And just like th-- And then boom, you get an output just like this where you can play it and
+15:47.7  watch him wave just like this.
+15:49.9  So the motions are a lot more fluid.
+15:52.1  Obviously, we would need to fix...
+15:53.6  His hand is going through his hair right now, so that's something that we need to fix.
+15:59.5  But it just feels a lot more natural compared to Opus 4.8, which w- is just a few models ol- which is just a few months old.
+16:07.9  And you can tell it's getting better consistency with these outputs in animation.
+16:11.8  It even animated his face where he, like, smiles a little bit, he blinks, he moves his eyes.
+16:16.4  It's, it's getting much, much better.
+16:21.2  Okay.
+16:22.3  Okay, so this is not done officially, but I will just stop it right here because it's, it's pretty much gotten to the point of what we want with the wave.
+16:30.2  Now let's just ask Claude to, "Now make him jump and do a backflip.
+16:42.9  He lands on his feet." I'll shoot that off, and we will wait for that output.
+17:01.5  And then of course, as this is building out, we can open up, we can open up , We can open up our dope sheet to play with any of the keyframes inside of this animation.
+17:16.5  It looks like it even added motion blur to the hand movement, which is kinda cool.
+17:20.9  I wonder if it added a camera.
+17:22.0  Oh yeah, it did.
+17:22.6  So yeah, that's pretty cool.
+17:24.5  So with literally one prompt, and it's very simple, natural text prompt that I did with talking to my computer, we get an output like that for the wave.
+17:30.9  Now let's wait for the back flip.
+24:12.1  And boom, we get a backflip.
+24:14.1  Um, it's a little choppy, so I definitely want to update kind of like the body dynamics of, like pushing off the floor and then landing with some weight, uh, with the gravity and stuff.
+24:24.0  But off of one simple prompt like that, you can get a generation in Blender that's editable, completely editable- Of your character rig animation like this.
+25:55.0  So just like that, you can utilize Claude Fable 5.1 to animate your rigged characters inside of Blender.
+26:06.8  It's a super cool and useful feature, and I could definitely see it advancing in the future as these models get better and better at visual reasoning and understanding the human movement inside of a character like this inside of Blender.
+27:12.3  So let me know what you're going to make with it-- with this new Claude Fable 5.1 connection, and drop it in the comments.
+27:21.8  If you found this video resourceful or useful at all, feel free to subscribe and like this video, and give me some suggestions in the comments below.
+27:28.3  I'm gonna leave you guys with that, and as always, I will see you guys in the next one.
+27:32.2  Thanks.

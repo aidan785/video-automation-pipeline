@@ -1,0 +1,290 @@
+{
+  "source_file": "/Users/aidanstanik/Projects/Adobe Transfer Folder/3.333.mov",
+  "source_timeline_offset_seconds": 1782.9,
+  "video_fps": 30,
+  "method": "Raw WAV isolates re-transcribed with workspace ElevenLabs Scribe; 25 ms RMS plus silencedetect at -30, -35, -40 and -45 dB. No text repairs or shared edits.",
+  "recommendations": [
+    {
+      "candidate_local": [
+        586.3636,
+        586.9645
+      ],
+      "candidate_source": [
+        2369.2636,
+        2369.8645
+      ],
+      "isolate_wav": "assets/p3-isolate-3.wav",
+      "isolate_json": "assets/p3-isolate-3.json",
+      "isolate_local": [
+        584,
+        589
+      ],
+      "transcript": "That's really cool that Opus 5.5 implemented that",
+      "isolated_word_times": {
+        "5.5": [
+          585.9,
+          586.5
+        ],
+        "implemented": [
+          586.98,
+          587.32
+        ]
+      },
+      "finding": "False residual silence: -30 dB starts during the quiet final five decay and reaches implemented onset. Weak decay remains through about586.60; implemented starts acoustically around586.950.",
+      "threshold_evidence": {
+        "-30_db_interval": [
+          586.363625,
+          586.964562
+        ],
+        "-35_db_interval": [
+          586.375437,
+          586.95025
+        ],
+        "-40_db_intervals": [
+          [
+            586.448562,
+            586.510312
+          ],
+          [
+            586.517438,
+            586.768438
+          ],
+          [
+            586.802875,
+            586.950188
+          ]
+        ],
+        "-45_db_interval": [
+          586.595063,
+          586.735562
+        ]
+      },
+      "rms_db_examples": {
+        "586.350_to586.375": -38.5,
+        "586.500_to586.525": -46.6,
+        "586.575_to586.600": -51.7,
+        "586.625_to586.650": -54.6,
+        "586.950_to586.975": -37.6
+      },
+      "recommended_action": "Exclude the original residual from the >=0.6s pause audit. If tightening a shorter natural pause is desired, the following frame-aligned cut safely avoids speech.",
+      "safe_optional_cut_local": [
+        586.6666666667,
+        586.8666666667
+      ],
+      "safe_optional_cut_source": [
+        2369.5666666667,
+        2369.7666666667
+      ],
+      "safe_optional_cut_frames": [
+        17600,
+        17606
+      ],
+      "safe_optional_cut_duration_seconds": 0.2,
+      "minimum_word_guard_seconds": {
+        "after_quiet_tail_at586.600": 0.0666666667,
+        "before_acoustic_onset_at586.950": 0.0833333333
+      }
+    },
+    {
+      "candidate_local": [
+        852.6092,
+        853.2798
+      ],
+      "candidate_source": [
+        2635.5092,
+        2636.1798
+      ],
+      "isolate_wav": "assets/p3-isolate-4.wav",
+      "isolate_json": "assets/p3-isolate-4.json",
+      "isolate_local": [
+        850,
+        856
+      ],
+      "transcript": "Okay, I got stuck behind a wall for a second there. I need some more boosts",
+      "isolated_word_times": {
+        "wall": [
+          852.34,
+          852.6
+        ],
+        "for": [
+          853.16,
+          853.24
+        ],
+        "a": [
+          853.26,
+          853.3
+        ]
+      },
+      "finding": "False residual silence: -30 dB begins in wall decay and swallows the very quiet for and the a onset. Wall decay approaches background level around852.70; quiet for begins around853.15\u2013853.16. The phrase is continuous and intentional.",
+      "threshold_evidence": {
+        "-30_db_interval": [
+          852.609187,
+          853.281188
+        ],
+        "-35_db_interval": [
+          852.6365,
+          853.220938
+        ],
+        "-40_db_intervals": [
+          [
+            852.95225,
+            853.030312
+          ],
+          [
+            853.048938,
+            853.142625
+          ]
+        ],
+        "-45_db_interval": null
+      },
+      "rms_db_examples": {
+        "852.600_to852.625": -35.4,
+        "852.625_to852.650": -42.3,
+        "852.675_to852.700": -47.5,
+        "853.150_to853.175": -47.8,
+        "853.200_to853.225": -43.2,
+        "853.275_to853.300": -38.0
+      },
+      "recommended_action": "Exclude the original residual from the >=0.6s pause audit. If tightening a shorter natural pause is desired, the following frame-aligned cut safely avoids speech.",
+      "safe_optional_cut_local": [
+        852.7666666667,
+        853.0666666667
+      ],
+      "safe_optional_cut_source": [
+        2635.6666666667,
+        2635.9666666667
+      ],
+      "safe_optional_cut_frames": [
+        25583,
+        25592
+      ],
+      "safe_optional_cut_duration_seconds": 0.3,
+      "minimum_word_guard_seconds": {
+        "after_quiet_tail_at852.700": 0.0666666667,
+        "before_quiet_onset_at853.150": 0.0833333333
+      }
+    }
+  ],
+  "fresh_editorial_checks": [
+    {
+      "fresh_suspect": "Again, I'm, I'm a Magic Mouse",
+      "raw_local": [
+        677.9,
+        680.5
+      ],
+      "isolate_wav": "assets/p3-isolate-5.wav",
+      "isolate_json": "assets/p3-isolate-5.json",
+      "isolate_text": "Again, I'm on my Magic Mouse, so it's hard",
+      "isolated_local_words": {
+        "Again,": [
+          678.7,
+          678.92
+        ],
+        "I'm": [
+          678.96,
+          679.06
+        ],
+        "on": [
+          679.12,
+          679.18
+        ],
+        "my": [
+          679.24,
+          679.36
+        ],
+        "Magic": [
+          679.4,
+          679.7
+        ]
+      },
+      "action": "Preserve. Fresh Scribe confused on with a second I'm. No actual repeat and no source timing repair needed. Original source on679.110\u2013679.230 is valid."
+    },
+    {
+      "fresh_suspect": "This one i- is insanely fast",
+      "raw_local": [
+        776.7,
+        779.1
+      ],
+      "isolate_wav": "assets/p3-isolate-6.wav",
+      "isolate_json": "assets/p3-isolate-6.json",
+      "isolate_text": "This one is insanely fast. So",
+      "isolated_local_words": {
+        "This": [
+          777.0,
+          777.1
+        ],
+        "one": [
+          777.14,
+          777.22
+        ],
+        "is": [
+          777.48,
+          777.56
+        ],
+        "insanely": [
+          777.6,
+          778.28
+        ],
+        "fast.": [
+          778.32,
+          778.68
+        ]
+      },
+      "narrow_isolate": "assets/p3-isolate-8.wav",
+      "narrow_isolate_text": "Um, is in",
+      "acoustics": "One fades continuously777.15\u2013777.31, from -26 to -42dB RMS, followed by silence777.35\u2013777.43 and the only is attack at777.43. There is no distinct second vowel onset in the fresh i- interval777.259\u2013777.299. Narrow isolate begins inside one and transcribes its truncated tail as Um, then a single is.",
+      "action": "Preserve. Evidence supports a fresh-ASR split of one's tail and the single is; no confirmed spoken restart and no source token repair."
+    },
+    {
+      "fresh_suspect": "13:26.112\u201313:27.332 No\u2192Well voice gap",
+      "raw_local": [
+        220.8,
+        235.1
+      ],
+      "isolate_wav": "assets/p3-isolate-7.wav",
+      "isolate_json": "assets/p3-isolate-7.json",
+      "isolate_text": "No. Well, you guys can probably",
+      "isolated_local_words": {
+        "No.": [
+          221.1,
+          221.26
+        ],
+        "Well,": [
+          234.18,
+          234.3
+        ]
+      },
+      "suspect_original_oh_times_local": [
+        [
+          221.46,
+          221.7
+        ],
+        [
+          231.42,
+          231.7
+        ],
+        [
+          231.7,
+          231.7
+        ]
+      ],
+      "acoustics": "The221.42 and231.42 transients have waveform correlation0.862 over the first100ms when aligned by5.5ms. They are approximately -37 to -45dB RMS, repeat a similar short attack/decay, and no isolate transcribes them as speech. They are consistent with repeated game-death sound effects. Original zero-length third Oh has no separate utterance.",
+      "action": "Trim the second game-only remnant and surrounding true voice gap. Keep No and its associated first effect through221.80. Then resume at234.10, preserving at least60ms before the original Well234.160 onset.",
+      "safe_cut_local": [
+        221.8,
+        234.1
+      ],
+      "safe_cut_source": [
+        2004.7,
+        2017.0
+      ],
+      "safe_cut_local_frames": [
+        6654,
+        7023
+      ],
+      "additional_removed_from_existing_clean_v1_seconds": 0.6,
+      "expected_fresh_voice_gap_after_seconds": 0.62,
+      "source_repair": "Do not split additional words. The original Oh tokens are unsupported speech artifacts; classify them as non-speech / omit them from spoken transcript when regenerating. No quiet speaker reaction was recovered."
+    }
+  ]
+}

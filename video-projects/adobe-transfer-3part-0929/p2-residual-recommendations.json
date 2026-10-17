@@ -1,0 +1,93 @@
+{
+  "source": "assets/part2.mov",
+  "timeline": "local part 2 seconds; source offset is applied by parent",
+  "evidence": {
+    "isolate": "assets/p2-isolate-residual.wav",
+    "transcript": "assets/p2-isolate-residual.json",
+    "isolate_local_start": 897.0,
+    "isolate_local_end": 914.0,
+    "asr_result": "Oh yeah, I can zoom in. That's awesome. I'm playing on a Magic Mouse, an Apple Magic Mouse, so this is like insanely sensitive. Oh, I got one piece of ammo from that. Oh, no",
+    "pcm": "16 kHz mono signed PCM; 20 ms RMS/peak bins inspected around each boundary."
+  },
+  "local_cuts": [
+    {
+      "start": 899.4,
+      "end": 900.0666666667,
+      "duration": 0.6666666667,
+      "reason": "Delete noise-only residual containing phantom Mm. New ASR has no word here. The cut stays inside the identified 899.3333\u2013900.1445 silent span; next real Oh begins 900.280.",
+      "original_residual": [
+        899.3333,
+        900.1445
+      ],
+      "original_residual_pcm": {
+        "rms_dbfs": -56.102,
+        "peak_dbfs": -40.233
+      },
+      "cut_pcm": {
+        "rms_dbfs": -56.285,
+        "peak_dbfs": -41.001
+      },
+      "speech_protection": "About 213 ms retained before next real Oh; >=60 ms retained at either end of the supplied silent span."
+    },
+    {
+      "start": 909.4,
+      "end": 909.9666666667,
+      "duration": 0.5666666667,
+      "reason": "Delete noise-only residual containing phantom Ha. New ASR has no word here. Next real Oh begins 910.060 with PCM onset around 910.04.",
+      "original_residual": [
+        909.3667,
+        910.0692
+      ],
+      "original_residual_pcm": {
+        "rms_dbfs": -51.382,
+        "peak_dbfs": -32.324
+      },
+      "cut_pcm": {
+        "rms_dbfs": -52.221,
+        "peak_dbfs": -38.992
+      },
+      "speech_protection": "About 93 ms before ASR Oh and at least 73 ms before measurable voice onset. Earlier sensitive ends 907.460."
+    },
+    {
+      "start": 911.5333333333,
+      "end": 911.9,
+      "duration": 0.3666666667,
+      "reason": "Trim only dead air after that; preserve its quiet final consonant. Raw voice tail is visible through about 911.440 (20 ms bin peak -33.68 dBFS at911.42\u2013911.44); noise floor resumes911.44 onward. Next Oh begins911.98.",
+      "original_residual": [
+        911.3696,
+        911.9768
+      ],
+      "original_residual_pcm": {
+        "rms_dbfs": -50.622,
+        "peak_dbfs": -30.547
+      },
+      "cut_pcm": {
+        "rms_dbfs": -54.675,
+        "peak_dbfs": -40.343
+      },
+      "speech_protection": "91 ms after full-source that end911.442; 80 ms before next Oh start911.980. Do not use911.3696 as a cut start."
+    }
+  ],
+  "transcript_repairs": [
+    {
+      "action": "remove phantom word",
+      "text": "Mm.",
+      "local_start": 899.442,
+      "local_end": 900.002,
+      "evidence": "Absent from fresh17-second isolate transcript; near-flat -56.1 dBFS RMS span contains no spoken word."
+    },
+    {
+      "action": "remove phantom word",
+      "text": "Ha.",
+      "local_start": 909.442,
+      "local_end": 909.522,
+      "evidence": "Absent from fresh17-second isolate transcript; -51.4 dBFS RMS residual with low non-speech noise hump at909.44\u2013909.55."
+    }
+  ],
+  "additional_note": "Fresh isolate also omits full-source Ha897.282\u2013897.322. This entry may be another noise transcription, but is outside the two requested residual cuts. No extra cut is proposed.",
+  "additional_897_pcm": {
+    "rms_dbfs": -29.297,
+    "peak_dbfs": -22.023
+  },
+  "validation": "All recommended boundaries are on the 30 fps frame grid. No shared source, transcript, or cut files modified."
+}

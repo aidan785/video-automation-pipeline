@@ -1,0 +1,112 @@
+5.98-13.50: All right. Jumping into actually how I built this inside of my Claude session, we're gonna jump back into the skill
+14.28-21.12: that I had created, whether you're on Mac or Windows, and how it sets up the session for you to actually start merging your games.
+28.58-36.00: So again, that is in the link in the description, but you will find in the Free School community a game mashup setup zip
+36.78-37.54: and a README
+39.14-44.44: MD file. When we look in the game mashup folder, we can see assets, references,
+45.50-56.08: s- assets, references, scripts, and then a skill.md file. If we open up this skill.md file, we can see this is how the agent is going to understand how to set up this meshed game
+58.08-60.90: inside of your current Claude session, depending on what
+62.44-63.18: setup you have.
+65.04-73.46: So a very basic description is it's a playable mash two games together project on the user's computer, starting by asking whether they're on Mac or Windows. And based on that--
+74.88-79.44: And base-- And based on that answer, it's going to split into two separate paths.
+85.00-93.80: It'll then take you through what's already installed. It'll check if you have certain things installed on your computer. For example, on Window-- for example, on Mac, if you have...
+107.48-111.20: For example, on Mac, if you don't have the Mine colonia or the Lunati,
+112.42-113.06: or Luanti.
+120.76-124.16: Or if you're on Windows, the GitHub repo for Universal Modder.
+136.18-143.02: It also mentions in step three, for Windows only, it's going to pick the route for you. Windows can only do the realistic route because
+144.52-146.66: a lot of these games are only native on Windows.
+149.06-155.04: And if you do have both of the games downloaded and installed, you own them, then it's going to make your life ten times easier.
+156.98-161.32: But because I'm on Mac and I don't own any of the games, we're using alternatives that are completely free.
+164.62-165.90: It'll download Python for you,
+169.42-171.02: and then give you the actual plan,
+173.42-177.72: so it can get a yes from you and install all of the softwares required based on your operating system.
+193.76-202.82: And then I get-- And then in that zip file, I also give you access to the scripts, references, and assets that I use for my Mac installation. Again, if you're on Windows, it's going
+202.84-207.34: to work perfectly fine. This is just a free version of Minecraft and Doom,
+208.34-212.18: and the AI can reference this to help set up your meshed game.
+213.08-217.26: So I have a detect games Python file, install, launch, and mash command
+218.88-222.76: Python files. In my references, I have the Mac MD file.
+223.84-225.12: This is just how it downloaded.
+232.04-234.64: This is just what it's going to download on your Mac computer.
+236.02-237.46: Real games window MD.
+239.76-249.14: So if you do have a Windows operating system and you do own the games, it has that option for you as well. Some troublesu-- some troubleshooting M-- a troubleshooting markdown file just in case
+249.18-251.04: the AI gets confused at any point.
+252.76-254.50: And then the actual Windows MD.
+256.86-261.66: So if you are running Windows, this is the markdown file for how to set up those meshed games.
+271.16-277.30: And then in the assets folder, this is just where it's going to save all of your projects. So in your project folder, you can find mods,
+281.74-290.64: Black Ops, which again, this is going to download itself. You don't need to download anything yourself. This is just a project structure that your agent can use to implement into your Claude session with
+290.72-296.40: a README file on how this is-- how this folder is structured and what it uses it for. For example,
+297.66-298.36: Minecraft Doom,
+299.40-301.34: Minecraft Black Ops, playing later,
+302.92-312.08: what's in the folder, credits, and licenses. So this is just for the agent to read to know how to structure the folder. As you scale, maybe you wanna add more games into your session,
+313.10-317.10: it can organize your folders like that. And then of course, finally, the actual tools that it used
+318.78-319.62: inside of the project.
+323.52-323.86: So once,
+326.78-330.78: so once you have the game mashup setup zip file and the README file
+366.38-368.44: Head over to Claude Code.
+384.42-388.64: And then paste in this prompt. This is the best way to get everything set up so
+389.50-392.38: your agents can, your agents can start working as soon as possible.
+395.76-405.62: Read the README in the Game Mashup Skill folder. Install the Game Mashup Setup Skill, then use it to set up the Doom inside of Minecraft on my computer. It's the easiest two games to
+405.66-410.08: set up because they're com-- two completely free games, and you can actually see how the process works.
+413.74-423.00: You also make su-- you also need to make sure that you have both of the zip file and README file uploaded. So whatever folder you're in, I am just in a Blender folder
+424.66-428.78: because I work in all of my 3D workflows or game workflows inside of a Blender folder.
+457.40-463.94: You can navigate back, you can navigate back to your Game Mashup Setup zip and your README.md
+466.16-471.98: file where you-- wherever you stored that, whether that's in a folder or just in your downloads. You can
+472.80-478.66: highlight both of these and then right click, hold Option on your keyboard, and then copy those two items as path names.
+482.84-489.40: This will point the agent exactly where the files are on your computer. With the very simple prompt, we can shoot that off.
+495.24-502.36: And now it's going to start building. All I have to do is sit back, relax, and it's going to download all the s-- and it's going to download all the files that I need
+502.42-503.04: on my computer
+504.74-506.30: and start setting up the meshed game.
+693.96-698.76: All right. And boom, we are in Minecraft, but with a Doom character.
+699.48-705.98: As you can see, there's all these monsters, these Doom characters that I need to fight off inside of my Minecraft world.
+707.56-712.68: And the Mineclonia does a great job of actually cloning Minecraft, making sure that looks very similar to the original.
+714.72-718.34: I need to pick up a new weapon because this pistol sucks.
+722.30-722.48: Okay.
+728.76-732.34: All right, I just rebooted the game. I was having some problems with it running.
+735.06-739.98: But as you can see, we have these health packs. We have... I don't know what these is- these are. I'm not super familiar with
+740.72-742.10: Doom. I never played it.
+748.06-749.34: We just need to get one of these guys down,
+750.14-751.24: and you can see they do have
+752.48-756.92: death animations for when they get knocked down. There is an animation for that. So
+759.90-761.14: it's really cool seeing
+762.80-764.40: the mashup between Minecraft
+765.10-768.72: and Doom. And then there's different levels. So I'll show you once I complete this level,
+774.32-775.66: the next level that it takes me to.
+784.58-787.30: Even the fireballs leave explosions in the ground.
+800.90-804.88: All right, so I just finished the first level. Now we're entering the nuclear plant.
+811.64-814.34: All right, let's go pick up that shotgun if he dropped one. He did not.
+818.72-819.26: And I died.
+820.64-821.78: All right, let's retry that.
+822.92-826.14: See if we can pick up anything new. There we go. We got some new weapons.
+838.48-843.04: It's cool 'cause it shows my health based on the Minecraft interface.
+844.02-846.30: As I'm getting hit, my health bar goes down.
+891.98-893.62: Pick up those health bars
+894.38-895.38: or those health kits.
+898.28-899.74: Now you just need to fight these people off.
+902.18-904.20: It's quite overwhelming. There is a lot going on.
+910.02-911.94: My pistol doesn't do much damage.
+925.02-930.42: Oh no, we are hitting nighttime now, so I'm wondering if there's gonna be any mods in Minecraft.
+958.22-962.26: All right, we are in nighttime now. It's very hard to see, and there's a lot going on.
+973.34-974.90: Got a new gun, this chain gun.
+976.80-978.32: Hopefully that helps me out a little bit more.
+981.66-985.12: I don't know if you guys can see very well, but I will change this back to daytime.
+1073.84-1077.56: But there you have it. Now you can play Doom inside of Minecraft
+1078.46-1081.28: with the same characters, the same character animations,
+1082.22-1084.92: levels. You're just in a Minecraft world now,
+1086.86-1090.60: which I think is super cool, and I did this completely for free
+1092.02-1093.50: just using AI.
+1102.75-1104.37: It is pretty fun too.
+1106.01-1110.79: You do have to find almost like the low ground here because there's so many of them. You need to give them a chance to
+1116.57-1116.95: Oh, shit.
+1120.59-1125.57: So yeah, there you have it. So if you want to merge your games together, utilize that skill, the free
+1126.79-1129.89: zip file and the skill.md and readme file
+1130.85-1131.67: that I provided
+1132.55-1134.31: for you to set this type of system up.
+1139.51-1141.91: And you can start playing your favorite games
+1143.45-1143.89: together.
+1145.81-1146.95: Two nostalgia games
+1149.17-1151.01: in one. I need to get a health kit.
+1169.39-1169.55: And
+1170.57-1171.69: it is pretty fun.
+1193.89-1197.13: And boom, I died. But there you have it. That's how you can
+1198.45-1207.15: connect your games together. I hope you guys enjoyed this video. And again, let me know if you have any questions in the comments below. Get your free kit in the description.
+1211.11-1213.31: And start having fun with merging your games together.
+1214.25-1217.37: I'm going to leave you guys with that. But as always, I will see you guys in the next one.

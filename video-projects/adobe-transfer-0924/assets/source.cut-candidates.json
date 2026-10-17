@@ -1,0 +1,99 @@
+{
+  "agent": "cut-mistakes",
+  "source_transcript": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0924/assets/source.silence-transcript.json",
+  "word_count": 2321,
+  "segment_count": 63,
+  "counts": {
+    "retake": 2,
+    "stutter": 4
+  },
+  "proposed_cut_seconds": 35.04,
+  "candidates": [
+    {
+      "id": "c005",
+      "type": "retake",
+      "confidence": "medium",
+      "recommend": "cut",
+      "score": 0.435,
+      "cut": {
+        "start": 0.22,
+        "end": 10.62
+      },
+      "removes": "Today I'm gonna be testing out GPT-6 Soul inside of Blender, stress testing it on a bunch of different examples, and showing you how much cheaper it actually is to run GPT-6 Soul.",
+      "keeps": "Today I'm gonna be, today I'm gonna be testing GPT-6 Soul inside of Blender. I'll run it through a bunch of stress tests from creating miniature game assets to full environments, to even some simulations.",
+      "gapBetween": 0.24,
+      "note": "seg 1 ~ seg 2 (jaccard 0.43, same opening)"
+    },
+    {
+      "id": "c001",
+      "type": "stutter",
+      "confidence": "high",
+      "recommend": "cut",
+      "cut": {
+        "start": 44.94,
+        "end": 45.76
+      },
+      "removes": "building,",
+      "keeps": "building",
+      "context": "hammering the GPT-6 Astra content, building, building out renders for real estate,",
+      "note": "repeated \"building\""
+    },
+    {
+      "id": "c002",
+      "type": "stutter",
+      "confidence": "high",
+      "recommend": "cut",
+      "cut": {
+        "start": 199.9,
+        "end": 200.22
+      },
+      "removes": "which,",
+      "keeps": "which",
+      "context": "text, volume and tuning knobs, which, which I will get into this",
+      "note": "repeated \"which\""
+    },
+    {
+      "id": "c003",
+      "type": "stutter",
+      "confidence": "high",
+      "recommend": "cut",
+      "cut": {
+        "start": 395.86,
+        "end": 396.04
+      },
+      "removes": "it.",
+      "keeps": "It",
+      "context": "Soul has, and it got it. It understood it. I mean, the",
+      "note": "repeated \"it\""
+    },
+    {
+      "id": "c004",
+      "type": "stutter",
+      "confidence": "high",
+      "recommend": "cut",
+      "cut": {
+        "start": 487.48,
+        "end": 487.82
+      },
+      "removes": "the,",
+      "keeps": "the",
+      "context": "absolutely no iteration. This was the, the model completely-- This, the model",
+      "note": "repeated \"the\""
+    },
+    {
+      "id": "c006",
+      "type": "retake",
+      "confidence": "medium",
+      "recommend": "cut",
+      "score": 0.35,
+      "cut": {
+        "start": 588.241,
+        "end": 611.22
+      },
+      "removes": "The Kitchen was about $0.53 with 1.4 million tokens. The Marble Machine, which was that simulation that we built, was 6 million tokens and only $1.86 in API costs.",
+      "keeps": "The Forest scene with, again, a very small revision was about 3 million tokens and it was only about $1.04, totaling $5.71 in API costs.",
+      "gapBetween": 12.96,
+      "note": "seg 55 ~ seg 57 (jaccard 0.35)"
+    }
+  ]
+}

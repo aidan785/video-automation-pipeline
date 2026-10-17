@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1080,height=1920"><title>SOP Ad · Dark White Glass · portrait</title><script src="assets/gsap.min.js"></script><style>
+@font-face{font-family:Inter;src:url('assets/Inter-Variable.ttf');font-weight:100 900}
+*{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0d141f;font-family:Inter,sans-serif;color:#f3f6fa}
+#main{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(ellipse at 38% 72%,#142237 0%,#0d141f 66%)}
+.ambient{position:absolute;left:65px;top:460px;width:940px;height:400px;border-radius:50%;background:radial-gradient(ellipse,rgba(75,157,202,.12),transparent 67%);filter:blur(35px);pointer-events:none}
+.brand{position:absolute;left:96px;top:31px;display:flex;align-items:center;gap:14px;color:#f3f6fa;z-index:5}
+.brand .brand-logo{display:block;width:96px;height:96px;object-fit:contain;flex-shrink:0}.brand .rule{width:1px;height:28px;background:rgba(181,195,212,.25)}.brand small{font-size:22px;font-weight:450;letter-spacing:-.3px;color:#b5c3d4}
+.header-note{position:absolute;right:98px;top:64px;font-size:23px;color:#b5c3d4;letter-spacing:-.4px}
+.speaker-window{position:absolute;left:1080px;top:151px;width:744px;height:773px;border-radius:40px;overflow:hidden;background:#1b2737;box-shadow:0 28px 80px rgba(0,0,0,.22);border:1.5px solid rgba(230,242,255,.19);z-index:2}
+.speaker-window video,.speaker-window img{width:100%;height:100%;object-fit:cover;object-position:50% 50%}.speaker-edge{position:absolute;left:1080px;top:151px;width:744px;height:773px;border-radius:40px;box-shadow:inset 0 1px 1px rgba(255,255,255,.28);z-index:3;pointer-events:none}
+.scene{position:absolute;inset:0;z-index:4;pointer-events:none}.scene-inner{width:100%;height:100%;padding:178px 900px 155px 96px;display:flex;flex-direction:column;gap:23px}
+.eyebrow{font-size:25px;font-weight:480;color:#75c9f3;letter-spacing:-.25px;line-height:1.3}
+h1{font-size:84px;line-height:1.09;font-weight:620;letter-spacing:-4px;margin:0;max-width:900px}h1 span{display:block;white-space:nowrap}#intro h1{font-size:78px;letter-spacing:-3.7px}
+.ui{position:relative;width:830px;height:350px;flex-shrink:0;margin-top:26px;isolation:isolate}
+.reflection{position:absolute;left:90px;top:25px;width:650px;height:250px;border-radius:50%;filter:blur(34px);z-index:-1;background:radial-gradient(ellipse at 45% 40%,rgba(102,184,229,.17),rgba(46,90,130,.10) 48%,transparent 74%)}
+.glass{position:relative;background:linear-gradient(135deg,rgba(64,88,116,.39),rgba(28,43,63,.39) 52%,rgba(56,87,114,.26));border:1.3px solid rgba(214,234,255,.19);border-radius:25px;backdrop-filter:blur(28px) saturate(1.3);box-shadow:inset 0 1.4px 1px rgba(241,249,255,.14),inset 0 -1px 1px rgba(134,165,195,.06),0 23px 48px rgba(0,0,0,.16);overflow:hidden}
+.glass:after{content:'';position:absolute;inset:1px;border-radius:inherit;border-top:1px solid rgba(229,243,255,.08);pointer-events:none}
+.sheen{position:absolute;left:-180px;top:-100px;width:110px;height:500px;transform:rotate(25deg);background:linear-gradient(90deg,transparent,rgba(220,242,255,.08),transparent);filter:blur(13px);pointer-events:none}
+.concepts{display:flex;align-items:center;gap:30px;width:830px;padding:0 12px 0 0}
+.learn-card{width:235px;height:252px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transform:rotate(-4deg)}
+.learn-card svg{width:69px;height:69px;color:#b5c3d4}.learn-card strong{font-size:34px;font-weight:500;letter-spacing:-1px}
+.bridge{color:#75c9f3}.bridge svg{width:51px;height:51px}
+.sell-card{width:420px;height:278px;padding:35px 36px;display:flex;flex-direction:column;justify-content:center;gap:17px;background:linear-gradient(135deg,rgba(59,109,143,.43),rgba(33,64,88,.23))}
+.sell-card .symbol{width:63px;height:63px;border-radius:18px;display:grid;place-items:center;background:rgba(117,201,243,.09);color:#75c9f3;border:1px solid rgba(117,201,243,.12)}.symbol svg{width:37px;height:37px}
+.sell-card strong{font-size:39px;font-weight:550;letter-spacing:-1.3px}.sell-card small{font-size:25px;color:#b5c3d4;font-weight:400;line-height:1.35}
+.benefits{display:flex;flex-direction:column;gap:19px;width:806px}
+.benefit{width:100%;height:102px;padding:18px 23px;display:flex;align-items:center;gap:21px;border-radius:23px}
+.benefit .icon{width:60px;height:60px;flex-shrink:0;display:grid;place-items:center;border-radius:17px;background:rgba(117,201,243,.08);color:#75c9f3}.benefit .icon svg{width:34px;height:34px}
+.benefit strong{display:block;font-size:29px;font-weight:550;letter-spacing:-.7px;line-height:1.25}.benefit small{display:block;font-size:22px;font-weight:400;color:#b5c3d4;margin-top:5px;letter-spacing:-.25px}.benefit .number{margin-left:auto;padding-left:20px;color:#b5c3d4;font-size:21px;font-weight:450;font-variant-numeric:tabular-nums}
+.caption{position:absolute;top:965px;left:0;width:1920px;text-align:center;z-index:10}
+.caption span{display:inline-block;padding:10px 23px 12px;border-radius:20px;border:1px solid rgba(224,240,255,.16);background:rgba(33,48,67,.8);backdrop-filter:blur(20px);box-shadow:0 6px 24px rgba(0,0,0,.12);font-size:35px;font-weight:450;line-height:1.25;letter-spacing:-.45px;max-width:1700px;white-space:nowrap;color:#f3f6fa}
+.offer-content{width:100%;height:100%;padding:173px 900px 150px 96px;display:flex;flex-direction:column;gap:23px}.offer-content h1{font-size:76px;line-height:1.08}
+.offer-cards{display:flex;gap:22px;width:850px;margin-top:14px}.offer-card{padding:27px 29px;height:293px;display:flex;flex-direction:column;gap:10px}.annual{width:466px;background:linear-gradient(135deg,rgba(59,109,143,.43),rgba(33,64,88,.23))}.monthly{width:350px}
+.offer-label{font-size:23px;font-weight:550;color:#b5c3d4}.annual .offer-label{color:#75c9f3}.price{font-size:93px;font-weight:600;line-height:1.03;letter-spacing:-5px;font-variant-numeric:tabular-nums}.price small{font-size:28px;letter-spacing:-.6px;font-weight:400;color:#b5c3d4}.annual .price small{display:block;margin-top:8px}.monthly .price{font-size:77px;margin-top:4px}.equivalent{font-size:26px;color:#f3f6fa;font-weight:450;margin-top:4px;letter-spacing:-.4px}.billing{font-size:22px;color:#b5c3d4}.offer-features{font-size:25px;color:#b5c3d4;letter-spacing:-.4px;margin-top:2px}.refund{font-size:23px;color:#b5c3d4;display:flex;align-items:center;gap:12px}.refund svg{width:26px;height:26px;color:#75c9f3}
+
+.caption{opacity:0}#solution h1{font-size:78px;letter-spacing:-3.7px}
+.metric-panel{height:267px;width:806px;padding:31px 38px;display:flex;align-items:center;gap:34px}.stat-icon{width:105px;height:105px;display:grid;place-items:center;border-radius:27px;color:#75c9f3;background:rgba(117,201,243,.08)}.stat-icon svg{width:65px;height:65px}.stat-value{display:block;font-size:128px;font-weight:600;letter-spacing:-7px;line-height:1.05;font-variant-numeric:tabular-nums}.stat-value.medium{font-size:106px;letter-spacing:-5px}.stat-label{display:block;font-size:29px;color:#b5c3d4;line-height:1.4;margin-top:6px;letter-spacing:-.7px}
+.tags{display:flex;gap:16px;margin-top:18px}.tags span{padding:9px 21px;border:1px solid rgba(181,195,212,.2);border-radius:15px;color:#b5c3d4;font-size:24px}
+.bridge-panel{width:806px;height:282px;display:flex;align-items:center;justify-content:center;gap:52px}.bridge-item{display:flex;flex-direction:column;align-items:center;gap:24px;width:230px}.bridge-item svg{width:69px;height:69px;color:#75c9f3}.bridge-item strong{font-size:33px;font-weight:500;letter-spacing:-.9px}
+.loop-cards{display:flex;gap:17px;width:806px}.loop-card{width:257px;height:212px;padding:26px;display:flex;flex-direction:column;gap:9px}.loop-card svg{width:45px;height:45px;color:#75c9f3;margin-bottom:7px}.loop-card strong{font-size:31px;font-weight:530;letter-spacing:-.7px}.loop-card small{font-size:24px;color:#b5c3d4}.quiet-callout{width:806px;margin-top:24px;font-size:30px;font-weight:480;padding:24px 30px;letter-spacing:-.6px;text-align:center}
+.fear-cards{display:flex;gap:24px;width:806px}.fear-card{width:391px;height:274px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}.fear-card svg{width:65px;height:65px;color:#75c9f3}.fear-card strong{font-size:35px;font-weight:530;letter-spacing:-1px}.fear-card small{font-size:25px;color:#b5c3d4}
+.outcome-rows{gap:24px}.outcome-rows .benefit{height:132px}.outcome-rows .benefit strong{font-size:32px}.outcome-rows .benefit small{font-size:23px}
+.cta-card{width:806px;min-height:207px;padding:34px;display:flex;align-items:center;gap:27px;background:linear-gradient(135deg,rgba(59,109,143,.43),rgba(33,64,88,.23))}.download-symbol{width:82px;height:82px;flex-shrink:0;display:grid;place-items:center;background:rgba(117,201,243,.09);border-radius:24px;color:#75c9f3}.download-symbol svg{width:47px;height:47px}.cta-card strong{display:block;font-size:39px;letter-spacing:-1.2px;font-weight:560;line-height:1.2}.cta-card small{display:block;font-size:24px;line-height:1.4;color:#b5c3d4;margin-top:16px;letter-spacing:-.35px}.cta-note{font-size:27px;color:#b5c3d4;margin-top:26px;letter-spacing:-.6px}
+
+html,body,#main{width:1080px;height:1920px}#main{background:radial-gradient(ellipse at 50% 43%,#142237 0%,#0d141f 66%)}
+.ambient{left:40px;top:590px;width:1000px;height:540px}.brand{left:64px;top:53px;gap:16px}.brand .brand-logo{width:110px;height:110px}.brand small{font-size:24px}.header-note{right:64px;top:96px;font-size:24px}
+.speaker-window,.speaker-edge{left:64px;top:1080px;width:952px;height:720px;border-radius:44px}.speaker-window video{object-position:50% 50%}
+.scene-inner{padding:214px 64px 0;align-items:center;gap:20px}.eyebrow{text-align:center;font-size:28px}h1,#intro h1{text-align:center;font-size:82px;line-height:1.08;letter-spacing:-3.8px;width:952px;max-width:952px}#intro h1{font-size:78px;letter-spacing:-3.3px}
+.ui{width:830px;height:330px;margin-top:18px;text-align:left}.concepts{gap:29px;padding:0}.learn-card{width:240px}.sell-card{width:450px}.benefits{width:830px;gap:16px}.benefit{height:96px;padding:14px 23px}.benefit strong{font-size:30px;line-height:1.15}.benefit small{font-size:22px;line-height:1.2;margin-top:4px}
+.caption{top:932px;left:64px;width:952px}.caption span{max-width:930px;white-space:normal;text-wrap:balance;font-size:38px;line-height:1.22;padding:12px 24px 14px;border-radius:23px}
+
+#solution h1{font-size:78px;letter-spacing:-3.3px}.metric-panel,.bridge-panel,.loop-cards,.quiet-callout,.fear-cards,.cta-card{width:830px}.metric-panel{height:260px}.stat-value{font-size:128px}.stat-label{font-size:30px}.tags{justify-content:center}.loop-card{width:266px}.quiet-callout{font-size:30px;padding:21px;margin-top:23px}.fear-card{width:403px}.outcome-rows .benefit{height:132px}.outcome-rows .benefit strong{font-size:32px}.outcome-rows .benefit small{font-size:23px}.cta-note{text-align:center}.cta-card small{font-size:24px}.cta-card strong{font-size:39px}
+.caption{opacity:1}</style></head><body><main data-hf-id="hf-f0ne" id="main" data-composition-id="main" data-start="0" data-duration="1" data-width="1080" data-height="1920"><div data-hf-id="hf-9v4o" class="ambient"></div><div data-hf-id="hf-oojr" class="brand"><img data-hf-id="hf-axzv" class="brand-logo" src="assets/ais-official-mark.png" alt="AI Automation Society"><span data-hf-id="hf-6o6j" class="rule"></span><small data-hf-id="hf-7awo">Free SOP</small></div><div data-hf-id="hf-rmu3" class="header-note">First AI Client</div><div data-hf-id="hf-syfk" class="speaker-window"><img src="assets/speaker-poster.jpg" alt="Nate Herk"></div><div data-hf-id="hf-vfqz" class="speaker-edge"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section data-hf-id="hf-7kg5" id="benefits" class="scene"><div data-hf-id="hf-qkx6" class="scene-inner"><div data-hf-id="hf-8gck" class="eyebrow">Inside the SOP</div><h1 data-hf-id="hf-6r27"><span data-hf-id="hf-q71i">Make your</span><span data-hf-id="hf-rdf1">next move.</span></h1><div data-hf-id="hf-nkkj" class="ui"><div data-hf-id="hf-44am" class="reflection"></div><div data-hf-id="hf-u4kc" class="benefits"><div data-hf-id="hf-f4yv" id="pitch" class="glass benefit"><span data-hf-id="hf-i0lu" class="icon"><svg data-hf-id="hf-3zhk" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle data-hf-id="hf-lmva" cx="24" cy="24" r="17" /><circle data-hf-id="hf-lzjr" cx="24" cy="24" r="9" /><circle data-hf-id="hf-esh8" cx="24" cy="24" r="2" /></svg></span><div data-hf-id="hf-x11t"><strong data-hf-id="hf-20je">One-sentence pitch</strong><small data-hf-id="hf-bv02">That works today</small></div><span data-hf-id="hf-g3id" class="number">01</span></div><div data-hf-id="hf-m46b" id="credibility" class="glass benefit"><span data-hf-id="hf-9jva" class="icon"><svg data-hf-id="hf-17cd" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path data-hf-id="hf-gfer" d="m12 24 8 8 17-19" /></svg></span><div data-hf-id="hf-xfcu"><strong data-hf-id="hf-ddoc">Build credibility</strong><small data-hf-id="hf-ox1r">With zero case studies</small></div><span data-hf-id="hf-hafg" class="number">02</span></div><div data-hf-id="hf-iafq" id="outreach" class="glass benefit"><span data-hf-id="hf-9y6b" class="icon"><svg data-hf-id="hf-1lne" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path data-hf-id="hf-amhu" d="M10 9h28a5 5 0 0 1 5 5v17a5 5 0 0 1-5 5H22L11 43v-7a6 6 0 0 1-6-6V14a5 5 0 0 1 5-5Z" /><path data-hf-id="hf-ulok" d="M14 19h20M14 26h14" /></svg></span><div data-hf-id="hf-w8fr"><strong data-hf-id="hf-xgtz">Outreach messages</strong><small data-hf-id="hf-oqis">That land projects</small></div><span data-hf-id="hf-gw4f" class="number">03</span></div></div></div></div></section><div data-hf-id="hf-980o" id="cap15" class="caption"><span data-hf-id="hf-1eo4">instead of using the skills and knowledge</span></div></main><script>const tl=gsap.timeline({paused:true});tl.to({}, {duration:1},0);window.__timelines={main:tl};</script></body></html>

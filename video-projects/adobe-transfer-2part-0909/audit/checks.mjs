@@ -1,0 +1,10 @@
+import fs from 'node:fs';import {spawnSync} from 'node:child_process';import {computeStages} from '../../../editing-os/lib/stages.mjs';import {scanWorkspace} from '../../../editing-os/lib/scan.mjs';
+const b='video-projects/adobe-transfer-2part-0909/audit';
+fs.writeFileSync(b+'/fixture-transcript.json',JSON.stringify({words:[{text:'Hello',start:.2,end:.5},{text:'world.',start:.6,end:1.1}],audio_duration_secs:1.4}));
+fs.writeFileSync(b+'/invalid-ledger.json',JSON.stringify({source_duration:100,edited_duration:1.4,keep_ranges:[{start:0,end:1}],delete_ranges:[{start:3,end:4}]}));
+const check=spawnSync('node',['.claude/skills/verify-cuts/scripts/verify-passes.mjs',b+'/fixture-transcript.json','--edl',b+'/invalid-ledger.json','--report',b+'/invalid-ledger-result.md'],{encoding:'utf8'});
+const inv={archetype:'talking-head',assetsFiles:[{name:'clean.mp4',rel:'assets/clean.mp4',mtime:1,isDir:false}],jsonCandidates:[],renders:[],deliveryRenders:[],cardsHtml:[],rootIndexHtml:null,assetsHasBrollDir:false};
+const stages=computeStages(inv);
+const snapshot=scanWorkspace();fs.writeFileSync(b+'/workspace-snapshot.json',JSON.stringify(snapshot,null,2));
+const findings={invalidLedgerAccepted:check.status===0,cleanVideoAloneVerifyStatus:stages.find(s=>s.id==='verify'),snapshotSummary:snapshot.summary,skillCount:fs.readdirSync('.claude/skills').length};
+fs.writeFileSync(b+'/findings.json',JSON.stringify(findings,null,2));console.log(JSON.stringify(findings,null,2));

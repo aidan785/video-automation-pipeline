@@ -1,0 +1,5 @@
+import fs from 'node:fs';import {spawn} from 'node:child_process';
+const b='video-projects/adobe-transfer-2part-0909/assets';
+const jobs=[...fs.readFileSync(b+'/residual-dry.txt','utf8').matchAll(/del ([\d.]+)-([\d.]+)/g)].map(m=>({start:+m[1],end:+m[2]}));
+function run(cmd,args){return new Promise((res,rej)=>{const p=spawn(cmd,args,{stdio:['ignore','pipe','pipe']});let s='';p.stdout.on('data',d=>s+=d);p.stderr.on('data',d=>s+=d);p.on('exit',c=>c?rej(Error(s)):res(s));});}
+let n=0;await Promise.all(Array.from({length:3},async()=>{while(n<jobs.length){let i=n++,j=jobs[i],stem=b+'/iso/res-'+i;j.offset=Math.max(0,j.start-2);await run('ffmpeg',['-v','error','-y','-ss',String(j.offset),'-i',b+'/source.ffconcat','-t',String(j.end-j.offset+2),'-vn','-ar','16000','-ac','1',stem+'.wav']);await run('node',['scripts/transcribe-elevenlabs.mjs',stem+'.wav','--output',stem+'.json']);const t=JSON.parse(fs.readFileSync(stem+'.json'));j.words=t.words.filter(w=>w.type==='word').map(w=>({...w,start:w.start+j.offset,end:w.end+j.offset}));console.log(i,j.start,j.end,t.text);}}));fs.writeFileSync(b+'/iso/res-manifest.json',JSON.stringify(jobs,null,2));

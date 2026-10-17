@@ -135,6 +135,6 @@ const filterPath = outVideo.replace(/\.[^.]+$/, '') + '.retake-filter.txt';
 fs.writeFileSync(filterPath, lines.join('\n'));
 
 const ff = ['-y', '-i', srcVideo, '-/filter_complex', filterPath, '-map', '[v]', '-map', '[a]',
-  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outVideo];
+  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-g', '30', '-keyint_min', '30', '-sc_threshold', '0', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', outVideo];
 console.log('ffmpeg ' + ff.join(' '));
 execFileSync('ffmpeg', ff, { stdio: 'inherit' });

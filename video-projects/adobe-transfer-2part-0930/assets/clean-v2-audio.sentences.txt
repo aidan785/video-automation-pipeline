@@ -1,0 +1,130 @@
+0:00.1  I created a interactive backrooms horror game with Opus 5.5, Higgsfield, and Blender.
+0:06.6  The whole point of this game is to find energy fuses in this massive map, and these fuses are scattered anywhere throughout the map.
+0:14.1  But the catch is you have a certain amount of time before a entity or monster gets you.
+0:20.3  I also equipped myself with a flashlight when we're going to these dark spaces, and honestly, I'm a little freaked out both by the fact that Opus 5, an AI model, built this for me, but then also the game is
+0:31.0  just generally terrifying to play.
+0:33.1  So as you can see, this is an energy fuse that I just found, and if I hold E, I take that energy fuse and all of the light goes out.
+0:39.1  My goal is to get those energy fuses into the elevator.
+0:42.7  Oh, shoot, and the entity got me.
+0:44.4  Um, but again, just using those three tools, Opus 5.5, Higgsfield, and Blender, I was able to build out this full-scale game, and I'm going to teach you exactly how I did it as well.
+0:54.2  So something that I wanted to sell in this game is the realism.
+0:57.4  I want it to feel very interactive and realistic.
+1:00.0  So I wanted the carpet and the wallpaper to feel worn down, but I also wanted to have texture.
+1:04.3  I also wanted the light to reflect off of that textured wall.
+1:07.5  So as you can see in this image, there's light that's reflecting from these board lights or ceiling lights in the hallway in front of me, and even the carpet, adding texture to that.
+1:15.7  Taking an image and essentially applying a displacement mat or distortion to signify, like, carpet.
+1:22.7  So if you're looking to create games like this that you can host just on your browser using Three.js, it's very, very simple, but the problem that you get is that AI can't output a story of a game along with,
+1:34.1  like, realistic outputs like this with just one prompt.
+1:37.1  And so that's why we use Blender, Claude, and Higgsfield as a mix of tools to generate these games for us.
+1:43.1  So if you're looking to build games like this, it doesn't have to be a horror game or a backrooms game, just any game that you're generally interested in, or if you're already building a game, adding this workflow to your
+1:53.1  stack, this is how I did it.
+1:54.7  Firstly, you're gonna need Blender, and specifically, you're gonna need Blender 5.2.2.
+1:58.8  It's just the most recent version.
+1:60.0  This is where you're gonna get all the new features.
+2:01.9  We're gonna be using Blender to generate our assets.
+2:04.8  So essentially, we're gonna be writing everything as code to then turn into a 3D model for our game like this.
+2:10.4  So this entire scene or environment, this Blender's backrooms environment, is just a Blender model, and then we have these images that are placed on top of the model, such as, like, the wallpaper and the carpet, and then those images
+2:22.7  are distorted inside of Blender to add the realistic textures.
+2:26.5  So as you can see, the ceiling didn't add any textures 'cause I didn't ask the AI model to generate any textures for me.
+2:32.8  But I did want the walls to have this rugged look, this worn down look, and the carpet that have that soft but really dirty ground.
+2:40.4  And then also with lighting, we're able to place these lights inside of Blender to see how the light reflects off of certain objects inside of our scene that then we can implement in a browser game like this.
+2:50.8  So that's why we use Blender in this stack.
+2:53.1  The next thing is obviously Claude, specifically Claude Code.
+2:55.7  This is where you're gonna get access to your flagship models like Opus 5.5, which builds games super fast and super efficient.
+3:03.1  So you can download the Claude Code for desktop app for Mac or Windows, sign in with your Claude or Anthropic subscription, and you'll be set there.
+3:10.6  And then the third thing we need is something to generate our audio.
+3:14.4  So whether that's turning on the flashlight, the lights, the light flickering audio, the monster chasing us, footsteps, the VHS kind of static audio.
+3:23.2  But then also our images to overlay onto our walls, our carpet, and our ceiling, which then will be distorted inside of Blender.
+3:30.8  So I personally use Higgsfield.
+3:32.5  You can use the MCP, which you can connect to the Higgsfield MCP inside of your cloud session.
+3:38.0  Just go to higgsfield.ai/mcp, connect to Claude, and boom, you can add a custom connector just like that.
+3:44.5  You have access to every single flagship AI image and video model and audio model that Higgsfield offers.
+3:50.4  Or I'm not gonna be focusing on this today, but you can use the new API, where you essentially can replicate Higgsfield inside of your sessions, whether you're building an app.
+3:59.0  But for this example specifically, this is a personal game that I wanted to build.
+4:02.2  I'm not offering any of these models, and no one's gonna be generating any images, videos, or audio with my game.
+4:07.4  But if you did have a game that needed to generate images, audio, or video, you can implement the API as well.
+4:12.7  So now I'm going to show you the process of how I built this inside of Claude Code with my connection to Blender and the Higgsfield MCP, how you can create a storyboard of your game.
+4:23.2  So your game actually has a story and an objective.
+4:25.5  Oh, God, there's the entity.
+4:26.5  Oh, God.
+4:27.0  Oh, God.
+4:27.5  How to generate your entire scene and make it playable using those three tools.
+4:32.5  So jumping into actually how I prompted this and created the horror game, there's a few different things that you need to have set up for it to work properly.
+4:41.2  So firstly, obviously inside of Claude, make sure that you are in the Claude Code desktop app.
+4:46.7  You select a folder.
+4:47.7  I just created this game inside of my Blender folder because I have so many different skills tied to Blender that I was able to build the entire scene with all the understanding and knowledge that I already have stored inside
+4:58.1  of this folder.
+4:59.0  So make sure you are working in a folder you can keep all of your assets separated in.
+5:02.8  Also, I make sure to keep bypass permissions on because we're not building anything that's gonna be invasive to, like, personal data or files that we don't want to be shared.
+5:10.6  And then for our model, just having Opus 5.5 on, so make sure that you're updated.
+5:15.1  And then I put my effort level at extra.
+5:17.6  You can also do max or ultra code, but extra seems to work perfectly for me.
+5:22.2  Great thing about Opus is it does not spend a lot of tokens and a lot of credits, which means you're not spending as much money if you are using, like, an API.
+5:29.4  But if you're on the subscription, you're gonna be minimizing your token spend, and you're getting super high quality outputs.
+5:34.8  Now, there's two ways you can go about this, and I'm gonna show you the first way, which is the easiest way.
+5:39.1  The first way is you can go into the link in the description below.
+5:42.0  You'll see a line that says, "All my free resources." That'll take you to my free school community, where you can find this skill that I've built, which is slash- Game builder.
+5:49.8  When you call this game builder skill, it's a game workshop builder that you can use your AI agents to set up this exact same process.
+5:56.9  And the best part about this game builder skill is if you don't have Blender set up, and if you don't have the Blender MCP connected to your Claude session, and you don't have the Higgsfield MCP also connected to your
+6:05.5  Claude session, it will go do that for you.
+6:07.4  All you have to do is give it your emails and the accounts that you logged in with, and it'll set all those connections up for you.
+6:12.8  You can see if I go into my customize and my connectors, I can search up Blender.
+6:16.6  Got Blender connected right here.
+6:18.1  And of course, Higgsfield, which is also connected.
+6:20.4  And so how you call a skill is just with /gamebuilder, and then say, okay, I showed you guys the Backrooms example.
+6:26.2  Let's create a Super Mario Kart game.
+6:29.6  I will shoot that off, and boom, now we have Super Mario Kart.
+6:32.4  I'm in, like, a candy land, but I have to go around this lap three times.
+6:37.0  It also created three other maps for me that I can test out, which I'll show you in a sec here.
+6:41.8  But I get power-ups, so I have this, like, little slick peel that I can drop.
+6:45.0  We've got boosters.
+6:46.4  I'm currently in eighth doing very bad.
+6:48.7  But let me pick up one of these boosters and see what I get.
+6:51.2  There's spin-outs.
+6:52.2  I get a shockwave, shocked everybody.
+6:54.1  Now I am in second place.
+6:55.9  I'm gonna grab this booster.
+6:57.2  And so again, utilizing Blender, Opus 8.5, and the Higgsfield MCP to generate all of our creative assets, we're able to create playable games.
+7:05.7  What's a bouncer?
+7:06.2  Let's see what this does.
+7:07.3  Oh, it looks like a shell.
+7:08.2  And even the players that I'm playing against are AI.
+7:10.9  Now I am in first.
+7:12.1  I used to love Mario Kart as a kid, and I just completely sold the game here, literally getting in eighth place.
+7:18.6  I was first just before the finish line.
+7:20.4  But as you can see, we have this little car model inside of Blender that it used to put our character in to then implement inside of our game.
+7:29.1  And then as you can see in our drift karts, which is like the Super Mario clone, we have Sunny Speedway, Candy Canyon, which is the one that we just did, and then Neon Night.
+7:38.7  So it gave us some options to play with.
+7:40.3  Now, how I made the actual Backrooms game is I originally didn't start with the game-building skill.
+7:45.8  I shot off a prompt like this: open Backrooms Higgsfield Blender folder, where I had references of the Backrooms, so images of what the Backrooms looked like, and then a text file that included a prompt that then generated assets from
+7:57.3  Higgsfield to then implement inside of Blender to build the actual scene in Blender to then implement into the game and add all the controls, the audio.
+8:04.5  And I was given this last circuit browser.
+8:06.6  And so that gave me an output just like this.
+8:08.7  With literally one prompt, I was able to get an output like this, but I did not have a flashlight originally.
+8:14.7  You'll see in the bottom left right here, there is a flashlight.
+8:17.4  I had to add that in as an extra because I couldn't see in these, like, dark areas.
+8:22.0  All I have to do now is click F, and I have a flashlight, which is pretty crazy that, like, this game was created by an AI model in less than, like, 15 minutes with one iteration.
+8:31.7  I'm super happy with it and with the entity and everything.
+8:34.4  And the game controls, when you take the fuses, it makes it get dark.
+8:38.0  There's a story behind it.
+8:39.0  Oh, there's the entity.
+8:40.1  Gotta run.
+8:40.6  Gotta run.
+8:41.5  Sorry, I don't mean to be getting distracted, but as the entity approaches, my camera gets more glitchy.
+8:46.0  Shoot, I might get stuck back here.
+8:47.3  As you can see, my camera is, like, glitching crazy out right now.
+8:50.3  Yep, and he got me.
+8:51.4  And so it applied these textures from Higgsfield.
+8:53.6  So you see this is the wallpaper, and this is a carpet.
+8:55.8  It then threw that into Blender.
+8:57.6  Blender then distorted the carpet and the wallpaper to add, like, the gross materials and the realism.
+9:03.1  And then we were given outputs like this with the grainy camera, the walking motion, the entity that's walking.
+9:08.3  We could definitely do some work on the entity.
+9:09.6  He looks a little fake right now.
+9:11.1  Still kind of scary.
+9:11.9  But that's how I created this game, and you can too.
+9:14.8  It is so easy now to break into this game dev space and create games just for fun, or if you're working on projects, use AI as an assistant.
+9:23.3  So make sure you grab that skill to create your Backrooms game or whatever game you want.
+9:27.6  Maybe it's Mario Kart, maybe it's Fortnite.
+9:30.3  And stick around for more videos on game building with AI models like this.
+9:34.7  I hope you guys enjoyed today's video, and as always, I will see you in the next one.

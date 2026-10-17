@@ -1,0 +1,352 @@
+[00:01.84 1.84] So jumping straight into how,
+        ~~ gap 0.9s (3.78 -> 4.68)
+[00:04.68 4.68] so, so jumping straight into how this is possible, there's only two things you need for this setup.
+[00:10.74 10.74] That is
+        ~~ gap 1.4s (11.12 -> 12.52)
+[00:12.52 12.52] access to Claude,
+        ~~ gap 1.7s (13.32 -> 14.98)
+[00:14.98 14.98] specifically,
+        ~~ gap 0.8s (15.52 -> 16.36)
+[00:16.36 16.36] specifically Opus 5.5.
+[00:18.18 18.18] It's not required, but that is the newest model from Claude, and it performs so well inside of Blender.
+        ~~ gap 2.7s (23.16 -> 25.84)
+[00:25.84 25.84] And then naturally off of that, you're going to need Blender.
+[00:28.78 28.78] And then naturally off of that, you are going to need Blender.
+[00:31.42 31.42] This is where we're going to build all of our animations, our scenes, and this is where we're going to let Opus 5.5 or any Claude model run
+        ~~ gap 6.1s (38.30 -> 44.42)
+[00:44.42 44.42] and execute inside of our Blender session.
+        ~~ gap 22.0s (47.34 -> 69.38)
+[01:09.38 69.38] So there's a ton of tutorials out there where we, so there's a ton of tutorial, so there's a ton of tutorials out there right now where we turn a Blender render into a previs, and then we feed that to an AI video model like CDance 2.5 and generate
+        ~~ gap 1.6s (82.18 -> 83.76)
+[01:23.76 83.76] a video off of our previs.
+        ~~ gap 9.7s (85.06 -> 94.72)
+[01:34.72 94.72] I mean, myself specifically, I have been hammering the Blender previs to CDance 2.5 workflow for the past month now, and I've pretty much mastered how to actually do it.
+        ~~ gap 7.6s (104.92 -> 112.50)
+[01:52.50 112.50] But in this video today, I'm going to show you how, but in this video today, the whole purpose is to not use an AI model and to just use our Blender viewport.
+[02:00.36 120.36] Let's push Claude to the absolute limit of what it knows about animation, textures,
+        ~~ gap 0.9s (126.54 -> 127.40)
+[02:07.40 127.40] environment design,
+        ~~ gap 0.9s (128.34 -> 129.28)
+[02:09.28 129.28] realism,
+        ~~ gap 1.7s (129.76 -> 131.48)
+[02:11.48 131.48] without using an AI model.
+[02:12.80 132.80] Because using an AI model like CDance 2.5 can get, one, very expensive.
+[02:17.52 137.52] Two, it's just a hassle because you're constantly re...
+        ~~ gap 0.9s (139.80 -> 140.66)
+[02:20.66 140.66] Two, it's just a hassle because if...
+        ~~ gap 0.8s (142.56 -> 143.40)
+[02:23.40 143.40] Two, it's just a annoy...
+[02:25.26 145.26] Two, it's just a hassle because
+        ~~ gap 2.8s (146.92 -> 149.68)
+[02:29.68 149.68] you're constantly re-prompting and regenerating
+        ~~ gap 1.1s (151.88 -> 152.98)
+[02:32.98 152.98] because your outputs are never consistent.
+[02:35.16 155.16] But with a Blender viewport like this, everything is in a 3D environment inside Blender.
+        ~~ gap 2.6s (159.40 -> 161.96)
+[02:41.96 161.96] So we can try to get it as realistic as possible
+        ~~ gap 3.9s (164.10 -> 168.00)
+[02:48.00 168.00] and obtain all of the characteristics and styles
+        ~~ gap 1.0s (170.84 -> 171.80)
+[02:51.80 171.80] and objects inside of our scene without losing it in an AI video generation.
+        ~~ gap 3.6s (175.62 -> 179.20)
+[02:59.20 179.20] This is just a sneak peek to what we're going to be creating today,
+        ~~ gap 1.1s (181.38 -> 182.52)
+[03:02.52 182.52] which I will show you,
+        ~~ gap 0.9s (183.10 -> 184.00)
+[03:04.00 184.00] which I will...
+        ~~ gap 1.1s (184.92 -> 186.06)
+[03:06.06 186.06] And this viewport is just a sneak peek of what we're creating today, by the way.
+        ~~ gap 25.0s (189.26 -> 214.24)
+[03:34.24 214.24] So before you
+        ~~ gap 14.5s (214.74 -> 229.28)
+[03:49.28 229.28] So before you go in the comments and say this is all AI hype and AI models can't
+        ~~ gap 0.8s (234.20 -> 235.02)
+[03:55.02 235.02] generate realistic scenes inside of Blender, I'm just going to show you some of the outputs that I have been getting in images.
+[04:00.38 240.38] I will show you the videos at the very end.
+[04:02.46 242.46] So this is like a spaceship scene.
+        ~~ gap 2.1s (243.86 -> 245.96)
+[04:05.96 245.96] The spaceship is going through some nebula of some sort.
+        ~~ gap 2.7s (248.34 -> 251.02)
+[04:11.02 251.02] And I had it generate multiple different angles to kind of signify, okay, this is like an action shot.
+        ~~ gap 12.9s (255.52 -> 268.42)
+[04:28.42 268.42] Here is more of like a depth shot where we have the asteroids or meteors.
+[04:32.60 272.60] I'm not,
+        ~~ gap 0.8s (272.86 -> 273.70)
+[04:33.70 273.70] I'm not a super big space...
+[04:35.30 275.30] I don't understand the space terminology yet, but if you do know, let me know in the comments.
+[04:40.32 280.32] But we have these rocks that are floating around the spaceship.
+        ~~ gap 2.4s (282.88 -> 285.24)
+[04:45.24 285.24] Some more different, some more angles of some action shots.
+        ~~ gap 1.3s (287.64 -> 288.92)
+[04:48.92 288.92] And again,
+        ~~ gap 0.9s (289.18 -> 290.04)
+[04:50.04 290.04] an AI generated, an AI generated all this inside of Blender without using a single image or video model.
+        ~~ gap 8.3s (296.48 -> 304.74)
+[05:04.74 304.74] Or even in this shot, or even this shot, what I just showed you
+        ~~ gap 1.1s (307.88 -> 308.98)
+[05:08.98 308.98] about one minute ago.
+        ~~ gap 3.9s (309.90 -> 313.80)
+[05:13.80 313.80] An alien looking lizard on a branch, but there's a depth of field, there's realism.
+        ~~ gap 1.2s (318.12 -> 319.34)
+[05:19.34 319.34] It also is animated, which I won't show you yet because I want to show you the process of how we can animate and rig a character.
+        ~~ gap 13.0s (325.26 -> 338.26)
+[05:38.26 338.26] But again, the AI model is getting so good.
+[05:40.60 340.60] We honestly don't even need a video generation model if,
+        ~~ gap 1.0s (343.58 -> 344.56)
+[05:44.56 344.56] for the specific tasks that we're trying to,
+        ~~ gap 1.8s (347.00 -> 348.80)
+[05:48.80 348.80] for the specific tasks that we're trying to achieve with our Blender viewport.
+        ~~ gap 11.2s (352.16 -> 363.32)
+[06:03.32 363.32] Or here's like another one.
+[06:04.34 364.34] This one I was the least happy--
+[06:06.86 366.86] Or here's another one.
+[06:07.64 367.64] This one I actually was least happy about.
+[06:09.56 369.56] Um, it doesn't look like a caterpillar, and maybe the style that I prompted Claude was not
+        ~~ gap 1.3s (375.86 -> 377.16)
+[06:17.16 377.16] specific enough.
+[06:18.60 378.60] But it just looks a little bit too toyish and too unrealistic.
+        ~~ gap 0.8s (381.18 -> 382.02)
+[06:22.02 382.02] But again, this was all generated with Opus 5.5 and Blender.
+        ~~ gap 4.0s (385.18 -> 389.16)
+[06:29.16 389.16] This one was also animated as well.
+[06:30.66 390.66] As you can see, it goes through these--
+        ~~ gap 0.8s (392.34 -> 393.16)
+[06:33.16 393.16] It goes through this very smooth head turn, turns to the camera, which again, I'll show you in the very end of the video.
+        ~~ gap 4.4s (398.56 -> 402.92)
+[06:42.92 402.92] But I just wanted to s--
+        ~~ gap 4.8s (403.44 -> 408.26)
+[06:48.26 408.26] But this is what we can do with AI now without an AI video model.
+        ~~ gap 14.9s (411.96 -> 426.84)
+[07:06.84 426.84] So how we're going to do this, it's very simple.
+[07:08.98 428.98] It's just like all the workflows I've done on my channel
+        ~~ gap 2.3s (431.34 -> 433.62)
+[07:13.62 433.62] having, having Claude connected to Blender.
+[07:15.84 435.84] So if we want to make sure that our Blender connection is set up, we just do /mcp,
+        ~~ gap 1.6s (440.22 -> 441.78)
+[07:21.78 441.78] and that will open up our list of mcp's.
+[07:23.46 443.46] We can search Blender right here.
+        ~~ gap 2.5s (444.74 -> 447.26)
+[07:27.26 447.26] And you can see we are connected
+        ~~ gap 0.9s (448.44 -> 449.38)
+[07:29.38 449.38] to Blender.
+        ~~ gap 2.4s (450.18 -> 452.56)
+[07:32.56 452.56] You also wanna have an empty Blender viewport open.
+[07:35.14 455.14] I will clear this.
+        ~~ gap 7.9s (455.86 -> 463.74)
+[07:43.74 463.74] So now we have a completely empty Blender session that we can start building in.
+        ~~ gap 6.5s (468.24 -> 474.72)
+[07:54.72 474.72] And so if you're looking to create videos or maybe just still shots, it's honestly--
+        ~~ gap 0.8s (478.78 -> 479.60)
+[07:59.60 479.60] And so if you're looking to just create still shots, it makes your life really easy.
+        ~~ gap 1.5s (483.14 -> 484.60)
+[08:04.60 484.60] Opus 5.5 does a great job pulling references from the internet or even
+        ~~ gap 1.1s (488.68 -> 489.74)
+[08:09.74 489.74] pulling references from a prompt that you create.
+[08:11.81 491.81] But when it comes to rigging, this is where it gets a little bit more difficult because this character has different ligaments.
+[08:16.68 496.68] It has arms, legs, a tail.
+[08:19.26 499.26] It has individual fingers.
+        ~~ gap 2.8s (500.66 -> 503.42)
+[08:23.42 503.42] It has eyebrows.
+[08:24.46 504.46] It has these tentacles at the top of its head or I guess id- antennas.
+        ~~ gap 4.5s (507.90 -> 512.40)
+[08:32.40 512.40] We're going to want--
+        ~~ gap 0.9s (512.96 -> 513.82)
+[08:33.82 513.82] If we're creating a video, we wanna add motion to that character.
+        ~~ gap 3.3s (517.30 -> 520.62)
+[08:40.62 520.62] And so just a sneak peek, if I play this, you can see that the fingers move.
+        ~~ gap 8.7s (524.48 -> 533.20)
+[08:53.20 533.20] And so if we--
+[08:53.72 533.72] If--
+[08:54.24 534.24] And so just a sneak peek, if I play this, you can see that the fingers are moving down here.
+[08:57.88 537.88] So let me just zoom in right here.
+        ~~ gap 2.2s (539.14 -> 541.30)
+[09:01.30 541.30] Let me get out of pose mode so we can just select the actual
+        ~~ gap 6.8s (543.72 -> 550.54)
+[09:10.54 550.54] fingers, but we can see that his fingers
+        ~~ gap 1.7s (552.94 -> 554.60)
+[09:14.60 554.60] move, and he is merging with a vine right here.
+        ~~ gap 1.1s (556.84 -> 557.98)
+[09:17.98 557.98] So we will need to fix that.
+        ~~ gap 6.0s (559.14 -> 565.16)
+[09:25.16 565.16] Or even his throat croaking.
+[09:28.52 568.52] He's a lizard of some sort, so
+        ~~ gap 3.0s (570.12 -> 573.10)
+[09:33.10 573.10] he was able to pick that up.
+        ~~ gap 0.8s (574.18 -> 575.02)
+[09:35.02 575.02] His head moving.
+        ~~ gap 4.5s (575.70 -> 580.18)
+[09:40.18 580.18] His head moves as this little bug flies by,
+        ~~ gap 1.6s (582.36 -> 583.96)
+[09:43.96 583.96] which if you can't see, the bug is right here.
+        ~~ gap 1.4s (585.58 -> 586.94)
+[09:46.94 586.94] The bug is right here.
+[09:47.86 587.86] You can barely even see it, but it does float right by him,
+        ~~ gap 0.9s (590.92 -> 591.86)
+[09:51.86 591.86] and it's like he's almost tracking it if we go into our camera view.
+[09:54.60 594.60] He's tracking the bug as it flies by.
+        ~~ gap 1.0s (596.56 -> 597.58)
+[09:57.58 597.58] But he still has all of the natural motion,
+        ~~ gap 1.4s (599.80 -> 601.18)
+[10:01.18 601.18] and AI did this.
+[10:02.10 602.10] AI was able to pull this.
+[10:03.40 603.40] And I honestly didn't even reference, like, this is how a lizard moves.
+[10:06.26 606.26] This is what I want it to happen.
+[10:07.94 607.94] It added the little bug to fly by, and then it tracked the bug
+        ~~ gap 1.0s (610.88 -> 611.92)
+[10:11.92 611.92] and animated that in my viewport.
+        ~~ gap 6.3s (613.34 -> 619.68)
+[10:19.68 619.68] And so what I like to do when prompting these types of scenes, if I want inspiration from something, I always pull from the internet.
+        ~~ gap 47.4s (625.26 -> 672.68)
+[11:12.68 672.68] And so this right here from the actual Blender website was my inspiration.
+        ~~ gap 3.8s (676.54 -> 680.38)
+[11:20.38 680.38] All I did was copy this image,
+        ~~ gap 2.4s (681.82 -> 684.26)
+[11:24.26 684.26] go back into my Claude session, and paste that image in.
+        ~~ gap 24.6s (686.86 -> 711.42)
+[11:51.42 711.42] And give it this very natural language text prompt.
+[11:53.88 713.88] This is not a structured prompt.
+[11:55.90 715.90] You don't need to be s- wasting your time giving structured prompts to Claude to generate in Blender.
+[12:01.62 721.62] Maybe you do when it comes to image generation or video generation.
+[12:04.62 724.62] But because we're skipping that, uh--
+[12:06.36 726.36] because we're skipping that part entirely and relying only on the Blender viewport, you can talk to it naturally as you would maybe a junior 3D designer And that's how I treat my Claude when it's working inside of Blender.
+[12:17.86 737.86] I always think of it as, okay, it's training its--
+[12:20.56 740.56] it's training.
+[12:21.26 741.26] It's in its training session of
+        ~~ gap 0.9s (743.08 -> 743.96)
+[12:23.96 743.96] building inside of Blender, so we have to talk to it naturally.
+        ~~ gap 1.3s (747.18 -> 748.50)
+[12:28.50 748.50] So all I said is, "I want you to create this type of creature scene.
+[12:31.50 751.50] Again, keep it as realistic as possible with the goal of this creature being rigged in the future, then animated very smoothly."
+[12:37.66 757.66] If you're having any trouble with the rig stuff, maybe there is something that you can find online, so go search references,
+        ~~ gap 0.8s (763.00 -> 763.84)
+[12:43.84 763.84] like a free character model for this, or build it yourself.
+        ~~ gap 1.5s (766.42 -> 767.96)
+[12:47.96 767.96] This is going to be a very difficult build because of the rigging
+        ~~ gap 1.5s (770.48 -> 772.02)
+[12:52.02 772.02] and the realism
+        ~~ gap 0.9s (772.74 -> 773.68)
+[12:53.68 773.68] and how unique it is.
+[12:55.24 775.24] And that is all I shot off.
+[12:56.50 776.50] There's no special trick that you need to
+        ~~ gap 5.9s (778.92 -> 784.78)
+[13:04.78 784.78] prompt Claude to generate these types of scenes.
+        ~~ gap 2.0s (787.08 -> 789.12)
+[13:09.12 789.12] And with that one prompt ,
+        ~~ gap 8.7s (790.60 -> 799.28)
+[13:19.28 799.28] it gave me these reference images
+        ~~ gap 6.5s (800.88 -> 807.34)
+[13:27.34 807.34] and then finally the actual reference video which is in seven-twenty P, which is in four-eighty P, so it's very low quality.
+[13:33.68 813.68] I just wanted to render out fast 'cause it takes about like an hour to two hours to render out.
+[13:37.56 817.56] But you can see you have the animation of the actual lizard.
+[13:40.36 820.36] He sees the bug fly by, but it's in the depth of the camera.
+[13:43.52 823.52] It's out of the depth of the camera, so it's a little blurred out.
+[13:46.04 826.04] But you can see he seems very natural.
+        ~~ gap 1.9s (828.00 -> 829.86)
+[13:49.86 829.86] He's moving like a normal lizard.
+[13:51.50 831.50] His antennas are flowing as he moves his head.
+[13:54.50 834.50] He taps his fingers.
+[13:55.68 835.68] Now, the one thing, obviously, is right here in this bottom right corner.
+[13:58.98 838.98] Hopefully my
+        ~~ gap 1.1s (839.40 -> 840.52)
+[14:00.52 840.52] head is not in the way.
+[14:02.12 842.12] I'll have to edit that out when I am editing this video.
+[14:05.48 845.48] His fingers are merging through this vine, this branch.
+[14:08.88 848.88] So we need to update that.
+        ~~ gap 1.4s (850.32 -> 851.72)
+[14:11.72 851.72] But the great thing is, because this is rigged,
+        ~~ gap 1.7s (854.66 -> 856.34)
+[14:16.34 856.34] we can go back into
+        ~~ gap 1.2s (857.56 -> 858.74)
+[14:18.74 858.74] Blender,
+        ~~ gap 6.4s (859.06 -> 865.42)
+[14:25.42 865.42] zoom in on that finger that was interacting or interfering with the
+        ~~ gap 0.8s (870.02 -> 870.86)
+[14:30.86 870.86] vine, and then just move it up.
+        ~~ gap 53.9s (873.14 -> 927.00)
+[15:27.00 927.00] All right, and now we have the hand
+        ~~ gap 2.8s (928.98 -> 931.80)
+[15:31.80 931.80] not interfering within the branch anymore.
+        ~~ gap 1.1s (934.34 -> 935.42)
+[15:35.42 935.42] Oh, I guess maybe just a little bit right here
+        ~~ gap 6.2s (937.04 -> 943.26)
+[15:43.26 943.26] which we can fix just by turning this, grabbing it, and shifting it forward.
+[15:48.76 948.76] Go back to our main camera view.
+        ~~ gap 9.8s (949.88 -> 959.68)
+[15:59.68 959.68] And you can see ...
+        ~~ gap 14.7s (960.30 -> 975.02)
+[16:15.02 975.02] And now that finger is not interfering with our branch.
+[16:19.48 979.48] So because it's rigged, we can now--
+[16:21.64 981.64] bec- So because it's rigged that--
+[16:23.60 983.60] So because Claude rigged it for us, and say I had no rigging experience,
+        ~~ gap 1.5s (986.74 -> 988.24)
+[16:28.24 988.24] I can then iterate myself
+        ~~ gap 4.1s (990.46 -> 994.60)
+[16:34.60 994.60] after Claude is done finished.
+        ~~ gap 8.6s (995.62 -> 1004.18)
+[16:44.18 1004.18] So I'm really happy with how this turned out.
+[16:46.08 1006.08] I think it's really cool that Opus five point five, a Claude model, can generate something like this inside of Blender, and it's getting closer and closer to actually being implemented in real three-D workflows.
+        ~~ gap 10.0s (1015.80 -> 1025.76)
+[17:05.76 1025.76] And then again, like I was mentioning with this little bug character, this caterpillar ...
+        ~~ gap 27.7s (1029.50 -> 1057.20)
+[17:37.20 1057.20] Scratch that.
+[17:38.20 1058.20] And so here's the ten-eighty output.
+[17:40.26 1060.26] One thing I'm noticing that I need to fix is about halfway through the video, he turns black.
+[17:45.28 1065.28] His character
+        ~~ gap 1.7s (1066.02 -> 1067.74)
+[17:47.74 1067.74] completely glitches out.
+        ~~ gap 2.2s (1068.70 -> 1070.90)
+[17:50.90 1070.90] But as you can see, it's so much cleaner with the ten-eighty P version for these first like four seconds before he changes his color,
+        ~~ gap 1.4s (1077.54 -> 1078.94)
+[17:58.94 1078.94] which that's a glitch inside of Blender that Claude definitely messed up on.
+[18:01.84 1081.84] But again, I can reiterate in the future.
+        ~~ gap 2.0s (1084.20 -> 1086.20)
+[18:06.20 1086.20] I just had that run for about two hours though, so I'm not going to re-run that.
+        ~~ gap 1.4s (1089.40 -> 1090.82)
+[18:10.82 1090.82] But it looks so clean, and it's getting so good at the actual
+        ~~ gap 1.8s (1094.76 -> 1096.56)
+[18:16.56 1096.56] animation side of
+        ~~ gap 1.8s (1098.32 -> 1100.12)
+[18:20.12 1100.12] Blender.
+        ~~ gap 1.7s (1100.44 -> 1102.12)
+[18:22.12 1102.12] So I'm really happy with how this animation turned out in this scene.
+        ~~ gap 0.8s (1106.22 -> 1107.04)
+[18:27.04 1107.04] It's something I would honestly post on my social media.
+[18:29.52 1109.52] Maybe not the glitch, but a full rendered out video clean.
+        ~~ gap 24.4s (1113.60 -> 1137.98)
+[18:57.98 1137.98] And here's that caterpillar scene with its little rig.
+[19:00.40 1140.40] So this is how I animated it.
+[19:01.98 1141.98] It just is like walking around.
+[19:03.46 1143.46] It's like a jiggly caterpillar and then it turns its head.
+[19:06.76 1146.76] Very fluid motion.
+        ~~ gap 7.9s (1147.66 -> 1155.52)
+[19:15.52 1155.52] Let me just denoise this so you guys can actually see.
+        ~~ gap 1.6s (1157.36 -> 1158.96)
+[19:18.96 1158.96] But it's very bright environment.
+[19:20.32 1160.32] There's some depth of field to the camera, which I'm always a huge fan of.
+        ~~ gap 77.0s (1163.92 -> 1240.94)
+[20:40.94 1240.94] But it is pretty cute and it's kind of cool to see that it was able
+        ~~ gap 1.2s (1243.76 -> 1244.92)
+[20:44.92 1244.92] to generate this like blobby texture for our caterpillar.
+        ~~ gap 440.3s (1248.50 -> 1688.85)
+[28:08.85 1688.85] And so what that animation looks like s--
+[28:10.53 1690.53] w--
+[28:11.03 1691.03] And so what that animation looks like within Eevee generation,
+        ~~ gap 0.9s (1693.79 -> 1694.69)
+[28:14.69 1694.69] so this is not Cycles, but this is what we get, this like flowy, gooey caterpillar.
+[28:18.59 1698.59] He kind of turns, his
+        ~~ gap 0.9s (1700.43 -> 1701.35)
+[28:21.35 1701.35] antennas move as he's like bouncing around and turning.
+        ~~ gap 2.2s (1705.19 -> 1707.39)
+[28:27.39 1707.39] But it's really cool that this entire scene was generated with Claude inside of Blender, and now I can go inside of Blender and iterate upon it without even touching AI video generation models like CDance 2.5 and wasting my money there.
+        ~~ gap 2.9s (1719.49 -> 1722.43)
+[28:42.43 1722.43] So I'm just testing out these capabilities, and I'm sure that they're going to get better and better and better as time goes on.
+        ~~ gap 2.5s (1727.55 -> 1730.03)
+[28:50.03 1730.03] So I highly s- so I highly recommend that you stick around to see more AI Blender workflows like this.
+        ~~ gap 2.8s (1735.13 -> 1737.93)
+[28:57.93 1737.93] If you guys, if you guys enjoyed this video, please for--
+[29:01.19 1741.19] If you guys enjoyed this video, please feel free...
+        ~~ gap 1.6s (1742.67 -> 1744.27)
+[29:04.27 1744.27] If you guys enjoyed this video, please feel free to give this video a like.
+[29:07.13 1747.13] It helps me out a ton.
+        ~~ gap 1.1s (1747.95 -> 1749.07)
+[29:09.07 1749.07] I'm gonna leave you guys with that, and as always, I will see you in the next one.

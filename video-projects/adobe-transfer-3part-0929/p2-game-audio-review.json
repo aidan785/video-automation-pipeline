@@ -1,0 +1,260 @@
+{
+  "source": "assets/part2.mov",
+  "timeline": "Local part2 seconds. Parent applies global offset568.8333333333.",
+  "classification": "Targeted Ha/Mm entries are artificial source-ASR words from gameplay effects or background noise. No human spoken reaction or laughter event was detected in these targeted gaps.",
+  "method": "Fresh ElevenLabs Scribe transcription with audio-event tagging, inspection of waveform and spectrogram versus adjacent real speech, and PCM amplitude measurements. Direct listening was unavailable in this model interface; conclusions rely on the audio analysis evidence.",
+  "spectrogram": "assets/p2-game-sound-spectrum.png",
+  "fresh_isolates": [
+    {
+      "isolate": 7,
+      "local_start": 797.0,
+      "file": "assets/p2-isolate-7.json",
+      "text": "One, two, three. Okay",
+      "audio_event_count": 0
+    },
+    {
+      "isolate": 8,
+      "local_start": 817.0,
+      "file": "assets/p2-isolate-8.json",
+      "text": "These little chug jugs. The storm's-",
+      "audio_event_count": 0
+    },
+    {
+      "isolate": 9,
+      "local_start": 868.0,
+      "file": "assets/p2-isolate-9.json",
+      "text": "And I get 49 wood from that. Oh, no",
+      "audio_event_count": 0
+    },
+    {
+      "isolate": 10,
+      "local_start": 885.0,
+      "file": "assets/p2-isolate-10.json",
+      "text": "Can I zoom in?",
+      "audio_event_count": 0
+    },
+    {
+      "isolate": 11,
+      "local_start": 896.0,
+      "file": "assets/p2-isolate-11.json",
+      "text": "Oh yeah, I can zoom",
+      "audio_event_count": 0
+    },
+    {
+      "isolate": 12,
+      "local_start": 885.0,
+      "file": "assets/p2-isolate-12.json",
+      "text": "Can I zoom in? Oh yeah, I can zoom in",
+      "audio_event_count": 0
+    }
+  ],
+  "local_cuts": [
+    {
+      "start": 798.6,
+      "end": 801.7666666667,
+      "reason": "Unused nonvoice wait between three and Okay; includes two game sound artifacts transcribed as Ha.",
+      "last_real_word": {
+        "text": "three.",
+        "start": 798.102,
+        "end": 798.482
+      },
+      "next_real_word": {
+        "text": "Okay,",
+        "start": 801.841,
+        "end": 802.062
+      },
+      "protection_ms": {
+        "after_last_word": 118,
+        "before_next_word": 74.333
+      }
+    },
+    {
+      "start": 818.4,
+      "end": 820.4,
+      "reason": "Unused nonvoice wait between jugs and The; includes game sound artifact transcribed as Ha. Fresh isolate jugs ends818.240; acoustic tail remains around818.30, protected by100ms.",
+      "last_real_word": {
+        "text": "jugs.",
+        "start": 817.782,
+        "end": 818.222
+      },
+      "next_real_word": {
+        "text": "The",
+        "start": 820.482,
+        "end": 820.562
+      },
+      "protection_ms": {
+        "after_asr_tail": 160,
+        "after_acoustic_tail_approx": 100,
+        "before_next_word": 82
+      }
+    },
+    {
+      "start": 869.7333333333,
+      "end": 873.8333333333,
+      "reason": "Unused nonvoice wait between that and Oh no; includes two game sound artifacts transcribed as Ha. Use fresh that end869.660 to protect its longer tail.",
+      "last_real_word": {
+        "text": "that.",
+        "start": 869.362,
+        "end": 869.562,
+        "fresh_isolate_end": 869.66
+      },
+      "next_real_word": {
+        "text": "Oh,",
+        "start": 873.902,
+        "end": 873.982
+      },
+      "protection_ms": {
+        "after_fresh_last_word": 73.333,
+        "before_next_word": 68.667
+      }
+    },
+    {
+      "start": 886.4,
+      "end": 900.2,
+      "reason": "Unused nonvoice wait after Can I zoom in before Oh yeah; full sixteen-second isolate confirms no intermediate commentary. Includes gunfire/sound-effect Ha886.882 and Ha897.282 plus phantom Mm899.442. This wider cut subsumes prior899.4\u2013900.066667 residual cut.",
+      "last_real_word": {
+        "text": "in?",
+        "start": 886.102,
+        "end": 886.302,
+        "fresh_isolate_end": 886.32
+      },
+      "next_real_word": {
+        "text": "Oh,",
+        "start": 900.282,
+        "end": 900.362
+      },
+      "protection_ms": {
+        "after_fresh_last_word": 80,
+        "before_original_next_word": 82
+      }
+    },
+    {
+      "start": 907.5666666667,
+      "end": 909.9666666667,
+      "reason": "Unused nonvoice wait after sensitive before Oh I got one piece; source Ha909.442 is noise. This wider cut subsumes prior909.4\u2013909.966667 residual cut.",
+      "last_real_word": {
+        "text": "sensitive.",
+        "start": 906.962,
+        "end": 907.462
+      },
+      "next_real_word": {
+        "text": "Oh,",
+        "start": 910.062,
+        "end": 910.122
+      },
+      "protection_ms": {
+        "after_last_word": 104.667,
+        "before_next_word": 95.333
+      }
+    }
+  ],
+  "transcript_repairs": [
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 800.182,
+      "local_end": 800.502,
+      "isolate": 7,
+      "pcm": {
+        "rms_dbfs": -33.546,
+        "peak_dbfs": -21.87
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 800.942,
+      "local_end": 801.122,
+      "isolate": 7,
+      "pcm": {
+        "rms_dbfs": -30.071,
+        "peak_dbfs": -18.406
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 819.802,
+      "local_end": 819.982,
+      "isolate": 8,
+      "pcm": {
+        "rms_dbfs": -38.148,
+        "peak_dbfs": -27.349
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 872.822,
+      "local_end": 873.022,
+      "isolate": 9,
+      "pcm": {
+        "rms_dbfs": -36.016,
+        "peak_dbfs": -24.367
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 873.462,
+      "local_end": 873.642,
+      "isolate": 9,
+      "pcm": {
+        "rms_dbfs": -35.954,
+        "peak_dbfs": -26.119
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 886.882,
+      "local_end": 886.942,
+      "isolate": 10,
+      "pcm": {
+        "rms_dbfs": -44.457,
+        "peak_dbfs": -35.025
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 897.282,
+      "local_end": 897.322,
+      "isolate": 11,
+      "pcm": {
+        "rms_dbfs": -29.297,
+        "peak_dbfs": -22.023
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Mm.",
+      "local_start": 899.442,
+      "local_end": 900.002,
+      "isolate": 11,
+      "pcm": {
+        "rms_dbfs": -56.624,
+        "peak_dbfs": -41.001
+      },
+      "evidence": "No word or laughter event in fresh tagged isolate. Waveform and spectrogram show sound effect/noise rather than spoken syllable; the Ha sound shape differs from adjacent low-pitch commentary formants."
+    },
+    {
+      "action": "remove phantom transcript word",
+      "text": "Ha.",
+      "local_start": 909.442,
+      "local_end": 909.522,
+      "isolate": "p2-isolate-residual.json",
+      "evidence": "Previously verified absent in 897\u2013914 isolate; residual RMS \u221251.382 dBFS and short nonvoice noise hump. This duplicates prior residual recommendation."
+    }
+  ],
+  "combining_prior_recommendations": "Use union of source cuts. These recommendations subsume the previous899.4\u2013900.066667 and909.4\u2013909.966667 residual cuts; retain prior911.533333\u2013911.9 cut to protect that consonant.",
+  "validation": "All cut bounds are on30fps grid and >=60ms from genuine neighboring speech. Shared source/cut files unchanged.",
+  "not_in_scope": "Source zero-duration Mm874.882 is also absent from isolate9, but occurs after Oh no and outside requested trim; no additional audio cut proposed."
+}

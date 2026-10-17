@@ -1,0 +1,22 @@
+{
+  "sourceDuration": 1365.433,
+  "editedDuration": 672.425,
+  "removed": 693.008,
+  "removedPct": 50.8,
+  "deleteRanges": 175,
+  "keepRanges": 174,
+  "editedWords": 2317,
+  "outputs": {
+    "edl": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silence-edl.json",
+    "transcript": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silence-transcript.json",
+    "decisions": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silence-decisions.md"
+  },
+  "video": {
+    "input": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.mov",
+    "output": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silenced.mp4",
+    "filterScript": "/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silence-filter.txt",
+    "rendered": false
+  },
+  "ffmpegCommand": "ffmpeg -y -i \"/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.mov\" -/filter_complex \"/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silence-filter.txt\" -map [v] -map [a] -c:v libx264 -preset medium -crf 18 -g 30 -keyint_min 30 -sc_threshold 0 -c:a aac -b:a 192k -movflags +faststart \"/Users/aidanstanik/Projects/Video Automation/video-projects/adobe-transfer-0916/assets/source.silenced.mp4\"",
+  "hint": "re-run with --apply to render the cut video"
+}

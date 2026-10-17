@@ -1,0 +1,51 @@
+{
+  "result": "PASS",
+  "fresh_transcript": "final-video.json",
+  "sweeps": [
+    {
+      "pass_number": 1,
+      "kind": "silence",
+      "word_count": 2770,
+      "residual_gaps": 0,
+      "longest_gap_seconds": 0.54,
+      "head_seconds": 0.06,
+      "tail_seconds": 0.321,
+      "review": "Entire final transcript reviewed; compact continuous narration, natural breaths, no unexplained dead air."
+    },
+    {
+      "pass_number": 2,
+      "kind": "cuts and retakes",
+      "approved_cuts": 51,
+      "phrase_checks": 67,
+      "phrase_checks_passed": 67,
+      "repeat_warning": "for. For at 9:19 is the sentence boundary: what it uses it for. For example. Retain.",
+      "similar_sentences": "Three similar pairs near the outro describe distinct live gameplay reactions and the resource CTA. No repeated recording attempts remain.",
+      "review": "Read the complete final 188-sentence transcript in order, comparing retained takes and completed wording."
+    },
+    {
+      "pass_number": 3,
+      "kind": "ledger and coverage",
+      "expected_frames": 24079,
+      "actual_frames": 24079,
+      "source_partition": "complete",
+      "duration_drift_seconds": -0.0,
+      "av_duration_difference_seconds": 0.000333,
+      "transcript_alignment": 0.989772,
+      "review": "Full expected/fresh transcript alignment reviewed. Differences are ASR names, punctuation, contractions, numeral spelling, and a zero-duration partial token at a cut boundary. Distinct examples, platform setup, file walkthrough, prompt, copy-path demonstration, Doom/Minecraft gameplay and outro remain."
+    }
+  ],
+  "visual": {
+    "sampled_frame_matches": 35,
+    "minimum_psnr": 52.06664989033209,
+    "visually_inspected_frames": [
+      30,
+      6020,
+      12040,
+      18059,
+      24077
+    ],
+    "source_join_seconds": 399.6,
+    "notes": "Original split-screen preserved, presenter and screen framing match sources; no export crop or added obstruction."
+  },
+  "full_decode": "PASS: completed with exit 0 and empty error log"
+}

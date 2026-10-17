@@ -1,0 +1,60 @@
+0:10.4  I created the-- I created a interactive backrooms horror game with Opus 5 point-- with Opus 5.5, Higgsfield, Blender-- Higgsfield, and Blender.
+0:27.5  The whole point of this game is to find energy fuses in this massive map, and it's scattered throughout the map, and these fuses are scattered anywhere throughout the map.
+0:40.4  But the catch is you have a certain amount of time before the mons- before a entity or monster gets you.
+0:51.9  I also equipped myself with a flashlight when we're going to these dark spaces.
+1:00.6  And honestly, it's a little freaky because...
+1:05.1  And honestly, it's a little f- And honestly, I'm a little freaked out both by the fact that Opus 5, an AI model, built this for me, but then also the game is just genuinely terrifying to play.
+1:23.7  So as you can see, this is an energy fuse that I just found, and if I hold E, I can-- I take that energy fuse, and all of the light goes out.
+1:31.3  My goal is to get those energy fuses into the elevator.
+1:34.9  I have this, I have this flashlight to...
+1:44.1  Oh, shoot.
+1:44.5  There's the end.
+1:45.9  And the entity, and the entity got me.
+1:48.7  Um, but again, just using those three tools, Opus 5.5, Higgsfield, and Blender, I was able to build out this full-scale game, and I'm going to teach you exactly how I did it as well.
+2:21.8  So something that I wanted to sell in this game is the realism.
+2:25.0  I wanted there to feel-- I want it to feel very interactive and realistic, so I wanted the carpet and the wallpaper to feel, I wanted the carpet and the wallpaper to feel worn down.
+2:38.2  But I also want it to have texture.
+2:41.0  I also wanted the light to be able-- I also wanted the light to reflect off of that textured wall.
+2:47.9  So as you can see in this image, there's light that's reflecting from these board lights or ceiling lights in the hallway in front of me.
+2:58.1  And even the carpet, adding texture to that, taking an image and dis- taking an image and essentially applying a displacement matte or distortion to signify, like, carpet.
+3:26.6  And then obviously...
+3:46.6  So, so if you're looking to create this, so if you're looking to create games like this that you can host just on your browser using Three.js, it's very, very simple.
+3:59.4  But the problem that you get is that AI can't just output a, AI can't output a r- AI can't, AI can't output a story of a game along with, like, realistic outputs like this with just one prompt.
+4:14.4  And so that's why we use Blender, Claude, and Higgsfield as a mix of tools to generate these games for us.
+4:26.6  So if you're looking to build, so if you're looking to build games like this, it doesn't have to be a horror game or a backrooms game, just any game that you're genuinely interested in, or if you're already building a
+4:35.5  game, adding this workflow to your stack, this is how I did it.
+4:41.2  Firstly, you're gonna need, firstly, you're gonna need Blender.
+4:43.8  Specifically, you're gonna need Blender 5.2.2.
+4:46.8  It's just the most recent version.
+4:47.9  This is where you're gonna get all the new features.
+4:51.0  Secondly, you're going to need Claude Code.
+4:55.6  Actually, scratch that.
+4:57.3  We're gonna be using Blender to generate our assets.
+5:00.2  So instead of writing everyth- So essentially, we're gonna be writing everything i- So essentially, we're gonna be writing everything as code to then turn, or scripting, to then turn into a 3D model for our game like this.
+5:18.1  So this entire Blender-- So this entire scene or environment, this Blender's backrooms environment, is just a Blender model.
+5:28.5  And then we have, and then we have these images that are placed on top of the model, such as, like, the wallpaper and the carpet, and then those images are distorted inside of Blender to add the realistic textures.
+5:45.6  So as you can see, the ceiling didn't add any textures 'cause I didn't ask the AI model to generate any textures for me.
+5:55.9  But I did want the walls to have this rugged look, this worn down look, and the carpet that have that soft but really dirty ground.
+6:13.2  And then also with lighting, we're able to place these lights inside of Blender to see how the light reflects off of certain objects inside of our scene that then we can implement in a browser game like this.
+6:27.7  So that's why we use Blender in this stack.
+6:30.6  Next is obviously, the next thing is obviously Claude, specifically Claude Code.
+6:35.1  This is where you're going to get access to your flagship models like Opus 5.5, which builds games super fast and super efficient.
+6:46.2  So you can download the Claude Code for desktop app for Mac or Windows, sign in with your Claude or Anthropic subscription, and you'll be set there.
+6:60.0  And then the third thing we need is something to generate our audio.
+7:03.8  So whether that's turning on the flashlight, the lights, the light flickering audio, the monster chasing us, footsteps, the VHS kind of static audio.
+7:15.1  Higgsfield But then also our images to overlay onto our walls, our carpet, and our ceiling, which then will be distorted inside of Blender.
+7:36.1  So I personally use Higgsfield.
+7:37.9  You can use the MCP, which you can connect to the Higgsfield MCP inside of your Claude session.
+7:44.3  Just go to Higgsfield.ai slash MCP, connect to Claude, and boom, you can add a custom connector just like that.
+7:50.8  You have access to every single flagship AI image and video model and audio model that Higgsfield offers.
+7:58.4  Or I'm not going to be focusing on this today, but you can use the new API where you essentially can replicate Higgsfield inside of your sessions, whether you're building an app.
+8:11.4  But for this example specifically, this is a personal game that I wanted to build.
+8:15.4  I'm not offering any of these models and no one's going to be generating any images, videos, or audio with my game.
+8:24.4  But if you did have a game that needed to generate images, audio, or video, you can implement the API as well.
+9:38.5  So now I'm going to show you the process of how I built this inside of Claude Code with my connection to Blender and the Higgsfield MCP.
+9:49.4  How you can create a storyboard of your game.
+9:54.7  So your game actually has a story and an objective.
+10:01.7  And then how to generate your entire scene.
+10:03.7  Oh God, there's the entity.
+10:04.7  Oh God, oh God.
+10:06.4  How to generate your entire scene and make it playable using those three tools.

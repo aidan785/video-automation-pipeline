@@ -1,0 +1,107 @@
+0:00.1  What would happen if we connected GPT-6 Astra to Blender and performed physics tests inside of Blender?
+0:06.5  If you stick to the end of this video, I'll show you the final explosion video with the smoke particles, the fire particles, and dust particles of this rock explosion.
+0:15.7  In this video, I ran GPT-6 Astra through five different physics tests to test out its knowledge and its ability to perform physics inside of Blender.
+0:26.5  It's not really performing physics, it's just generating scenes using physics.
+0:30.4  And you might be surprised because these test scenes that it built performed very well.
+0:35.0  From water physics to smoke physics to explosions, I tried to test as much as I could with GPT-6 Astra and absolutely no plugins or additional knowledge, just using GPT-6 Astra and its computer use inside of Blender.
+0:50.5  I even created some nice, pretty scenes using GPT-6 Astra to build the environment but then add some physics, like on this flag.
+0:57.3  And then, of course, the most intense one that I tried, which was the rock demolition with explosions, dust, smoke.
+1:03.9  So I'll show you all of this.
+1:05.2  So stick around to see how well GPT-6 Astra performed inside of Blender.
+1:09.9  So this first scene that I wanted to create was this very basic wrecking ball simulation that just uses collision, and it performed really well.
+1:16.7  So if I play this, you can see that the collision worked perfectly.
+1:19.4  You know, it-- The wrecking ball hits the bricks and it falls, there's gravity, and the scene looks great.
+1:24.4  It put it in this little test environment, and then that test environment was then recreated for the next five generations.
+1:29.8  So with the very first basic test being completed, I am happy with the output that we got.
+1:34.4  So let's move to the second test that I used GPT-6 for.
+1:37.9  The second was a wind test, and I wanted to test three different materials: silk, cotton, and canvas.
+1:43.6  So these are different consistencies or I guess different materials and how wind affects them.
+1:48.5  And on the backside here, we have these three metal balls that act as an object that the cloth can wrap around.
+1:55.2  And I just wanna note that these are all generated with one prompt.
+1:58.5  So I didn't iterate upon any of this.
+2:00.7  I gave it a very direct prompt to generate these scenes and then execute on its own.
+2:05.5  So if we play this...
+2:06.4  And also to note, I am not in the rendered viewport, I am just in our material preview because with the rendered viewport, it's going to look very glitchy and very grainy.
+2:14.7  But if you wanna render this out, you definitely can.
+2:16.7  So playing these, these all have the exact same wind speed.
+2:19.0  You can see that the silk, cotton, and canvas have different consistencies when they wrap around the metal object.
+2:24.8  So with the wind blowing, the silk obviously is going to wrap around the ball a lot more.
+2:29.8  Cotton is a little bit thicker, so it's going to be a little bit more constrained.
+2:34.1  And then a canvas, like a paper canvas like you'd paint on, is going to be very thick, I guess, in consistency or in tension compared to something like silk.
+2:43.7  So I'm really impressed that it understood the consistencies or the materials and how they interact with other objects because that's important to signify realism.
+2:53.3  And so that inspired me for this flag in this, like, medieval setup to create this wind blowing on the flag with the nice castle in the background.
+3:01.9  So you can create some actual motion to your scenes now utilizing GPT-6 Astra and Blender.
+3:07.8  And then here is the final rendered output for this video.
+3:10.2  It was rendered really quickly.
+3:12.0  I needed to output it fast.
+3:13.7  But you can see we have, like, the nice fabric material, and then we have the actual wind blowing on the flag with the nice scene in the background.
+3:21.4  So this is how you can play around with different materials and create different scenes to signify motion inside of your environments.
+3:27.4  Now, the next test that I did was a water gate release, and I'll show you the final rendered output.
+3:32.5  I baked the water animation, which GPT-6 understands how to do and why it needs to do that.
+3:38.0  If you're not familiar, if you bake your animation, it's essentially turning this liquid motion, which I'll show you right here.
+3:43.9  It doesn't look good right now because this is the material preview.
+3:46.9  But this motion of the water, the realism that it signifies, if you bake it, your renders are gonna be a lot faster, and your viewport is actually gonna play back.
+3:54.9  So essentially, we're taking all of this data and turning it into a static file.
+3:58.5  So we have a file of the water moving around in this exact environment with the exact parameters or the perimeter of this box or scene.
+4:06.6  We essentially just render out the water as a static file, and then when we render out the actual video, those files essentially are compressed into each other, and then we get a clean output like this.
+4:15.6  And I was really impressed with the water animation because, again, the level of this water is a lot higher on the left side.
+4:21.5  And when the gate is released, we can see that the water flows out.
+4:24.4  And I'll show you the final rendered output with the baked water simulation in a second here.
+4:28.8  So as you can see, this is the rendered output that I gave it.
+4:31.7  It's just 720p, but you can see the water animation is generated by GPT-6 Astra, then was baked by GPT-6 Astra, and then was re-rendered in the final output using only Astra.
+4:43.7  Now, I did make a video recently on Fable 5.1 and water animations.
+4:47.6  It's very, very similar.
+4:49.2  So I can't really say Fable 5.1 or GPT-6 Astra is better for these water simulations n- 'cause they are both very, very similar, and I'm happy with both outputs that we got.
+4:59.4  But it's crazy that AI can generate and build a water simulation inside of Blender without any context.
+5:06.7  It just understands the Blender interface well enough to actually execute and build something like this.
+5:12.1  Now, this next scene is the thermal test or an explosion fireball test chamber.
+5:17.2  You're not gonna see anything in this generation because the actual explosion is baked.
+5:21.4  So just how we bake water simulations, we can bake fire and smoke simulations inside of Blender.
+5:26.6  And this is where I really thought that GPT-6 Astra was going to lose its understanding because its understanding and the outputs weren't gonna be as good.
+5:34.4  Now, the goal of this was to have a small explosion start right here and then have smoke particles wrap around this flow obstacle right here to show that these particles have realism, and they're going to rise because as heat
+5:47.7  rises, the smoke will rise as well.
+5:49.6  And so this is the output that I got from GPT-6 Astra inside of Blender doing the fireball test chamber thermal test.
+5:57.0  It explodes, and then the smoke kind of wraps around the flow obstacle, but it dissipates so fast that you can't even really see the smoke either covering or wrapping around the flow obstacle.
+6:07.9  So it got the idea.
+6:09.0  It baked the explosion, and you can see the explosion's definitely there.
+6:12.0  It has, like, the fireball, and then the smoke kind of dissipates and rises up.
+6:16.6  Again, all being baked by GPT-6 Astra and then rendered out with the AI model.
+6:21.6  And so this is where I started to think, like, "Okay, maybe these more complex workflows when it comes to simulations is not suitable for GPT-6 Astra.
+6:29.7  I need to test this out with a different scene." And so that brought me to build out, like, this realistic destruction effect inside of Blender using GPT-6 Astra, and I really wanted to test its limits here.
+6:40.1  And I gave this really long prompt.
+6:41.6  It had it reference some videos on tutorials, so essentially I'm teaching it to become a 3D designer or VFX artist based on free resources on YouTube.
+6:51.4  And it created this really cool simulation where it's like maybe, I don't know, I thought of Dune when I first saw this, where it's, like, the worms inside of the desert when they're under the ground, and they're moving through
+7:02.4  the desert floor.
+7:03.3  They're kind of shifting everything.
+7:05.3  But this is obviously more concrete style.
+7:07.4  I wanted smoke, I wanted fire, I wanted destruction, I wanted shattering concrete and rocks.
+7:12.5  And so this is the first output it gave me.
+7:13.9  It was super clean, super accurate.
+7:16.0  One thing I'll notice is It separated these concrete blocks into four separate sections, so you can kind of see where the blocks are breaking, and it just doesn't look super natural, like it's shifting under this rock.
+7:28.9  So that's something I need to iterate upon with GPT-6 Astra.
+7:32.0  But it added the concrete textures, it added the rock textures, it added, like, the soil for me, and it created this nice smooth collision simulation, which I was really happy with.
+7:41.6  And so I thought, you know, "Why don't we combine these?" You know, we can have a collision simulation with some smoke and dust, and then some fire added on to make it feel as real as possible.
+7:50.8  And so with that and its knowledge on smoke, fire, collisions, dust, and then baking all of that to create a final rendered output, I was able to get something just like this, where we have that same exact collision simulation,
+8:03.9  but then we have, like, fire underneath to signify, like, explosions.
+8:07.2  Now, it's not perfect, and the thing is with these AI models, it's never going to be perfect, but we're getting closer and closer to GPT-6 Astra, like, actually playing a pivotal role in 3D, in my opinion.
+8:19.7  We're always gonna need the human there for creativity and creative iteration and creative leadership, because you can't just shoot off a prompt and say, "Hey, I want you to build an explosion inside of Blender." You have to give it
+8:28.8  some direction.
+8:30.2  But I am really happy with this output, and again, this was technically two prompts to create an explosion simulation just like this.
+8:37.4  Now, I have one more simulation that I wanna show you, and that's a classic jelly drop test.
+8:42.0  Based on different viscosities...
+8:43.9  Based on different materials and viscosities, we have, like, soft, medium, and firm jelly drops, and when I drop them, we can see that it's very, very minimal.
+8:52.0  So it definitely did not pick up on, like, exactly what I was going for.
+8:55.1  I was hoping that soft would be, like, literally a mesh or, like, goop, and it would flatten completely and then kind of bring itself back together.
+9:02.6  Medium would be more, like, soft, and then firm would be kind of just like a rock.
+9:05.7  And then here's that rendered output.
+9:06.9  Again, it's just very similar.
+9:08.5  It doesn't seem like there's a massive difference between the three levels of softness, but it got the idea that I was trying to create a demo on the bounciness or a drop test on these jelly blocks.
+9:20.6  You can barely notice, like, the soft one obviously is compressed more than the firm one, but it's so minimal.
+9:28.1  I definitely need to iterate upon this again and just give it more context on, like, "I want this soft jelly block to be as flat as possible or as gooey as possible." But there you have it.
+9:37.6  That's how I utilize GPT-6 Astra to test out the physics inside of Blender.
+9:42.9  If you're interested in AI content like this, feel free to like.
+9:45.5  It helps me out a ton.
+9:46.8  And subscribe to the channel.
+9:48.3  I'll be posting a lot more on AI models and Blender and how they can work together.
+9:52.8  I hope you guys enjoyed, and as always, I will see you in the next one.
+9:56.6  Thanks.

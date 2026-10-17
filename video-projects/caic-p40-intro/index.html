@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="assets/tokens.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #p40 {
+    position: relative; width: 1920px; height: 1080px;
+    overflow: hidden; background: var(--canvas);
+    font-family: var(--font-body); color: var(--text);
+  }
+  #bg { position: absolute; inset: 0; z-index: 1; }
+  #bg .base   { position: absolute; inset: 0; background: var(--canvas); }
+  #bg .dots   { position: absolute; inset: 0; background-image: var(--dot); background-size: var(--dot-size); }
+  #bg .bloom  { position: absolute; inset: -10%; background: var(--bloom-bottom); transform-origin: 50% 100%; }
+  #bg .bloom2 { position: absolute; inset: 0; background: var(--bloom-corner); opacity: .5; }
+
+  #vidwrap { position: absolute; inset: 0; z-index: 20; transform-origin: 0 0; }
+  #vidframe { position: absolute; inset: 0; overflow: hidden; border-radius: 0px; }
+  #vidframe video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #vidrim {
+    position: absolute; inset: 0; border-radius: 0px; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 1.5px 0 var(--glass-hi), 0 0 0 1.5px rgba(var(--accent-rgb), .55),
+                0 0 34px rgba(var(--accent-rgb), .35), var(--glass-shadow);
+  }
+  #vidshade {
+    position: absolute; inset: 0; z-index: 25; pointer-events: none;
+    background: linear-gradient(90deg,
+      #0A0E14 0%, #0A0E14 26%,
+      rgba(10,14,20,.92) 35%, rgba(10,14,20,.55) 44%, transparent 55%);
+  }
+
+  .under { position: absolute; inset: 0; z-index: 5; }
+  .over  { position: absolute; inset: 0; z-index: 30; }
+  .self  { inset: auto; }
+  #vig   { position: absolute; inset: 0; z-index: 40; background: var(--vignette); pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 41; background-image: var(--tex-grain); background-size: 200px 200px; opacity: .05; pointer-events: none; }
+
+  /* ---------- shared card kit (Kallaway) ---------- */
+  .kick {
+    font-family: var(--font-mono); font-size: var(--size-label);
+    letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent);
+    text-shadow: var(--textglow-accent);
+  }
+  .chipx {
+    padding: 16px 30px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: var(--glass-bg-dark); border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .chipx b { color: var(--white); }
+  .punchx {
+    padding: 20px 36px; border-radius: var(--radius-sm);
+    font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 34px; color: var(--white);
+    background: linear-gradient(0deg, rgba(var(--accent-rgb), .13), rgba(var(--accent-rgb), .13)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--accent-rgb), .65);
+    box-shadow: var(--glow-accent), inset 0 1px 0 var(--glass-hi);
+    text-shadow: var(--textglow-accent);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx {
+    padding: 18px 32px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 30px; color: var(--text);
+    background: linear-gradient(0deg, rgba(var(--alert-rgb), .12), rgba(var(--alert-rgb), .12)), rgba(12, 17, 27, 0.94); border: 1.5px solid rgba(var(--alert-rgb), .6);
+    box-shadow: 0 0 22px rgba(var(--alert-rgb), .26), inset 0 1px 0 var(--glass-hi);
+    backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  }
+  .warnx b { color: var(--alert); }
+  .grad {
+    background: linear-gradient(180deg, #fff 15%, var(--accent) 120%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    padding-bottom: .14em; margin-bottom: -.14em;
+  }
+  .word { display: inline-block; }
+
+  .qrow { display: flex; align-items: flex-start; gap: 20px; padding: 16px 26px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .qrow .n { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 21px; color: var(--accent); border: 1.5px solid rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); }
+  .qrow .tx { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 31px; color: var(--white); }
+  .qrow .tx .sub { display: block; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: var(--text-dim); margin-top: 5px; }
+  .qrow .tx .sub b { color: var(--text); }
+  .qrow.bad .n { color: var(--alert); border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 12px rgba(var(--alert-rgb), .3); }
+  .qrow.lit { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+
+  .kc { padding: 24px 30px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .kc.hot { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  .kc.dead { border-color: rgba(var(--alert-rgb), .55); box-shadow: 0 0 16px rgba(var(--alert-rgb), .22), inset 0 1px 0 var(--glass-hi); }
+  .kc .lab { font-family: var(--font-mono); font-size: 20px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); margin-bottom: 8px; }
+  .kc.dead .lab { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  .kc .val { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 33px; color: var(--white); }
+  .kc .det { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 23px; color: var(--text-dim); margin-top: 8px; }
+  .kc .det b { color: var(--text); }
+
+  .quote { padding: 22px 32px; border-radius: 24px; border-bottom-left-radius: 8px; font-family: var(--font-body); font-weight: var(--wt-med); font-size: 28px; font-style: italic; color: var(--text); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  .quote b { color: var(--white); font-style: normal; }
+
+  /* rails / pills (module map, ladder, zones) */
+  .rail { display: flex; align-items: center; gap: 14px; }
+  .mpill { padding: 16px 28px; border-radius: 999px; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 28px; color: var(--text-dim); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); white-space: nowrap; }
+  .mpill.on { color: var(--white); border-color: rgba(var(--accent-rgb), .7); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); text-shadow: var(--textglow-accent); }
+  .mpill.done { color: var(--white); }
+  .mpill.done::before { content: "✓ "; color: var(--accent); }
+  .mpill.bad { border-color: rgba(var(--alert-rgb), .6); color: var(--white); }
+  .conn { width: 34px; height: 2px; background: rgba(var(--accent-rgb), .55); box-shadow: var(--glow-accent-sm); transform-origin: 0 50%; }
+
+  /* takeover / outro centering */
+  .center { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .center .l1 { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 88px; line-height: 1.12; letter-spacing: var(--track-tight); color: var(--white); text-shadow: var(--textglow); }
+  .center .kick { margin-bottom: 26px; }
+  .center .rail { justify-content: center; }
+  .center .t { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 92px; color: var(--white); text-shadow: var(--textglow); }
+  .caps { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 40px; }
+
+  /* under-plane PIP layouts: content stays left of x~1200 */
+  .head { position: absolute; left: 110px; top: 56px; }
+  .head .t { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 52px; color: var(--white); text-shadow: var(--textglow); margin-top: 10px; }
+  .pstack { position: absolute; left: 110px; top: 200px; width: 1060px; display: flex; flex-direction: column; gap: 14px; }
+  .pstack > div { align-self: flex-start; max-width: 1040px; }
+  .pstack .qrow { width: 1000px; }
+
+  /* over-plane shift layouts: left column, video shifted right */
+  .sstack { position: absolute; left: 80px; top: 190px; display: flex; flex-direction: column; gap: 15px; }
+  .sstack > div { align-self: flex-start; max-width: 760px; }
+  .sstack .chipx { font-size: 28px; padding: 14px 26px; }
+  .sstack .punchx { font-size: 30px; line-height: 1.35; }
+  .sstack .warnx { font-size: 28px; }
+
+#b1 .l1 { font-size: 92px; }
+  #b1 .sub { margin-top: 34px; font-size: 30px; }
+
+#b2 .sstack { top: 150px; gap: 13px; }
+  #b2 .quote { font-size: 26px; }
+  #b2 .kc .det { font-size: 22px; }
+
+#b4 .sstack { top: 140px; gap: 12px; }
+  #b4 .quote { font-size: 27px; }
+  #b4 .chipx.list { font-size: 26px; line-height: 1.4; }
+
+#b5 .big { padding: 26px 34px; font-size: 40px; line-height: 1.25; }
+
+#b6 .sstack { top: 150px; gap: 13px; }
+  #b6 .rail { max-width: none !important; }
+  #b6 .rail .mpill { font-size: 21px; padding: 10px 16px; }
+  #b6 .rail .conn { width: 14px; }
+  #b6 .kc .det { font-size: 22px; }
+
+#b7 .pstack { top: 186px; }
+  #b7 .qrow .tx { font-size: 29px; }
+
+#b9 .zones { position: absolute; left: 110px; top: 170px; width: 1080px; display: flex; flex-direction: column; gap: 12px; }
+  #b9 .zone { padding: 16px 24px; border-radius: var(--radius); background: var(--glass-bg-dark); border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow); }
+  #b9 .zone.mine { border-color: rgba(var(--accent-rgb), .6); box-shadow: var(--glow-accent-sm), inset 0 1px 0 var(--glass-hi); }
+  #b9 .zone .zh { display: flex; align-items: baseline; gap: 16px; }
+  #b9 .zone .zn { font-family: var(--font-mono); font-size: 19px; letter-spacing: var(--track-wide); text-transform: uppercase; color: var(--accent); text-shadow: var(--textglow-accent); }
+  #b9 .zone .zt { font-family: var(--font-display); font-weight: var(--wt-black); font-size: 34px; color: var(--white); text-shadow: var(--textglow); }
+  #b9 .zone .zs { font-family: var(--font-body); font-weight: var(--wt-med); font-size: 22px; color: var(--text-dim); margin-top: 4px; }
+  #b9 .zone .zs b { color: var(--text); }
+  #b9 .zone .zw { font-family: var(--font-body); font-weight: var(--wt-semi); font-size: 21px; color: var(--accent); margin-top: 8px; }
+  #b9 .zone.warn .zn, #b9 .zone.warn .zw { color: var(--alert); text-shadow: 0 0 14px rgba(var(--alert-rgb), .4); }
+  #b9 .zone.warn { border-color: rgba(var(--alert-rgb), .5); }
+  #b9 .rows { display: flex; gap: 10px; margin-top: 12px; }
+  #b9 .rows .d { flex: 1 1 0; padding: 12px 16px; border-radius: var(--radius-sm); background: rgba(255,255,255,.04); border: 1px solid var(--glass-border); }
+  #b9 .rows .d .dt { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 24px; color: var(--white); }
+  #b9 .rows .d .dd { font-family: var(--font-body); font-size: 19px; line-height: 1.3; color: var(--text-dim); margin-top: 4px; }
+  #b9 .rows .d .dd b { color: var(--text); }
+
+#b10 .sstack { top: 150px; gap: 14px; }
+  #b10 .quote { font-size: 26px; max-width: 740px; }
+
+#b11 .pstack { top: 176px; gap: 10px; }
+  #b11 .qrow { padding: 11px 22px; }
+  #b11 .qrow .tx { font-size: 28px; }
+  #b11 .qrow .tx .sub { font-size: 20px; margin-top: 2px; }
+  #b11 .kc .det { font-size: 21px; }
+  #b11 .chipx { font-size: 24px; padding: 12px 22px; }
+
+#b12 .sstack { top: 160px; gap: 13px; }
+  #b12 .kc .det { font-size: 22px; }
+
+#b13 .pstack { top: 176px; gap: 12px; }
+  #b13 .quote { font-size: 27px; }
+  #b13 .kc .val { font-size: 30px; }
+
+#b14 .rail { margin-bottom: 40px; }
+  #b14 .q { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 44px; color: var(--text); text-shadow: var(--textglow); margin-bottom: 44px; max-width: 1400px; line-height: 1.25; }
+  #b14 .q b { color: var(--white); }
+  #b14 .t { font-size: 84px; }
+</style>
+</head>
+<body>
+
+<div data-hf-id="hf-5uek" id="p40" data-composition-id="p40" data-start="0" data-duration="549.33" data-width="1920" data-height="1080">
+
+  <div data-hf-id="hf-zsys" id="bg" class="clip" data-start="0" data-duration="549.33" data-track-index="2">
+    <div data-hf-id="hf-9327" class="base"></div><div data-hf-id="hf-zx1w" class="dots"></div><div data-hf-id="hf-j2ll" class="bloom"></div><div data-hf-id="hf-lri9" class="bloom2"></div>
+  </div>
+
+  <!-- ============ UNDER-PLANE (tracks 4/5) ============ -->
+
+  <div data-hf-id="hf-20zx" id="b1" class="under clip" data-start="0" data-duration="10.54" data-track-index="4">
+    <div data-hf-id="hf-n6rz" class="center inner"><div data-hf-id="hf-yeow"><div data-hf-id="hf-1aet" class="kick">Pillar Four · Governance · Boundaries Built In</div><div data-hf-id="hf-4o07" class="l1">The agent that behaved<br data-hf-id="hf-x5px"><span data-hf-id="hf-qg2d" class="grad">for a month</span></div><div data-hf-id="hf-h4yq" class="chipx sub">A daily stats DM in ClickUp, built for a YouTube demo</div></div></div>
+  </div>
+
+  <div data-hf-id="hf-hkwo" id="b3" class="under clip" data-start="55.41" data-duration="21.43" data-track-index="4">
+    <div data-hf-id="hf-d6im" class="head x"><div data-hf-id="hf-u5b5" class="kick">The real lesson from the story</div><div data-hf-id="hf-ou7e" class="t">Where the rule <span data-hf-id="hf-yxpy" class="grad">actually lived</span></div></div><div data-hf-id="hf-3j2g" class="pstack x"><div data-hf-id="hf-6fio" class="kc dead k1"><div data-hf-id="hf-o7hf" class="lab">The prompt layer</div><div data-hf-id="hf-jltw" class="val">“Only post to this DM”</div><div data-hf-id="hf-th89" class="det">The rule about where messages could go lived in the prompt, <b data-hf-id="hf-jsj1">and the prompt turned out to be optional</b></div></div><div data-hf-id="hf-pyt2" class="kc hot k2"><div data-hf-id="hf-a5qn" class="lab">The tool layer</div><div data-hf-id="hf-3de5" class="val">What the automation could reach</div><div data-hf-id="hf-zyv9" class="det">What the system can actually touch and do. <b data-hf-id="hf-lsor">The rule that actually held.</b></div></div><div data-hf-id="hf-pr1k" class="punchx p1">A prompt is a suggestion, a dotted line. The tool layer is a hard boundary.</div></div>
+  </div>
+
+  <div data-hf-id="hf-y3v4" id="b5" class="under clip" data-start="121.33" data-duration="30.79" data-track-index="4">
+    <div data-hf-id="hf-ytk2" class="head x"><div data-hf-id="hf-uqay" class="kick">The rule my ClickUp agent taught me</div><div data-hf-id="hf-s75q" class="t">One rule <span data-hf-id="hf-bcma" class="grad">underneath all of it</span></div></div><div data-hf-id="hf-qzls" class="pstack x"><div data-hf-id="hf-oepi" class="punchx big p1">If an AI system can do or read something, assume that someday it will</div><div data-hf-id="hf-wytw" class="chipx c1">That agent could post anywhere, <b data-hf-id="hf-fs2e">so eventually it posted everywhere</b></div><div data-hf-id="hf-mwt3" class="chipx c2">Goal-oriented models are good enough now to <b data-hf-id="hf-cado">invent a way through</b> whatever stands between them and the goal</div><div data-hf-id="hf-jt39" class="kc hot k1"><div data-hf-id="hf-obph" class="lab">You can't predict it. You can bound it.</div><div data-hf-id="hf-s8ai" class="val">Draw the outer limits of what it can ever touch</div><div data-hf-id="hf-vp05" class="det">So even on its worst day, <b data-hf-id="hf-at36">the damage stops at a line you drew on purpose</b></div></div></div>
+  </div>
+
+  <div data-hf-id="hf-md1b" id="b7" class="under clip" data-start="193.55" data-duration="34.19" data-track-index="4">
+    <div data-hf-id="hf-z7v3" class="head x"><div data-hf-id="hf-9at5" class="kick">This will feel familiar</div><div data-hf-id="hf-h482" class="t">You've been doing governance <span data-hf-id="hf-y08w" class="grad">since Pillar 1</span></div></div><div data-hf-id="hf-psop" class="pstack x"><div data-hf-id="hf-otiy" class="qrow r1"><div data-hf-id="hf-qaa9" class="n">P1</div><div data-hf-id="hf-cihj" class="tx">The audit put emergency triage on the leave-it list<span data-hf-id="hf-s0qh" class="sub"><b data-hf-id="hf-cr78">That was a governance decision</b></span></div></div><div data-hf-id="hf-kvex" class="qrow r2"><div data-hf-id="hf-rh7c" class="n">P2</div><div data-hf-id="hf-8jac" class="tx">The scope wrote “clinical and emergency: never”<span data-hf-id="hf-1uvh" class="sub"><b data-hf-id="hf-6qrl">Governance again</b></span></div></div><div data-hf-id="hf-hw5c" class="qrow r3"><div data-hf-id="hf-r2wb" class="n">P3</div><div data-hf-id="hf-2ndg" class="tx">The triage agent branches anything clinical to a human, every single time<span data-hf-id="hf-31sk" class="sub"><b data-hf-id="hf-jxp2">Governance written in code</b></span></div></div><div data-hf-id="hf-al5h" class="punchx p1">What this module adds is the system behind those decisions: make them on purpose, enforce them, write them down</div></div>
+  </div>
+
+  <div data-hf-id="hf-u0gq" id="b9" class="under clip" data-start="253.07" data-duration="102.49" data-track-index="4">
+    <div data-hf-id="hf-zm64" class="head x"><div data-hf-id="hf-rrqp" class="kick">Organize governance into</div><div data-hf-id="hf-qc9g" class="t">Three <span data-hf-id="hf-iidk" class="grad">zones</span></div></div><div data-hf-id="hf-fb4l" class="zones x"><div data-hf-id="hf-c3oq" class="zone mine z1"><div data-hf-id="hf-mnpi" class="zh"><span data-hf-id="hf-vbxn" class="zn">Zone one</span><span data-hf-id="hf-gd1h" class="zt">Boundary design</span></div><div data-hf-id="hf-7h17" class="zs">Limits you build into the system itself. The three decisions from the definition.</div><div data-hf-id="hf-hnc7" class="rows"><div data-hf-id="hf-xmqx" class="d d1"><div data-hf-id="hf-r1s9" class="dt">What the AI may do</div><div data-hf-id="hf-9fed" class="dd">Which actions it can take. <b data-hf-id="hf-nc6d">My agent could post to any channel</b> when it should have sent one DM.</div></div><div data-hf-id="hf-3sgq" class="d d2"><div data-hf-id="hf-pmit" class="dt">Where the data travels</div><div data-hf-id="hf-gcbm" class="dd">Which systems and companies it passes through. <b data-hf-id="hf-yrtv">A patient record leaving the client's environment</b> on its way to a model provider.</div></div><div data-hf-id="hf-7qkr" class="d d3"><div data-hf-id="hf-sizl" class="dt">Who answers for it</div><div data-hf-id="hf-1bqf" class="dd">A named person. <b data-hf-id="hf-imfy">A system nobody owns is an incident nobody catches.</b></div></div></div><div data-hf-id="hf-ka7d" class="zw zw1">Yours, the builder. Enforced with permissions and code.</div></div><div data-hf-id="hf-1fr6" class="zone z2"><div data-hf-id="hf-ws5m" class="zh"><span data-hf-id="hf-j9mt" class="zn">Zone two</span><span data-hf-id="hf-134w" class="zt">Standards translation</span></div><div data-hf-id="hf-bx2f" class="zs">NIST AI RMF · ISO 42001 · the EU AI Act. Which parts apply to a client is <b data-hf-id="hf-bmuk">a specialist's job</b>.</div><div data-hf-id="hf-nmp2" class="zw zw2">Your job is recognition. Bring in the expert: they say what must be true, you make it true in the build.</div></div><div data-hf-id="hf-7g1r" class="zone warn z3"><div data-hf-id="hf-x6gn" class="zh"><span data-hf-id="hf-xdu7" class="zn">Zone three</span><span data-hf-id="hf-zci4" class="zt">Legal judgment</span></div><div data-hf-id="hf-17i8" class="zs">Is a specific use of AI lawful for this business, in this place? <b data-hf-id="hf-w8j5">You never touch zone three.</b> Not a little, not confidently, not when the client pushes.</div><div data-hf-id="hf-w5hx" class="zw zw3">Handled by lawyers. Your contribution is having spotted the question and sent it there.</div></div></div>
+  </div>
+
+  <div data-hf-id="hf-gf3m" id="b11" class="under clip" data-start="404.97" data-duration="51.62" data-track-index="4">
+    <div data-hf-id="hf-00h5" class="head x"><div data-hf-id="hf-27d6" class="kick">The shape of the module</div><div data-hf-id="hf-j678" class="t">A four-step process, <span data-hf-id="hf-cm7e" class="grad">run on every step</span> you build</div></div><div data-hf-id="hf-q6zq" class="pstack x"><div data-hf-id="hf-8466" class="qrow r1"><div data-hf-id="hf-7h2p" class="n">01</div><div data-hf-id="hf-4fb8" class="tx">Diagnose<span data-hf-id="hf-3yln" class="sub">Name what can go wrong, <b data-hf-id="hf-mrfx">using four failure categories</b></span></div></div><div data-hf-id="hf-fb3x" class="qrow r2"><div data-hf-id="hf-8nzs" class="n">02</div><div data-hf-id="hf-u0xc" class="tx">Screen<span data-hf-id="hf-3iwn" class="sub">Yours to handle in zone one, <b data-hf-id="hf-crd3">or a standards or legal question that needs an expert?</b></span></div></div><div data-hf-id="hf-fxfc" class="qrow r3"><div data-hf-id="hf-89or" class="n">03</div><div data-hf-id="hf-gbid" class="tx">Choose<span data-hf-id="hf-ge98" class="sub">Pick the <b data-hf-id="hf-junn">strongest control</b> that covers the risk</span></div></div><div data-hf-id="hf-dy1b" class="qrow r4"><div data-hf-id="hf-6a5m" class="n">04</div><div data-hf-id="hf-n2vc" class="tx">Apply<span data-hf-id="hf-g2qy" class="sub">Put the fix in place</span></div></div><div data-hf-id="hf-jiah" class="kc hot k1"><div data-hf-id="hf-drhh" class="lab">The deliverable · the Boundary Map</div><div data-hf-id="hf-4s9r" class="val">What the system may and may never do</div><div data-hf-id="hf-l2n9" class="det">Every line backed by <b data-hf-id="hf-n7tn">a permission setting or a piece of code</b>, not a sentence in a prompt asking the model to behave</div></div><div data-hf-id="hf-jmid" class="chipx c2">Worked on the <b data-hf-id="hf-w9ft">Brightwater triage agent</b> the whole way through</div></div>
+  </div>
+
+  <div data-hf-id="hf-yjfm" id="b13" class="under clip" data-start="487.22" data-duration="46.56" data-track-index="4">
+    <div data-hf-id="hf-0es6" class="head x"><div data-hf-id="hf-dk0p" class="kick">One more thing before we start diagnosing</div><div data-hf-id="hf-qq1j" class="t">The attitude <span data-hf-id="hf-pm9o" class="grad">to bring</span></div></div><div data-hf-id="hf-p02n" class="pstack x"><div data-hf-id="hf-846n" class="chipx c1">Governance sounds like the defensive part of the program, the work you do so nothing bad happens</div><div data-hf-id="hf-w784" class="punchx p1">In practice, it wins you business</div><div data-hf-id="hf-z1co" class="quote q1">“Wow, <b data-hf-id="hf-66o9">these guys really know what they're talking about.</b>”</div><div data-hf-id="hf-di4m" class="chipx c2">Almost nobody selling AI builds talks about <b data-hf-id="hf-6az4">where the customers' personal information sits</b>, what the system will refuse to do, or who picks up the phone when something breaks</div><div data-hf-id="hf-kp7k" class="kc hot k1"><div data-hf-id="hf-wct7" class="lab">Raise those questions with a plan attached</div><div data-hf-id="hf-265u" class="val">You're not the vendor who added risk. You're the consultant who took risk out.</div></div><div data-hf-id="hf-idqz" class="chipx c3">Employed track: the same conversation with leadership does the same thing <b data-hf-id="hf-l8rj">for your standing inside the company</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-tvqe" id="b14" class="under clip" data-start="533.63" data-duration="15.7" data-track-index="5">
+    <div data-hf-id="hf-qdkf" class="center inner"><div data-hf-id="hf-y7yw"><div data-hf-id="hf-yt92" class="kick kicker">Pillar Four · Governance</div><div data-hf-id="hf-6ejl" class="q">What could possibly go wrong? <b data-hf-id="hf-uknd">And what did you build so it can't?</b></div><div data-hf-id="hf-qzq8" class="rail"><span data-hf-id="hf-djp6" class="mpill on s1">Diagnose</span><span data-hf-id="hf-qy5c" class="conn s1c"></span><span data-hf-id="hf-imwu" class="mpill s2">Screen</span><span data-hf-id="hf-dqlx" class="conn s2c"></span><span data-hf-id="hf-b592" class="mpill s3">Choose</span><span data-hf-id="hf-dfw2" class="conn s3c"></span><span data-hf-id="hf-mfr4" class="mpill s4">Apply</span></div><div data-hf-id="hf-qltp" class="t">Next: <span data-hf-id="hf-s1yp" class="grad">Diagnose</span></div></div></div>
+  </div>
+
+  <!-- ============ VIDEO ============ -->
+  <div data-hf-id="hf-jfri" id="vidwrap">
+    <div data-hf-id="hf-ysfx" id="vidframe">
+      <video data-hf-id="hf-6xgi" id="p40-video" src="assets/clean-v2.mp4" muted data-start="0" data-duration="544.33" data-track-index="0"></video>
+      <div data-hf-id="hf-1fyy" id="vidrim"></div>
+    </div>
+  </div>
+  <div data-hf-id="hf-sxyd" id="vidshade"></div>
+  <audio data-hf-id="hf-paqm" id="p40-audio" src="assets/audio-v2.m4a" data-start="0" data-duration="544.33" data-track-index="1" data-volume="1.0"></audio>
+
+  <!-- ============ OVER-PLANE (track 6) ============ -->
+
+  <div data-hf-id="hf-ffnw" id="b2" class="over clip" data-start="10.39" data-duration="45.17" data-track-index="6">
+    <div data-hf-id="hf-1hoh" class="sstack x"><div data-hf-id="hf-3z38" class="kick k1">It ran perfectly, every day, for about a month</div><div data-hf-id="hf-8m50" class="warnx w1">Then one morning it posted my stats into other channels, <b data-hf-id="hf-lcy9">including team announcements</b></div><div data-hf-id="hf-1vs4" class="quote q1">“Hey, sorry, <b data-hf-id="hf-pwuo">that wasn't supposed to go there.</b>”</div><div data-hf-id="hf-dpd1" class="chipx c1">Nothing secret in those stats. The whole consequence: <b data-hf-id="hf-zl3v">one awkward apology</b></div><div data-hf-id="hf-hb0b" class="kc dead k2"><div data-hf-id="hf-vwdg" class="lab">Same mistake, different data</div><div data-hf-id="hf-9rf2" class="val">Customer data into a public channel</div><div data-hf-id="hf-kj0x" class="det">Someone's billing history or medical note. <b data-hf-id="hf-wme1">A lost client and a legal problem</b> instead of an apology.</div></div><div data-hf-id="hf-lan9" class="punchx p1">The mistake and the consequence are two separate things</div></div>
+  </div>
+
+  <div data-hf-id="hf-j6l4" id="b4" class="over clip" data-start="76.69" data-duration="44.79" data-track-index="6">
+    <div data-hf-id="hf-9dqt" class="sstack x"><div data-hf-id="hf-7twy" class="kick k1">Before anything else, define the word</div><div data-hf-id="hf-s2y8" class="chipx c1">Governance sounds like paperwork. <b data-hf-id="hf-l819">It isn't.</b></div><div data-hf-id="hf-047y" class="punchx p1">Governance is risk management for AI systems</div><div data-hf-id="hf-iahl" class="quote q1">“<b data-hf-id="hf-f0h7">What could possibly go wrong here?</b>”</div><div data-hf-id="hf-g09k" class="quote q2">“<b data-hf-id="hf-7p1v">What have I put in place</b> so that it can't?”</div><div data-hf-id="hf-d5qr" class="chipx list c2">Deciding three things: <b data-hf-id="hf-9tu0">what the AI may do</b> · <b data-hf-id="hf-uvjg">what data it may touch</b> · <b data-hf-id="hf-n1jo">who answers for it</b> when something breaks</div><div data-hf-id="hf-ksi5" class="chipx c3">Then enforce those decisions with <b data-hf-id="hf-o8xx">something stronger than an instruction in the prompt</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-klc8" id="b6" class="over clip" data-start="151.97" data-duration="41.73" data-track-index="6">
+    <div data-hf-id="hf-aknw" class="sstack x"><div data-hf-id="hf-qeen" class="kick k1">Why this pillar comes fourth</div><div data-hf-id="hf-89i7" class="rail r1"><span data-hf-id="hf-dui3" class="mpill done">1 Audit</span><span data-hf-id="hf-8c37" class="conn"></span><span data-hf-id="hf-sqth" class="mpill done">2 Scope</span><span data-hf-id="hf-bv6b" class="conn"></span><span data-hf-id="hf-xds6" class="mpill done">3 Build</span><span data-hf-id="hf-bgva" class="conn"></span><span data-hf-id="hf-v0em" class="mpill on">4 Governance</span><span data-hf-id="hf-b2k9" class="conn"></span><span data-hf-id="hf-lzdd" class="mpill">5 Evals</span></div><div data-hf-id="hf-qrqx" class="chipx c1">Two pillars now stand between <b data-hf-id="hf-lwri">the Brightwater build and going live</b></div><div data-hf-id="hf-a02i" class="kc hot k2"><div data-hf-id="hf-fa8t" class="lab">Governance, then evals</div><div data-hf-id="hf-qdfg" class="val">This one makes the build safe. The next one proves it works.</div><div data-hf-id="hf-4lvz" class="det"><b data-hf-id="hf-cgv7">Skip either and you're launching on hope.</b></div></div><div data-hf-id="hf-sp20" class="chipx c2">The promise from the build pillar: write down what data it may touch and what it may never do. <b data-hf-id="hf-nfz6">This is that treatment.</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-fzm3" id="b8" class="over clip" data-start="227.59" data-duration="25.63" data-track-index="6">
+    <div data-hf-id="hf-a6cv" class="sstack x"><div data-hf-id="hf-dg1v" class="kick k1">Governance is decisions plus enforcement, so:</div><div data-hf-id="hf-os46" class="punchx p1">Which decisions are actually yours to make?</div><div data-hf-id="hf-ngy7" class="chipx c1">Some are <b data-hf-id="hf-e86x">engineering calls</b> you should make alone</div><div data-hf-id="hf-4biz" class="chipx c2">Some need <b data-hf-id="hf-li3x">a specialist</b></div><div data-hf-id="hf-l386" class="chipx c3">A few you're <b data-hf-id="hf-l37p">not qualified or permitted</b> to make on a client's behalf at all</div><div data-hf-id="hf-4pig" class="warnx w1">Doing someone else's zone badly is <b data-hf-id="hf-a5mn">the fastest way to get a client, and yourself, into real trouble</b></div></div>
+  </div>
+
+  <div data-hf-id="hf-v718" id="b10" class="over clip" data-start="355.41" data-duration="49.71" data-track-index="6">
+    <div data-hf-id="hf-bd9y" class="sstack x"><div data-hf-id="hf-q4hc" class="kick k1">How do you spot a zone two or three issue?</div><div data-hf-id="hf-mnkz" class="quote q1">“If you walk into your house and smell gas, you don't need to know how to fix a gas leak. <b data-hf-id="hf-k3gj">You need to notice the smell and call someone who does.</b>” <br data-hf-id="hf-rsrt">Russ</div><div data-hf-id="hf-yuak" class="chipx c1">The lessons ahead <b data-hf-id="hf-3le3">train your nose</b> with specific, checkable signals</div><div data-hf-id="hf-9f4e" class="warnx w1"><b data-hf-id="hf-e3zu">Nothing in this program is legal advice.</b> We're not attorneys, and finishing this certification won't make you one.</div><div data-hf-id="hf-3e0t" class="punchx p1">Recognize it. Refer it.</div></div>
+  </div>
+
+  <div data-hf-id="hf-0pvw" id="b12" class="over clip" data-start="456.44" data-duration="30.93" data-track-index="6">
+    <div data-hf-id="hf-ayyx" class="sstack x"><div data-hf-id="hf-yb4z" class="kick k1">People blur these two · evals is the very next pillar</div><div data-hf-id="hf-aedj" class="kc hot k2"><div data-hf-id="hf-1g35" class="lab">Governance</div><div data-hf-id="hf-jj1b" class="val">What the system is <b data-hf-id="hf-hd5v">allowed</b> to do</div></div><div data-hf-id="hf-j928" class="kc k3"><div data-hf-id="hf-r2e4" class="lab">Evals</div><div data-hf-id="hf-wz2g" class="val">How <b data-hf-id="hf-7yuh">well</b> it does its job</div></div><div data-hf-id="hf-0va6" class="chipx c1">A wrong answer it was allowed to give: <b data-hf-id="hf-894u">an evals problem</b></div><div data-hf-id="hf-c63t" class="chipx c2">A correct action it was never supposed to take: <b data-hf-id="hf-a37j">a governance problem</b></div><div data-hf-id="hf-i28w" class="punchx p1">Governance designs for the worst case. Evals measure the everyday case.</div></div>
+  </div>
+
+  <div data-hf-id="hf-ox5g" id="vig" class="clip" data-start="0" data-duration="549.33" data-track-index="10"></div>
+  <div data-hf-id="hf-3ttg" id="grain" class="clip" data-start="0" data-duration="549.33" data-track-index="11"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(() => {
+  const DUR = 549.33;
+  const tl = gsap.timeline({ paused: true });
+  const PIP = { x: 1319, y: 631, scale: 0.36 };
+  const PIP_R = 77;
+  const PIP_CROP = 420;
+  const wrap = '#vidwrap', frame = '#vidframe', rim = '#vidrim';
+
+  function move(t, props, { radius = null, rimOp = null, crop = null, d = 0.7 } = {}) {
+    tl.to(wrap, { ...props, duration: d, ease: 'power3.inOut' }, t);
+    tl.to(wrap, { filter: 'blur(14px)', duration: d / 2, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(0px)',  duration: d / 2, ease: 'power2.out' }, t + d / 2);
+    if (radius !== null) tl.to(frame, { borderRadius: radius, duration: d, ease: 'power3.inOut' }, t);
+    if (crop   !== null) tl.to(frame, { left: crop, right: crop, duration: d, ease: 'power3.inOut' }, t);
+    if (rimOp  !== null) tl.to(rim,   { opacity: rimOp, borderRadius: radius ?? 0, duration: d, ease: 'power2.inOut' }, t);
+  }
+  const toFULL = (t) => move(t, { x: 0, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0 });
+  const toPIP  = (t) => move(t, { x: PIP.x, y: PIP.y, scale: PIP.scale, opacity: 1 }, { radius: PIP_R, rimOp: 1, crop: PIP_CROP });
+  function toOFF(t, d = 0.6) {
+    tl.to(wrap, { opacity: 0, y: '+=90', duration: d, ease: 'power2.in' }, t);
+    tl.to(wrap, { filter: 'blur(18px)', duration: d, ease: 'power2.in' }, t);
+  }
+  function fromOFF(t, target, { radius = 0, rimOp = 0, crop = 0, d = 0.8 } = {}) {
+    tl.set(wrap, { x: target.x, y: target.y + 90, scale: target.scale, opacity: 0, filter: 'blur(18px)' }, t);
+    tl.set(frame, { borderRadius: radius, left: crop, right: crop }, t);
+    tl.set(rim, { opacity: rimOp, borderRadius: radius }, t);
+    tl.to(wrap, { y: target.y, opacity: 1, duration: d, ease: 'power3.out' }, t);
+    tl.to(wrap, { filter: 'blur(0px)', duration: d * 0.8, ease: 'power2.out' }, t + d * 0.2);
+  }
+  const SHIFT_X = 400;
+  const SHADE_OFF_X = -1150;
+  tl.set('#vidshade', { x: SHADE_OFF_X }, 0);
+  const clearLeft   = (t) => { tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t);
+                               tl.to(wrap, { x: SHIFT_X, duration: 0.7, ease: 'power3.inOut' }, t + 0.1); };
+  const unclearLeft = (t) => { tl.to(wrap, { x: 0, duration: 0.7, ease: 'power3.inOut' }, t);
+                               tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+  const shadeOut    = (t) => { tl.to('#vidshade', { x: SHADE_OFF_X, duration: 0.65, ease: 'power3.inOut' }, t); };
+  // PIP corner -> shifted full frame in ONE wrap tween (scrim trails in); never pair with toFULL/clearLeft on the same window
+  const toSHIFT     = (t) => { move(t, { x: SHIFT_X, y: 0, scale: 1, opacity: 1 }, { radius: 0, rimOp: 0, crop: 0, d: 0.8 });
+                               tl.to('#vidshade', { x: 0, duration: 0.65, ease: 'power3.inOut' }, t + 0.15); };
+
+  /* shot plan (generated): b2 shift 10.39-55.56 · b3 pip 55.41-76.84 · b4 shift 76.69-121.48 · b5 pip 121.33-152.12 · b6 shift 151.97-193.7 · b7 pip 193.55-227.74 · b8 shift 227.59-253.22 · b9 pip 253.07-355.56 · b10 shift 355.41-405.12 · b11 pip 404.97-456.59 · b12 shift 456.44-487.37 · b13 pip 487.22-533.78 */
+  tl.set(wrap, { opacity: 0 }, 0);
+  fromOFF(10.14, { x: 0, y: 0, scale: 1 });
+  clearLeft(10.29);
+  toPIP(55.56); shadeOut(55.81);
+  toSHIFT(76.14);
+  toPIP(121.48); shadeOut(121.73);
+  toSHIFT(151.42);
+  toPIP(193.7); shadeOut(193.95);
+  toSHIFT(227.04);
+  toPIP(253.22); shadeOut(253.47);
+  toSHIFT(354.86);
+  toPIP(405.12); shadeOut(405.37);
+  toSHIFT(455.89);
+  toPIP(487.37); shadeOut(487.62);
+  toOFF(533.78);
+
+  // ambient loops must FIT inside DUR (floor, not ceil) or tl.duration() overshoots and the render grows a dead tail
+  const AMB = Math.floor(DUR / 8);
+  tl.to('#bg .bloom',  { scale: 1.07, yPercent: -2, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+  tl.to('#bg .bloom2', { opacity: 0.36, duration: 5, ease: 'sine.inOut', repeat: Math.floor(DUR / 10) * 2 - 1, yoyo: true }, 0);
+  tl.to('#vig',        { opacity: 0.88, duration: 4, ease: 'sine.inOut', repeat: AMB * 2 - 1, yoyo: true }, 0);
+
+  const inUp   = (t, sel, d = 0.8, y = 34)  => { tl.fromTo(sel, { y, opacity: 0, filter: 'blur(10px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const inLeft = (t, sel, d = 0.8, x = -46) => { tl.fromTo(sel, { x, opacity: 0, filter: 'blur(8px)' },  { x: 0, opacity: 1, filter: 'blur(0px)', duration: d, ease: 'power4.out' }, t); };
+  const spring = (t, sel, d = 0.7)          => { tl.fromTo(sel, { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: d, ease: 'back.out(1.4)' }, t); };
+  const outBlur= (t, sel, d = 0.5, y = -60) => { tl.to(sel, { y, opacity: 0, filter: 'blur(16px)', duration: d, ease: 'power2.in' }, t); };
+
+  /* b1 takeover 0-10.54 · cold open: the agent that behaved for a month */
+  inUp(0.3, '#b1 .kick', 0.7, 20);
+  tl.fromTo('#b1 .l1', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 0.9);
+  spring(3.11, '#b1 .sub', 0.7);
+  tl.to('#b1 .inner', { scale: 3.1, opacity: 0, filter: 'blur(24px)', duration: 0.9, ease: 'power2.in' }, 9.49);
+  tl.set('#b1 .inner', { opacity: 0 }, 10.39);
+  /* b2 shift 10.39-55.56 · the story: one morning it posted everywhere */
+  inUp(10.59, '#b2 .k1', 0.6, 18);
+  inLeft(16.07, '#b2 .w1', 0.7);
+  spring(24.71, '#b2 .q1', 0.7);
+  inLeft(28.29, '#b2 .c1', 0.7);
+  spring(36.87, '#b2 .k2', 0.7);
+  spring(33.71, '#b2 .p1', 0.7);
+  outBlur(55.01, '#b2 .x', 0.45);
+  /* b3 pip 55.41-76.84 · prompt layer vs tool layer */
+  inUp(55.71, '#b3 .head', 0.7, 26);
+  spring(57.05, '#b3 .k1', 0.7);
+  spring(62.93, '#b3 .k2', 0.7);
+  spring(68.85, '#b3 .p1', 0.7);
+  outBlur(76.29, '#b3 .x', 0.45);
+  /* b4 shift 76.69-121.48 · define governance */
+  inUp(76.89, '#b4 .k1', 0.6, 18);
+  inLeft(85.17, '#b4 .c1', 0.7);
+  spring(87.05, '#b4 .p1', 0.7);
+  spring(95.66, '#b4 .q1', 0.7);
+  spring(99.69, '#b4 .q2', 0.7);
+  inLeft(102.95, '#b4 .c2', 0.7);
+  inLeft(112.51, '#b4 .c3', 0.7);
+  outBlur(120.93, '#b4 .x', 0.45);
+  /* b5 pip 121.33-152.12 · the rule underneath: if it can, someday it will */
+  inUp(121.63, '#b5 .head', 0.7, 26);
+  tl.fromTo('#b5 .p1', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 124.75);
+  inLeft(130.24, '#b5 .c1', 0.7);
+  inLeft(133.67, '#b5 .c2', 0.7);
+  spring(142.83, '#b5 .k1', 0.7);
+  outBlur(151.57, '#b5 .x', 0.45);
+  /* b6 shift 151.97-193.7 · why this pillar comes fourth */
+  inUp(152.17, '#b6 .k1', 0.6, 18);
+  tl.fromTo('#b6 .r1 .mpill, #b6 .r1 .conn', { y: 44, opacity: 0, scale: 0.9, filter: 'blur(8px)' }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out', stagger: 0.2 }, 156.73);
+  inLeft(167.67, '#b6 .c1', 0.7);
+  spring(170.5, '#b6 .k2', 0.7);
+  inLeft(180.43, '#b6 .c2', 0.7);
+  outBlur(193.15, '#b6 .x', 0.45);
+  /* b7 pip 193.55-227.74 · you've been doing governance since pillar one */
+  inUp(193.85, '#b7 .head', 0.7, 26);
+  inLeft(199.29, '#b7 .r1', 0.7);
+  inLeft(204.25, '#b7 .r2', 0.7);
+  inLeft(208.79, '#b7 .r3', 0.7);
+  spring(216.15, '#b7 .p1', 0.7);
+  outBlur(227.19, '#b7 .x', 0.45);
+  /* b8 shift 227.59-253.22 · which decisions are yours */
+  inUp(227.79, '#b8 .k1', 0.6, 18);
+  spring(232.03, '#b8 .p1', 0.7);
+  inLeft(234.31, '#b8 .c1', 0.7);
+  inLeft(236.43, '#b8 .c2', 0.7);
+  inLeft(237.61, '#b8 .c3', 0.7);
+  inLeft(246.29, '#b8 .w1', 0.7);
+  outBlur(252.67, '#b8 .x', 0.45);
+  /* b9 pip 253.07-355.56 · the three-zone map (ON SCREEN) */
+  inUp(253.37, '#b9 .head', 0.7, 26);
+  spring(253.57, '#b9 .z1', 0.7);
+  inUp(261.71, '#b9 .d1', 0.6, 16);
+  inUp(268.69, '#b9 .d2', 0.6, 16);
+  inUp(278.69, '#b9 .d3', 0.6, 16);
+  inUp(292.51, '#b9 .zw1', 0.6, 12);
+  spring(295.11, '#b9 .z2', 0.7);
+  inUp(312.89, '#b9 .zw2', 0.6, 12);
+  spring(336.43, '#b9 .z3', 0.7);
+  inUp(346.29, '#b9 .zw3', 0.6, 12);
+  outBlur(355.01, '#b9 .x', 0.45);
+  /* b10 shift 355.41-405.12 · the gas leak + not lawyers */
+  inUp(355.61, '#b10 .k1', 0.6, 18);
+  spring(364.59, '#b10 .q1', 0.7);
+  inLeft(376.05, '#b10 .c1', 0.7);
+  inLeft(388.41, '#b10 .w1', 0.7);
+  spring(403.31, '#b10 .p1', 0.7);
+  outBlur(404.57, '#b10 .x', 0.45);
+  /* b11 pip 404.97-456.59 · the shape of the module: four steps + the Boundary Map (ON SCREEN) */
+  inUp(405.27, '#b11 .head', 0.7, 26);
+  inLeft(413.05, '#b11 .r1', 0.7);
+  inLeft(417.63, '#b11 .r2', 0.7);
+  inLeft(426.43, '#b11 .r3', 0.7);
+  inLeft(430.25, '#b11 .r4', 0.7);
+  spring(435.55, '#b11 .k1', 0.7);
+  inLeft(448.62, '#b11 .c2', 0.7);
+  outBlur(456.04, '#b11 .x', 0.45);
+  /* b12 shift 456.44-487.37 · governance vs evals */
+  inUp(456.64, '#b12 .k1', 0.6, 18);
+  spring(464.64, '#b12 .k2', 0.7);
+  spring(467.12, '#b12 .k3', 0.7);
+  inLeft(470.42, '#b12 .c1', 0.7);
+  inLeft(474.1, '#b12 .c2', 0.7);
+  spring(479.92, '#b12 .p1', 0.7);
+  outBlur(486.82, '#b12 .x', 0.45);
+  /* b13 pip 487.22-533.78 · the attitude: governance wins business */
+  inUp(487.52, '#b13 .head', 0.7, 26);
+  inLeft(490.68, '#b13 .c1', 0.7);
+  spring(495.92, '#b13 .p1', 0.7);
+  spring(502.64, '#b13 .q1', 0.7);
+  inLeft(504.48, '#b13 .c2', 0.7);
+  spring(517.4, '#b13 .k1', 0.7);
+  inLeft(521.8, '#b13 .c3', 0.7);
+  outBlur(533.23, '#b13 .x', 0.45);
+  /* b14 outro 533.63-549.33 · the pillar in one line + Diagnose is next */
+  inUp(534.03, '#b14 .kicker', 0.6, 20);
+  tl.fromTo('#b14 .q', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 535.48);
+  spring(539.92, '#b14 .s1', 0.55);
+  inLeft(540.22, '#b14 .s1c', 0.4);
+  spring(540.42, '#b14 .s2', 0.55);
+  inLeft(540.72, '#b14 .s2c', 0.4);
+  spring(540.92, '#b14 .s3', 0.55);
+  inLeft(541.22, '#b14 .s3c', 0.4);
+  spring(541.42, '#b14 .s4', 0.55);
+  tl.fromTo('#b14 .t', { scale: 0.94, opacity: 0, filter: 'blur(12px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power4.out' }, 541.46);
+
+  tl.to({}, { duration: DUR }, 0);
+  window.__timelines = window.__timelines || {};
+  window.__timelines['p40'] = tl;
+})();
+
+</script>
+</body>
+</html>

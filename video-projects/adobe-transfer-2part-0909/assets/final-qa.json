@@ -1,0 +1,63 @@
+{
+  "result": "PASS",
+  "passing_agent": {
+    "result": "PASS",
+    "reviewer": "independent passing agent",
+    "render": "clean-v3.mp4",
+    "fresh_transcript": "clean-v3-fresh.json",
+    "edl": "clean-v3.union-edl.json",
+    "passes_completed": 3,
+    "full_transcript_sentences_reviewed_per_pass": 264,
+    "word_count": 4530,
+    "gap_threshold_seconds": 0.7,
+    "residual_gaps_over_threshold": 0,
+    "maximum_interword_gap_seconds": 0.68,
+    "head_seconds": 0.08,
+    "tail_seconds": 0.318688,
+    "phrase_checks_passed": 70,
+    "phrase_checks_total": 70,
+    "mechanical_warnings": 9,
+    "unresolved_warnings": 0,
+    "remaining_editorial_flubs_identified": 0,
+    "full_sentence_retakes_identified": 0,
+    "duration_seconds": 1258.266016,
+    "expected_duration_seconds": 1258.2666666666664,
+    "duration_drift_seconds": 0.0006506666663881333,
+    "video_frames": 37748,
+    "expected_video_frames": 37748,
+    "av_duration_difference_seconds": 1.6e-05,
+    "source_partition_error_seconds": 0,
+    "report": "verify-report.md",
+    "scope": "Silence, mistake, retake, cut-integrity and transcript-coverage verification. Natural emphasis, grammatical repetition, and ordinary delivery retained. No separate script supplied."
+  },
+  "integrity": {
+    "result": "PASS",
+    "keep_ranges": 250,
+    "source_seconds": 3882.2,
+    "deleted_seconds": 2623.9333333333334,
+    "kept_seconds": 1258.2666666666664,
+    "video_frames": 37748,
+    "expected_frames": 37748,
+    "video_seconds": 1258.266016,
+    "audio_seconds": 1258.266,
+    "av_duration_difference": 1.5999999959603883e-05,
+    "part2_starts_at": 1199.6333333333323,
+    "size_bytes": 1584821598,
+    "full_source_partition": true
+  },
+  "decode": {
+    "exit_code": 0,
+    "error_log_bytes": 0
+  },
+  "visual_review": {
+    "segment_start_frames_inspected": 250,
+    "source_frame_comparisons": 26,
+    "contact_sheets_inspected": 9,
+    "issues_identified": 0
+  },
+  "acoustic_silence": {
+    "threshold_db": -40,
+    "minimum_duration_seconds": 0.6,
+    "silences_detected": 0
+  }
+}

@@ -1,0 +1,148 @@
+0:00.2  Today I'm gonna be testing out GPT-6 Soul inside of Blender, stress testing it on a bunch of different examples, and showing you how much cheaper it actually is to run GPT-6 Soul.
+0:10.6  Today I'm gonna be, today I'm gonna be testing GPT-6 Soul inside of Blender.
+0:14.7  I'll run it through a bunch of stress tests from creating miniature game assets to full environments, to even some simulations.
+0:21.4  Now, going over some really quick stats of GPT-6 Soul.
+0:24.6  Just recently, GPT-6 Astra dropped from OpenAI.
+0:28.0  It was a very powerful model, and it completely changed how AI models can work in Blender, 3D sp-- three D, 3D design.
+0:35.7  It was an amazing model that worked with 3D, and I was getting some pretty insane outputs.
+0:40.3  And if you're curious, you can look at my page.
+0:42.1  I have been hammering the GPT-6 Astra content, building, building out renders for real estate, these crazy pre-viz scenes, animating character, animating characters, building out these cathedrals.
+0:54.5  So the Astra model was great, but GPT-6 Soul is the new cheaper flagship model, and it replaces GPT 5.6 Soul.
+1:02.5  Speaking of pricing, if you're using the OpenAI API keys instead of the subscription plan, which is the twenty dollar a month, a hundred dollar a month, or two hundred dollar a month plan, if you're using APIs, it's about a
+1:14.0  two dollar input cost and a ten dollar output cost, which is fifty percent cheaper than GPT 5.6 Soul.
+1:21.0  They also list some stats about Luna, but I'm not focusing on Luna today.
+1:24.3  I want to test out how Soul, which is the new-- which is the flagship-- which is, which has now replaced the 5.6 Soul model, the new flagsh- the new flagship model outside of the Astra model, which is like the
+1:38.2  super power one, built inside of Blender, and I will-- And by the end of this video, I will show you a cost anal-- And by the end of this video, I will show you a cost analysis of five separate
+1:48.0  scenes, each one with their cost tied to it, along with a full cost spent in API token credits just in case you are using the API from OpenAI.
+1:57.5  A stat I want to highlight is the computer use, and if you're not familiar with computer use, it is how an AI model interacts with the interface of your computer, specifically Blender.
+2:06.5  How can GPT-6 Soul play around with the tools that Blender has available, utilize those tools, utilize those tools to get accurate outputs from what our idea or vision is?
+2:18.1  So it's essentially, so it's essentially like, so think of it as like you, but an AI model.
+2:22.9  How well does it understand the interface?
+2:26.0  And because Blender is an open-sourced Python platform, it can use coding to implement scripts, so it understands the full back end of Blender through the Python, through Python.
+2:34.3  And so its computer use is really good inside of Blender, which I will show you in these next examples.
+2:39.4  There's some other stats on this page, so if you want to check it out, you definitely can.
+2:42.8  It's just at openai.com, introducing GPT-6 Soul and Luna.
+2:47.3  But let's jump into the actual test.
+2:49.6  Let's jump into the actual demo of what I built and how much it cost.
+2:53.2  Okay, starting with this first build, this is a old school radio that I wanted GPT-6 Soul to build for us, maybe for a game asset or just a 3D model that we can throw into any of our other projects.
+3:05.5  And we built this, and we built this model specifically to test the hard surface modeling on the actual build.
+3:13.1  Some small detailed materials like this little pick or wick, some text, volume and tuning knobs, which, which I will get into this in a second.
+3:22.0  Um, as you can see, it's a little bit off.
+3:23.8  And then actually like product rendering or 3D game asset gen-- 3D game assets or just 3D models that you can implement into any of your scenes.
+3:32.4  Firstly, what I wanna go out-- what I wanna go over is it turned out, it turned out okay.
+3:37.0  I'd give this maybe a four out of ten because there's a lot of stuff missing.
+3:40.8  If we were going for ultra-realism, and maybe we weren't, again, it was a very simple prompt.
+3:44.7  It was a, it was a structured prompt that I sent off to the model.
+3:48.1  There should be a mesh for, there should be a mesh for the speaker.
+3:51.2  These volume knobs...
+3:52.5  The white paint and the orange paint is off, and so we'd have to come back in and adjust this manually.
+3:58.3  Again, the paint on-- this white paint is off for both of them.
+4:01.5  So you'd have to do some manual adjusting.
+4:03.9  But overall I'm still impressed, and I know these AI models can build in 3D, but it's al-- it's not always going to, but it's not always going to be perfect.
+4:12.2  And so that's why if you maybe have a game asset library, or you already have a mo-- or you already have a 3D model library like Blender Kit, you can connect that and build scenes instead of iterating yourself, which
+4:23.4  is costing you time or iterating with GPT-6 Soul, which is costing you tokens and money.
+4:29.3  Or you can just build it yourself.
+4:31.2  But that's not the point of this video.
+4:32.2  Today we're testing out the GPT-6 Soul model inside of Blender.
+4:36.0  And then here is the topology for those of you wondering as well.
+4:39.8  This next scene I, this next scene I built was a kitchen scene, and the reason I tested this inside of Blender was for believable proportions to a scene.
+4:49.7  So like this nice little i-- orthographic or isometric viewport, kind of feels miniature.
+4:54.8  Some scene organization stuff, so keeping stuff organized and orderly.
+4:59.0  Going off that, repeated geometry, and then UV texturing, and then UV texturing.
+5:04.0  And if we look at this, again, very simple scene.
+5:06.4  Most models can build this pretty well.
+5:08.3  And if you're wondering about cost, don't worry, I'm gonna break this do- And if you're wondering about cost, don't worry, I'm going to break this down at the very end for each scene, and then a total cost.
+5:16.6  But again, we're still noticing some small differences.
+5:19.4  But again, we're s-- I'm still noticing some small mistakes that the actual model is making, like these cabinets going in.
+5:26.1  This is, like, where the human iteration would come into, where you need to fix that, whether yourself iterate it or create it yourself.
+5:32.8  This mat is, this mat is shifting into the marble tabletop here.
+5:38.4  So we can just shift that up.
+5:39.5  So we can just shift that up.
+5:41.0  But I could see this, with GPT 6 Astra, if I send a prompt-- With GPT 6 Astra, if I sent off the same prompt, it would probably output a better response.
+5:48.8  But again, that is a more powerful model.
+5:50.8  But overall, I would give this maybe a five to six out of ten.
+5:55.9  Now, this next scene I built was kind of like a simulation.
+5:58.7  You always see, you always see those videos on social media, specifically, like, short form, where it's, like, these really satisfying simulations of repeated looped videos of maybe something getting sliced or a ball hitting piano notes and playing, like, a
+6:13.1  popular song.
+6:14.1  And so we can play this here.
+6:15.3  You can see the marble rolls down.
+6:16.9  It spins around in this little loop.
+6:19.4  It then lands in this thing that, like, shifts it over to this pulley, pulls it up, and then pulls it to the left, and then it drops it, and it repeats again.
+6:28.1  Few things I'm noticing.
+6:29.2  I mean, and I built this to test out, like, the mechanical design understanding that GPT 6 Soul has, and it got it.
+6:36.0  It understood it.
+6:36.8  I mean, the model's not perfect.
+6:38.4  There's definitely some things wrong, like this is not realistic at all.
+6:41.3  But maybe you weren't going for a realistic output.
+6:44.2  These are just floating in space, and obviously this is just animated with keyframes.
+6:48.1  But it understood the rigi-- but it understood the rigid body simulation that needed to apply.
+6:52.4  I didn't tell it to apply any physics.
+6:54.1  I just s-- I just shot off a detailed prompt, and you can see it applied that rigid body simulation to the ball, which rolls down, and then there's obviously gra- and then there's obviously gravity that we could adjust in
+7:05.7  future iterations.
+7:06.7  And then I also just wanted to test out its reliable playback.
+7:09.2  So can it loop a video?
+7:11.6  With one shot, it gave us this.
+7:13.4  I would give this, again, maybe a six out of ten for what I was going for.
+7:17.5  But it drops four points because the realism is definitely not there.
+7:20.7  Now, next I wanted to test out rigging.
+7:22.6  This was something that I was really curious about, so I went to build this little penguin for us, and I wanted to rig that character so we could go in, go into our pose mode, and then animate our character
+7:34.1  however we want.
+7:35.2  So if we want him to wave, we can make him wave.
+7:37.2  It did not create a full rig.
+7:39.1  It looks like it just did the limbs and then the core body, and the tail too.
+7:43.0  Oh, wait, maybe not the tail.
+7:43.9  That's his leg.
+7:44.7  But I wanted to test out the character modeling, rigging, deformation weights, and then create, like, a complete animated sequence with that one prompt that I shot off, and this is what we got with that prompt from GPT 6 Soul.
+7:56.6  So, you know, it's very basic.
+7:58.1  It's something I would never use in-- It's something I would never use or, like, produce, send over to a client, or post to my portfolio.
+8:05.0  And obviously, this was one prompt with absolutely no iteration.
+8:07.2  This was the, the model completely-- This, the model did this completely itself.
+8:11.2  But it was able to create the rigged character, but it was able to create like a half rigged character.
+8:15.8  It added its little flippers.
+8:17.2  It animated it.
+8:18.1  Gave it a little walking motion.
+8:19.5  But again, it's not like GPT-6 Astro where you can fully rig a character and create some pretty dynamic motions.
+8:26.8  The last scene I wanted to build is this nice little forest scene in the isometric view here.
+8:32.5  Or orthographic.
+8:33.7  I did this to test out geometry nodes.
+8:36.0  As you can see, it applied geometry nodes to our trees and rocks and grass and little leaves on the ground.
+8:42.4  Which gave us that controllable scattering.
+8:44.4  So if we wanted to add more, add less, we could do that just by tree density or applying random seeds.
+8:50.7  And then also adjusting the trail.
+8:52.4  So if we want a thick trail, we can adjust that without deleting anything.
+8:55.5  Or if we want a really thin trail like this, it'll adapt to the scene.
+8:58.8  So it's interactive.
+8:60.0  And then obviously like the natural variation.
+9:02.4  So like adding different colored tree leaves, different rock shapes, different leaves on the ground.
+9:08.8  Very basic, very simple.
+9:09.8  And this is something that you could build if you're somewhat skilled at Blender very easily.
+9:13.4  But GPT-6 Soul was able to output this for us.
+9:15.6  So I'd give this again maybe a 7 out of 10 for exactly what I was going for.
+9:19.7  Now for pricing, I want to go over really quickly how much this cost in tokens and pricing.
+9:24.4  As you can see, I have all five builds out here for us totaling only $5.71.
+9:29.1  And yesterday I tested out Opus 5.5, which is Anthropic's new flagship model.
+9:34.5  And it was a lot more expensive.
+9:36.3  Granted, I was testing out some more intense scenes.
+9:38.9  But overall, GPT-6 Soul is a lot cheaper from what I've seen.
+9:42.9  So Radio was about 800,000 tokens and it spent only $0.33 on that build.
+9:48.2  The Kitchen was about $0.53 with 1.4 million tokens.
+9:51.9  The Marble Machine, which was that simulation that we built, was 6 million tokens and only $1.86 in API costs.
+9:58.3  Again, I didn't spend this money personally.
+10:00.5  I run everything on my subscription plan.
+10:03.1  The Penguin, including a tiny little revision, was about 6 million tokens, was about 7 million tokens, and I only spent $1.96.
+10:11.2  The Forest scene with, again, a very small revision was about 3 million tokens and it was only about $1.04, totaling $5.71 in API costs.
+10:21.0  Again, I did not spend that out of my bank account.
+10:23.8  I use the subscription plan.
+10:25.4  But we total about 19 million tokens, which costs $5.71 to build in Blender.
+10:30.9  So if you're curious about costs, there you have it.
+10:32.8  So that concludes my test of building inside of Blender using the new GPT-6 Soul model.
+10:39.9  If you want to set up Blender sessions like this, in the link in the description below where it says all of my free resources, you can find the Creative AI Network.
+10:46.7  Once you join, head to the Classroom tab, go to the Cloud Skills Vault, search for the free OS packs, and you can find a Blender AI starter pack, which is a Blender OS with a bunch of skills that I've
+10:58.0  created, context on how Blender can work with AI models, whether you're using Anthropic or GPT models.
+11:03.2  And all you got to do is drop the zip file into one of your sessions, and it will set everything up for you and build up your project structure.
+11:09.4  Thanks for sticking to the end.
+11:10.9  I hope you guys enjoyed.
+11:11.8  If you did, leave a like and subscribe to the channel.
+11:14.2  It means a ton to me, and it also helps me out a ton.
+11:16.7  As always, I will see you guys in the next one.
+11:18.7  Thanks.

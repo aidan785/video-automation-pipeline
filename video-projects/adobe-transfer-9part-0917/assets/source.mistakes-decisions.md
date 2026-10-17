@@ -1,0 +1,68 @@
+# Cut-Mistakes Decisions (applied)
+
+Input duration: 13:01.08 (781.08s)
+Output duration: 10:44.36 (644.36s)
+Removed: 136.72s across 62 cuts
+
+- 00:07.84–00:20.45 (12.62s): Abandoned phrase, stutter, or superseded take
+- 00:30.86–00:32.03 (1.17s): Abandoned phrase, stutter, or superseded take
+- 00:57.30–01:00.30 (3.00s): Abandoned phrase, stutter, or superseded take
+- 01:08.20–01:11.53 (3.34s): Abandoned phrase, stutter, or superseded take
+- 01:20.62–01:22.59 (1.98s): Abandoned phrase, stutter, or superseded take
+- 01:23.82–01:26.79 (2.98s): Abandoned phrase, stutter, or superseded take
+- 01:27.86–01:27.98 (0.12s): Abandoned phrase, stutter, or superseded take
+- 01:33.32–01:35.12 (1.80s): Abandoned phrase, stutter, or superseded take
+- 01:35.96–01:36.56 (0.61s): Abandoned phrase, stutter, or superseded take
+- 01:49.32–01:50.30 (0.98s): Abandoned phrase, stutter, or superseded take
+- 01:52.94–01:53.25 (0.31s): Abandoned phrase, stutter, or superseded take
+- 02:05.68–02:10.17 (4.50s): Abandoned phrase, stutter, or superseded take
+- 02:14.06–02:14.68 (0.62s): Remove misspoken three more count; retain I have different types of scenes, consistent with the three-build structure
+- 02:43.70–02:44.45 (0.75s): Abandoned phrase, stutter, or superseded take
+- 03:01.66–03:05.50 (3.84s): Abandoned phrase, stutter, or superseded take
+- 03:23.28–03:24.41 (1.13s): Abandoned phrase, stutter, or superseded take
+- 03:49.20–03:51.39 (2.20s): Abandoned phrase, stutter, or superseded take
+- 03:59.78–04:01.15 (1.38s): Abandoned phrase, stutter, or superseded take
+- 04:25.12–04:25.68 (0.56s): Abandoned phrase, stutter, or superseded take
+- 04:30.64–04:32.83 (2.19s): Abandoned phrase, stutter, or superseded take
+- 04:39.94–04:43.13 (3.19s): Abandoned phrase, stutter, or superseded take
+- 04:58.84–04:59.54 (0.70s): Abandoned phrase, stutter, or superseded take
+- 05:00.98–05:06.53 (5.56s): Abandoned phrase, stutter, or superseded take
+- 05:15.58–05:16.21 (0.64s): Abandoned phrase, stutter, or superseded take
+- 05:19.90–05:20.73 (0.83s): Abandoned phrase, stutter, or superseded take
+- 06:05.70–06:06.81 (1.12s): Abandoned phrase, stutter, or superseded take
+- 06:44.70–06:45.06 (0.37s): Abandoned phrase, stutter, or superseded take
+- 07:04.78–07:05.81 (1.03s): Abandoned phrase, stutter, or superseded take
+- 07:11.88–07:14.60 (2.72s): Abandoned phrase, stutter, or superseded take
+- 07:32.06–07:33.31 (1.25s): Abandoned phrase, stutter, or superseded take
+- 07:47.74–07:50.57 (2.83s): Abandoned phrase, stutter, or superseded take
+- 07:54.12–07:54.54 (0.42s): Abandoned phrase, stutter, or superseded take
+- 08:02.42–08:07.79 (5.37s): Abandoned phrase, stutter, or superseded take
+- 08:30.46–08:31.14 (0.68s): Abandoned phrase, stutter, or superseded take
+- 08:46.52–08:50.81 (4.29s): Abandoned phrase, stutter, or superseded take
+- 08:55.76–09:01.49 (5.74s): Abandoned phrase, stutter, or superseded take
+- 09:04.10–09:05.43 (1.34s): Abandoned phrase, stutter, or superseded take
+- 09:09.48–09:11.87 (2.39s): Abandoned phrase, stutter, or superseded take
+- 09:14.64–09:16.85 (2.22s): Abandoned phrase, stutter, or superseded take
+- 09:20.78–09:21.20 (0.42s): Abandoned phrase, stutter, or superseded take
+- 09:25.38–09:27.99 (2.62s): Abandoned phrase, stutter, or superseded take
+- 09:44.12–09:45.74 (1.62s): Abandoned phrase, stutter, or superseded take
+- 10:03.12–10:03.79 (0.68s): Abandoned phrase, stutter, or superseded take
+- 10:22.62–10:26.96 (4.34s): Abandoned phrase, stutter, or superseded take
+- 10:31.72–10:32.31 (0.60s): Abandoned phrase, stutter, or superseded take
+- 10:37.20–10:38.40 (1.20s): Abandoned phrase, stutter, or superseded take
+- 10:40.30–10:41.09 (0.80s): Abandoned phrase, stutter, or superseded take
+- 10:44.24–10:45.81 (1.58s): Abandoned phrase, stutter, or superseded take
+- 10:46.94–10:51.50 (4.56s): Abandoned phrase, stutter, or superseded take
+- 10:55.20–10:55.78 (0.58s): Abandoned phrase, stutter, or superseded take
+- 10:57.96–11:00.22 (2.26s): Abandoned phrase, stutter, or superseded take
+- 11:03.26–11:03.97 (0.72s): Abandoned phrase, stutter, or superseded take
+- 11:05.82–11:06.18 (0.36s): Abandoned phrase, stutter, or superseded take
+- 11:14.96–11:16.87 (1.91s): Abandoned phrase, stutter, or superseded take
+- 11:26.66–11:27.37 (0.72s): Abandoned phrase, stutter, or superseded take
+- 11:33.20–11:34.93 (1.74s): Abandoned phrase, stutter, or superseded take
+- 11:37.58–11:41.19 (3.62s): Abandoned phrase, stutter, or superseded take
+- 11:43.68–11:54.41 (10.74s): Dictated prompt and explicit delete instruction
+- 12:17.70–12:18.48 (0.78s): Abandoned phrase, stutter, or superseded take
+- 12:22.38–12:26.29 (3.91s): Abandoned phrase, stutter, or superseded take
+- 12:31.30–12:32.77 (1.47s): Abandoned phrase, stutter, or superseded take
+- 12:38.06–12:38.79 (0.74s): Abandoned phrase, stutter, or superseded take

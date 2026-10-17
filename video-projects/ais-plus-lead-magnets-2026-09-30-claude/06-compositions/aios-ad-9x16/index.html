@@ -1,0 +1,313 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1080,height=1920"><title>aios-ad-9x16</title><script src="assets/gsap.min.js"></script><style>
+@font-face{font-family:Inter;src:url('assets/Inter-Variable.ttf');font-weight:100 900}
+*{box-sizing:border-box}
+html,body{margin:0;overflow:hidden;background:#070B12;font-family:Inter,sans-serif;color:#F2F6FA}
+#main{position:relative;overflow:hidden;background:#070B12}
+.pool{position:absolute;border-radius:50%;pointer-events:none}
+.pool-a{background:radial-gradient(ellipse,rgba(38,120,190,.22),rgba(38,120,190,0) 68%);filter:blur(30px)}
+.pool-b{background:radial-gradient(ellipse,rgba(55,189,248,.12),rgba(55,189,248,0) 66%);filter:blur(40px)}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at 50% 45%,rgba(7,11,18,0) 55%,rgba(3,5,9,.55) 100%)}
+.brand{position:absolute;display:flex;align-items:center;gap:6px;z-index:6}
+.brand .logo{width:72px;height:72px;display:block;margin:-12px 0 -12px -14px}
+.brand .word{font-size:20px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#C9D6E2}
+.header-note{position:absolute;color:#A6B6C6;letter-spacing:-.3px;z-index:6}
+.speaker-window{position:absolute;overflow:hidden;background:#0d1520;z-index:2;border:1.5px solid rgba(255,255,255,.14);box-shadow:0 34px 90px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35)}
+.speaker-window video{width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.speaker-edge{position:absolute;z-index:3;pointer-events:none;box-shadow:inset 0 1px 1px rgba(255,255,255,.28),inset 0 0 0 1px rgba(255,255,255,.04)}
+.scene{position:absolute;inset:0;pointer-events:none;z-index:4}
+.scene-inner{width:100%;height:100%;display:flex;flex-direction:column;gap:23px}
+.eyebrow{font-size:25px;font-weight:520;color:#37BDF8;letter-spacing:-.3px}
+h1{font-size:88px;line-height:1.06;font-weight:630;letter-spacing:-4.6px;margin:0;color:#F2F6FA}
+h1 span{display:block;white-space:nowrap}
+h1.long{font-size:78px;letter-spacing:-4px}
+h1.compact{font-size:64px;letter-spacing:-3.2px}
+.ui{position:relative;flex-shrink:0;margin-top:30px;isolation:isolate}
+.reflection{position:absolute;z-index:-1;width:540px;height:300px;left:80px;top:40px;filter:blur(46px);border-radius:50%;background:radial-gradient(ellipse at 35% 30%,rgba(55,189,248,.30),rgba(40,110,190,.16) 45%,rgba(40,110,190,0) 72%)}
+.glass{position:relative;background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04) 55%,rgba(110,190,240,.07));border:1px solid rgba(255,255,255,.13);border-radius:26px;backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);box-shadow:inset 0 1px 1px rgba(255,255,255,.22),inset 0 -1px 2px rgba(0,0,0,.25),0 26px 60px rgba(0,0,0,.42),0 2px 6px rgba(0,0,0,.25);overflow:hidden}
+.sheen{position:absolute;top:0;bottom:0;left:-70%;width:60%;pointer-events:none;background:linear-gradient(105deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.10) 50%,rgba(255,255,255,0) 70%)}
+.tile{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;flex-shrink:0;background:rgba(55,189,248,.13);color:#37BDF8;box-shadow:inset 0 1px 1px rgba(255,255,255,.14)}
+.tile svg{width:32px;height:32px}.tile.big{width:78px;height:78px;border-radius:22px}.tile.big svg{width:42px;height:42px}
+.tile.sm{width:40px;height:40px;border-radius:12px}.tile.sm svg{width:22px;height:22px}
+.tile.dim{background:rgba(255,255,255,.06);color:#8397AA}
+.num{font-variant-numeric:tabular-nums}
+.status{margin-left:auto;font-size:18px;font-weight:520;color:#37BDF8;background:rgba(55,189,248,.13);padding:8px 14px;border-radius:20px;white-space:nowrap}
+/* channel stat panel */
+.stat-stack{display:flex;flex-direction:column;gap:16px}
+.stat-panel{width:560px;padding:4px 30px}
+.stat-row{display:flex;align-items:center;gap:22px;padding:20px 0}
+.stat-row small{display:block;font-size:19px;color:#A6B6C6;letter-spacing:-.2px}
+.stat-row strong{display:block;font-size:64px;line-height:1.05;font-weight:620;letter-spacing:-3px;color:#F2F6FA}.stat-row .num-2{font-size:52px}
+/* not-technical chips */
+.chip-row{display:flex;gap:22px}
+.chip{display:flex;align-items:center;gap:18px;padding:22px 26px 22px 22px;font-size:28px;font-weight:500;letter-spacing:-.8px;height:104px}
+.muted-chip{color:#A6B6C6}
+.strike{position:absolute;left:92px;right:22px;top:51px;height:2px;border-radius:2px;background:#37BDF8;transform-origin:0 50%;display:block}
+.note{font-size:24px;color:#8397AA;margin:30px 4px 0;letter-spacing:-.4px}
+/* money card */
+.money-card{display:flex;align-items:center;gap:24px;padding:26px 28px;width:790px}
+.money-card strong{display:block;font-size:30px;font-weight:580;letter-spacing:-1px}
+.money-card small{display:block;font-size:20px;color:#A6B6C6;margin-top:6px}
+/* offer card (VSL) */
+.offer-card{width:820px;padding:26px 34px 26px}
+.offer-head{display:flex;align-items:center}.plan{font-size:30px;font-weight:600;letter-spacing:-.8px}
+.price-row{display:flex;align-items:flex-end;gap:28px;margin:8px 0 18px}
+.price b{font-size:96px;line-height:.95;font-weight:640;letter-spacing:-5px}.price span{font-size:28px;color:#A6B6C6;margin-left:6px}
+.per-mo{font-size:30px;color:#A6B6C6;padding-bottom:12px;letter-spacing:-.6px}.per-mo b{color:#37BDF8;font-weight:620}
+.perks{display:flex;flex-direction:column;gap:12px;border-top:1px solid rgba(255,255,255,.09);padding-top:20px}
+.perk{display:flex;align-items:center;gap:16px;font-size:23px;line-height:1.2;color:#E4ECF3;letter-spacing:-.4px}
+.monthly-card{width:820px;margin-top:16px;display:flex;align-items:baseline;gap:14px;padding:22px 34px}
+.monthly-card .plan{font-size:26px;color:#C9D6E2;margin-right:10px}.monthly-card b{font-size:40px;font-weight:620;letter-spacing:-1.5px}
+.monthly-card .mo{font-size:22px;color:#A6B6C6}.monthly-card small{margin-left:auto;font-size:20px;color:#A6B6C6}
+.offer-light{left:40px;top:120px;width:640px;height:360px}
+/* SOP ad */
+.shot-frame{width:800px;padding:0;border-radius:22px;background:#0f0f0f}
+.shot{display:block;width:100%;height:auto;border-radius:22px}
+.hl{position:absolute;left:33.2%;top:27%;width:15.6%;height:15%;border-radius:12px;border:2px solid #37BDF8;box-shadow:0 0 0 4px rgba(55,189,248,.16),0 0 26px rgba(55,189,248,.45);display:block}
+.shot-note{font-size:20px;color:#8397AA;margin:16px 4px 0;letter-spacing:-.2px}
+.comment-stack{display:flex;flex-direction:column;gap:14px;width:800px}
+.comment{display:flex;gap:18px;align-items:flex-start;padding:20px 26px 20px 20px}
+.c-avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;background:radial-gradient(circle at 40% 35%,#6d8aa3,#2b3b4c);filter:blur(5px)}
+.c-body{min-width:0}.c-name{display:block;width:150px;height:14px;border-radius:7px;background:rgba(200,215,230,.35);filter:blur(4px);margin:4px 0 12px}
+.comment p{margin:0;font-size:26px;line-height:1.3;color:#E4ECF3;letter-spacing:-.4px}
+.note.small{font-size:19px;margin-top:6px}
+.loop-wrap{display:flex;gap:34px;align-items:center}
+.ring-box{position:relative;width:270px;height:270px;flex-shrink:0}
+.ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.12);box-shadow:inset 0 0 40px rgba(55,189,248,.10),0 0 50px rgba(55,189,248,.08)}
+.orbit{position:absolute;inset:0}.dot{position:absolute;left:50%;top:-7px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#37BDF8;box-shadow:0 0 18px #37BDF8;display:block}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#A6B6C6;font-size:22px;font-weight:520}.ring-label svg{width:44px;height:44px;color:#37BDF8}
+.loop-list{display:flex;flex-direction:column;gap:12px;width:520px}
+.lrow{display:flex;align-items:center;gap:14px;padding:12px 18px;font-size:23px;color:#E4ECF3;border-radius:18px}
+.way-out{display:flex;align-items:center;gap:16px;padding:16px 20px;margin-top:6px;border-color:rgba(55,189,248,.45);background:linear-gradient(135deg,rgba(55,189,248,.20),rgba(55,189,248,.06) 60%,rgba(255,255,255,.04))}
+.way-out strong{display:block;font-size:26px;font-weight:600;letter-spacing:-.6px}.way-out small{display:block;font-size:20px;color:#9FDDF9;margin-top:4px}
+.vs-row{display:flex;gap:24px}
+.vs-card{width:390px;padding:26px 28px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.vs-card strong{font-size:32px;font-weight:600;letter-spacing:-1px;margin-top:10px}.vs-card small{font-size:21px;color:#A6B6C6}
+.tags{display:flex;gap:10px;margin-top:10px}.tag{font-size:19px;font-weight:540;padding:7px 14px;border-radius:18px;margin-top:10px;display:inline-block}
+.tags .tag{margin-top:0}.tag.calm{color:#A6B6C6;background:rgba(255,255,255,.07)}.tag.risk{color:#FFD9A0;background:rgba(255,190,110,.12);border:1px solid rgba(255,190,110,.28)}
+.sop-row{display:flex;align-items:center;gap:40px}
+.paper-wrap{perspective:1400px;flex-shrink:0}
+.paper{position:relative;overflow:hidden;width:340px;height:430px;border-radius:18px;padding:26px 26px 22px;background:linear-gradient(160deg,#FFFFFF,#EEF3F8);color:#1B2330;transform:rotateY(-10deg) rotateX(4deg);box-shadow:0 40px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.6),0 0 60px rgba(55,189,248,.18);font-family:Inter,sans-serif}
+.p-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.16em;color:#6B7A8C;font-weight:600}.p-head b{font-size:11px;color:#1B6FA0;background:#E3F2FB;padding:4px 8px;border-radius:6px}
+.p-eyebrow{margin-top:42px;font-size:12px;letter-spacing:.14em;color:#1E9BD8;font-weight:600}
+.p-title{margin-top:12px;font-size:46px;line-height:1.02;font-weight:620;letter-spacing:-2.2px}
+.p-sub{margin-top:14px;font-size:17px;color:#5B6878}
+.p-lines{margin-top:30px;display:flex;flex-direction:column;gap:14px}.p-lines i{display:flex;align-items:center;gap:12px;font-style:normal}.p-lines em{font-style:normal;font-size:13px;color:#7B8898;font-weight:600;width:22px}.p-lines u{display:block;height:8px;border-radius:4px;background:#E2E8EF;flex:1}
+.p-lines i:nth-child(2) u{flex:.8}.p-lines i:nth-child(3) u{flex:.9}
+.p-foot{position:absolute;left:26px;right:26px;bottom:20px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#7B8898}.p-foot b{width:10px;height:10px;border-radius:50%;background:#37BDF8;display:block}
+.sop-tag{font-size:36px;line-height:1.2;font-weight:560;letter-spacing:-1.2px;color:#F2F6FA;max-width:400px}.sop-tag span{color:#37BDF8}
+.irows{display:flex;flex-direction:column;gap:14px;width:800px}
+.irow{display:flex;align-items:center;gap:18px;padding:16px 22px;border-radius:20px}
+.inum{font-size:20px;font-weight:600;color:#37BDF8;width:30px;font-variant-numeric:tabular-nums}
+.irow strong{font-size:26px;font-weight:560;letter-spacing:-.6px;color:#EEF3F8}
+.proof-card{width:780px;padding:8px 30px}
+.proof-row{display:flex;align-items:center;gap:22px;padding:22px 0}.proof-row.divided{border-top:1px solid rgba(255,255,255,.09)}
+.proof-row strong{display:block;font-size:30px;font-weight:600;letter-spacing:-.9px}.proof-row small{display:block;font-size:20px;color:#A6B6C6;margin-top:6px}
+.ring30{width:78px;height:78px;flex-shrink:0}.ring30 circle{fill:none;stroke-width:6}.ring30 .track{stroke:rgba(255,255,255,.10)}.ring30 .prog{stroke:#37BDF8;stroke-linecap:round;stroke-dasharray:201.1;stroke-dashoffset:0}
+.steps{display:flex;flex-direction:column;gap:12px;width:620px}
+.step{display:flex;align-items:center;gap:16px;padding:14px 20px;font-size:26px;font-weight:540;letter-spacing:-.6px;border-radius:18px}
+.step.final{border-color:rgba(55,189,248,.5);background:linear-gradient(135deg,rgba(55,189,248,.24),rgba(55,189,248,.07) 60%,rgba(255,255,255,.04));color:#fff}
+/* media windows (CP4) */
+.mwrap{position:absolute;z-index:3;border-radius:22px;overflow:hidden;background:#0b111a;border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 70px rgba(0,0,0,.5),inset 0 1px 1px rgba(255,255,255,.18)}
+.mwrap .bar{height:34px;display:flex;align-items:center;gap:8px;padding:0 16px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08)}
+.mwrap .bar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.22);display:block}
+.mwrap video{display:block;width:100%;height:auto}
+.mwrap.accent{border-color:rgba(55,189,248,.7);box-shadow:0 0 0 3px rgba(55,189,248,.18),0 30px 70px rgba(0,0,0,.5)}
+.mwrap.dim video{filter:saturate(.75) brightness(.9)}
+.mlabel{position:absolute;left:16px;top:48px;font-size:18px;font-weight:560;color:#fff;background:rgba(8,13,21,.74);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:7px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14)}
+.mchips{position:absolute;left:16px;bottom:16px;display:flex;gap:10px;flex-wrap:wrap}
+.mchip{font-size:21px;font-weight:560;padding:9px 15px;border-radius:14px;background:rgba(8,13,21,.8);border:1px solid rgba(55,189,248,.5);color:#EAF6FD;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.jarvis-frame{width:800px;padding:0;border-radius:22px}.jv{display:block;width:100%;height:auto}
+.chat{display:flex;flex-direction:column;gap:14px;align-items:flex-start;width:760px}
+.bubble{font-size:27px;padding:16px 24px;border-radius:24px 24px 6px 24px;color:#E4ECF3;letter-spacing:-.4px}
+.cgrid{display:grid;grid-template-columns:392px 392px;gap:16px}
+.ctile{padding:20px 24px;display:flex;flex-direction:column;gap:6px;min-height:138px}
+.cn{font-size:18px;font-weight:600;color:#37BDF8;font-variant-numeric:tabular-nums}.ctile strong{font-size:32px;font-weight:600;letter-spacing:-1px}.ctile small{font-size:20px;color:#A6B6C6}
+.box-row{display:flex;align-items:center;gap:34px}
+.box-img{height:420px;width:auto;display:block;filter:drop-shadow(0 30px 50px rgba(0,0,0,.55)) drop-shadow(0 0 40px rgba(55,189,248,.18))}
+.c-list{display:flex;flex-direction:column;gap:12px}
+.cchip,.schip{display:inline-block;font-size:22px;font-weight:560;padding:10px 16px;border-radius:14px;background:rgba(55,189,248,.12);border:1px solid rgba(55,189,248,.35);color:#EAF6FD}
+.kit{display:flex;flex-direction:column;gap:14px;width:800px}
+.krow{display:flex;align-items:center;gap:20px;padding:18px 22px}
+.krow strong{display:block;font-size:30px;font-weight:600;letter-spacing:-.8px}.krow small{display:block;font-size:20px;color:#A6B6C6;margin-top:4px}
+.skill-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.cta-row{display:flex;align-items:center;gap:36px}
+.box-sm{height:330px;width:auto;display:block;filter:drop-shadow(0 26px 44px rgba(0,0,0,.55)) drop-shadow(0 0 34px rgba(55,189,248,.16))}
+.cta-col{display:flex;flex-direction:column;gap:14px;width:420px}.works{font-size:20px;color:#A6B6C6}.chips2{display:flex;gap:10px}
+.sc-card{display:flex;align-items:center;gap:22px;padding:22px 26px;width:760px}
+.sc-card strong{display:block;font-size:34px;font-weight:620;letter-spacing:-1px}.sc-card small{display:block;font-size:21px;color:#A6B6C6;margin-top:4px}
+.ui .chips2{margin:18px 0}
+/* captions */
+.caption{position:absolute;left:0;text-align:center;z-index:10}
+.caption span{display:inline-block;padding:10px 24px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(9,14,22,.70);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 1px rgba(255,255,255,.10);font-size:35px;font-weight:500;letter-spacing:-.5px;white-space:nowrap;color:#F2F6FA}
+.caption b{color:#37BDF8;font-weight:600}
+
+html,body,#main{width:1080px;height:1920px}
+.pool-a{left:-160px;top:380px;width:1200px;height:900px}.pool-b{left:60px;top:1000px;width:960px;height:900px}
+.brand{left:64px;top:76px}.header-note{right:64px;top:94px;font-size:24px}
+.speaker-window,.speaker-edge{left:64px;top:1080px;width:952px;height:720px;border-radius:44px}
+.scene-inner{padding:250px 64px 0;align-items:center;gap:22px}
+.eyebrow{text-align:center;font-size:28px}
+h1{text-align:center;width:952px}
+.ui{width:830px;margin-top:26px;display:flex;flex-direction:column;align-items:center}
+.stat-panel{width:700px}.money-card{width:830px}.chip-row{justify-content:center}.note{text-align:center}
+.caption{top:932px;left:64px;width:952px}
+.caption span{max-width:930px;white-space:normal;text-wrap:balance;font-size:42px;line-height:1.22;padding:12px 24px 14px;border-radius:23px}
+/* phone readability: every UI text >= 24px, card titles >= 30px */
+.shot-frame{width:900px}.shot-note{font-size:24px;text-align:center}
+.comment-stack{width:920px}.comment p{font-size:31px}.note,.note.small{font-size:24px;text-align:center}
+.loop-wrap{gap:26px}.ring-box{width:230px;height:230px}.ring-label{font-size:24px}.loop-list{width:600px}.lrow{font-size:28px;padding:10px 16px}.way-out strong{font-size:29px}.way-out small{font-size:24px}
+.vs-card{width:440px}.vs-card strong{font-size:36px}.vs-card small{font-size:26px}.tag{font-size:24px}
+.sop-row{flex-direction:column;gap:0}.sop-tag{display:none}.paper{width:300px;height:380px;padding:22px}.p-title{font-size:40px}.p-eyebrow{margin-top:30px}
+.irows{width:920px}.irow strong{font-size:30px}.inum{font-size:24px}
+.proof-card{width:900px}.proof-row strong{font-size:34px}.proof-row small{font-size:24px}
+.steps{width:700px}.step{font-size:31px;padding:12px 20px}
+.slot-main{left:120px;top:405px;width:840px}.slot-cmpL{left:64px;top:440px;width:466px}.slot-cmpR{left:550px;top:440px;width:466px}
+.mlabel{font-size:24px}.mchip{font-size:26px}
+.jarvis-frame{width:840px}.chat{width:900px;align-items:center}.bubble{font-size:33px}
+.cgrid{grid-template-columns:440px 440px}.ctile strong{font-size:36px}.ctile small{font-size:25px}.cn{font-size:22px}
+.box-img{height:380px}.cchip,.schip{font-size:27px}.kit{width:900px}.krow strong{font-size:34px}.krow small{font-size:25px}.skill-chips{justify-content:center}
+.cta-row{flex-direction:column;gap:14px}.box-sm{height:180px}.cta-col{width:auto;display:grid;grid-template-columns:auto auto;justify-content:center;align-items:center;gap:14px 14px}.works{font-size:25px}.cta-col .step{grid-column:1 / span 2;justify-self:center}.step{font-size:31px}.sc-card{width:900px}.sc-card strong{font-size:38px}.sc-card small{font-size:26px}.ui .chips2{justify-content:center}
+</style></head><body>
+<main id="main" data-composition-id="main" data-start="0" data-duration="69.867" data-width="1080" data-height="1920">
+<div class="pool pool-a"></div><div class="pool pool-b"></div><div class="vignette"></div>
+<div class="brand"><img class="logo" src="assets/ais-logo.png" alt="AIS"><span class="word">AI Automation Society</span></div><div class="header-note">Free template</div>
+<div class="speaker-window"><video id="speaker" src="assets/speaker.mp4" muted playsinline data-start="0" data-duration="69.867" data-track-index="0"></video></div><div class="speaker-edge"></div>
+<audio id="speech" src="assets/speaker.mp4" data-start="0" data-duration="69.867" data-track-index="1" data-volume="1"></audio>
+<div id="mw-brain1" class="mwrap slot-main" data-in="11.95" data-out="19.85"><div class="bar"><i></i><i></i><i></i></div><video id="mv-brain1" src="assets/m-brain1.mp4" muted playsinline data-start="11.95" data-duration="7.900" data-track-index="40"></video><span class="mlabel">Nate's AI OS, 3D brain</span><div class="mchips"><span class="mchip pop" data-at="13.3">Every past decision</span><span class="mchip pop" data-at="15.75">Your priorities</span><span class="mchip pop" data-at="17.65">All your knowledge</span></div></div>
+<div id="mw-brain2" class="mwrap slot-main" data-in="57.15" data-out="62.3"><div class="bar"><i></i><i></i><i></i></div><video id="mv-brain2" src="assets/m-brain2.mp4" muted playsinline data-start="57.15" data-duration="5.150" data-track-index="41"></video><span class="mlabel">Interactive 3D brain</span><div class="mchips"><span class="mchip pop" data-at="60.9">Find anything</span></div></div>
+<section id="s0" class="scene clip" data-start="0.000" data-duration="6.300" data-track-index="3"><div class="scene-inner"><div class="eyebrow">Like Jarvis from Iron Man</div><h1 class="compact"><span>Ask it anything.</span></h1><div class="ui ui-jarvis"><div class="reflection"></div><div class="glass jarvis-frame reveal"><img class="jv" src="assets/jarvis.png" alt="Nate with a Jarvis-style HUD"></div></div></div></section>
+<section id="s1" class="scene clip" data-start="6.030" data-duration="5.970" data-track-index="4"><div class="scene-inner"><div class="eyebrow">The problem</div><h1 class=""><span>Hours spent</span><span>re-explaining.</span></h1><div class="ui ui-reexplain"><div class="reflection"></div>
+    <div class="chat">
+      <div class="glass bubble reveal" data-at="8.7">Here's my business, again…</div>
+      <div class="glass bubble reveal" data-at="9.6">As I said, my priorities are…</div>
+      <div class="glass bubble reveal" data-at="10.35">Let me re-explain the context…</div>
+    </div></div></div></section>
+<section id="s2" class="scene clip" data-start="11.730" data-duration="8.170" data-track-index="5"><div class="scene-inner"><div class="eyebrow">So I built an AI OS</div><h1 class="compact"><span>It remembers everything.</span></h1><div class="ui ui-media"></div></div></section>
+<section id="s3" class="scene clip" data-start="19.630" data-duration="17.470" data-track-index="6"><div class="scene-inner"><div class="eyebrow">The 4Cs</div><h1 class=""><span>What made</span><span>Jarvis work.</span></h1><div class="ui ui-fourCs"><div class="reflection"></div>
+    <div class="cgrid">
+      <div class="glass ctile light" data-at="21.95"><span class="cn">01</span><strong>Context</strong><small>Knows your business</small></div>
+      <div class="glass ctile light" data-at="25.85"><span class="cn">02</span><strong>Connections</strong><small>Reaches your stuff</small></div>
+      <div class="glass ctile light" data-at="27.25"><span class="cn">03</span><strong>Capabilities</strong><small>Knows how to do the work</small></div>
+      <div class="glass ctile light" data-at="34.05"><span class="cn">04</span><strong>Cadence</strong><small>Runs without being asked</small></div>
+    </div></div></div></section>
+<section id="s4" class="scene clip" data-start="36.830" data-duration="6.420" data-track-index="7"><div class="scene-inner"><div class="eyebrow">Your AI OS</div><h1 class="long"><span>Think Jarvis.</span><span>Without the suit.</span></h1><div class="ui ui-box"><div class="reflection"></div>
+    <div class="box-row">
+      <img class="box-img reveal" src="assets/aios-box.png" alt="AI OS starter template box" data-at="37.3">
+      <div class="c-list"><span class="cchip pop" data-at="37.85">Context</span><span class="cchip pop" data-at="37.99">Connections</span><span class="cchip pop" data-at="38.13">Capabilities</span><span class="cchip pop" data-at="38.27">Cadence</span></div>
+    </div></div></div></section>
+<section id="s5" class="scene clip" data-start="42.980" data-duration="14.220" data-track-index="8"><div class="scene-inner"><div class="eyebrow">Yours, free</div><h1 class="long"><span>Everything you</span><span>need to build it.</span></h1><div class="ui ui-kit"><div class="reflection"></div>
+    <div class="kit">
+      <div class="glass krow light" data-at="47.25"><span class="tile"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 24 8 8 17-19"/></svg></span><div><strong>Simple guided setup</strong><small>Gives it the context it needs</small></div></div>
+      <div class="glass krow light" data-at="50.55"><span class="tile"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m24 5 5 14 14 5-14 5-5 14-5-14-14-5 14-5Z"/></svg></span><div><strong>Six skills</strong><small>Organize knowledge, plan, keep improving</small></div></div>
+      <div class="skill-chips"><span class="schip pop" data-at="50.85">/onboard</span><span class="schip pop" data-at="51.01">/grill-me</span><span class="schip pop" data-at="51.17">/audit</span><span class="schip pop" data-at="51.33">/link</span><span class="schip pop" data-at="51.49">/level-up</span><span class="schip pop" data-at="51.65">/3d-brain</span></div>
+    </div></div></div></section>
+<section id="s6" class="scene clip" data-start="56.930" data-duration="5.420" data-track-index="9"><div class="scene-inner"><div class="eyebrow">Interactive 3D brain</div><h1 class="compact"><span>Find anything you need.</span></h1><div class="ui ui-media"></div></div></section>
+<section id="s7" class="scene clip" data-start="62.080" data-duration="7.787" data-track-index="10"><div class="scene-inner"><div class="eyebrow">Free template</div><h1 class=""><span>Build your</span><span>own Jarvis.</span></h1><div class="ui ui-aiosCta"><div class="reflection"></div>
+    <div class="cta-row">
+      <img class="box-sm reveal" src="assets/aios-box-cta.png" alt="AI OS starter template box">
+      <div class="cta-col">
+        <div class="works reveal">Works with</div>
+        <div class="chips2"><span class="schip light" data-at="63.65">Claude Code</span><span class="schip light" data-at="64.35">Codex</span></div>
+        <div class="glass step final light" data-at="66.8"><span class="tile sm"><svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6v24m-9-9 9 9 9-9M8 34v4a4 4 0 0 0 4 4h24a4 4 0 0 0 4-4v-4"/></svg></span>Free template, link below</div>
+      </div>
+    </div></div></div></section>
+<div id="cap0" class="caption clip" data-start="0.140" data-duration="1.570" data-track-index="30"><span>You know Jarvis from Iron Man?</span></div>
+<div id="cap1" class="caption clip" data-start="1.710" data-duration="0.820" data-track-index="30"><span>Tony Stark could ask</span></div>
+<div id="cap2" class="caption clip" data-start="2.530" data-duration="0.940" data-track-index="30"><span>Jarvis for anything,</span></div>
+<div id="cap3" class="caption clip" data-start="3.470" data-duration="1.460" data-track-index="30"><span>and it understood how to execute</span></div>
+<div id="cap4" class="caption clip" data-start="4.930" data-duration="1.410" data-track-index="30"><span>on it the right way.</span></div>
+<div id="cap5" class="caption clip" data-start="6.340" data-duration="0.560" data-track-index="30"><span>That is the dream</span></div>
+<div id="cap6" class="caption clip" data-start="6.900" data-duration="1.500" data-track-index="30"><span>for how AI would help us too,</span></div>
+<div id="cap7" class="caption clip" data-start="8.400" data-duration="1.300" data-track-index="30"><span>but I kept wasting hours</span></div>
+<div id="cap8" class="caption clip" data-start="9.700" data-duration="2.390" data-track-index="30"><span>re-explaining my business to my AI.</span></div>
+<div id="cap9" class="caption clip" data-start="12.090" data-duration="1.100" data-track-index="30"><span>So I built a system</span></div>
+<div id="cap10" class="caption clip" data-start="13.190" data-duration="1.940" data-track-index="30"><span>that remembers every past decision.</span></div>
+<div id="cap11" class="caption clip" data-start="15.130" data-duration="0.980" data-track-index="30"><span>It understands the priorities</span></div>
+<div id="cap12" class="caption clip" data-start="16.110" data-duration="0.800" data-track-index="30"><span>of my business,</span></div>
+<div id="cap13" class="caption clip" data-start="16.910" data-duration="1.120" data-track-index="30"><span>and it keeps all my knowledge</span></div>
+<div id="cap14" class="caption clip" data-start="18.030" data-duration="1.890" data-track-index="30"><span>organized and easily retrieved.</span></div>
+<div id="cap15" class="caption clip" data-start="19.920" data-duration="1.020" data-track-index="30"><span>Jarvis worked so well</span></div>
+<div id="cap16" class="caption clip" data-start="20.940" data-duration="1.960" data-track-index="30"><span>because it had full context.</span></div>
+<div id="cap17" class="caption clip" data-start="22.900" data-duration="0.900" data-track-index="30"><span>It understood</span></div>
+<div id="cap18" class="caption clip" data-start="23.800" data-duration="1.460" data-track-index="30"><span>how everything in Tony's life</span></div>
+<div id="cap19" class="caption clip" data-start="25.260" data-duration="1.540" data-track-index="30"><span>and business were connected.</span></div>
+<div id="cap20" class="caption clip" data-start="26.800" data-duration="1.500" data-track-index="30"><span>It knew its own capabilities versus</span></div>
+<div id="cap21" class="caption clip" data-start="28.300" data-duration="1.020" data-track-index="30"><span>when another tool</span></div>
+<div id="cap22" class="caption clip" data-start="29.320" data-duration="1.660" data-track-index="30"><span>or another person was needed,</span></div>
+<div id="cap23" class="caption clip" data-start="30.980" data-duration="1.780" data-track-index="30"><span>and it ran core processes</span></div>
+<div id="cap24" class="caption clip" data-start="32.760" data-duration="1.960" data-track-index="30"><span>automatically on a set cadence</span></div>
+<div id="cap25" class="caption clip" data-start="34.720" data-duration="0.940" data-track-index="30"><span>to surface needs</span></div>
+<div id="cap26" class="caption clip" data-start="35.660" data-duration="1.520" data-track-index="30"><span>or issues proactively.</span></div>
+<div id="cap27" class="caption clip" data-start="37.180" data-duration="1.160" data-track-index="30"><span>And those are the four Cs</span></div>
+<div id="cap28" class="caption clip" data-start="38.340" data-duration="2.100" data-track-index="30"><span>that I built my AI OS around.</span></div>
+<div id="cap29" class="caption clip" data-start="40.440" data-duration="1.220" data-track-index="30"><span>So think Jarvis,</span></div>
+<div id="cap30" class="caption clip" data-start="41.660" data-duration="1.630" data-track-index="30"><span>just without the actual suit.</span></div>
+<div id="cap31" class="caption clip" data-start="43.290" data-duration="1.300" data-track-index="30"><span>And I'm giving you everything you need</span></div>
+<div id="cap32" class="caption clip" data-start="44.590" data-duration="1.140" data-track-index="30"><span>to create your own Jarvis</span></div>
+<div id="cap33" class="caption clip" data-start="45.730" data-duration="1.120" data-track-index="30"><span>for completely free.</span></div>
+<div id="cap34" class="caption clip" data-start="46.850" data-duration="1.480" data-track-index="30"><span>A simple guided setup process</span></div>
+<div id="cap35" class="caption clip" data-start="48.330" data-duration="2.260" data-track-index="30"><span>to give it the context that it needs,</span></div>
+<div id="cap36" class="caption clip" data-start="50.590" data-duration="1.380" data-track-index="30"><span>six skills that will automatically</span></div>
+<div id="cap37" class="caption clip" data-start="51.970" data-duration="1.460" data-track-index="30"><span>organize all knowledge,</span></div>
+<div id="cap38" class="caption clip" data-start="53.430" data-duration="1.180" data-track-index="30"><span>create plans of action,</span></div>
+<div id="cap39" class="caption clip" data-start="54.610" data-duration="1.140" data-track-index="30"><span>and continuously improve</span></div>
+<div id="cap40" class="caption clip" data-start="55.750" data-duration="1.290" data-track-index="30"><span>the system over time,</span></div>
+<div id="cap41" class="caption clip" data-start="57.040" data-duration="1.820" data-track-index="30"><span>and an interactive <b>3D</b> brain that makes</span></div>
+<div id="cap42" class="caption clip" data-start="58.860" data-duration="1.980" data-track-index="30"><span>it easy for both you and the AI</span></div>
+<div id="cap43" class="caption clip" data-start="60.840" data-duration="1.590" data-track-index="30"><span>to find anything that you need.</span></div>
+<div id="cap44" class="caption clip" data-start="62.430" data-duration="0.920" data-track-index="30"><span>You can install the system</span></div>
+<div id="cap45" class="caption clip" data-start="63.350" data-duration="1.860" data-track-index="30"><span>into Claude Code or Codex or any</span></div>
+<div id="cap46" class="caption clip" data-start="65.210" data-duration="1.480" data-track-index="30"><span>other AI agent that you wanna use.</span></div>
+<div id="cap47" class="caption clip" data-start="66.690" data-duration="1.580" data-track-index="30"><span>So check it out for free right now.</span></div>
+<div id="cap48" class="caption clip" data-start="68.270" data-duration="0.940" data-track-index="30"><span>The link is below.</span></div>
+</main><script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+const SCENES = [[0,6.25],[6.25,11.95],[11.95,19.85],[19.85,37.05],[37.05,43.2],[43.2,57.15],[57.15,62.3],[62.3,69.867]];
+const D = 69.867;
+SCENES.forEach((s, i) => {
+  const root = "#s" + i;
+  const at = Math.max(0, s[0] - 0.08);
+  if (i > 0) {
+    tl.fromTo(root, { opacity: 0, x: 26, filter: "blur(11px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.58, ease: "power3.out" }, at);
+    tl.from(root + " .eyebrow", { y: 12, opacity: 0, duration: 0.5, ease: "power2.out" }, at + 0.05);
+    tl.from(root + " h1 span", { y: 22, opacity: 0, filter: "blur(6px)", stagger: 0.1, duration: 0.65, ease: "expo.out" }, at + 0.1);
+  }
+  const free = [...document.querySelectorAll(root + " .reveal:not([data-at])")];
+  if (free.length) tl.from(free, { y: 23, opacity: 0, filter: "blur(6px)", stagger: 0.085, duration: 0.7, ease: "power3.out" }, at + 0.22);
+  document.querySelectorAll(root + " .reveal[data-at]").forEach((el) => {
+    tl.from(el, { y: 18, opacity: 0, filter: "blur(6px)", duration: 0.6, ease: "power3.out" }, Number(el.dataset.at));
+  });
+  document.querySelectorAll(root + " .light[data-at]").forEach((el) => {
+    tl.fromTo(el, { opacity: 0.3 }, { opacity: 1, duration: 0.45, ease: "power2.out" }, Number(el.dataset.at));
+    const tile = el.querySelector(".tile");
+    if (tile) tl.fromTo(tile, { scale: 0.85 }, { scale: 1, duration: 0.5, ease: "back.out(1.6)" }, Number(el.dataset.at));
+  });
+  document.querySelectorAll(root + " .pop[data-at]").forEach((el) => {
+    tl.fromTo(el, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.6)" }, Number(el.dataset.at));
+  });
+  document.querySelectorAll(root + " .orbit").forEach((el) => {
+    tl.fromTo(el, { rotation: 0 }, { rotation: 540, duration: s[1] - s[0], ease: "none" }, at);
+  });
+  document.querySelectorAll(root + " .prog[data-at]").forEach((el) => {
+    tl.fromTo(el, { strokeDashoffset: 201.1 }, { strokeDashoffset: 0, duration: 1.1, ease: "power2.out" }, Number(el.dataset.at));
+  });
+  document.querySelectorAll(root + " .strike").forEach((el) => {
+    tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power2.inOut" }, Number(el.dataset.at));
+  });
+  const sheens = document.querySelectorAll(root + " .sheen");
+  if (sheens.length) tl.fromTo(sheens, { x: 0 }, { x: 1400, duration: 1.8, ease: "sine.inOut" }, at + 1.1);
+  tl.fromTo(root + " .reflection", { x: -10, opacity: 0.75 }, { x: 18, opacity: 1, duration: Math.max(1, s[1] - s[0] - 0.4), ease: "sine.inOut" }, at);
+  if (i < SCENES.length - 1) tl.fromTo(root, { opacity: 1, x: 0, filter: "blur(0px)" }, { opacity: 0, x: -22, filter: "blur(10px)", duration: 0.3, ease: "power2.inOut", immediateRender: false }, s[1] - 0.3);
+});
+tl.fromTo("#mw-brain1", { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 11.9);
+tl.fromTo("#mw-brain1", { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.3, ease: "power2.inOut", immediateRender: false }, 19.55);
+tl.fromTo("#mw-brain2", { opacity: 0, y: 18, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 57.1);
+tl.fromTo("#mw-brain2", { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.3, ease: "power2.inOut", immediateRender: false }, 62);
+document.querySelectorAll(".mwrap .pop[data-at]").forEach((c) => tl.fromTo(c, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.6)" }, Number(c.dataset.at)));
+document.querySelectorAll(".caption").forEach((el) => {
+  tl.from(el.querySelector("span"), { y: 8, opacity: 0, duration: 0.16, ease: "power2.out" }, Number(el.dataset.start));
+});
+tl.to({}, { duration: D }, 0);
+window.__timelines.main = tl;
+</script></body></html>

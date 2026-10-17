@@ -37,9 +37,21 @@ node .claude/skills/cut-silences/scripts/clamp-stretched-tokens.mjs \
 
 It silencedetects the whole source once (-30dB, d=0.6), clamps any token
 > 1.2s whose span overlaps a detected silence (end pulled to silence start /
-start pushed to silence end), leaves legit long words (spoken URLs) alone, and
-writes in place with an `.orig.json` backup. Tune `--min` / `--noise` /
-`--sil-min` for high-noise-floor recordings.
+start pushed to silence end, applied for EVERY overlapping silence), leaves
+legit long words (spoken URLs) alone, and writes in place with an `.orig.json`
+backup. Tune `--min` / `--noise` / `--sil-min` for high-noise-floor recordings.
+
+**Review the clamp table before trusting it** — two failure modes seen on real
+takes (9/4 Blender tutorial):
+- A clamped token under ~0.25s (flagged `SUSPECT`) usually means the speaker
+  dropped under -30dB mid-word: "backflip." was really "back … flip." with a
+  typing pause between; the clamp chopped "flip." off. Fix by hand from a 50ms
+  RMS sweep + an isolated Scribe pass on the slice (split into two tokens).
+- A token stretched over a long wait can hide a *doubled* word at its true
+  position ("So" 8:05–9:25 was "So, so" at 9:24.9) or a whole restart
+  ("finding" 1.2s = "…trouble f- if you're having trouble finding"). Isolate-
+  transcribe every stretched token's real speech window and rewrite the tokens
+  before planning; a mistake cut can then target the hidden stutter.
 
 ## Usage
 

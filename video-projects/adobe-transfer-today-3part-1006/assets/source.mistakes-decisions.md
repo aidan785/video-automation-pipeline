@@ -1,0 +1,66 @@
+# Cut-Mistakes Decisions (applied)
+
+Input duration: 21:05.04 (1265.04s)
+Output duration: 18:58.06 (1138.06s)
+Removed: 126.98s across 60 cuts
+
+- 00:11.62–00:13.32 (1.70s): Remove false start or repeated take; retain the completed wording.
+- 00:24.42–00:28.84 (4.42s): Remove false start or repeated take; retain the completed wording.
+- 00:32.46–00:34.76 (2.30s): Remove false start or repeated take; retain the completed wording.
+- 00:40.60–00:44.08 (3.48s): Remove false start or repeated take; retain the completed wording.
+- 00:49.00–00:49.70 (0.70s): Remove false start or repeated take; retain the completed wording.
+- 00:59.02–00:59.82 (0.80s): Remove false start or repeated take; retain the completed wording.
+- 00:59.84–01:25.58 (25.74s): Remove false start or repeated take; retain the completed wording.
+- 01:38.76–01:40.20 (1.44s): Remove false start or repeated take; retain the completed wording.
+- 01:44.22–01:47.50 (3.28s): Remove false start or repeated take; retain the completed wording.
+- 01:52.18–01:55.34 (3.16s): Remove false start or repeated take; retain the completed wording.
+- 01:55.36–01:57.32 (1.96s): Remove false start or repeated take; retain the completed wording.
+- 02:05.86–02:09.06 (3.20s): Remove false start or repeated take; retain the completed wording.
+- 02:12.82–02:14.06 (1.24s): Remove false start or repeated take; retain the completed wording.
+- 02:24.94–02:25.84 (0.90s): Remove false start or repeated take; retain the completed wording.
+- 02:36.32–02:37.82 (1.50s): Remove false start or repeated take; retain the completed wording.
+- 02:56.86–02:57.90 (1.04s): Remove false start or repeated take; retain the completed wording.
+- 03:29.66–03:31.84 (2.18s): Remove false start or repeated take; retain the completed wording.
+- 03:36.74–03:37.66 (0.92s): Remove false start or repeated take; retain the completed wording.
+- 03:39.66–03:40.78 (1.12s): Remove false start or repeated take; retain the completed wording.
+- 03:54.08–03:56.44 (2.36s): Remove false start or repeated take; retain the completed wording.
+- 03:59.48–04:00.92 (1.44s): Remove false start or repeated take; retain the completed wording.
+- 04:00.94–04:03.22 (2.28s): Remove false start or repeated take; retain the completed wording.
+- 04:06.18–04:07.34 (1.16s): Remove false start or repeated take; retain the completed wording.
+- 04:18.66–04:20.20 (1.54s): Remove false start or repeated take; retain the completed wording.
+- 04:25.96–04:26.44 (0.48s): Remove false start or repeated take; retain the completed wording.
+- 04:29.62–04:33.20 (3.58s): Remove false start or repeated take; retain the completed wording.
+- 04:49.36–04:51.00 (1.64s): Remove false start or repeated take; retain the completed wording.
+- 05:08.30–05:08.70 (0.40s): Remove false start or repeated take; retain the completed wording.
+- 05:19.34–05:21.00 (1.66s): Remove false start or repeated take; retain the completed wording.
+- 05:38.62–05:40.08 (1.46s): Remove false start or repeated take; retain the completed wording.
+- 05:45.88–05:47.26 (1.38s): Remove false start or repeated take; retain the completed wording.
+- 05:59.66–06:00.06 (0.40s): Remove false start or repeated take; retain the completed wording.
+- 06:11.00–06:13.50 (2.50s): Remove false start or repeated take; retain the completed wording.
+- 07:10.28–07:11.98 (1.70s): Remove false start or repeated take; retain the completed wording.
+- 07:14.60–07:17.60 (3.00s): Remove false start or repeated take; retain the completed wording.
+- 07:39.74–07:40.26 (0.52s): Remove false start or repeated take; retain the completed wording.
+- 07:43.90–07:45.26 (1.36s): Remove false start or repeated take; retain the completed wording.
+- 07:53.42–07:55.24 (1.82s): Remove false start or repeated take; retain the completed wording.
+- 08:35.60–08:36.90 (1.30s): Remove false start or repeated take; retain the completed wording.
+- 09:48.54–09:50.70 (2.16s): Remove false start or repeated take; retain the completed wording.
+- 10:01.74–10:03.14 (1.40s): Remove false start or repeated take; retain the completed wording.
+- 11:18.94–11:19.92 (0.98s): Remove false start or repeated take; retain the completed wording.
+- 11:21.70–11:25.62 (3.92s): Remove false start or repeated take; retain the completed wording.
+- 11:31.20–11:34.54 (3.34s): Remove false start or repeated take; retain the completed wording.
+- 11:45.26–11:45.88 (0.62s): Remove false start or repeated take; retain the completed wording.
+- 12:05.12–12:06.16 (1.04s): Remove false start or repeated take; retain the completed wording.
+- 13:24.50–13:25.22 (0.72s): Remove false start or repeated take; retain the completed wording.
+- 14:20.34–14:20.98 (0.64s): Remove false start or repeated take; retain the completed wording.
+- 14:21.64–14:22.30 (0.66s): Remove false start or repeated take; retain the completed wording.
+- 14:24.20–14:25.00 (0.80s): Remove false start or repeated take; retain the completed wording.
+- 15:01.72–15:05.96 (4.24s): Remove false start or repeated take; retain the completed wording.
+- 15:31.42–15:32.16 (0.74s): Remove false start or repeated take; retain the completed wording.
+- 15:39.52–15:42.26 (2.74s): Remove false start or repeated take; retain the completed wording.
+- 16:15.14–16:16.30 (1.16s): Remove false start or repeated take; retain the completed wording.
+- 16:27.04–16:30.36 (3.32s): Remove false start or repeated take; retain the completed wording.
+- 16:36.78–16:38.44 (1.66s): Remove false start or repeated take; retain the completed wording.
+- 16:50.14–16:50.50 (0.36s): Remove false start or repeated take; retain the completed wording.
+- 17:05.28–17:07.98 (2.70s): Remove false start or repeated take; retain the completed wording.
+- 19:51.16–19:51.54 (0.38s): Remove false start or repeated take; retain the completed wording.
+- 19:59.78–20:00.12 (0.34s): Remove false start or repeated take; retain the completed wording.

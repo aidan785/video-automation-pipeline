@@ -1,0 +1,1 @@
+Final rendered and verified. See renders/Blender Token Cost Test - Final.mp4, FINAL-TRANSCRIPT.txt, CUT-REVIEW.md, and VERIFICATION.md. All work is confined to this new project folder; shared pipeline scripts and other projects were not changed.

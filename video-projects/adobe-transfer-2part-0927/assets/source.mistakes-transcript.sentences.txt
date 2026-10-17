@@ -1,0 +1,126 @@
+0:00.2  What if I told you that Opus five point five built this forest scene inside of Blender?
+0:05.2  It looks like it was taken on a camera.
+0:07.2  It's super high quality, and the environment and the atmosphere feel super realistic in this scene.
+0:12.3  or even this little bakery shot.
+0:14.1  There's a bunch of detail and textures that signify realism, like the brick walls, the metal bar stools, the coffee equipment.
+0:21.8  Or even, like, this blacksmith forge that I had created all with using Opus five point five in Blender And the outputs I'm getting are just absolutely insane.
+0:30.5  They are so realistic compared to any other AI model that I've tested out so far.
+0:35.1  And it's doing really well in these, like, dark scenes.
+0:37.0  So this is, like, maybe, like, a study where we have a nice little library with individual books.
+0:41.4  We have a fireplace.
+0:42.9  We have these assets on the table which look super, super realistic.
+0:47.2  Or even these, like, nature scenes.
+0:48.9  So this is a canyon.
+0:50.2  And what I wanna point you to is just looking at the textures and the quality of the assets.
+0:54.9  There's rock textures.
+0:56.0  There's different rocks.
+0:57.3  there's some brush right here.
+0:58.7  There's, like, a mud texture on the ground.
+1:01.0  or even this, like, pre-vis render that could be used in, like, maybe a real estate listing.
+1:05.4  I mean, look at the chair, look at the couch, look at the lamp.
+1:08.4  It's starting to feel very, very realistic with these outputs, And there's a way that I utilize the Opus five point five agent with Blender to produce these high quality assets.
+1:19.0  And so today I'm gonna show you how I utilized a free tool to pull assets from, to then implement inside of your Blender sessions when building with AI agents.
+1:28.0  so jumping straight into the video, there's gonna be a few things that you need set up before we actually start building.
+1:33.5  Firstly, you're going to need Blender.
+1:35.1  Obviously, we're gonna be utilizing Blender throughout this entire process, so make sure that you download the most recent version of Blender, which is, I believe, five point two point two.
+1:43.4  Next, you're going to need to download the Blender MCP server.
+1:46.2  This is from the official Blender website, so you don't have to go to GitHub and find one that someone had already created.
+1:52.1  Blender has provided their own MCP server to plug into your AI workflows.
+1:56.7  The installation process is very simple.
+1:58.4  All you need to do is drag and drop this box into Blender, your open Blender viewport two times, and that will install it into your session.
+2:05.1  Then you're going to need access to Claude Opus five point five.
+2:09.0  How you do this is you just have a subscription, whether that's the twenty dollar a month, hundred dollar a month, or two hundred dollar a month, so that we can actually prompt an agent to build inside of Blender, or
+2:17.1  you can be using the API key, whatever your preference is.
+2:19.6  We're gonna be specifically just focusing on the subscription plan in this video.
+2:23.2  And then the last thing, and the most important thing, which I have added to this workflow, I've noticed a lot of people in my comments asking, "Can't we just connect an open source library of three-D assets?" to have the
+2:34.6  agent implement inside of Blender.
+2:36.0  And so the best library that is completely free, it does have a paid tier where you can get access to more, but there are a ton.
+2:43.4  For example, a hundred and forty thousand free 3D assets.
+2:46.7  This is Blender Kit.
+2:47.9  Blender Kit is essentially like an all-in-one library with models, HDRIs, materials.
+2:53.8  There is a ton of different 3D assets inside of Blender Kit that you can use for free, You can have an AI model like Opus 5.5 connected to this library.
+3:02.6  So for whatever you're building, maybe that's a pre-viz render for a house, you get access to so many high-quality assets.
+3:09.4  Instead of having the agent spend all of its context, money, and time on building, say, a chair, you can just import a chair.
+3:16.6  you can just import a chair from Blender Kit.
+3:18.8  So how are you gonna download that?
+3:19.9  You just go up here to Download Blender Kit.
+3:22.4  And then go back into your Blender session.
+3:24.8  As you can see, I have Blender Kit installed ready to go right up here.
+3:27.8  There's this navigation button, but if you are looking to install it into your Blender session, just go to Edit, then Preferences, And then click on this downward-facing arrow, and then Install from Disk.
+3:37.4  Navigate to where you just saved that.
+3:38.7  I just saved that in my downloads.
+3:39.9  You'll see the Blender Kit zip file, and then you will install that.
+3:43.2  And then Install from Disk.
+3:44.5  And boom, you get this little pop-up up here.
+3:46.4  This is the Blender Kit icon, and when you open that, you can see we get access to models, materials, scenes, HDRs, brushes, some node stuff.
+3:54.3  But you're mainly gonna be using these for the HDRIs-- the HDRs, the scenes, materials, and the actual models.
+4:02.2  So you can see we have this little search kit up here.
+4:04.4  So if we want a chair, we can search up chair, and then we get access to all of these models that we get then can implement inside of our scene.
+4:13.1  So now that we have this connected inside of Blender, Claude Opus 5.5 has access to all of these models.
+4:19.5  So a hundred and forty thousand plus models Claude now has access to and can implement into our scenes.
+4:25.4  And if you're looking to render directly inside of Blender, instead of maybe going to an AI video model like CDance 2.5, your outputs are going to be so much more clean because you're not relying on the AI model to
+4:36.0  generate these in-depth textures or relying on the AI model to create something based off its knowledge of something.
+4:42.5  Like if you told Opus 5.5, "Create me a chair," it's not gonna look like this.
+4:46.3  So we can use a preexisting library of 3D assets that now Claude can just use and s- and save some tokens and cost when we're building.
+4:54.9  So let's prompt and create something with Claude Code.
+4:57.9  So as you can see, I am in my Claude session.
+5:00.4  I'm just on the Claude desktop app.
+5:01.9  I have Opus 5.5 selected, and I'm going to put this at high effort, which is just like the most average effort level that most people have on their AI models.
+5:11.5  I'm also working inside of a Blender folder.
+5:13.9  Go in the link in the description where it says All My Free Resources.
+5:16.4  You will find a link to the Creative AI Network, where you can go into the Classroom tab, find the Claude Skills Vault, and you get a free Blender AI starter pack.
+5:24.4  This will set up everything for you.
+5:26.4  The second you throw this into your Claude session, it'll set up the MCP connection.
+5:29.8  it'll add all of the skills that I've built for Blender, including like pre-viz to CDance renders or how to efficiently build inside of Blender or Blender agent teams.
+5:38.8  I've done a ton of videos on it in the past But a lot of people found this really resourceful to just have this one zip file that they could download, throw into their session, and then everything's set up for
+5:47.2  them.
+5:47.6  It'll keep your projects organized, your renders organized.
+5:50.3  So instead of you doing that, you can find that there.
+5:52.2  That Blender OS is currently the folder that I work in for all my Blender sessions.
+5:56.8  And so if you have everything connected and set up, we can just verify that the connection is working.
+6:01.1  Can you see the Blender Kit Asset Library?
+6:04.5  It looks like it is testing a free Blender Kit model.
+6:07.9  It did a search, and yes, it can reach Blender Kit.
+6:11.1  So the first build that I want to show you guys how to do is kind of in the real estate space.
+6:16.2  Because there's so many different assets for furniture inside of Blender Kit, it's really easy not to build, and it builds super fast.
+6:22.4  So instead of Claude spending all of its time building up chairs and couches and rugs and textures for the floors and the walls, it can just pull those assets straight from Blender Kit and then organize everything into a clean
+6:33.1  scene.
+6:33.6  So the first thing I'm going to prompt is I want to create a modern home previs render.
+6:39.9  Essentially like what you would see at an architecture company for a model of a house.
+6:45.2  I want this to be the interior of the living room with a lot of high-scale furniture, very cozy, very warm.
+6:51.9  That's all I'm going to prompt.
+6:52.8  When I shoot that off, we can go back into Blender and see what it builds.
+6:56.5  Now this prompt is just natural language straight off the top of my head.
+6:59.5  So you could definitely iterate upon the prompts to make them a lot more structured and organized so you're not going back and forth and iterating.
+7:05.8  But for this build, this prompt is more than enough.
+7:08.3  And boom, we get an output just like this.
+7:10.9  And what you can notice now is we have so much more realism because we have these professionally crafted 3D assets.
+7:18.0  For example, I'm just gonna go into my...
+7:20.5  I'm just gonna go into the solid viewport so I can move around here, but I will change the rendered viewport on when we wanna see some of the detail.
+7:27.3  But you can see, like, this couch right here.
+7:29.2  If we turn on the rendered preview The blanket feels real.
+7:32.1  The actual couch feels like it's an actual cushion.
+7:34.4  It looks realistic.
+7:35.8  And so all of these assets were pulled from a library and then Claude Opus 5.5 essentially is the orchestrator.
+7:42.5  It's the builder.
+7:43.4  So it's going to pull all these assets to make it look as realistic as possible.
+7:47.3  So these wood beams on the ceiling are each an individual asset created by someone, a professional 3D artist.
+7:53.3  And it really sells that realism look.
+7:55.4  Or even look at this recliner chair.
+7:56.9  You can see there's this leather detail in our 3D scene that Opus 5.5 just does not have the knowledge to create.
+8:05.2  So it's nice to have these assets there so we can get these clean, nice looking scenes.
+8:10.1  So great job by Opus 5.5 on organizing this full scene set up for us.
+8:15.3  another example of what we can build is maybe like a vintage car garage.
+8:20.3  So I can just shoot off, build a vintage car in a garage scene.
+8:24.0  And it's going to go search up all of the car assets that we have in Blender Kit along with garage assets to make it feel as realistic as possible.
+8:31.4  And boom, we get a car in a garage setup.
+8:34.8  Let me just go into my material preview so we can move around here.
+8:38.0  But we see we have this nice garage.
+8:40.5  And it looks like it pulled, like, the wood planks up here from Blender Kit, this lamp, and then obviously the car itself.
+8:47.5  But there you have it.
+8:48.7  That's how you can start creating really realistic scenes with Opus 5.5.
+8:53.5  If you found this video resourceful or useful at all, please feel free to leave a like and subscribe to the channel.
+8:57.7  It helps me out a ton.
+8:59.5  I'm gonna leave you guys with that, and stick around for more AI and 3D workflows, and make sure you grab that Blender OS in the Free School community.
+9:07.4  Thanks for sticking to the end.
+9:08.3  As always, I will see you guys in the next one.

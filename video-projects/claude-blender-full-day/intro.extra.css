@@ -1,0 +1,48 @@
+  /* ---------- cold open ---------- */
+  #co-back { position: absolute; inset: 0; background: #000; z-index: 3; }
+  /* ring ship stills sit in the same 4:3 window as the clips; the push is a transform on the img */
+  .rs { position: absolute; left: 258px; top: 14px; width: 1404px; height: 1052px; z-index: 4; overflow: hidden; border-radius: 44px; background: #000; }
+  .rs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #rs1 img { transform-origin: 56% 44%; }
+  #rs2 img { transform-origin: 60% 40%; }
+  #rs3 img { transform-origin: 42% 38%; }
+  #sheet, #bh-sheet { position: absolute; width: 1404px; height: 1052px; transform-origin: 0 0; border-radius: 44px; background: #fff; overflow: hidden; }
+  #sheet { left: 258px; top: 14px; z-index: 4; }
+  .print { position: absolute; top: 196px; width: 380px; }
+  .print img { width: 380px; height: 480px; object-fit: cover; display: block; border-radius: 8px; }
+  .print .nm { margin-top: 26px; font-family: "Lexend", sans-serif; font-weight: 300; font-size: 36px; line-height: 1.2; color: #5a5a5a; text-align: center; }
+  .print .tk { font-family: "Redaction 35", serif; font-weight: 700; font-size: 74px; line-height: 1.15; color: #141414; text-align: center;
+    white-space: nowrap; transform: scaleX(.787); }
+  .cap.dark { top: 982px; }
+
+  /* ---------- behind Aidan (plate coords, moves with the camera) ---------- */
+  #bh-sheet { left: 24px; top: 120px; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+
+  .card { position: absolute; padding: 10px; box-sizing: border-box; background: #fff; border-radius: 20px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .card img { width: 100%; display: block; border-radius: 11px; object-fit: cover; }
+
+  /* "I give it a reference picture, and I let it work": the two reference pictures he supplied */
+  #bh-ref1 { left: 40px; top: 110px; width: 560px; transform: rotate(-5deg); }
+  #bh-ref2 { left: 262px; top: 396px; width: 350px; transform: rotate(4deg); }
+
+  /* "looked at them and fixed its own mistakes": one card per build, the picture steps from first pass to finished */
+  .pg .st { position: relative; aspect-ratio: 16 / 9; border-radius: 11px; overflow: hidden; background: #000; }
+  .pg .st img { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 0; }
+  .pg .st .s2, .pg .st .s3, .pg .st .s4 { opacity: 0; }
+  #bh-pg1 { left: 1404px; top: 92px; width: 476px; transform: rotate(3deg); }
+  #bh-pg2 { left: 1444px; top: 392px; width: 446px; transform: rotate(-3deg); }
+
+  /* "threw out some shots": the three rejected stills, then they drop */
+  #bh-rj1 { left: 50px; top: 104px; width: 500px; transform: rotate(-6deg); }
+  #bh-rj2 { left: 104px; top: 318px; width: 480px; transform: rotate(4deg); }
+  #bh-rj3 { left: 36px; top: 520px; width: 460px; transform: rotate(-3deg); }
+
+  /* ---------- cutaway montage ---------- */
+  #mont-back { position: absolute; inset: 0; z-index: 8; background: #000; }
+  #montr { position: absolute; inset: 0; z-index: 9; overflow: hidden; }
+  #montr img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: 46% 44%; }
+  .mont { opacity: 0; position: absolute; inset: 0; z-index: 9; pointer-events: none; }
+  .mont video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* keeps the text readable over bright footage: a soft dark corner, not a full-frame gradient */
+  #mont-shade { position: absolute; inset: 0; z-index: 9; pointer-events: none;
+    background: radial-gradient(1500px 760px at 0% 100%, rgba(0,0,0,.72), rgba(0,0,0,0) 70%); }
