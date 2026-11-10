@@ -1,0 +1,223 @@
+/* ============================================================================
+   SANJI STYLE — style tokens
+   Single source of palette / type / glass / motion for every card in this
+   style. Cards reference these vars and never hardcode colors, fonts,
+   easings, or textures. Tweak here, all cards update. See DESIGN.md.
+
+   Distilled frame-by-frame (25fps native) from Sanji Nai-Chien's
+   "How I Make $880/Day with AI Motion Design" (YouTube D5qpBbEWTxo).
+   Aesthetic: premium SaaS-launch motion design. Three canvases:
+     PAPER  - white page, near-black type that resolves out of blur
+     EMBER  - true black lit by orange corner light, dark chatbot UI,
+              glowing type that cools from hot to settled
+     COBALT - electric blue with slow sonar rings and liquid-glass
+              squircle tiles / pills, focus-shift states
+   Motion signature: everything resolves OUT OF BLUR (blur -> sharp,
+   light -> full ink, low -> settled). Nothing hard-pops, nothing moves
+   linearly, entrances ~0.2-0.5s with a whisper of overshoot, exits faster.
+   ============================================================================ */
+
+/* The HyperFrames compiler embeds supported fonts by name at render time;
+   this @import makes standalone / browser preview show the right faces. */
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap");
+
+:root {
+  /* --- COBALT canvas (sampled #2042EE / #2146EF across the glass scenes) ---- */
+  --cobalt:        #2042EE;   /* THE blue. flat canvas behind every glass card */
+  --cobalt-deep:   #2630E4;   /* glass interior pool (bottom-right of each card) */
+  --cobalt-ink:    #1A22B8;   /* deepest shade, card drop shadows / VS badge ring */
+  --cobalt-lift:   #405EF0;   /* glass highlight tone, top-left of tiles */
+  --sky:           #1B7DF0;   /* cyan-leaning blob in the chapter-strip canvas */
+  --sky-2:         #20A0F5;   /* brightest cyan blob */
+  --cobalt-rgb:    32, 66, 238;
+
+  /* --- EMBER canvas (sampled from the chatbot / code scenes) ---------------- */
+  --void:          #030100;   /* true black with a hair of warmth */
+  --void-2:        #0B0604;   /* chat box interior */
+  --ember:         #FF7A1A;   /* hot accent: send button, glow cores, chips */
+  --ember-hot:     #FFB347;   /* white-hot core of the comet / button pulse */
+  --ember-glow:    #E6832A;   /* corner light pool (sampled bottom-left) */
+  --ember-deep:    #67270D;   /* far edge of the corner light (sampled top-right) */
+  --ember-dim:     #3E190D;   /* faint warm wash in the dark */
+  --ember-rgb:     255, 122, 26;
+
+  /* --- glow-type blue (the "motion design" letters, $500 particles) --------- */
+  --volt:          #2F8CFF;   /* glowing letter core */
+  --volt-soft:     #8CC4FF;   /* particle sparkle highlight */
+  --volt-rgb:      47, 140, 255;
+
+  /* --- PAPER canvas --------------------------------------------------------- */
+  --paper:         #FFFFFF;
+  --paper-2:       #F4F5F8;   /* soft off-white panels (VS cards sit on this) */
+  --ink:           #1C1C1E;   /* settled type on paper */
+  --ink-pre:       #C9C9CC;   /* pre-resolve light grey (words arrive this color) */
+  --ink-mid:       #6B6B70;   /* secondary on paper */
+
+  /* --- text on dark / blue ---------------------------------------------------*/
+  --white:         #FFFFFF;
+  --white-pre:     rgba(255, 255, 255, 0.38);  /* pre-resolve on dark/blue */
+  --white-soft:    rgba(255, 255, 255, 0.72);  /* secondary labels on blue */
+  --dormant:       #A6A3B4;   /* focus-shift "inactive" text, sampled grey-lavender */
+  --halftone:      #F5B400;   /* amber dot-matrix of the iris transition */
+  --alert:         #FF4D4D;   /* the tiny red "no" dot on VS tags. ONLY there */
+
+  /* --- syntax colors for the cooled code stream ----------------------------- */
+  --code-tag:      #5AA8FF;
+  --code-attr:     #8FA3B8;
+  --code-str:      #7BD88F;
+  --code-text:     #D9D9DE;
+  --code-hot:      #FF8A2A;
+
+  /* semantic aliases the blueprint contract expects */
+  --bg:     var(--cobalt);
+  --fg:     var(--white);
+  --accent: var(--ember);
+  --muted:  var(--white-pre);
+
+  /* --- typography ------------------------------------------------------------
+     Inter Tight 800 = display voice. Section titles, pill labels, kinetic
+     captions are ALL CAPS with tight tracking (looks like Inter Display XB).
+     Inter 600/700 = UI sentence case inside glass cards ("Nothing moves
+     linearly", "The math"). JetBrains Mono = file names, code, tiny meta.
+     Source Serif 4 600 = the editorial serif wordmark moment on EMBER only. */
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+  --font-serif:   "Source Serif 4", Georgia, serif;
+
+  --wt-ui:     600;
+  --wt-bold:   700;
+  --wt-heavy:  800;
+  --wt-black:  900;
+
+  --track-caps:  -0.035em;  /* caps display, tight */
+  --track-tight: -0.025em;  /* sentence-case display */
+  --track-ui:    -0.012em;  /* glass card UI text */
+  --track-mono:  0;
+
+  --size-mega:   200px;  /* giant gradient title ("Two Options") */
+  --size-hero:   150px;  /* hero numeral ($880, 999) */
+  --size-title:  104px;  /* section / chapter titles */
+  --size-head:   72px;   /* card headlines, pill titles */
+  --size-ui:     46px;   /* glass card rows */
+  --size-label:  30px;   /* pill labels, tags */
+  --size-small:  22px;   /* meta, axis ticks */
+  --size-cap:    64px;   /* tier2 kinetic caption */
+  --size-sub:    40px;   /* tier2 glass subtitle */
+
+  /* --- LIQUID GLASS (cobalt system) -----------------------------------------
+     A tile = translucent white sheen top-left fading to a deep cobalt pool
+     bottom-right, 1.5px bright rim, soft deep-blue drop shadow, faint inner
+     top highlight. ACTIVE tiles are brighter + deeper; DORMANT tiles keep the
+     glass but their content fades to --dormant. */
+  --glass-fill:
+    linear-gradient(150deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.07) 38%, rgba(38,48,228,0.28) 72%, rgba(30,28,210,0.55) 100%);
+  --glass-fill-active:
+    linear-gradient(150deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.10) 34%, rgba(36,40,226,0.55) 70%, rgba(28,24,205,0.85) 100%);
+  --glass-rim:         rgba(255, 255, 255, 0.36);
+  --glass-rim-active:  rgba(255, 255, 255, 0.62);
+  --glass-shadow:
+    0 28px 70px rgba(14, 18, 150, 0.32), inset 0 1.5px 0 rgba(255,255,255,0.32), inset 0 -24px 60px rgba(28, 22, 200, 0.30);
+  --glass-shadow-active:
+    0 34px 90px rgba(14, 18, 150, 0.45), 0 0 60px rgba(120, 140, 255, 0.22), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -30px 70px rgba(28, 22, 200, 0.45);
+  --glass-blur:        blur(18px) saturate(1.25);
+
+  --badge-fill:  radial-gradient(circle at 35% 30%, rgba(255,255,255,0.28), rgba(255,255,255,0.08) 60%, rgba(255,255,255,0.04));
+  --badge-rim:   rgba(255, 255, 255, 0.42);
+
+  --r-tile:   46px;   /* squircle tile radius at ~380px */
+  --r-card:   56px;   /* large glass card radius */
+  --r-pill:   999px;
+  --r-chat:   44px;   /* dark chat box radius */
+  --r-plate:  40px;   /* screenshot plate radius */
+  --rim:      1.5px;
+
+  /* --- EMBER glass (dark chat UI) -------------------------------------------- */
+  --chat-fill:    linear-gradient(180deg, rgba(14,8,5,0.96), rgba(4,2,1,0.98));
+  --chat-rim:     rgba(255, 140, 60, 0.55);           /* rim catches the orange light */
+  --chat-rim-dim: rgba(255, 255, 255, 0.10);
+  --chat-shadow:  0 0 0 1px rgba(255,120,40,0.10), 0 30px 90px rgba(0,0,0,0.8), 0 -10px 60px rgba(255,110,30,0.10);
+  --chip-fill:    rgba(18, 10, 6, 0.92);
+  --chip-rim:     rgba(255, 255, 255, 0.16);
+  --chip-glow:    0 0 0 1.5px rgba(255,140,50,0.95), 0 0 26px rgba(255,122,26,0.65), 0 0 60px rgba(255,122,26,0.35);
+
+  /* --- canvases / textures ---------------------------------------------------- */
+  --ember-corners:
+    radial-gradient(70% 60% at 100% 0%, rgba(230,131,42,0.85) 0%, rgba(103,39,13,0.55) 32%, rgba(3,1,0,0) 62%),
+    radial-gradient(60% 55% at 0% 100%, rgba(230,131,42,0.60) 0%, rgba(62,25,13,0.45) 35%, rgba(3,1,0,0) 66%);
+  --cobalt-wash:
+    radial-gradient(60% 70% at 18% 30%, rgba(32,160,245,0.55), rgba(32,66,238,0) 60%),
+    radial-gradient(55% 60% at 85% 85%, rgba(27,125,240,0.55), rgba(32,66,238,0) 62%),
+    linear-gradient(180deg, #1E52EC, #2042EE 50%, #1D3BE6);
+  --dot-grid-blue:
+    radial-gradient(circle, rgba(70,110,255,0.55) 1.3px, transparent 1.8px) 0 0 / 9px 9px;
+  --cell-grid:   /* faint 64px blueprint grid in the chapter canvas */
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px) 0 0 / 64px 64px;
+  --vignette-dark: radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.65) 100%);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+
+  /* --- motion ----------------------------------------------------------------
+     Measured at 25fps from the reference:
+       word resolve     5 frames  (0.20s) blur 12px -> 0, ink-pre -> ink, y +10 -> 0
+       hero dolly       7 frames  (0.28s) scale 3 -> 1 while it sharpens + darkens
+       letter type      1 char / frame-ish (0.04-0.06s) each char 0.16s blur-in
+       glow cool-down   ~10-14 frames (0.5s) glow color -> settled white / syntax
+       glass tile pop   6-8 frames (0.3s) scale .92 + blur 10 -> sharp, slight overshoot
+       focus shift      0.35s previous tile content -> --dormant
+       ring pulse       ~1.2s period, rings expand + fade, loop
+       chapter whip     5 frames (0.2s) strip slides left with horizontal smear
+       plate slide-up   7 frames (0.28s) from below with vertical smear, then drift
+       iris reveal      16 frames (0.64s) halftone disc grows from a point
+       exit             faster than entry (~0.6x), dissolve to blur */
+  --ease-resolve: cubic-bezier(0.16, 1, 0.3, 1);   /* expo.out feel */
+  --ease-pop:     cubic-bezier(0.34, 1.32, 0.64, 1); /* slight overshoot */
+  --ease-glide:   cubic-bezier(0.65, 0, 0.35, 1);  /* in-out for camera moves */
+  --ease-exit:    cubic-bezier(0.7, 0, 0.84, 0);   /* exits accelerate out */
+
+  --dur-word:     0.20s;
+  --dur-dolly:    0.28s;
+  --dur-char:     0.16s;
+  --dur-cool:     0.50s;
+  --dur-pop:      0.32s;
+  --dur-focus:    0.35s;
+  --dur-whip:     0.20s;
+  --dur-slide:    0.28s;
+  --dur-iris:     0.64s;
+
+  --blur-in:      12px;   /* word / tile start blur */
+  --blur-hero:    18px;   /* hero dolly start blur */
+
+  --pad: 140px;
+
+  /* --- SYSTEM canvas: blue-screen terminal + ASCII render ------------------
+     Added 11/3 from the BUCK x Isle of Any blue-screen campaign (refs in
+     references/system/). Flat saturated blue, white mono type with a soft
+     phosphor bloom, every image built from luminance-mapped glyphs. -------- */
+  --sys-blue:      #0F18FB;   /* sampled flat ground (#0F18FB, 97% of pixels) */
+  --sys-blue-lift: #2A33FC;   /* faint glyph haze / dim layer */
+  --sys-ink:       #F3F5FF;   /* white type, very slightly blue */
+  --sys-dim:       rgba(243,245,255,0.42);   /* background glyph field */
+  --sys-ghost:     rgba(243,245,255,0.16);   /* far field / map dots */
+  --sys-chip-bg:   #F3F5FF;   /* inverse-video chip fill */
+  --sys-chip-ink:  #0F18FB;   /* inverse-video chip text */
+  --sys-bloom:     0 0 6px rgba(225,232,255,0.55), 0 0 1px rgba(255,255,255,0.9);
+  --sys-scan:      repeating-linear-gradient(90deg, rgba(255,255,255,0.022) 0 1px, rgba(255,255,255,0) 1px 4px);
+  --font-term:     "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --term-size:     30px;      /* measured: 19.6px advance, 36px line pitch at 1080 */
+  --term-line:     36px;
+  --term-track:    0.055em;
+  --ascii-ramp:    " .,:-~>*+cC%#$";   /* measured density ramp, dark to bright */
+  --dur-type-line: 0.042s;    /* 1 line per frame at 24fps when the log floods */
+  --dur-scramble:  0.125s;    /* 3 frames of glyph noise before a word resolves */
+  --beat:          0.5s;      /* scene changes land on a 0.5s grid, 2s bars */
+
+  /* --- TEXT PRESET "uppit-reveal" (lib/text-preset.js, DESIGN.md section 11) --
+     The house text animation for all DOM text, lifted from uppitai.com. */
+  --txt-dur:       0.7s;     /* per word */
+  --txt-stagger:   0.04s;    /* word to word: 10-17 words in flight at once */
+  --txt-blur:      6px;      /* start blur */
+  --txt-rise:      0.3em;    /* start offset below the baseline */
+  --txt-ease:      cubic-bezier(0.23, 1, 0.32, 1);
+  --txt-block-rise: 18px;    /* whole-element reveal (chips, pills, icons) */
+}

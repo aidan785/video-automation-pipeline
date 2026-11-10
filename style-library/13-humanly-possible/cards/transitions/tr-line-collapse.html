@@ -1,0 +1,93 @@
+<!doctype html>
+<!--
+  Humanly Possible · transition · line · COLLAPSE (opaque full frame, 1.2 s)
+  Born from a line, back to a line, as a plate swap. Plate A squashes into a 3 px cream line
+  across the center (clip-path on the plate wrapper, never scaleY on type), the line retracts
+  to a point, the point pops and draws back out into a line, and plate B opens from that line.
+  Close and open mirror each other. Both plates drift slowly on their own layers; grain on top.
+  From DESIGN.md motion rule 4 and Great Big Story's line-born title box
+  (references/analysis/gbs-memory.md, gbs-marathons.md).
+  Exit: the card ends on clean plate B; cut to the real B shot on the last frame.
+  Slots: plate-a, plate-b (media, full frame 1920x1080).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+      #hp-tr-line-collapse{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+
+      #hp-tr-line-collapse .plate{position:absolute;inset:0;overflow:hidden;}
+      #hp-tr-line-collapse .plate .drift{position:absolute;inset:0;transform-origin:50% 50%;}
+      #hp-tr-line-collapse .plate img,#hp-tr-line-collapse .plate video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;display:block;}
+
+      #hp-tr-line-collapse .line{position:absolute;left:0;top:538px;width:1920px;height:3px;background:var(--hp-cream);transform-origin:50% 50%;}
+      #hp-tr-line-collapse .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.3;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-tr-line-collapse" data-composition-id="hp-tr-line-collapse" data-start="0" data-width="1920" data-height="1080">
+      <div class="plate b"><div class="drift"><img data-slot="plate-b" src="../../assets/demo/place-baker.jpg" alt="" /></div></div>
+      <div class="plate a"><div class="drift"><img data-slot="plate-a" src="../../assets/demo/place-dana.jpg" alt="" /></div></div>
+      <i class="line"></i>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-tr-line-collapse-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-tr-line-collapse-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-tr-line-collapse";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 1.2;
+      const tl = gsap.timeline({ paused: true });
+      const A = $1(".plate.a"), B = $1(".plate.b"), L = $1(".line");
+      const OPEN = "inset(0px 0px 0px 0px)";
+      const SHUT = "inset(538.5px 0px 538.5px 0px)";
+      const DOT = 3 / 1920;
+
+      // drift on the plate layers only
+      tl.fromTo(A.querySelector(".drift"), { scale: 1.04 }, { scale: 1, duration: .4, ease: "none" }, 0);
+      tl.fromTo(B.querySelector(".drift"), { scale: 1 }, { scale: 1.03, duration: .5, ease: "none" }, .7);
+
+      tl.set(B, { clipPath: SHUT, autoAlpha: 0 }, 0);
+      tl.set(L, { autoAlpha: 0, scaleX: 1 }, 0);
+
+      // 1. plate A squashes into the line (0 to .34)
+      tl.fromTo(A, { clipPath: OPEN }, { clipPath: SHUT, duration: .34, ease: "power3.in" }, 0);
+      tl.set(L, { autoAlpha: 1 }, .34);
+      tl.set(A, { autoAlpha: 0 }, .34);
+      // 2. the line retracts to a point (.34 to .52)
+      tl.to(L, { scaleX: DOT, duration: .18, ease: "power3.in" }, .34);
+      // 3. the point pops and draws back out into a line (.54 to .76)
+      tl.fromTo(L, { scaleY: 1 }, { scaleY: 2.4, duration: .05, ease: "none", yoyo: true, repeat: 1 }, .5);
+      tl.to(L, { scaleX: 1, duration: .22, ease: POP }, .58);
+      // 4. plate B opens from the line (.78 to 1.16), the line hands off as B's edges leave it
+      tl.set(B, { autoAlpha: 1 }, .78);
+      tl.fromTo(B, { clipPath: SHUT }, { clipPath: OPEN, duration: .38, ease: POP, immediateRender: false }, .78);   // fromTo: read-back insets collapse
+      tl.set(L, { autoAlpha: 0 }, .8);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

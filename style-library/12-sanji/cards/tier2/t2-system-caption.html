@@ -1,0 +1,329 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · caption · SYSTEM CAPTION
+  references/system s12, s24 (chip + terminal type), transparent overlay for
+  talking-head footage. A flat blue-screen bar opens at lower center from one
+  lone white cell, stepping wider cell by cell with a ragged glyph edge. A thin
+  "/*" comment marker sits on its left. The phrase types in word group by word
+  group (each group scrambles over 2 frames, noise tail riding the edge); the
+  key word lands inside an inverse chip that flickers on. Exit: the letters
+  decay down the ramp (letter > % > : > .) on a ragged front and the bar
+  collapses back to a cell. Everything outside the bar is transparent.
+  Slots: text (text, <= 48 chars, one line), key (text, one word of the text
+  to chip, optional), group (number of words per group, 1-3, default 2).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-system-caption {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-term);
+      }
+      #sanji-t2-system-caption canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+      #sanji-t2-system-caption .glow { filter: drop-shadow(0 0 4px rgba(225,232,255,0.45)); }
+      #sanji-t2-system-caption .src { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-system-caption" data-composition-id="sanji-t2-system-caption" data-start="0" data-width="1920" data-height="1080">
+      <canvas class="cap"></canvas>
+      <div class="src">
+        <span data-slot="text">Cut the dead air without touching a timeline</span>
+        <span data-slot="key">dead</span>
+        <span data-slot="group">2</span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @ascii-engine:start v1 */
+/* SANJI · SYSTEM canvas · ASCII engine (single source of truth).
+   Cards carry an INLINED copy between the @ascii-engine markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-ascii-engine.mjs` to restamp every card.
+
+   Model (measured from the BUCK blue-screen spots): every image is a
+   grayscale paint mapped to a density ramp of glyphs on a fixed grid.
+     const F = SYS.field(canvasEl, { cw: 15, ch: 22 });
+     F.paint((g) => { ...draw grayscale in 1920x1080 coords... });  // white = dense glyph
+     F.clearText(); F.text(col, row, "Send:", { alpha: 1, inv: false });
+     F.render(t, { flicker: 0.25 });
+   Everything is a pure function of t (seeded hashes, no Math.random). */
+const SYS = (function () {
+  const RAMP = " .,:-~>*+cC%#$";
+  const NOISE = "#$%&*+-/<=>?@[]^_{|}~0123456789ABCDEFxz";
+  const c01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const hash = (x, y, s) => {
+    let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  };
+  const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296); };
+  const sm = (t) => t * t * (3 - 2 * t);
+  const vnoise = (x, y, s) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = sm(x - xi), yf = sm(y - yi);
+    const a = hash(xi, yi, s), b = hash(xi + 1, yi, s), c = hash(xi, yi + 1, s), d = hash(xi + 1, yi + 1, s);
+    return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf;
+  };
+  const fbm = (x, y, s, oct = 4) => { let v = 0, amp = 0.5, f = 1; for (let i = 0; i < oct; i++) { v += amp * vnoise(x * f, y * f, s + i * 17); f *= 2; amp *= 0.5; } return v; };
+  /* frame index at 24fps: glyph noise ticks on frames, like the reference */
+  const frame = (t) => Math.floor(t * 24 + 1e-6);
+
+  /* scramble: resolved prefix + a short tail of noise glyphs that rides the edge.
+     p 0..1 = progress; tail = noise chars ahead of the resolved edge. */
+  function scramble(final, p, t, seed = 7, tail = 3) {
+    const n = final.length, k = Math.floor(c01(p) * n + 1e-6);
+    if (k >= n) return final;
+    let out = final.slice(0, k);
+    const f = frame(t);
+    for (let i = k; i < Math.min(n, k + tail); i++) out += final[i] === " " ? " " : NOISE[Math.floor(hash(i, f, seed) * NOISE.length)];
+    return out;
+  }
+  /* noise-only string of length n (for chip glitch frames) */
+  function noiseStr(n, t, seed = 3) { let s = ""; const f = frame(t); for (let i = 0; i < n; i++) s += NOISE[Math.floor(hash(i, f, seed) * NOISE.length)]; return s; }
+
+  function field(canvas, opts = {}) {
+    const W = opts.width || 1920, H = opts.height || 1080;
+    const cw = opts.cw || 15, ch = opts.ch || 22;
+    const cols = Math.ceil(W / cw), rows = Math.ceil(H / ch);
+    const font = opts.font || `600 ${Math.round(ch * 0.98)}px "IBM Plex Mono", "JetBrains Mono", monospace`;
+    const ink = opts.ink || "243,245,255", bg = opts.bg || "#0F18FB";
+    const ramp = opts.ramp || RAMP;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    const src = document.createElement("canvas"); src.width = cols; src.height = rows;
+    const sctx = src.getContext("2d", { willReadFrequently: true });
+    let lum = new Float32Array(cols * rows);
+    const ovC = new Array(cols * rows).fill(null), ovA = new Float32Array(cols * rows), ovI = new Uint8Array(cols * rows);
+
+    const F = {
+      cols, rows, cw, ch, W, H, ctx, src: sctx,
+      /* grayscale paint in 1920x1080 coordinates; white = bright/dense */
+      paint(fn) {
+        sctx.setTransform(1, 0, 0, 1, 0, 0);
+        sctx.globalAlpha = 1; sctx.globalCompositeOperation = "source-over";
+        sctx.fillStyle = "#000"; sctx.fillRect(0, 0, cols, rows);
+        sctx.setTransform(cols / W, 0, 0, rows / H, 0, 0);
+        sctx.fillStyle = "#fff"; sctx.strokeStyle = "#fff";
+        fn(sctx);
+        const d = sctx.getImageData(0, 0, cols, rows).data;
+        for (let i = 0; i < cols * rows; i++) lum[i] = d[i * 4] / 255;
+      },
+      /* direct luminance function per cell: fn(col,row,x,y) -> 0..1 (added to paint) */
+      fn(fn, mode = "max") {
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const i = r * cols + c, v = fn(c, r, (c + 0.5) * cw, (r + 0.5) * ch);
+          lum[i] = mode === "add" ? c01(lum[i] + v) : mode === "set" ? c01(v) : Math.max(lum[i], v);
+        }
+      },
+      clearLum() { lum.fill(0); },
+      clearText() { ovC.fill(null); ovA.fill(0); ovI.fill(0); },
+      /* write a string into the grid. col/row in cells; inv = inverse-video chip */
+      text(col, row, str, o = {}) {
+        if (row < 0 || row >= rows) return;
+        for (let i = 0; i < str.length; i++) {
+          const c = col + i; if (c < 0 || c >= cols) continue;
+          const k = row * cols + c;
+          if (str[i] === " " && !o.inv && !o.keepSpace) continue;
+          ovC[k] = str[i]; ovA[k] = o.alpha == null ? 1 : o.alpha; ovI[k] = o.inv ? 1 : 0;
+        }
+      },
+      /* text placed by pixel position (snapped to the grid) */
+      textAt(x, y, str, o = {}) { F.text(Math.round(x / cw), Math.round(y / ch), str, o); },
+      lumAt(c, r) { return c < 0 || r < 0 || c >= cols || r >= rows ? 0 : lum[r * cols + c]; },
+      render(t, o = {}) {
+        const flick = o.flicker == null ? 0.18 : o.flicker;   /* prob a cell hops one ramp level per frame */
+        const gain = o.gain == null ? 1 : o.gain, floor = o.floor == null ? 0.06 : o.floor;
+        const aMin = o.alphaMin == null ? 0.38 : o.alphaMin, aMax = o.alphaMax == null ? 1 : o.alphaMax;
+        const seed = o.seed || 11, f = frame(t), R = o.ramp || ramp, N = R.length - 1;
+        ctx.clearRect(0, 0, W, H);
+        if (o.fillBg) { ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); }
+        ctx.font = font; ctx.textBaseline = "top"; ctx.textAlign = "left";
+        /* bucket by alpha so fillStyle changes stay cheap */
+        const B = 8, buckets = Array.from({ length: B }, () => []);
+        const inv = [];
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const k = r * cols + c;
+          if (ovC[k] !== null) { if (ovI[k]) inv.push(k); else buckets[Math.min(B - 1, Math.floor(ovA[k] * (B - 1) + 0.5))].push([k, ovC[k]]); continue; }
+          let v = lum[k] * gain;
+          if (v < floor) continue;
+          v = c01(v);
+          let idx = Math.round(v * N);
+          if (flick > 0 && hash(c, r, f * 31 + seed) < flick) idx += hash(r, c, f + seed) < 0.5 ? -1 : 1;
+          idx = Math.max(1, Math.min(N, idx));
+          const a = aMin + (aMax - aMin) * v;
+          buckets[Math.min(B - 1, Math.floor(a * (B - 1) + 0.5))].push([k, R[idx]]);
+        }
+        for (let b = 0; b < B; b++) {
+          if (!buckets[b].length) continue;
+          ctx.fillStyle = `rgba(${ink},${(b / (B - 1)).toFixed(3)})`;
+          for (const [k, chr] of buckets[b]) ctx.fillText(chr, (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+        if (inv.length) {
+          ctx.fillStyle = `rgb(${ink})`;
+          for (const k of inv) ctx.fillRect((k % cols) * cw, Math.floor(k / cols) * ch, cw, ch);
+          ctx.fillStyle = bg;
+          for (const k of inv) ctx.fillText(ovC[k], (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+      },
+    };
+    return F;
+  }
+
+  /* ---- grayscale paint helpers (draw onto F.src inside F.paint) ---------- */
+  /* spinning coin: angle in radians around the vertical axis. Generic face
+     (rim + inner ring + diagonal sheen bands); pass a glyph string for the face. */
+  function coin(g, x, y, R, angle, o = {}) {
+    const sx = Math.cos(angle), w = Math.max(R * 0.07, Math.abs(sx) * R);
+    const thick = R * (o.thick || 0.16) * Math.abs(Math.sin(angle));
+    const face = o.face == null ? 0.3 : o.face;
+    g.save(); g.translate(x, y);
+    /* edge band (visible as the coin turns): bright, reads as the sliver when edge-on */
+    if (thick > 0.5) { g.fillStyle = `rgba(255,255,255,${o.edge || 0.8})`; g.beginPath(); g.ellipse(Math.sign(Math.sin(angle)) * thick * 0.5, 0, w, R, 0, 0, 6.2832); g.fill(); }
+    g.fillStyle = `rgb(${Math.round(face * 255)},${Math.round(face * 255)},${Math.round(face * 255)})`; g.beginPath(); g.ellipse(0, 0, w, R, 0, 0, 6.2832); g.fill();
+    /* lighter diagonal sheen bands (the reference's striped face) */
+    g.save(); g.beginPath(); g.ellipse(0, 0, w * 0.92, R * 0.92, 0, 0, 6.2832); g.clip();
+    g.rotate(-0.75); const ph = ((o.sheen || 0) * R * 1.4) % (R * 0.6);
+    g.fillStyle = "rgba(255,255,255,0.32)";
+    for (let b = -4; b <= 4; b++) g.fillRect(-R * 2, b * R * 0.6 + ph, R * 4, R * 0.2);
+    g.restore();
+    g.lineWidth = R * 0.11; g.strokeStyle = "#fff"; g.beginPath(); g.ellipse(0, 0, w * 0.95, R * 0.95, 0, 0, 6.2832); g.stroke();
+    g.lineWidth = R * 0.04; g.strokeStyle = "rgba(255,255,255,0.85)"; g.beginPath(); g.ellipse(0, 0, w * 0.76, R * 0.76, 0, 0, 6.2832); g.stroke();
+    if (o.glyph && Math.abs(sx) > 0.18) {
+      g.save(); g.scale(sx, 1); g.fillStyle = "#fff";
+      g.font = `800 ${R * 1.0}px "Inter Tight", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
+      g.fillText(o.glyph, 0, R * 0.05); g.restore();
+    }
+    g.restore();
+  }
+  /* soft dot (particle) */
+  function dot(g, x, y, r, a = 1) { g.fillStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+  /* big glyph-mask text, e.g. a word rendered as ASCII */
+  function word(g, str, x, y, size, o = {}) {
+    g.save(); g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`;
+    g.font = `${o.weight || 800} ${size}px ${o.family || '"Inter Tight", sans-serif'}`;
+    g.textAlign = o.align || "center"; g.textBaseline = "middle"; g.fillText(str, x, y); g.restore();
+  }
+  /* SVG path (24-unit icon, e.g. Lucide) stroked into the paint */
+  function icon(g, d, x, y, size, o = {}) {
+    g.save(); g.translate(x - size / 2, y - size / 2); g.scale(size / 24, size / 24);
+    const p = new Path2D(d);
+    if (o.fill) { g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.fill(p); }
+    g.lineWidth = o.width || 2; g.lineCap = "round"; g.lineJoin = "round";
+    g.strokeStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.stroke(p); g.restore();
+  }
+
+  return { RAMP, NOISE, c01, hash, lcg, vnoise, fbm, frame, scramble, noiseStr, field, coin, dot, word, icon };
+})();
+/* @ascii-engine:end */
+        const ID = "sanji-t2-system-caption";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const { c01, hash, frame, NOISE } = SYS;
+        const f = (n) => n / 24;
+        const slot = (n) => $(`[data-slot="${n}"]`).textContent.replace(/\s+/g, " ").trim();
+        const TEXT = slot("text"), KEY = slot("key").toLowerCase(), GROUP = Math.max(1, Math.min(3, parseInt(slot("group"), 10) || 2));
+        const INK = "243,245,255", BLUE = getComputedStyle(ROOT).getPropertyValue("--sys-blue").trim() || "#0F18FB";
+        const RAMPDOWN = "%+:.";
+
+        /* ---- geometry: 38px mono on a cell grid ---- */
+        const SIZE = TEXT.length > 40 ? 38 : 44, ADV = SIZE * 0.65, CELL = ADV;
+        const PAD = 2;                                     /* cells of padding each side */
+        const NC = TEXT.length + PAD * 2;                  /* bar width in cells */
+        const BW = NC * CELL, BH = Math.round(SIZE * 2.1);
+        const BX = Math.round(960 - BW / 2), BY = 1080 - 150 - BH;
+        const TY = BY + Math.round((BH - SIZE * 1.12) / 2);
+
+        /* words -> groups, each with a start time */
+        const words = []; { let i = 0; for (const w of TEXT.split(" ")) { words.push({ w, i0: i, key: KEY && w.toLowerCase().replace(/[^a-z0-9]/g, "") === KEY.replace(/[^a-z0-9]/g, "") }); i += w.length + 1; } }
+        const T_BAR = f(1), BAR_D = f(7);
+        const T_TXT = T_BAR + BAR_D + f(1), G_STEP = f(5), G_D = f(2);
+        const groups = [];
+        for (let g = 0; g * GROUP < words.length; g++) groups.push(words.slice(g * GROUP, g * GROUP + GROUP));
+        const charAt = new Array(TEXT.length).fill(1e9), isKey = new Array(TEXT.length).fill(false);
+        groups.forEach((G, gi) => { const at = T_TXT + gi * G_STEP; G.forEach((w) => { for (let k = 0; k < w.w.length; k++) { charAt[w.i0 + k] = at + (k / Math.max(1, w.w.length)) * G_D; isKey[w.i0 + k] = w.key; } }); });
+        const T_DONE = T_TXT + (groups.length - 1) * G_STEP + G_D;
+        const keyW = words.find((w) => w.key);
+        const T_FLICK = keyW ? Math.max(...Array.from({ length: keyW.w.length }, (_, k) => charAt[keyW.i0 + k])) + f(2) : 1e9;
+        const T_OUT = Math.max(2.5, Math.ceil((T_DONE + 2.0) * 2) / 2), OUT_D = f(10);
+        const END = T_OUT + OUT_D + f(6);
+
+        const cv = $("canvas.cap"); cv.width = 1920; cv.height = 1080;
+        const g = cv.getContext("2d");
+        cv.classList.add("glow");
+        const FONT = `600 ${SIZE}px "IBM Plex Mono", "JetBrains Mono", monospace`;
+        const MF = '600 22px "IBM Plex Mono", "JetBrains Mono", monospace';
+
+        function chipOn(t) { if (t < T_FLICK) return false; const fr = frame(t - T_FLICK); return fr < 12 ? fr % 4 < 2 : true; }
+
+        function draw(t) {
+          g.clearRect(0, 0, 1920, 1080);
+          g.textBaseline = "top";
+          /* bar width in cells: opens from one cell, collapses back on exit */
+          let cells;
+          if (t < T_BAR) cells = 0;
+          else if (t < T_BAR + BAR_D) cells = Math.max(1, Math.round(c01((frame(t - T_BAR) + 1) / (BAR_D * 24)) * NC));
+          else cells = NC;
+          if (t >= T_OUT + f(4)) cells = Math.max(0, Math.round(NC * (1 - c01((t - T_OUT - f(4)) / (OUT_D - f(2))))));
+          if (t >= T_OUT + OUT_D) cells = 0;
+          if (cells <= 0) return;
+          const growing = cells < NC;
+          const bx = growing && t < T_OUT ? BX : Math.round(960 - cells * CELL / 2);
+          g.fillStyle = BLUE; g.fillRect(bx, BY, Math.round(cells * CELL), BH);
+          if (cells === 1 && t < T_OUT) { g.fillStyle = `rgb(${INK})`; g.fillRect(bx + 2, BY + 4, Math.round(CELL) - 4, BH - 8); }
+          /* ragged glyph edge while the bar moves */
+          if (growing && cells > 1) {
+            g.font = FONT; g.fillStyle = `rgba(${INK},0.75)`;
+            const ex = t < T_OUT ? bx + cells * CELL : bx + cells * CELL - CELL;
+            for (let r = 0; r < 2; r++) g.fillText(NOISE[Math.floor(hash(r, frame(t), 5) * NOISE.length)], ex - CELL, BY + 4 + r * SIZE * 0.85);
+          }
+          /* "/*" marker hanging off the left edge */
+          if (!growing || t >= T_OUT) {
+            /* "/*" comment tab sitting on the bar's top-left corner */
+            const TW = 54, TH = 30;
+            g.fillStyle = BLUE; g.fillRect(bx, BY - TH, TW, TH);
+            g.font = MF; g.fillStyle = `rgba(${INK},0.92)`;
+            g.fillText("/*", bx + 12, BY - TH + 5);
+          }
+          if (cells < NC && t >= T_OUT) return;   /* text gone before the bar folds */
+          /* text */
+          g.font = FONT;
+          const x0 = BX + PAD * CELL, on = chipOn(t);
+          if (keyW && on && t < T_OUT + f(2)) {
+            g.fillStyle = `rgb(${INK})`;
+            g.fillRect(Math.round(x0 + keyW.i0 * ADV - 4), Math.round(TY - SIZE * 0.14), Math.round(keyW.w.length * ADV + 6), Math.round(SIZE * 1.34));
+          }
+          for (let i = 0; i < TEXT.length; i++) {
+            const c = TEXT[i]; if (c === " ") continue;
+            const at = charAt[i]; if (t < at - G_D * 0.9) continue;
+            let ch = c, a = 1;
+            if (t < at) { ch = NOISE[Math.floor(hash(i, frame(t), 31) * NOISE.length)]; a = 0.8; }   /* noise tail */
+            if (t >= T_OUT) {
+              const d = Math.floor((t - T_OUT) * 24 - hash(i, 3, 9) * 3);   /* ragged ramp decay */
+              if (d >= 0) { if (d >= RAMPDOWN.length) continue; ch = RAMPDOWN[d]; a = 0.9 - d * 0.15; }
+            }
+            const inv = isKey[i] && on && t < T_OUT + f(2) && ch === c;
+            g.fillStyle = inv ? BLUE : `rgba(${INK},${a})`;
+            g.fillText(ch, x0 + i * ADV, TY);
+          }
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        const P = { t: 0 };
+        tl.fromTo(P, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(P.t) }, 0);
+        tl.set({}, {}, END);
+        draw(0);
+        if (document.fonts) {
+          Promise.all([document.fonts.load(`600 ${SIZE}px "IBM Plex Mono"`), document.fonts.load('600 22px "IBM Plex Mono"')]).then(() => draw(P.t), () => {});
+          document.fonts.ready.then(() => draw(P.t));
+        }
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

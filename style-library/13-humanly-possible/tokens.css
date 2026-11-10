@@ -1,0 +1,95 @@
+/* Humanly Possible style tokens (style-library/13-humanly-possible).
+   Source of truth: the HP design system (Pulse Combined, 2026-10-13) and the
+   brand site artifact (claude.ai/artifact/NnUWAXpmVWDW5gDavJCkwz), copied to
+   references/brand/. Cards never hardcode colors, fonts or easings.
+   Fonts: https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap */
+
+:root {
+  /* ---- palette: five primaries + one support shade. Nothing else. ---- */
+  --hp-oxblood: #4B1526;   /* every screen background */
+  --hp-cream:   #FFF0E6;   /* all type, the mark */
+  --hp-brick:   #7A1E1E;   /* chapter cards, feature surfaces. never text */
+  --hp-orange:  #FF8A4C;   /* ONE accent per frame */
+  --hp-gold:    #FFC145;   /* the spark: one number or one word */
+  --hp-deep:    #2C0B16;   /* shadows, overlays, floor */
+  --hp-cream-muted: rgba(255, 240, 230, .72);
+  --hp-hairline: rgba(255, 240, 230, .08);   /* layer separation instead of shadows */
+
+  /* generic aliases (library convention) */
+  --bg: var(--hp-oxblood);
+  --fg: var(--hp-cream);
+  --accent: var(--hp-orange);
+  --spark: var(--hp-gold);
+  --muted: var(--hp-cream-muted);
+
+  /* ---- gradients (all from the brand site) ---- */
+  /* 1. The burn: the only full-field gradient. Bottom-left core. Hero moments,
+        end cards, section takeovers. Always with grain. Never behind body text. */
+  --hp-burn: radial-gradient(115% 115% at 8% 100%, #FFC145 0%, #FF8A4C 28%, #7A1E1E 54%, #4B1526 76%, #2C0B16 100%);
+  /* burn re-anchored for other corners (same stops, used for direction variety) */
+  --hp-burn-br: radial-gradient(115% 115% at 92% 100%, #FFC145 0%, #FF8A4C 28%, #7A1E1E 54%, #4B1526 76%, #2C0B16 100%);
+  --hp-burn-low: radial-gradient(140% 90% at 50% 110%, #FFC145 0%, #FF8A4C 22%, #7A1E1E 48%, #4B1526 74%, #2C0B16 100%);
+  /* 2. Noise gradient fill: cream -> orange -> gold on the diagonal, with hard
+        grain. On the brand site this fills the mark; here it is the fill for ONE
+        hero word or number per card (clip-text, single element only). */
+  --hp-noise-fill: linear-gradient(135deg, #FFF0E6 0%, #FF8A4C 45%, #FFC145 100%);
+  /* 3. Flow: the same stops as an animated reflecting sweep (brand "flow" defs:
+        cream .3 cream .6 orange 1 gold, 5s loop). Animate background-position. */
+  --hp-flow: linear-gradient(135deg, #FFF0E6 0%, #FFF0E6 30%, #FF8A4C 60%, #FFC145 100%);
+  /* 4. Pass: a transparent -> cream -> orange -> gold -> transparent band,
+        rotated 28deg, swept once across a shape (brand "passGrad"). */
+  --hp-pass: linear-gradient(118deg, rgba(255,240,230,0) 0%, #FFF0E6 30%, #FF8A4C 55%, #FFC145 78%, rgba(255,240,230,0) 100%);
+  /* 5. Wash: blurred palette blobs on oxblood (brand "wall"): gold low-left,
+        orange, cream high-right, deep low-right. Built as layered radials;
+        put a heavy blur on the layer for the frosted variant. */
+  --hp-wash:
+    radial-gradient(34% 34% at 13% 70%, #FFC145 0%, rgba(255,193,69,0) 100%),
+    radial-gradient(29% 29% at 47% 88%, #FF8A4C 0%, rgba(255,138,76,0) 100%),
+    radial-gradient(32% 32% at 92% 18%, rgba(255,240,230,.55) 0%, rgba(255,240,230,0) 100%),
+    radial-gradient(25% 25% at 18% 14%, #FF8A4C 0%, rgba(255,138,76,0) 100%),
+    radial-gradient(22% 22% at 86% 86%, #2C0B16 0%, rgba(44,11,22,0) 100%),
+    #4B1526;
+  /* 6. Embers on black (brand "darkLights"): two soft lights in the dark. */
+  --hp-embers:
+    radial-gradient(19% 19% at 33% 79%, rgba(255,138,76,.9) 0%, rgba(255,138,76,0) 100%),
+    radial-gradient(14% 14% at 73% 28%, rgba(255,193,69,.7) 0%, rgba(255,193,69,0) 100%),
+    #000;
+  /* 7. Glass rim (logo finishes only): bright top-left, fading, picking up bottom-right. */
+  --hp-rim: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,.28) 35%, rgba(255,255,255,.12) 70%, rgba(255,255,255,.8) 100%);
+  /* footage legibility scrim (not a brand gradient; for tier-2 over video) */
+  --hp-scrim: linear-gradient(180deg, rgba(44,11,22,0) 50%, rgba(44,11,22,.72) 100%);
+
+  /* grain: brand SVG filter (fractalNoise .65-.9, 3 octaves, desaturated,
+     slope 1.2-1.6, intercept -.3, overlay blend). Cards inline the filter;
+     this data-URI is the cheap static overlay version. */
+  --hp-grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --hp-grain-opacity: .14;
+
+  /* ---- type ---- */
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --track-display: -0.03em;
+  --track-tight: -0.04em;
+  --track-label: 0.1em;
+  --size-hero: 220px;
+  --size-display: 128px;
+  --size-headline: 84px;
+  --size-body: 34px;
+  --size-label: 22px;
+
+  /* ---- motion: quick pops that settle. No bounces, no spins, no long fades. ---- */
+  --ease-pop: cubic-bezier(.2, .9, .25, 1);   /* brand pop */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);    /* site ease, for slides/wipes */
+  --ease-beat: cubic-bezier(.45, 0, .55, 1);  /* heartbeat in-out */
+  --dur-pop: .42s;
+  --dur-wipe: .5s;
+  --dur-out: .3s;
+
+  /* ---- shape + layout (1920x1080) ---- */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --margin: 116px;   /* 6% of 1920 */
+  --margin-y: 65px;  /* 6% of 1080 */
+}

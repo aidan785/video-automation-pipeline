@@ -1,0 +1,77 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · KINETIC · transition (72 frames = 3.0 s at 24 fps): stacked stripe wipe between two shots.
+  Built from raw-media/hp-sampler-refs/kinetic-blocks/ANALYSIS.md, graphic type 6 / move E (BK f1461-1478,
+  bk_rebrand_f1465_stripe-wipe).
+    F1-F24   shot A plays
+    F25-F50  three flat 360 px bars (brick, oxblood, gold, top to bottom) sweep in from the left. The top bar
+             leads; the middle starts 2 f later, the bottom 4 f later (staircase leading edge). Each leading edge
+             starts at ~1/6 of frame width per frame and slows (power2.out, 10 f, on ones). Each trailing edge
+             follows 9 f behind and accelerates away (power2.in, 12 f), so the bars sit as a near-solid staircase
+             for a few frames, and shot B is revealed behind it, so the bars carry the cut across the frame
+             instead of a crossfade. Flat edges, no blur, no shadow.
+    F51-F72  shot B plays. The edit point is the bars; cut the card anywhere after F50.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-kinetic-transition{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-kinetic-transition .shot{position:absolute;inset:0;overflow:hidden;}
+      #hp2-kinetic-transition .shot video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+      #hp2-kinetic-transition .shot.b{clip-path:polygon(0 0,0 0,0 1080px,0 1080px);}
+      #hp2-kinetic-transition .bar{position:absolute;left:0;width:0;height:360px;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-kinetic-transition" data-composition-id="hp2-kinetic-transition" data-start="0" data-width="1920" data-height="1080">
+      <div class="shot a">
+        <video data-slot="media" src="../../assets/footage/groom_6132700.mp4" poster="../../assets/footage/groom_6132700.jpg" muted playsinline preload="auto" data-start="0" data-duration="3" data-track-index="0"></video>
+      </div>
+      <div class="shot b">
+        <video data-slot="media-2" src="../../assets/footage/groom2_6131038.mp4" poster="../../assets/footage/groom2_6131038.jpg" muted playsinline preload="auto" data-start="0" data-duration="3" data-track-index="1"></video>
+      </div>
+      <div class="bar b1" style="top:0;background:#7A1E1E"></div>
+      <div class="bar b2" style="top:360px;background:#4B1526"></div>
+      <div class="bar b3" style="top:720px;background:#FFC145"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-kinetic-transition", FPS = 24, N = 72, W = 1920;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const out = gsap.parseEase("power2.out"), inn = gsap.parseEase("power2.in");
+      const clamp = (v) => Math.max(0, Math.min(1, v));
+
+      const W0 = 25, LAG = [0, 2, 4], LEAD = 10, TRAIL_DELAY = 9, TRAIL = 12;
+      const bars = [$1(".b1"), $1(".b2"), $1(".b3")], B = $1(".shot.b");
+      const edges = (i, F) => {                                             // [trailing, leading] x of bar i on frame F
+        const t = F - (W0 + LAG[i]);
+        const lead = t < 0 ? 0 : W * out(clamp(t / LEAD));
+        const trail = t < TRAIL_DELAY ? 0 : W * inn(clamp((t - TRAIL_DELAY) / TRAIL));
+        return [Math.round(trail), Math.round(lead)];
+      };
+      const END = W0 + LAG[2] + TRAIL_DELAY + TRAIL;                        // F50: bottom trailing edge exits
+      for (let F = W0; F <= END + 1; F++) {
+        const e = bars.map((_, i) => edges(i, F));
+        e.forEach(([tr, ld], i) => at(F, bars[i], { x: tr, width: ld - tr }));
+        const [t1, t2, t3] = e.map((v) => v[0]);                           // shot B shows left of each trailing edge
+        at(F, B, { clipPath: `polygon(0px 0px, ${t1}px 0px, ${t1}px 360px, ${t2}px 360px, ${t2}px 720px, ${t3}px 720px, ${t3}px 1080px, 0px 1080px)` });
+      }
+      tl.set({}, {}, N / FPS);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

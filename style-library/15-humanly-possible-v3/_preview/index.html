@@ -1,0 +1,202 @@
+<!doctype html>
+<!--
+  HP V3 · Field Glass · style library app.
+  Serve from the WORKSPACE ROOT:  npx serve . -p 8095 -n
+  open http://localhost:8095/style-library/15-humanly-possible-v3/_preview/
+  Grid shows posters (130+ live iframes would choke the browser); hover a tile to play it live.
+  Click for the player: scrub, 24fps frame step, speed, footage backdrop for pop-ups, live slot text editing.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Humanly Possible V3 · Field Glass</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter+Tight:wght@500;600;700&display=swap" />
+    <style>
+      :root { --ox: #4B1526; --deep: #2C0B16; --cream: #FFF0E6; --muted: rgba(255,240,230,.62); --orange: #FF8A4C; --gold: #FFC145; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--deep); color: var(--cream); font-family: "Inter Tight", sans-serif; }
+      header { padding: 40px 56px 8px; }
+      h1 { font: 800 56px/1 "Bricolage Grotesque", sans-serif; letter-spacing: -0.03em; margin: 0; font-variation-settings: "opsz" 96; }
+      h1 em { font-style: normal; color: var(--gold); }
+      header p { color: var(--muted); max-width: 1000px; font-size: 18px; line-height: 1.5; }
+      .row { display: flex; gap: 10px; margin: 14px 0 0; flex-wrap: wrap; align-items: center; }
+      .row .lab { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; width: 86px; }
+      .chip { padding: 8px 14px; border-radius: 10px; background: rgba(255,240,230,.08); color: var(--muted); font-weight: 600; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: .08em; }
+      .chip.on { background: var(--cream); color: var(--ox); }
+      .chip i { font-style: normal; opacity: .6; margin-left: 6px; }
+      #count { color: var(--muted); font-size: 14px; margin-left: 8px; }
+      main { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 26px; padding: 26px 56px 80px; }
+      .tile { cursor: pointer; }
+      .frame { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 14px; background: var(--bd, #1c1c1c); }
+      .frame img.poster, .frame img.bd { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .frame iframe { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; border: 0; transform-origin: 0 0; pointer-events: none; background: transparent; }
+      .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 10px 2px 0; }
+      .meta b { font: 800 20px/1.1 "Bricolage Grotesque", sans-serif; letter-spacing: -0.02em; }
+      .meta span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; white-space: nowrap; }
+      .meta span.g { color: var(--gold); }
+      .note { color: var(--muted); font-size: 14px; line-height: 1.45; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+      #big { position: fixed; inset: 0; background: rgba(20,5,10,.96); display: none; z-index: 9; padding: 28px; gap: 24px; }
+      #big.on { display: flex; }
+      #big .left { flex: 1; display: flex; flex-direction: column; gap: 14px; justify-content: center; min-width: 0; }
+      #big .frame { width: 100%; }
+      #big .side { width: 360px; overflow: auto; }
+      #big h2 { font: 800 30px/1.05 "Bricolage Grotesque", sans-serif; letter-spacing: -0.02em; margin: 4px 0 8px; }
+      #big .side p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+      #big .side code { color: var(--muted); font-size: 12px; word-break: break-all; }
+      .bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      .bar input[type=range] { flex: 1; min-width: 200px; accent-color: var(--orange); }
+      .bar button, .bar select, .side button { background: rgba(255,240,230,.1); color: var(--cream); border: 0; border-radius: 10px; padding: 8px 14px; font: 600 14px "Inter Tight", sans-serif; cursor: pointer; }
+      .bar .t { font-variant-numeric: tabular-nums; color: var(--muted); width: 120px; }
+      .slot { margin: 10px 0; }
+      .slot label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+      .slot select { width: 100%; background: rgba(255,240,230,.08); color: var(--cream); border: 0; border-radius: 10px; padding: 9px 12px; font: 600 15px "Inter Tight", sans-serif; }
+      .slot input { width: 100%; background: rgba(255,240,230,.08); color: var(--cream); border: 0; border-radius: 10px; padding: 9px 12px; font: 500 15px "Inter Tight", sans-serif; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Humanly Possible V3 · <em>Field Glass</em></h1>
+      <p>Warm smoked glass over graded nature, the brand burn and the palette wash. The burn is low sun from the bottom-left: sunrise reveals, glass that condenses like breath, the logo's heartbeat for emphasis, numbers with the photo showing through the type. Hover a tile to play it, click to open the player. Backdrop sets what sits behind cards with no background; the player can switch any card's ground, grain and corner light.</p>
+      <div class="row" id="cats"><span class="lab">Category</span></div>
+      <div class="row" id="canv"><span class="lab">Canvas</span></div>
+      <div class="row" id="bds"><span class="lab">Backdrop</span></div>
+      <div class="row"><span class="lab"></span><span id="count"></span></div>
+    </header>
+    <main id="grid"></main>
+    <div id="big">
+      <div class="left">
+        <div class="frame" id="bigframe"></div>
+        <div class="bar">
+          <button id="pp">Pause</button><button id="back">-1f</button><button id="fwd">+1f</button>
+          <input type="range" id="scrub" min="0" max="1000" value="0" />
+          <span class="t" id="tt">0.00 s</span>
+          <select id="spd"><option value="1">1x</option><option value="0.5">0.5x</option><option value="0.25">0.25x</option></select>
+          <select id="bd"><option value="">no backdrop</option></select>
+          <button id="close">Close (Esc)</button>
+        </div>
+      </div>
+      <div class="side" id="side"></div>
+    </div>
+    <script>
+      const BASE = location.pathname.replace(/_preview\/?(index\.html)?$/, "");
+      const DEMOS = ["phone_6963836", "phone_8142388", "field_5805200", "dusk_5941610", "prairie_13975529"];
+      const BACKDROPS = { "blank dark": "#1c1c1c", "blank light": "#ececec", "checker": "repeating-conic-gradient(#2a2a2a 0 25%, #1e1e1e 0 50%) 0 0 / 32px 32px", "footage": "#111" };
+      let BD = "blank dark";
+      const isOverlay = (c) => c.tier === "tier2" || c.canvas === "overlay" || c.ground === "none";
+      const tlOf = (ifr) => { try { const w = ifr.contentWindow; const k = Object.keys(w.__timelines || {})[0]; return k ? w.__timelines[k] : null; } catch (e) { return null; } };
+      const fit = (frame, ifr) => { ifr.style.transform = `scale(${frame.clientWidth / 1920})`; };
+      const live = new Set();
+      let cards = [], fCat = "all", fCanv = "all";
+
+      fetch(BASE + "style.json", { cache: "no-store" }).then((r) => r.json()).then((style) => {
+        cards = style.cards;
+        const chips = (host, key, get, set) => {
+          const counts = {}; cards.forEach((c) => (counts[get(c)] = (counts[get(c)] || 0) + 1));
+          ["all", ...Object.keys(counts).sort()].forEach((v) => {
+            const b = document.createElement("div"); b.className = "chip" + (v === "all" ? " on" : "");
+            b.innerHTML = v + (v === "all" ? `<i>${cards.length}</i>` : `<i>${counts[v]}</i>`);
+            b.onclick = () => { set(v); [...host.querySelectorAll(".chip")].forEach((x) => x.classList.toggle("on", x === b)); apply(); };
+            host.appendChild(b);
+          });
+        };
+        chips(document.getElementById("cats"), "category", (c) => c.category, (v) => (fCat = v));
+        chips(document.getElementById("canv"), "canvas", (c) => c.canvas || "field", (v) => (fCanv = v));
+        const bds = document.getElementById("bds");
+        Object.keys(BACKDROPS).forEach((k) => { const b = document.createElement("div"); b.className = "chip" + (k === BD ? " on" : ""); b.textContent = k;
+          b.onclick = () => { BD = k; [...bds.querySelectorAll(".chip")].forEach((x) => x.classList.toggle("on", x === b)); paintBackdrops(); }; bds.appendChild(b); });
+        const grid = document.getElementById("grid");
+        cards.forEach((card, i) => {
+          const el = document.createElement("div"); el.className = "tile";
+          const bd = isOverlay(card) ? `<img class="bd" data-demo="${DEMOS[i % DEMOS.length]}" alt="">` : "";
+          el.innerHTML = `<div class="frame">${bd}<img class="poster" loading="lazy" src="${BASE + (card.poster || "")}" alt=""></div>
+            <div class="meta"><b>${(card.treatment || card.id).replace(/-/g, " ")}</b><span class="${card.gold ? "g" : ""}">${card.category}${card.gold ? " · gold" : ""}</span></div><div class="note">${card.notes || ""}</div>`;
+          grid.appendChild(el);
+          card._el = el;
+          const frame = el.querySelector(".frame");
+          el.onmouseenter = () => { const ifr = document.createElement("iframe"); ifr.src = BASE + card.file; ifr.onload = () => { fit(frame, ifr); ifr._t0 = performance.now(); frame.querySelector(".poster").style.opacity = 0; }; frame.appendChild(ifr); live.add(ifr); el._ifr = ifr; };
+          el.onmouseleave = () => { if (el._ifr) { live.delete(el._ifr); el._ifr.remove(); el._ifr = null; frame.querySelector(".poster").style.opacity = 1; } };
+          el.onclick = () => openBig(card, i);
+        });
+        apply(); paintBackdrops();
+        requestAnimationFrame(function loop(now) {
+          live.forEach((ifr) => { const tl = tlOf(ifr); if (!tl || !ifr._t0) return; const d = tl.duration() + 0.8; tl.time(Math.min(tl.duration(), ((now - ifr._t0) / 1000) % d)); });
+          requestAnimationFrame(loop);
+        });
+      });
+      /* backdrop: what sits behind transparent cards (ground none, pop-ups). Posters of transparent cards are shot over blank dark. */
+      function paintBackdrops() {
+        document.documentElement.style.setProperty("--bd", BACKDROPS[BD]);
+        document.querySelectorAll("img.bd").forEach((im) => { if (BD === "footage") { im.src = BASE + "assets/demo/" + im.dataset.demo + ".jpg"; im.style.display = ""; } else im.style.display = "none"; });
+        if (B) mount(B.card, B.src);
+      }
+      function apply() {
+        let n = 0;
+        cards.forEach((c) => { const ok = (fCat === "all" || c.category === fCat) && (fCanv === "all" || (c.canvas || "field") === fCanv); c._el.style.display = ok ? "" : "none"; n += ok; });
+        document.getElementById("count").textContent = n + " cards";
+      }
+
+      /* player */
+      const big = document.getElementById("big"), bf = document.getElementById("bigframe"), scrub = document.getElementById("scrub"), tt = document.getElementById("tt"), bdSel = document.getElementById("bd");
+      DEMOS.forEach((d) => { const o = document.createElement("option"); o.value = d; o.textContent = d; bdSel.appendChild(o); });
+      let B = null;
+      function mount(card, srcdoc) {
+        const keep = B ? B.t : 0;
+        bf.innerHTML = (bdSel.value ? `<img class="bd" src="${BASE}assets/demo/${bdSel.value}.jpg" alt="">` : "") + `<iframe></iframe>`;
+        bf.style.background = BACKDROPS[BD];
+        const ifr = bf.querySelector("iframe");
+        if (srcdoc) ifr.srcdoc = srcdoc; else ifr.src = BASE + card.file;
+        B = { card, ifr, src: srcdoc, t: keep, playing: B ? B.playing : true, last: performance.now() };
+        ifr.onload = () => fit(bf, ifr);
+      }
+      async function openBig(card, i) {
+        bdSel.value = isOverlay(card) && BD === "footage" ? DEMOS[i % DEMOS.length] : "";
+        B = null; mount(card); big.classList.add("on");
+        const side = document.getElementById("side");
+        side.innerHTML = `<span class="meta"><span>${card.category} · ${card.canvas || "field"}${card.gold ? " · gold" : ""}</span></span><h2>${(card.treatment || "").replace(/-/g, " ")}</h2><p>${card.notes || ""}</p><p><code>${card.file}</code></p><div id="slots"></div>`;
+        /* slot editing: re-mount the card from its source with the new slot text */
+        const html = await (await fetch(BASE + card.file, { cache: "no-store" })).text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const slots = [...doc.querySelectorAll("[data-slot]")];
+        const host = document.getElementById("slots");
+        if (slots.length) host.innerHTML = "<p>Look (ground / grain / light) and slot text (Enter to apply):</p>";
+        const CHOICES = { ground: ["photo", "oxblood", "deep", "brick", "cream", "burn", "wash", "none"], grain: ["on", "off"], light: ["on", "off"] };
+        const remount = () => { const dir = new URL(BASE + card.file, location.href); const base = doc.querySelector("base") || doc.head.insertBefore(doc.createElement("base"), doc.head.firstChild); base.href = dir.href; B.t = 0; mount(card, "<!doctype html>" + doc.documentElement.outerHTML); };
+        slots.filter((s) => CHOICES[s.dataset.slot]).forEach((s) => {
+          const w = document.createElement("div"); w.className = "slot"; const n = s.dataset.slot, cur = s.textContent.trim();
+          const ok = (card.grounds && n === "ground") ? card.grounds : CHOICES[n];
+          w.innerHTML = `<label>${n}</label><select>${ok.map((v) => `<option ${v === cur ? "selected" : ""}>${v}</option>`).join("")}</select>`;
+          w.querySelector("select").onchange = (e) => { s.textContent = e.target.value; remount(); };
+          host.appendChild(w);
+        });
+        slots.filter((s) => !CHOICES[s.dataset.slot]).forEach((s) => {
+          const w = document.createElement("div"); w.className = "slot";
+          w.innerHTML = `<label>${s.dataset.slot}</label><input value="${s.innerHTML.replace(/"/g, "&quot;")}">`;
+          w.querySelector("input").onkeydown = (e) => { if (e.key !== "Enter") return; s.innerHTML = e.target.value;
+            const dir = new URL(BASE + card.file, location.href); const base = doc.querySelector("base") || doc.head.insertBefore(doc.createElement("base"), doc.head.firstChild); base.href = dir.href;
+            B.t = 0; mount(card, "<!doctype html>" + doc.documentElement.outerHTML); };
+          host.appendChild(w);
+        });
+      }
+      bdSel.onchange = () => B && mount(B.card);
+      const close = () => { big.classList.remove("on"); bf.innerHTML = ""; B = null; };
+      document.getElementById("close").onclick = close;
+      addEventListener("keydown", (e) => { if (e.key === "Escape") close(); if (!B) return; if (e.key === " ") { e.preventDefault(); document.getElementById("pp").click(); } if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); });
+      document.getElementById("pp").onclick = () => { if (!B) return; B.playing = !B.playing; document.getElementById("pp").textContent = B.playing ? "Pause" : "Play"; };
+      const step = (n) => { if (!B) return; B.playing = false; document.getElementById("pp").textContent = "Play"; B.t = Math.max(0, B.t + n / 24); };
+      document.getElementById("back").onclick = () => step(-1);
+      document.getElementById("fwd").onclick = () => step(1);
+      scrub.oninput = () => { const tl = B && tlOf(B.ifr); if (!tl) return; B.playing = false; document.getElementById("pp").textContent = "Play"; B.t = (scrub.value / 1000) * tl.duration(); };
+      addEventListener("resize", () => B && fit(bf, B.ifr));
+      requestAnimationFrame(function loop(now) {
+        if (B) { const tl = tlOf(B.ifr); if (tl) {
+          const dt = (now - B.last) / 1000;
+          if (B.playing) { B.t += dt * +document.getElementById("spd").value; if (B.t > tl.duration() + 0.8) B.t = 0; }
+          tl.time(Math.min(tl.duration(), B.t));
+          scrub.value = Math.round((Math.min(B.t, tl.duration()) / tl.duration()) * 1000);
+          tt.textContent = Math.min(B.t, tl.duration()).toFixed(2) + " / " + tl.duration().toFixed(2) + " s";
+        } B.last = now; }
+        requestAnimationFrame(loop);
+      });
+    </script>
+  </body>
+</html>

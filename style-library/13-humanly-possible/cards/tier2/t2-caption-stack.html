@@ -1,0 +1,118 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · caption · STACK
+  DOAC's pre-composed stacked lockup, revealed word on the word. Three lines laid out in their final
+  shape in the empty right column (x 1236 to 1804, never crossing the face): small Inter Tight caps
+  connective words, the big Bricolage line, small caps again. Each word pops on at its spoken time
+  (scale .92 to 1, y 8, 0.18 s); the one gold <em> word arrives with a 1.15 to 1 pop. Early words
+  never shift. A soft deep scrim sits behind the column for bright footage.
+  Orange: none (the big gold word carries the frame). Gold: the <em> word in line 2.
+  From DOAC move 1 + Fit (references/analysis/doac.md).
+  Word timing per line slot: pre-split `.w[data-at]` spans win; else data-word-at="t1 t2 ..." (one per
+  word, seconds from beat start); else an even stagger continuing from the previous line.
+  Exit: animated mirror (0.32 s before DUR), or cut away.
+  Slots: top (text, ~20 chars, caps), big (richtext, ~14 chars, may wrap to 2 rows, one <em> = gold), bottom (text, ~22 chars, caps).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-caption-stack{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t2-caption-stack .scrim{position:absolute;left:1080px;top:0;width:840px;height:1080px;pointer-events:none;
+        background:radial-gradient(64% 42% at 52% 50%, rgba(44,11,22,.74) 0%, rgba(44,11,22,.5) 46%, rgba(44,11,22,0) 100%);}
+
+      #hp-t2-caption-stack .col{position:absolute;left:1236px;width:568px;top:540px;transform:translateY(-50%);}
+      #hp-t2-caption-stack .sm{display:block;font-family:var(--font-body);font-weight:600;font-size:40px;line-height:1.1;letter-spacing:.08em;
+        text-transform:uppercase;color:var(--hp-cream);}
+      #hp-t2-caption-stack .big{display:block;margin:14px 0 18px;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:120px;line-height:.94;letter-spacing:var(--track-display);color:var(--hp-cream);}
+      #hp-t2-caption-stack .w{display:inline-block;transform-origin:50% 80%;}
+      #hp-t2-caption-stack .big .w{transform-origin:0% 80%;}
+      #hp-t2-caption-stack em{font-style:normal;color:var(--hp-gold);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-caption-stack" data-composition-id="hp-t2-caption-stack" data-start="0" data-width="1920" data-height="1080">
+      <div class="scrim"></div>
+      <div class="col">
+        <span class="sm" data-slot="top" data-word-at="0.2 0.38 0.56 0.74">She used to lose</span>
+        <span class="big" data-slot="big" data-word-at="0.98 1.24">every <em>Sunday</em></span>
+        <span class="sm" data-slot="bottom" data-word-at="1.7 1.86 2.04">to the invoices</span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-caption-stack";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 4.5;
+      const OUT = DUR - .32;
+      const tl = gsap.timeline({ paused: true });
+
+      // split a slot into word spans; an <em> stays one span (the gold unit)
+      function splitWords(slot, start, step) {
+        let words;
+        const pre = slot.querySelectorAll(".w");
+        if (pre.length) words = [...pre];
+        else {
+          words = [];
+          const nodes = [...slot.childNodes];
+          slot.textContent = "";
+          nodes.forEach((n) => {
+            if (n.nodeType === 3) {
+              n.textContent.split(/(\s+)/).forEach((p) => {
+                if (!p) return;
+                if (/^\s+$/.test(p)) { slot.appendChild(document.createTextNode(" ")); return; }
+                const s = document.createElement("span"); s.className = "w"; s.textContent = p; slot.appendChild(s); words.push(s);
+              });
+            } else if (n.nodeType === 1) {
+              const s = document.createElement("span"); s.className = "w"; s.appendChild(n); slot.appendChild(s); words.push(s);
+            }
+          });
+        }
+        const list = (slot.getAttribute("data-word-at") || "").trim().split(/[\s,]+/).filter(Boolean).map(Number);
+        const base = parseFloat(slot.getAttribute("data-at"));
+        const t0 = isFinite(base) ? base : start;
+        return words.map((el, i) => {
+          const own = parseFloat(el.getAttribute("data-at"));
+          const at = isFinite(own) ? own : (isFinite(list[i]) ? list[i] : t0 + i * step);
+          return { el, at, gold: !!(el.tagName === "EM" || el.querySelector("em")) };
+        });
+      }
+
+      const lines = [...$("[data-slot]")].filter((s) => s.textContent.trim());
+      let cursor = .2, all = [];
+      lines.forEach((slot) => {
+        const ws = splitWords(slot, cursor, .18);
+        if (ws.length) cursor = ws[ws.length - 1].at + .24;
+        all = all.concat(ws);
+      });
+
+      tl.fromTo($1(".scrim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: .3, ease: "power1.out" }, Math.max(0, (all[0] ? all[0].at : .2) - .2));
+      all.forEach((w) => {
+        if (w.gold) tl.fromTo(w.el, { autoAlpha: 0, scale: 1.15, y: 0 }, { autoAlpha: 1, scale: 1, duration: .22, ease: POP }, w.at);
+        else tl.fromTo(w.el, { autoAlpha: 0, scale: .92, y: 8 }, { autoAlpha: 1, scale: 1, y: 0, duration: .18, ease: POP }, w.at);
+      });
+
+      // exit: the lockup leaves line by line, top first, then the scrim
+      tl.to(lines, { autoAlpha: 0, y: -6, duration: .18, ease: "power2.in", stagger: .04 }, OUT);
+      tl.to($1(".scrim"), { autoAlpha: 0, duration: .25, ease: "power1.in" }, OUT + .06);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+    </script>
+  </body>
+</html>

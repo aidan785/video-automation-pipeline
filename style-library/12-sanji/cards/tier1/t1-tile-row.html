@@ -1,0 +1,243 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · overview · TILE ROW
+  The roadmap row. Flat cobalt with a soft center glow. Glass squircle tiles
+  (icon badge top-left, two-line label bottom-left) arrive one at a time from
+  the right out of blur. The row stays centered: every arrival re-centers it,
+  like the word re-center. Once more than four tiles exist the row scrolls
+  left and the first tile exits frame-left into blur. The newest tile is
+  ACTIVE (lit glass, 1.04), older tiles go dormant.
+  Slots: tile1..tile5 (<=18 each, wraps to 2 lines; an empty tile is skipped,
+  min 2 tiles).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-tile-row {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: radial-gradient(55% 60% at 50% 52%, rgba(255,255,255,0.09), rgba(255,255,255,0) 70%), var(--cobalt);
+        font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-tile-row .row { position: absolute; left: 0; top: 370px; height: 340px; width: 2000px; }
+      #sanji-t1-tile-row .g { position: absolute; top: 0; width: 340px; height: 340px; box-sizing: border-box; border-radius: var(--r-tile); }
+      #sanji-t1-tile-row .g > .fill, #sanji-t1-tile-row .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-tile-row .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-tile-row .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-tile-row .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-tile-row .badge {
+        position: absolute; left: 30px; top: 30px; width: 124px; height: 124px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-tile-row .lab {
+        position: absolute; left: 32px; bottom: 34px; width: 210px;
+        font-weight: var(--wt-bold); font-size: 40px; line-height: 1.08; letter-spacing: var(--track-ui);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-tile-row" data-composition-id="sanji-t1-tile-row" data-start="0" data-width="1920" data-height="1080">
+      <div class="row">
+        <div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="62" height="62" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="9" cy="7.5" r="3.6"/><path d="M2 20c0-3.9 3.1-6.3 7-6.3s7 2.4 7 6.3z"/><circle cx="16.4" cy="7.8" r="3" opacity="0.7"/><path d="M17.5 13.9c2.7.4 4.5 2.5 4.5 6.1h-4.4c0-2.4-.8-4.5-2.3-5.8z" opacity="0.7"/></svg></div>
+          <div class="lab" data-slot="tile1">Find a client</div></div></div>
+        <div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="60" height="60" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 8h10M7 12h7" stroke="#3A46E8" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="lab" data-slot="tile2">The exact pitch</div></div></div>
+        <div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="60" height="60" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" fill="#FFFFFF"/><path d="M10 7.2v5.6l4.6-2.8z" fill="#3A46E8"/><path d="M8 21h8M12 17v4" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+          <div class="lab" data-slot="tile3">Build it</div></div></div>
+        <div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="60" height="60" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="15" rx="3" fill="#FFFFFF"/><path d="M2 9.5h20" stroke="#3A46E8" stroke-width="2.2"/><rect x="14" y="13" width="5" height="3" rx="1" fill="#3A46E8"/></svg></div>
+          <div class="lab" data-slot="tile4">Get paid</div></div></div>
+        <div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 20.5V16h-4.5"/></svg></div>
+          <div class="lab" data-slot="tile5">Repeat</div></div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-tile-row";
+        const ROOT = document.getElementById(ID);
+        const $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), DORM = tok("--dormant");
+
+        const all = $$(".g");
+        const tiles = all.filter((t) => t.querySelector(".lab").textContent.trim() !== "");
+        all.forEach((t) => { if (!tiles.includes(t)) t.style.display = "none"; });
+        const W = 340, GAP = 36, P = W + GAP, VIS = 4;
+        tiles.forEach((t, i) => { t.style.left = i * P + "px"; });
+        const row = ROOT.querySelector(".row");
+        /* row x so the visible run (last <=4 tiles) is centered */
+        const rowX = (n) => { const s = Math.max(0, n - VIS), c = n - s; return (1920 - (c * P - GAP)) / 2 - s * P; };
+
+        const tl = gsap.timeline({ paused: true });
+        const T0 = 0.2, STEP = 0.72;
+        const END = T0 + (tiles.length - 1) * STEP + 1.8;
+
+        tl.set(tiles, { autoAlpha: 0 }, 0).set(row, { x: rowX(1) }, 0);
+
+        tiles.forEach((t, i) => {
+          const at = T0 + i * STEP, n = i + 1;
+          if (i > 0) tl.to(row, { x: rowX(n), duration: 0.6, ease: "power3.out" }, at);
+          /* arrive from the right out of blur, straight to the active scale */
+          tl.fromTo(t, { autoAlpha: 0, x: 260, scale: 0.94, filter: "blur(14px)" },
+            { autoAlpha: 1, x: 0, scale: 1.04, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, at);
+          tl.to(t.querySelector(".lit"), { opacity: 1, duration: 0.45, ease: "power2.out" }, at + 0.1);
+          TXT.block(tl, t.querySelector(".badge"), at + 0.16);
+          TXT.reveal(tl, t.querySelector(".lab"), at + 0.24);
+          /* previous tile goes dormant */
+          if (i > 0) {
+            const p = tiles[i - 1];
+            tl.to(p.querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, at + 0.15)
+              .to(p, { scale: 1, duration: 0.35, ease: "power2.inOut" }, at + 0.15)
+              .to(p.querySelector(".lab"), { color: DORM, duration: 0.35, ease: "power2.inOut" }, at + 0.15)
+              .to(p.querySelector(".badge"), { opacity: 0.6, duration: 0.35 }, at + 0.15);
+          }
+          /* row overflow: the oldest visible tile leaves frame-left into blur */
+          if (n > VIS) {
+            const out = tiles[n - VIS - 1];
+            tl.to(out, { autoAlpha: 0, x: -90, filter: "blur(12px)", duration: 0.45, ease: "power2.in" }, at + 0.02);
+          }
+        });
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

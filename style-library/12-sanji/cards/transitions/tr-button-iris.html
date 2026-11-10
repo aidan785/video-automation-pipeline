@@ -1,0 +1,289 @@
+<!doctype html>
+<!--
+  SANJI · transition · BUTTON IRIS
+  Scene A (EMBER chat box, prompt already written) to scene B (COBALT glass
+  tile row). A cursor glides in from the lower right and clicks the orange
+  send button: the cursor and button dip, the button flashes white-hot, and
+  an ember disc expands out of the button (white-hot rim, soft inner
+  gradient from deep ember at the core to glowing orange at the edge) until
+  it fills the frame. Then a clear hole opens from the same point, its edge
+  still glowing, and scene B (cobalt) is revealed through it while the last
+  of the ember ring sweeps off the frame corners.
+  Disc + hole are radial gradients written from the timeline clock (proxy
+  onUpdate), so every frame is a pure function of time.
+  Both scenes are STAND-INS. Slots: prompt (text <= 40), tile1-3 (caps <= 10).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-button-iris {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-tr-button-iris .scene { position: absolute; inset: 0; overflow: hidden; }
+      /* scene B: cobalt + rings + three glass tiles */
+      #sanji-tr-button-iris .sceneB { background: var(--cobalt); transform-origin: 1622px 650px; }
+      #sanji-tr-button-iris .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-tr-button-iris .tiles { position: absolute; left: 0; right: 0; top: 350px; display: flex; justify-content: center; gap: 60px; }
+      #sanji-tr-button-iris .tile { position: relative; width: 380px; height: 380px; border-radius: var(--r-tile); }
+      #sanji-tr-button-iris .tile > .fill { position: absolute; inset: 0; border-radius: inherit; background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-tr-button-iris .tile.on > .fill { background: var(--glass-fill-active); border-color: var(--glass-rim-active); box-shadow: var(--glass-shadow-active); }
+      #sanji-tr-button-iris .badge { position: absolute; left: 34px; top: 34px; width: 120px; height: 120px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim); display: flex; align-items: center; justify-content: center; }
+      #sanji-tr-button-iris .tile .t { position: absolute; left: 34px; bottom: 34px; font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 56px; line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; }
+
+      /* scene A: ember chat */
+      #sanji-tr-button-iris .sceneA { background: var(--void); }
+      #sanji-tr-button-iris .warm { position: absolute; inset: 0; background: var(--ember-corners); opacity: 0.45; }
+      #sanji-tr-button-iris .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.5; }
+      #sanji-tr-button-iris .box {
+        position: absolute; left: 140px; top: 372px; width: 1640px; height: 340px; box-sizing: border-box;
+        border-radius: var(--r-chat); background: var(--chat-fill); border: var(--rim) solid var(--chat-rim); box-shadow: var(--chat-shadow);
+      }
+      #sanji-tr-button-iris .prompt { position: absolute; left: 56px; top: 46px; font-weight: 500; font-size: 44px; letter-spacing: var(--track-ui); color: #EFE7E1; white-space: pre; }
+      #sanji-tr-button-iris .plus { position: absolute; left: 50px; bottom: 44px; width: 40px; height: 40px; }
+      #sanji-tr-button-iris .tools { position: absolute; right: 40px; bottom: 34px; display: flex; align-items: center; gap: 30px; color: #E9E2DC; font-size: 34px; font-weight: 500; letter-spacing: var(--track-ui); }
+      #sanji-tr-button-iris .tools svg { display: block; }
+      #sanji-tr-button-iris .model { display: flex; align-items: center; gap: 12px; }
+      #sanji-tr-button-iris .send { width: 76px; height: 76px; border-radius: 20px; background: var(--ember); display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 0 0 rgba(255,179,71,0), 0 8px 30px rgba(255,122,26,0.35); }
+      #sanji-tr-button-iris .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+      /* cursor */
+      #sanji-tr-button-iris .cursor { position: absolute; left: 0; top: 0; width: 46px; height: 56px; transform-origin: 4px 4px; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55)); }
+      /* the disc */
+      #sanji-tr-button-iris .disc { position: absolute; inset: 0; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-button-iris" data-composition-id="sanji-tr-button-iris" data-start="0" data-width="1920" data-height="1080">
+      <div class="scene sceneB">
+        <div class="ring" style="transform:scale(0.5)"></div><div class="ring" style="transform:scale(0.75)"></div><div class="ring" style="transform:scale(1)"></div>
+        <div class="tiles">
+          <div class="tile"><div class="fill"></div><div class="badge"><svg width="56" height="56" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="9" cy="8" r="3.6"/><path d="M2.5 19.5c.6-3.6 3.3-5.6 6.5-5.6s5.9 2 6.5 5.6z"/><circle cx="17" cy="9" r="2.6" opacity=".75"/><path d="M15.6 13.9c2.8-.2 5.3 1.5 5.9 4.8h-4.1c-.2-1.9-.8-3.5-1.8-4.8z" opacity=".75"/></svg></div><div class="t" data-slot="tile1">Brief</div></div>
+          <div class="tile on"><div class="fill"></div><div class="badge"><svg width="56" height="56" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5.5v13l10.5-6.5z"/></svg></div><div class="t" data-slot="tile2">Render</div></div>
+          <div class="tile"><div class="fill"></div><div class="badge"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l4.8 4.8L19.5 7"/></svg></div><div class="t" data-slot="tile3">Ship</div></div>
+        </div>
+      </div>
+      <div class="scene sceneA">
+        <div class="warm"></div><div class="vig"></div>
+        <div class="box">
+          <div class="prompt" data-slot="prompt">Make SaaS launch video</div>
+          <svg class="plus" viewBox="0 0 24 24" fill="none" stroke="#F2ECE6" stroke-width="2" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg>
+          <div class="tools">
+            <div class="model"><span>Opus 5.5</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E9E2DC" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#E9E2DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#E9E2DC" stroke-width="2.2" stroke-linecap="round"><path d="M3 10v4M7.5 6v12M12 3v18M16.5 7v10M21 10v4"/></svg>
+            <div class="send"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></div>
+          </div>
+        </div>
+        <div class="grain"></div>
+      </div>
+      <div class="disc"></div>
+      <svg class="cursor" viewBox="0 0 46 56"><path d="M4 4 L4 44 L14.5 34.5 L21.5 51 L28.5 48 L21.5 32 L36 32 Z" fill="#FFFFFF" stroke="#0B0604" stroke-width="2.6" stroke-linejoin="round"/></svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-button-iris";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const send = $(".send"), disc = $(".disc"), cursor = $(".cursor");
+
+        /* send button centre in root coordinates (untransformed layout, lazy) */
+        let BC = null;
+        const btn = () => {
+          if (BC && document.fonts.status === "loaded") return BC;
+          const box = $(".box"), tools = $(".tools");
+          BC = { x: box.offsetLeft + tools.offsetLeft + send.offsetLeft + 38, y: box.offsetTop + tools.offsetTop + send.offsetTop + 38 };
+          return BC;
+        };
+
+        const CLICK = 0.62, D0 = CLICK + 0.1, DD = 0.44, H0 = D0 + DD + 0.03, HD = 0.55, END = 2.2;
+        const eD = gsap.parseEase("power3.in"), eH = gsap.parseEase("power2.inOut");
+        const c01 = (x) => Math.max(0, Math.min(1, x));
+
+        function draw(t) {
+          const b = btn();
+          const far = Math.hypot(Math.max(b.x, 1920 - b.x), Math.max(b.y, 1080 - b.y)) + 120;
+          const pd = c01((t - D0) / DD), ph = c01((t - H0) / HD);
+          if (pd <= 0) { disc.style.background = "none"; return; }
+          const R = 40 + eD(pd) * far * 1.12;          /* disc edge */
+          const H = eH(ph) * (far * 1.35);              /* clear hole edge */
+          const at = `circle at ${b.x}px ${b.y}px`;
+          const st = [];
+          const px = (v) => Math.max(0, v).toFixed(1) + "px";
+          if (H > 0) {
+            /* hole: transparent centre, glowing ember lip */
+            st.push(`rgba(255,122,26,0) 0px`, `rgba(255,122,26,0) ${px(H - 150)}`, `rgba(255,160,70,0.55) ${px(H - 40)}`, `rgba(255,214,150,0.95) ${px(H)}`, `rgba(230,131,42,0.98) ${px(H + 40)}`);
+          } else {
+            st.push(`rgba(103,39,13,1) 0px`);
+          }
+          /* disc body: deep ember core to glowing orange toward the rim */
+          st.push(`rgba(160,64,18,1) ${px(Math.max(H + 60, R * 0.35))}`, `rgba(230,131,42,1) ${px(Math.max(H + 80, R * 0.82))}`,
+                  `rgba(255,190,110,1) ${px(R - 14)}`, `rgba(255,244,220,1) ${px(R - 3)}`, `rgba(255,150,60,0.55) ${px(R + 8)}`, `rgba(255,122,26,0) ${px(R + 70)}`);
+          disc.style.background = `radial-gradient(${at}, ${st.join(", ")})`;
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        /* cursor glide: fast start, long settle onto the button */
+        tl.set(cursor, { x: () => btn().x + 380, y: () => btn().y + 330, autoAlpha: 0 }, 0)
+          .to(cursor, { autoAlpha: 1, duration: 0.15, ease: "power1.out" }, 0.04)
+          .to(cursor, { x: () => btn().x - 8, y: () => btn().y - 6, duration: 0.52, ease: "power3.inOut" }, 0.06)
+          .to($(".warm"), { opacity: 0.8, duration: CLICK, ease: "sine.inOut" }, 0);
+        /* click */
+        tl.to(cursor, { scale: 0.84, duration: 0.07, ease: "power2.in" }, CLICK)
+          .to(cursor, { scale: 1, duration: 0.2, ease: "power2.out" }, CLICK + 0.07)
+          .to(send, { scale: 0.86, duration: 0.08, ease: "power2.in" }, CLICK)
+          .to(send, { scale: 1, duration: 0.28, ease: "back.out(1.4)" }, CLICK + 0.08)
+          .to(send, { backgroundColor: "#FFC266", boxShadow: "0 0 0 10px rgba(255,179,71,0.3), 0 0 50px rgba(255,170,60,0.9)", duration: 0.1, ease: "power2.out" }, CLICK + 0.05)
+          .to(cursor, { autoAlpha: 0, duration: 0.18, ease: "power2.in" }, D0 + 0.1);
+        /* swap scenes under the full disc; B settles from a push out of the button */
+        tl.set($(".sceneA"), { autoAlpha: 0 }, H0)
+          .fromTo($(".sceneB"), { scale: 1.12, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.75, ease: "expo.out" }, H0 + 0.05)
+          .fromTo($$(".tile"), { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)", stagger: 0.07 }, H0 + 0.12);
+        /* scene B tile labels (one word each) rise in on the house curve */
+        TXT.block(tl, $$(".tile .t"), H0 + 0.16, { stagger: 0.07 });
+
+        const P = { t: 0 };
+        tl.fromTo(P, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(P.t) }, 0);
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

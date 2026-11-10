@@ -1,0 +1,395 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · thesis (ui-plate) · NATURE GLASS PLATE
+  A wheat field photo, full bleed, slowly drifting. A small liquid-glass review
+  chip (check glyph) resolves in top-center over the photo first. Then a large
+  rounded white UI plate floats in out of blur with a slight 3D tilt that
+  settles flat (perspective on the wrapper, GSAP moves the inner plate). The
+  plate is a generic message composer: To pill, subject line, body text that
+  types in with a caret, a cobalt Send button. A cursor glides to Send and
+  presses (dip + ripple + flash) and the plate whooshes off to the upper right
+  with motion blur, leaving the landscape.
+  Slots: chip (text <= 14, empty hides the chip), to (text <= 26),
+  subject (text <= 30), body (text <= 80, wraps to ~3 lines), photo
+  (filename stem in assets/nature, default wheat-field).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-nature-glass-plate {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body);
+      }
+      #sanji-t1-nature-glass-plate .slot-photo { display: none; }
+      #sanji-t1-nature-glass-plate .bg { position: absolute; inset: 0; }
+      #sanji-t1-nature-glass-plate .bg img { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; display: block; }
+      #sanji-t1-nature-glass-plate .shade {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0) 30%),
+          radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.30) 100%);
+      }
+
+      /* glass review chip */
+      #sanji-t1-nature-glass-plate .chipwrap { position: absolute; left: 0; right: 0; top: 92px; display: flex; justify-content: center; }
+      #sanji-t1-nature-glass-plate .chip {
+        position: relative; box-sizing: border-box; height: 72px; padding: 0 34px 0 16px;
+        display: flex; align-items: center; gap: 16px; border-radius: var(--r-pill); overflow: hidden;
+        -webkit-backdrop-filter: blur(22px) saturate(1.4) brightness(1.04); backdrop-filter: blur(22px) saturate(1.4) brightness(1.04);
+        background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.08) 55%, rgba(255,255,255,0.04) 100%);
+        border: var(--rim) solid rgba(255,255,255,0.40);
+        box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.6), 0 16px 44px rgba(40,28,10,0.18);
+        color: var(--white); font-weight: var(--wt-ui); font-size: 30px; letter-spacing: var(--track-ui);
+      }
+      #sanji-t1-nature-glass-plate .chip .ck {
+        width: 44px; height: 44px; border-radius: 50%; background: var(--white);
+        display: flex; align-items: center; justify-content: center; color: var(--cobalt);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      }
+      #sanji-t1-nature-glass-plate .chip .tx { text-shadow: 0 1px 10px rgba(0,0,0,0.18); }
+
+      /* UI plate: perspective on the wrapper, GSAP on .plate */
+      #sanji-t1-nature-glass-plate .persp {
+        position: absolute; left: 50%; top: 214px; width: 1100px; height: 640px; margin-left: -550px;
+        perspective: 2200px; perspective-origin: 50% 40%;
+      }
+      #sanji-t1-nature-glass-plate .plate {
+        position: absolute; inset: 0; box-sizing: border-box; border-radius: 36px;
+        background: var(--paper); color: var(--ink);
+        box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 50px 120px rgba(36,26,8,0.38), 0 14px 34px rgba(36,26,8,0.16);
+        transform-origin: 50% 50%;
+      }
+      #sanji-t1-nature-glass-plate .hd {
+        position: absolute; left: 56px; right: 56px; top: 0; height: 104px;
+        display: flex; align-items: center; justify-content: space-between;
+        font-weight: var(--wt-ui); font-size: 26px; color: var(--ink-mid); letter-spacing: var(--track-ui);
+      }
+      #sanji-t1-nature-glass-plate .hd .win { display: flex; gap: 22px; color: var(--ink-pre); }
+      #sanji-t1-nature-glass-plate .rule { position: absolute; left: 56px; right: 56px; height: 1.5px; background: var(--paper-2); }
+      #sanji-t1-nature-glass-plate .rule.r1 { top: 104px; }
+      #sanji-t1-nature-glass-plate .rule.r2 { top: 206px; }
+      #sanji-t1-nature-glass-plate .rule.r3 { top: 302px; }
+      #sanji-t1-nature-glass-plate .to {
+        position: absolute; left: 56px; top: 104px; height: 102px; display: flex; align-items: center; gap: 22px;
+        font-size: 28px; color: var(--ink-mid); font-weight: 500;
+      }
+      #sanji-t1-nature-glass-plate .to .tp {
+        height: 58px; box-sizing: border-box; padding: 0 26px 0 8px; border-radius: var(--r-pill);
+        background: var(--paper-2); display: flex; align-items: center; gap: 14px;
+        color: var(--ink); font-weight: var(--wt-ui); font-size: 27px; letter-spacing: var(--track-ui);
+      }
+      #sanji-t1-nature-glass-plate .to .av {
+        width: 42px; height: 42px; border-radius: 50%;
+        background: linear-gradient(140deg, var(--sky-2), var(--cobalt) 70%);
+        color: var(--white); font-weight: var(--wt-bold); font-size: 20px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-nature-glass-plate .subj {
+        position: absolute; left: 56px; right: 56px; top: 206px; height: 96px; display: flex; align-items: center;
+        font-weight: var(--wt-bold); font-size: 44px; letter-spacing: var(--track-tight); color: var(--ink); white-space: nowrap;
+      }
+      #sanji-t1-nature-glass-plate .body {
+        position: absolute; left: 56px; top: 330px; width: 420px;
+        font-weight: 500; font-size: 36px; line-height: 1.42; letter-spacing: var(--track-ui); color: var(--ink);
+      }
+      #sanji-t1-nature-glass-plate .body .c { display: none; }
+      #sanji-t1-nature-glass-plate .caret {
+        display: inline-block; width: 3px; height: 38px; margin-left: 2px; vertical-align: -7px;
+        background: var(--cobalt); border-radius: 2px;
+      }
+      #sanji-t1-nature-glass-plate .bar {
+        position: absolute; left: 56px; right: 44px; bottom: 40px; height: 76px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      #sanji-t1-nature-glass-plate .bar .tools { display: flex; gap: 30px; color: var(--ink-mid); }
+      #sanji-t1-nature-glass-plate .send {
+        position: relative; overflow: hidden; height: 76px; box-sizing: border-box; padding: 0 30px 0 36px;
+        border-radius: var(--r-pill); background: var(--cobalt);
+        display: flex; align-items: center; gap: 14px;
+        color: var(--white); font-weight: var(--wt-bold); font-size: 29px; letter-spacing: var(--track-ui);
+        box-shadow: 0 10px 28px rgba(var(--cobalt-rgb), 0.35), inset 0 1.5px 0 rgba(255,255,255,0.3);
+      }
+      #sanji-t1-nature-glass-plate .send .flash { position: absolute; inset: 0; background: var(--white); opacity: 0; border-radius: inherit; }
+      #sanji-t1-nature-glass-plate .send .rip {
+        position: absolute; left: 50%; top: 50%; width: 220px; height: 220px; margin: -110px 0 0 -110px;
+        border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0) 70%);
+        opacity: 0;
+      }
+      #sanji-t1-nature-glass-plate .send span, #sanji-t1-nature-glass-plate .send svg { position: relative; }
+      #sanji-t1-nature-glass-plate .cursor {
+        position: absolute; left: 0; top: 0; width: 46px; height: 46px; transform-origin: 8px 6px;
+        filter: drop-shadow(0 6px 10px rgba(0,0,0,0.28));
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-nature-glass-plate" data-composition-id="sanji-t1-nature-glass-plate" data-start="0" data-width="1920" data-height="1080">
+      <span class="slot-photo" data-slot="photo">wheat-field</span>
+      <div class="bg"><img class="photo" alt="" /></div>
+      <div class="shade"></div>
+
+      <div class="chipwrap">
+        <div class="chip">
+          <div class="ck"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <span class="tx" data-slot="chip">Review</span>
+        </div>
+      </div>
+
+      <div class="persp">
+        <div class="plate">
+          <div class="hd q"><span>New message</span>
+            <span class="win">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </span></div>
+          <div class="rule r1 q"></div>
+          <div class="to q"><span>To</span><span class="tp"><span class="av">H</span><span class="em" data-slot="to">hello@studio.com</span></span></div>
+          <div class="rule r2 q"></div>
+          <div class="subj q" data-slot="subject">Best motion design</div>
+          <div class="rule r3 q"></div>
+          <div class="body"><span class="txt" data-slot="body">Loved the launch video. Can we talk about the next one?</span><span class="caret"></span></div>
+          <div class="bar q">
+            <div class="tools">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5l-8.2 8.2a5 5 0 0 1-7-7l8.6-8.6a3.4 3.4 0 0 1 4.8 4.8l-8.4 8.4a1.7 1.7 0 0 1-2.4-2.4l7.6-7.6"/></svg>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3.5"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 9"/></svg>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></svg>
+            </div>
+            <div class="send"><div class="rip"></div><div class="flash"></div><span>Send</span>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12.5 5.5L19 12l-6.5 6.5"/></svg></div>
+          </div>
+          <svg class="cursor" viewBox="0 0 24 24"><path d="M5 3.2l13.6 8.1-6 1.3 3.4 6.4-2.6 1.4-3.4-6.5-4.9 4z" fill="#FFFFFF" stroke="#1C1C1E" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-nature-glass-plate";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => ROOT.querySelectorAll(s);
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+
+        const stem = ($(".slot-photo").textContent || "wheat-field").trim();
+        $(".photo").src = "../../assets/nature/" + stem + ".jpg";
+
+        /* avatar initial from the To slot */
+        const em = ($(".em").textContent || "").trim();
+        $(".av").textContent = (em.match(/[a-z0-9]/i) || ["H"])[0].toUpperCase();
+
+        const hasChip = ($('[data-slot="chip"]').textContent || "").trim().length > 0;
+        if (!hasChip) $(".chipwrap").style.display = "none";
+
+        /* body chars, display:none until typed so the caret rides the end */
+        const txt = $(".txt");
+        const str = txt.textContent.trim(); txt.textContent = "";
+        const chars = [...str].map((ch) => { const c = document.createElement("span"); c.className = "c"; c.textContent = ch; txt.appendChild(c); return c; });
+
+        const tl = gsap.timeline({ paused: true });
+        const CHIP = 0.15;
+        const PLATE = hasChip ? 0.55 : 0.2;
+        const T0 = PLATE + 0.75;                       /* typing starts */
+        const CPS = Math.min(0.034, 1.7 / Math.max(1, chars.length));
+        const TEND = T0 + chars.length * CPS;
+        const CUR = TEND + 0.1;                        /* cursor glides in */
+        const PRESS = CUR + 0.78;
+        const OUT = PRESS + 0.42;                      /* plate whooshes off */
+        const END = OUT + 0.95;
+
+        /* ambient: slow drift on the photo */
+        tl.fromTo($(".bg"), { scale: 1.08, x: -24, y: 6 }, { scale: 1.12, x: 22, y: -6, duration: END, ease: "sine.inOut" }, 0);
+
+        /* chip resolves in */
+        if (hasChip) {
+          tl.fromTo($(".chip"), { autoAlpha: 0, y: -14, scale: 0.94, filter: "blur(12px)" },
+              { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, CHIP)
+            .fromTo($(".chip .ck"), { scale: 0.4, rotate: -30 }, { scale: 1, rotate: 0, duration: 0.42, ease: "back.out(1.25)" }, CHIP + 0.12);
+          TXT.reveal(tl, $(".chip .tx"), CHIP + 0.1);
+        }
+
+        /* plate floats in: blur + tilt settling flat */
+        tl.set(chars, { display: "none" }, 0)
+          .set($(".caret"), { autoAlpha: 0 }, 0)
+          .set($(".cursor"), { autoAlpha: 0 }, 0)
+          .fromTo($(".plate"),
+            { autoAlpha: 0, y: 150, scale: 0.9, rotationX: 22, rotationY: -16, rotationZ: 2.5, filter: "blur(16px)" },
+            { autoAlpha: 1, y: 0, scale: 1, rotationX: 0, rotationY: 0, rotationZ: 0, filter: "blur(0px)", duration: 1.0, ease: "expo.out" }, PLATE)
+          .set($(".caret"), { autoAlpha: 1 }, T0 - 0.1);
+        /* plate content: house text preset (words pour, UI parts rise as blocks) */
+        TXT.reveal(tl, $(".hd > span:first-child"), PLATE + 0.25);
+        TXT.block(tl, [$(".hd .win"), $(".r1"), $(".to"), $(".r2")], PLATE + 0.3);
+        const wrapIn = (el) => { const s = document.createElement("span"); while (el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return s; };   /* flex box: reveal an inline child so word gaps survive */
+        TXT.reveal(tl, wrapIn($(".subj")), PLATE + 0.5);
+        TXT.block(tl, [$(".r3"), $(".bar")], PLATE + 0.6);
+
+        /* body types in */
+        chars.forEach((c, i) => {
+          const t = T0 + i * CPS;
+          tl.set(c, { display: "inline" }, t)
+            .fromTo(c, { opacity: 0.2, filter: "blur(4px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.out" }, t);
+        });
+        tl.to($(".caret"), { opacity: 0, duration: 0.01, repeat: 3, yoyo: true, repeatDelay: 0.14 }, TEND + 0.05);
+
+        /* cursor glides to Send (positions measured lazily, plate-local coords) */
+        const sendPt = () => {
+          const s = $(".send"), b = $(".bar");
+          return { x: b.offsetLeft + s.offsetLeft + s.offsetWidth * 0.42, y: b.offsetTop + s.offsetTop + s.offsetHeight * 0.5 };
+        };
+        tl.fromTo($(".cursor"), { autoAlpha: 0, x: 1180, y: 760 },
+            { autoAlpha: 1, x: () => sendPt().x, y: () => sendPt().y, duration: 0.74, ease: "power3.inOut" }, CUR);
+
+        /* press: dip + ripple + flash */
+        tl.to($(".cursor"), { scale: 0.82, duration: 0.08, ease: "power2.in" }, PRESS)
+          .to($(".cursor"), { scale: 1, duration: 0.24, ease: "power2.out" }, PRESS + 0.1)
+          .to($(".send"), { scale: 0.93, duration: 0.08, ease: "power2.in" }, PRESS)
+          .to($(".send"), { scale: 1, duration: 0.3, ease: "back.out(1.25)" }, PRESS + 0.08)
+          .fromTo($(".send .rip"), { opacity: 0.9, scale: 0.1 }, { opacity: 0, scale: 1.6, duration: 0.5, ease: "power2.out" }, PRESS + 0.04)
+          .fromTo($(".send .flash"), { opacity: 0 }, { opacity: 0.42, duration: 0.07, ease: "power2.out" }, PRESS + 0.05)
+          .to($(".send .flash"), { opacity: 0, duration: 0.3, ease: "power2.out" }, PRESS + 0.12)
+          .to($(".send"), { boxShadow: "0 0 0 10px rgba(" + tok("--cobalt-rgb") + ",0.18), 0 10px 40px rgba(" + tok("--cobalt-rgb") + ",0.6), inset 0 1.5px 0 rgba(255,255,255,0.3)", duration: 0.12, ease: "power2.out" }, PRESS + 0.05)
+          .to($(".send"), { boxShadow: "0 0 0 22px rgba(" + tok("--cobalt-rgb") + ",0), 0 10px 28px rgba(" + tok("--cobalt-rgb") + ",0.35), inset 0 1.5px 0 rgba(255,255,255,0.3)", duration: 0.45, ease: "power2.out" }, PRESS + 0.17);
+
+        /* plate whooshes off to the upper right with motion blur */
+        tl.to($(".cursor"), { autoAlpha: 0, duration: 0.16, ease: "power1.in" }, OUT - 0.06)
+          .to($(".caret"), { autoAlpha: 0, duration: 0.1 }, OUT)
+          .to($(".plate"), { x: 1500, y: -820, scale: 0.72, rotationZ: -7, rotationY: 14, filter: "blur(18px)", duration: 0.5, ease: "power2.in" }, OUT)
+          .to($(".plate"), { autoAlpha: 0, duration: 0.2, ease: "power1.in" }, OUT + 0.36);
+        if (hasChip) TXT.blockExit(tl, $(".chip"), OUT + 0.4);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

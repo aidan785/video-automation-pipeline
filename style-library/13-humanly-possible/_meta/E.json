@@ -1,0 +1,87 @@
+[
+  {
+    "id": "humanly-possible.tier2.screen.side-card",
+    "tier": "tier2",
+    "purpose": "screen",
+    "treatment": "side-card",
+    "file": "cards/tier2/t2-screen-sidecard.html",
+    "slots": [
+      { "name": "tab", "type": "text", "maxChars": 32, "notes": "tool context, shown as caps on the brick tab" },
+      { "name": "prompt", "type": "text", "maxChars": 90, "notes": "what the guest typed; data-at = when it lands" },
+      { "name": "reply", "type": "richtext", "maxChars": 160, "notes": "sentence spans each with data-at; one <em> = the phrase that gets the gold highlighter band (keep it under ~30 chars)" }
+    ],
+    "duration": { "min": 4, "max": 8 },
+    "summary": "Cream AI chat snippet pops beside the host on the right (.9 to 1, 2% settle), prompt then reply land on the words, one phrase gets a gold highlighter band."
+  },
+  {
+    "id": "humanly-possible.tier2.screen.phone-dock",
+    "tier": "tier2",
+    "purpose": "screen",
+    "treatment": "phone-dock",
+    "file": "cards/tier2/t2-screen-phonedock.html",
+    "slots": [
+      { "name": "contact", "type": "text", "maxChars": 18 },
+      { "name": "contact-sub", "type": "text", "maxChars": 26 },
+      { "name": "msg-in", "type": "text", "maxChars": 60, "notes": "incoming bubble, data-at on its row" },
+      { "name": "draft-label", "type": "text", "maxChars": 24 },
+      { "name": "msg-out", "type": "richtext", "maxChars": 70, "notes": "AI-drafted reply; dashed draft, fills brick on send (send button data-at); one <em> flips to gold" },
+      { "name": "receipt", "type": "text", "maxChars": 14 },
+      { "name": "msg-in-2", "type": "text", "maxChars": 60 },
+      { "name": "note", "type": "text", "maxChars": 24, "notes": "system row, e.g. a booking confirmation" }
+    ],
+    "duration": { "min": 8, "max": 30 },
+    "summary": "Flat deep phone docked right of the speaker for a whole demo; a messages app where an AI-drafted reminder is sent, bubbles arriving on data-at; orange send button."
+  },
+  {
+    "id": "humanly-possible.tier2.screen.magnifier",
+    "tier": "tier2",
+    "purpose": "screen",
+    "treatment": "magnifier",
+    "file": "cards/tier2/t2-screen-magnifier.html",
+    "slots": [
+      { "name": "screen-title", "type": "text", "maxChars": 20 },
+      { "name": "screen-lines", "type": "list", "maxItems": 6, "notes": "short lines of the AI reply on the small dimmed screen, ~40 chars each" },
+      { "name": "lens-label", "type": "text", "maxChars": 30 },
+      { "name": "line-1", "type": "richtext", "maxChars": 34, "notes": "the one magnified line at 44px; one <em> = gold word on a deep sliver" },
+      { "name": "line-2", "type": "richtext", "maxChars": 34, "notes": "optional; hard-swaps in at its data-at" }
+    ],
+    "duration": { "min": 3, "max": 8 },
+    "summary": "Small cream chat screen dims as a cream lens pops over its lower-left edge, lifting one AI line at 44px with the key word gold; second line is a hard swap."
+  },
+  {
+    "id": "humanly-possible.tier2.screen.highlight",
+    "tier": "tier2",
+    "purpose": "screen",
+    "treatment": "highlight",
+    "file": "cards/tier2/t2-screen-highlight.html",
+    "slots": [
+      { "name": "label", "type": "text", "maxChars": 22 },
+      { "name": "meta", "type": "text", "maxChars": 24 },
+      { "name": "lines", "type": "list", "maxItems": 7, "notes": "5 to 7 lines, max ~44 chars each (nowrap). Mark one li class=\"key\" with data-at (gold band) and up to two li class=\"sup\" (cream 18% bands, .15s apart, optional data-at)" }
+    ],
+    "duration": { "min": 3.5, "max": 7 },
+    "summary": "Brick prompt card on the right; a gold band wipes behind the one key line and its ink flips to deep, two supporting lines get cream-18% bands."
+  },
+  {
+    "id": "humanly-possible.tier2.screen.click",
+    "tier": "tier2",
+    "purpose": "screen",
+    "treatment": "click",
+    "file": "cards/tier2/t2-screen-click.html",
+    "slots": [
+      { "name": "app-label", "type": "text", "maxChars": 14 },
+      { "name": "context", "type": "text", "maxChars": 22 },
+      { "name": "title", "type": "text", "maxChars": 26 },
+      { "name": "sub", "type": "text", "maxChars": 50 },
+      { "name": "people", "type": "list", "maxItems": 3, "notes": "2-letter initials" },
+      { "name": "more", "type": "text", "maxChars": 12 },
+      { "name": "cancel", "type": "text", "maxChars": 10 },
+      { "name": "action", "type": "text", "maxChars": 12, "notes": "button label; button data-at = the click" },
+      { "name": "done", "type": "text", "maxChars": 10 },
+      { "name": "count", "type": "number", "maxChars": 4, "notes": "lands gold after the click" },
+      { "name": "count-label", "type": "text", "maxChars": 14 }
+    ],
+    "duration": { "min": 2.5, "max": 5 },
+    "summary": "Cream confirm panel lower right; cursor glides to the orange button, 1-frame press, label swaps to a checked done state and a small count lands gold. Built to be cut away."
+  }
+]

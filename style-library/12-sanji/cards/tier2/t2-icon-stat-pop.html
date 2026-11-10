@@ -1,0 +1,241 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · ICON STAT POP
+  Two comparison callouts parked in the left and right thirds around the
+  speaker. Each is a solid white glyph that pops out of blur (left: an 8-ray
+  spark in ember, right: a white person silhouette) with a two-line label
+  resolving under it: sentence-case top line, heavy caps bottom line
+  ("Pro / 5 DAYS" vs "AI / 1 DAY"). The right side lands first, then the left;
+  then the losing side optionally dims (data-dim on the root: "b" = right,
+  "a" = left, "none"). Both dissolve with blur on the way out.
+  Slots: aTop, aBottom, bTop, bBottom (text, <=10 each).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-icon-stat-pop {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent;
+      }
+      #sanji-t2-icon-stat-pop .co {
+        position: absolute; top: 200px; width: 420px; margin-left: -210px;
+        display: flex; flex-direction: column; align-items: center;
+      }
+      #sanji-t2-icon-stat-pop .co.a { left: 370px; }
+      #sanji-t2-icon-stat-pop .co.b { left: 1545px; }
+      #sanji-t2-icon-stat-pop .glyph { width: 250px; height: 270px; display: flex; align-items: flex-end; justify-content: center; transform-origin: 50% 70%; }
+      #sanji-t2-icon-stat-pop .glyph svg { display: block; overflow: visible; filter: drop-shadow(0 4px 22px rgba(0,0,0,.28)); }
+      #sanji-t2-icon-stat-pop .co.a .glyph svg { filter: drop-shadow(0 0 26px rgba(var(--ember-rgb), .45)) drop-shadow(0 4px 22px rgba(0,0,0,.22)); }
+      #sanji-t2-icon-stat-pop .lab { margin-top: 30px; text-align: center; color: var(--white); text-shadow: 0 2px 24px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.18); white-space: nowrap; }
+      #sanji-t2-icon-stat-pop .lab .top { font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 52px; letter-spacing: var(--track-ui); line-height: 1.12; }
+      #sanji-t2-icon-stat-pop .lab .bot { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 52px; letter-spacing: var(--track-caps); line-height: 1.04; text-transform: uppercase; word-spacing: 0.1em; }
+      #sanji-t2-icon-stat-pop .lab > div { display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-icon-stat-pop" data-composition-id="sanji-t2-icon-stat-pop" data-start="0" data-width="1920" data-height="1080" data-dim="b">
+      <div class="co a">
+        <div class="glyph">
+          <!-- generic 8-ray spark -->
+          <svg width="210" height="210" viewBox="-100 -100 200 200">
+            <g fill="#FF7A1A">
+              <rect x="-11" y="-96" width="22" height="80" rx="11" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(45)" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(90)" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(135)" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(180)" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(225)" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(270)" />
+              <rect x="-11" y="-96" width="22" height="80" rx="11" transform="rotate(315)" />
+              <circle r="22" />
+            </g>
+          </svg>
+        </div>
+        <div class="lab"><div class="top" data-slot="aTop">AI</div><div class="bot" data-slot="aBottom">1 day</div></div>
+      </div>
+      <div class="co b">
+        <div class="glyph">
+          <!-- person silhouette -->
+          <svg width="236" height="268" viewBox="0 0 236 268">
+            <g fill="#FFFFFF">
+              <circle cx="118" cy="64" r="64" />
+              <path d="M0 268 C0 196 52 152 118 152 C184 152 236 196 236 268 Z" />
+            </g>
+          </svg>
+        </div>
+        <div class="lab"><div class="top" data-slot="bTop">Pro</div><div class="bot" data-slot="bBottom">5 days</div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-icon-stat-pop";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const A = $(".co.a"), B = $(".co.b");
+        const parts = (co) => ({ g: co.querySelector(".glyph"), top: co.querySelector(".top"), bot: co.querySelector(".bot") });
+        const a = parts(A), b = parts(B);
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set([a.g, b.g], { autoAlpha: 0 }, 0);
+
+        const pop = (p, t) => {
+          tl.fromTo(p.g,
+            { autoAlpha: 0, scale: 0.86, filter: "blur(12px)", y: 14 },
+            { autoAlpha: 1, scale: 1, filter: "blur(0px)", y: 0, duration: 0.42, ease: "back.out(1.25)" }, t)
+;
+          TXT.reveal(tl, p.top, t + 0.2);
+          TXT.reveal(tl, p.bot, t + 0.3);
+        };
+        /* right lands first, then left */
+        pop(b, 0.15);
+        pop(a, 1.35);
+
+        /* focus shift: the losing side dims */
+        const dim = ROOT.getAttribute("data-dim");
+        const LOSE = dim === "a" ? A : dim === "b" ? B : null;
+        const T_DIM = 2.25;
+        if (LOSE) tl.to(LOSE, { opacity: 0.45, scale: 0.97, duration: 0.4, ease: "power2.inOut" }, T_DIM);
+
+        /* hold, then both dissolve */
+        const OUT = T_DIM + 1.6;
+        TXT.exit(tl, [b.top, b.bot, a.top, a.bot], OUT - 0.08);
+        tl.to([A, B], { autoAlpha: 0, filter: "blur(10px)", duration: 0.34, ease: "power2.in", stagger: 0.05 }, OUT)
+          .set({}, {}, OUT + 0.45);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

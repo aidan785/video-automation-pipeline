@@ -1,0 +1,295 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · PROMPT ANATOMY
+  EMBER canvas. A dark chat box (orange-catching rim, comet streak on the top
+  edge) holds a structured prompt, one part per line, resolving word by word.
+  Then it is dissected: one segment at a time gets a tinted underlay (ember
+  tint and cool white tint, alternating), the rest of the prompt dims, a
+  connector draws out of the segment's end through the box rim and a label
+  chip drops in beside it. Chips arrive glowing ember and cool to a plain rim
+  (the glow-chip move). On the hold every segment returns to full white with
+  its underlay, all four chips settled. Connector start points are measured
+  from the live text layout, so any segment length up to maxChars works.
+  Slots: p1-p4 (prompt segments, one line each, <= 40), l1-l4 (chip labels, <= 9).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-prompt-anatomy {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body);
+      }
+      #sanji-t1-prompt-anatomy .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-prompt-anatomy .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.5; }
+      #sanji-t1-prompt-anatomy .comet {
+        position: absolute; left: 790px; top: -40px; width: 620px; height: 52px; transform-origin: 0% 50%; transform: rotate(24deg);
+        background: linear-gradient(90deg, rgba(255,122,26,0) 0%, rgba(255,140,40,0.35) 30%, rgba(255,190,90,0.95) 78%, rgba(255,230,170,1) 92%, rgba(255,200,120,0) 100%);
+        border-radius: 50%; filter: blur(9px); opacity: 0;
+      }
+      #sanji-t1-prompt-anatomy .box {
+        position: absolute; left: 210px; top: 220px; width: 1200px; box-sizing: border-box; padding: 58px 64px 120px;
+        border-radius: var(--r-chat); background: var(--chat-fill); border: var(--rim) solid var(--chat-rim); box-shadow: var(--chat-shadow);
+      }
+      #sanji-t1-prompt-anatomy .txt { font-weight: 500; font-size: 46px; line-height: 1.32; letter-spacing: var(--track-ui); color: #EFE7E1; }
+      #sanji-t1-prompt-anatomy .seg {
+        display: block; width: fit-content; white-space: nowrap; border-radius: 14px; padding: 6px 12px; margin: 0 -12px 22px;
+        -webkit-box-decoration-break: clone; box-decoration-break: clone;
+        background-color: rgba(255,122,26,0);
+      }
+      #sanji-t1-prompt-anatomy .seg .w { display: inline-block; white-space: pre; }
+      #sanji-t1-prompt-anatomy .plus { position: absolute; left: 58px; bottom: 40px; width: 40px; height: 40px; }
+      #sanji-t1-prompt-anatomy .send {
+        position: absolute; right: 40px; bottom: 30px; width: 72px; height: 72px; border-radius: 20px; background: var(--ember);
+        display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(255,122,26,0.35);
+      }
+      #sanji-t1-prompt-anatomy svg.wires { position: absolute; inset: 0; overflow: visible; }
+      #sanji-t1-prompt-anatomy .chip {
+        position: absolute; left: 1510px; top: 0; height: 64px; padding: 0 28px; margin-left: 0; box-sizing: border-box; border-radius: var(--r-pill);
+        background: var(--chip-fill); border: var(--rim) solid var(--chip-rim);
+        display: flex; align-items: center; gap: 16px; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 30px; letter-spacing: var(--track-caps); text-transform: uppercase; color: #F2ECE6;
+      }
+      #sanji-t1-prompt-anatomy .chip i { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+      #sanji-t1-prompt-anatomy .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-prompt-anatomy" data-composition-id="sanji-t1-prompt-anatomy" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="comet"></div>
+      <div class="vig"></div>
+      <div class="box">
+        <div class="txt"><span class="seg" data-slot="p1">You are a senior motion designer.</span><span class="seg" data-slot="p2">Write a 30 second launch script</span><span class="seg" data-slot="p3">for a calm, premium finance app.</span><span class="seg" data-slot="p4">Return a shot list with timings.</span></div>
+        <svg class="plus" viewBox="0 0 24 24" fill="none" stroke="#F2ECE6" stroke-width="2" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg>
+        <div class="send"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></div>
+      </div>
+      <svg class="wires" viewBox="0 0 1920 1080" fill="none" stroke-linecap="round">
+        <g class="cn"><path pathLength="1" stroke="#F2ECE6" stroke-width="3"/><circle class="a" r="7" fill="#F2ECE6"/><circle class="b" r="7" fill="#F2ECE6"/></g>
+        <g class="cn"><path pathLength="1" stroke="#F2ECE6" stroke-width="3"/><circle class="a" r="7" fill="#F2ECE6"/><circle class="b" r="7" fill="#F2ECE6"/></g>
+        <g class="cn"><path pathLength="1" stroke="#F2ECE6" stroke-width="3"/><circle class="a" r="7" fill="#F2ECE6"/><circle class="b" r="7" fill="#F2ECE6"/></g>
+        <g class="cn"><path pathLength="1" stroke="#F2ECE6" stroke-width="3"/><circle class="a" r="7" fill="#F2ECE6"/><circle class="b" r="7" fill="#F2ECE6"/></g>
+      </svg>
+      <div class="chip"><i></i><span data-slot="l1">Role</span></div>
+      <div class="chip"><i></i><span data-slot="l2">Task</span></div>
+      <div class="chip"><i></i><span data-slot="l3">Context</span></div>
+      <div class="chip"><i></i><span data-slot="l4">Format</span></div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-prompt-anatomy";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+
+        /* tints: ember / cool white alternating (only these two hues) */
+        const TINT = ["rgba(255,122,26,0.30)", "rgba(255,255,255,0.15)", "rgba(255,122,26,0.30)", "rgba(255,255,255,0.15)"];
+        const TINT_REST = ["rgba(255,122,26,0.16)", "rgba(255,255,255,0.08)", "rgba(255,122,26,0.16)", "rgba(255,255,255,0.08)"];
+        const DOT = ["rgba(255,122,26,1)", "rgba(255,255,255,0.9)", "rgba(255,122,26,1)", "rgba(255,255,255,0.9)"];
+
+        const GLOW = getComputedStyle(document.documentElement).getPropertyValue("--chip-glow").trim();
+        const segs = $$(".seg"), chips = $$(".chip"), cns = $$(".cn");
+        chips.forEach((c, i) => { c.querySelector("i").style.background = DOT[i]; });
+
+        /* split segments into words */
+        const words = [];
+        segs.forEach((s) => {
+          const ws = s.textContent.trim().split(/\s+/); s.textContent = "";
+          ws.forEach((w, i) => { const e = document.createElement("span"); e.className = "w"; e.textContent = w; s.appendChild(e); if (i < ws.length - 1) s.appendChild(document.createTextNode(" ")); words.push(e); });
+        });
+
+        /* lazy layout: measured when first rendered (after fonts) */
+        const CHIP_X = 1510;
+        const geo = [];
+        const measure = (i) => {
+          if (geo[i]) return geo[i];
+          const r = ROOT.getBoundingClientRect(), k = r.width / 1920;
+          const sr = segs[i].getBoundingClientRect();
+          geo[i] = { ax: (sr.right - r.left) / k + 14, ay: ((sr.top + sr.bottom) / 2 - r.top) / k };
+          return geo[i];
+        };
+        const dFor = (i) => () => { const g = measure(i); return `M${g.ax} ${g.ay} H ${CHIP_X - 2}`; };
+
+        const tl = gsap.timeline({ paused: true });
+        const T1 = 2.0, STEP = 1.15, ALL = T1 + 4 * STEP + 0.1, END = ALL + 1.6;
+
+        tl.fromTo($(".warm"), { opacity: 0.55 }, { opacity: 1, duration: 1.6, ease: "sine.inOut" }, 0)
+          .to($(".warm"), { opacity: 0.4, duration: 1.2, ease: "power2.inOut" }, 1.8);
+
+        /* box resolves + comet */
+        tl.fromTo($(".box"), { autoAlpha: 0, scale: 0.96, filter: "blur(14px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.1)
+          .fromTo($(".comet"), { opacity: 0, x: -220, y: -100 }, { opacity: 1, x: 0, y: 0, duration: 0.9, ease: "expo.out" }, 0.35);
+        TXT.block(tl, [$(".box .plus"), $(".box .send")], 0.45);
+
+        /* prompt words pour in with the house text preset */
+        TXT.reveal(tl, words, 0.4);
+
+        tl.set(chips, { autoAlpha: 0 }, 0).set($$(".cn circle"), { autoAlpha: 0 }, 0)
+          .set($$(".cn path"), { strokeDasharray: 1, strokeDashoffset: 1 }, 0);
+
+        for (let i = 0; i < 4; i++) {
+          const t = T1 + i * STEP, cn = cns[i], ch = chips[i];
+          /* lazy geometry (just before first use) */
+          tl.set(cn.querySelector("path"), { attr: { d: dFor(i) } }, T1 - 0.3)
+            .set(cn.querySelector(".a"), { attr: { cx: () => measure(i).ax, cy: () => measure(i).ay } }, T1 - 0.3)
+            .set(cn.querySelector(".b"), { attr: { cx: CHIP_X - 2, cy: () => measure(i).ay } }, T1 - 0.3)
+            .set(ch, { top: () => measure(i).ay - 32 }, T1 - 0.3);
+
+          /* focus: this segment full, others dim; underlay tints in */
+          segs.forEach((s, j) => { if (j !== i) tl.to(s, { opacity: j < i ? 0.55 : 0.4, duration: 0.3, ease: "power2.inOut" }, t); });
+          tl.to(segs[i], { opacity: 1, backgroundColor: TINT[i], duration: 0.35, ease: "power2.out" }, t);
+          if (i > 0) {
+            tl.to(segs[i - 1], { backgroundColor: TINT_REST[i - 1], duration: 0.35 }, t)
+              .to(cns[i - 1], { opacity: 0.35, duration: 0.3 }, t)
+              .to(chips[i - 1], { opacity: 0.6, duration: 0.3 }, t);
+          }
+          /* connector + chip drop (glow chip: hot then cool) */
+          tl.to(cn.querySelector(".a"), { autoAlpha: 1, duration: 0.15 }, t + 0.2)
+            .to(cn.querySelector("path"), { strokeDashoffset: 0, duration: 0.4, ease: "power2.inOut" }, t + 0.22)
+            .to(cn.querySelector(".b"), { autoAlpha: 1, duration: 0.15 }, t + 0.5)
+            .set(ch, { boxShadow: GLOW }, t + 0.5);
+          TXT.block(tl, ch, t + 0.5);                      /* chip rises as one block, glow cools below */
+          tl.fromTo(ch, { borderColor: "rgba(255,140,50,0.95)" }, { borderColor: "rgba(255,255,255,0.16)", boxShadow: "0 0 0 0px rgba(255,140,50,0), 0 0 0px rgba(255,122,26,0), 0 0 0px rgba(255,122,26,0)", duration: 0.6, ease: "power2.out", immediateRender: false }, t + 0.95);
+        }
+        /* hold: everything returns to full with underlays */
+        tl.to(segs, { opacity: 1, duration: 0.45, ease: "power2.inOut" }, ALL)
+          .to(segs.map((s) => s), { backgroundColor: (k) => TINT[k], duration: 0.45 }, ALL)
+          .to([...cns, ...chips], { opacity: 1, duration: 0.45 }, ALL);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

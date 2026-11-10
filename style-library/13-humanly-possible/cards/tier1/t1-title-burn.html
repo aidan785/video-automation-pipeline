@@ -1,0 +1,111 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · title · BURN
+  Episode title takeover on the brand burn. The burn rises from the bottom-left corner, so the
+  headline sits left-aligned in the dark upper-right two thirds of the frame. Each word pops on its
+  spoken time (data-at); one hero word carries the --hp-flow fill as a slow sweep across the hold
+  (the card's only clip-text element, and its gold). Small cream mark top-left, tracked episode
+  label above the headline, guest line below. Burn drifts on its own layer; grain on top.
+  Exit: mirrored 0.28 s (words drop out in reverse), or cut away.
+  Source: brand DESIGN.md (the gradient, "type in the upper-right two thirds") + tokens --hp-flow.
+  Slots: label (text, episode number), title (richtext: words in <span class="w">, the hero word
+  is <span class="w hero">; data-at per word), sub (text, guest + job).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+      #hp-t1-title-burn{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t1-title-burn .bg{position:absolute;inset:-4%;background:var(--hp-burn);transform-origin:8% 100%;}
+      #hp-t1-title-burn .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      #hp-t1-title-burn .mark{position:absolute;left:var(--margin);top:var(--margin-y);width:58px;height:auto;display:block;}
+
+      #hp-t1-title-burn .block{position:absolute;left:640px;right:var(--margin);top:236px;}
+      #hp-t1-title-burn .label{display:block;font-family:var(--font-body);font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--hp-cream-muted);margin-bottom:34px;}
+      #hp-t1-title-burn .title{font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:156px;line-height:.96;
+        letter-spacing:var(--track-tight);color:var(--hp-cream);}
+      #hp-t1-title-burn .title .w{display:inline-block;margin-right:.2em;transform-origin:0 80%;}
+      #hp-t1-title-burn .title .w:last-child{margin-right:0;}
+      /* the one clip-text element: flow fill, swept by background-position. padding keeps descenders inside the clip box */
+      #hp-t1-title-burn .title .hero{background:var(--hp-flow);background-size:240% 240%;background-position:12% 12%;
+        -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;padding:0 .04em .12em 0;margin-bottom:-.12em;}
+      #hp-t1-title-burn .sub{display:block;margin-top:44px;font-family:var(--font-body);font-weight:600;font-size:34px;line-height:1.3;letter-spacing:-.005em;color:var(--hp-cream);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-title-burn" data-composition-id="hp-t1-title-burn" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <svg class="mark" viewBox="231 201 426 486" aria-hidden="true"><g fill="#FFF0E6"><path fill-rule="evenodd" d="M231,215 A14,14 0 0 1 245,201 L643,201 A14,14 0 0 1 657,215 L657,613 A14,14 0 0 1 643,627 L481,627 A14,14 0 0 0 467,641 L467,673 A14,14 0 0 1 453,687 L245,687 A14,14 0 0 1 231,673 Z M275,259 A14,14 0 0 1 289,245 L599,245 A14,14 0 0 1 613,259 L613,569 A14,14 0 0 1 599,583 L437,583 A14,14 0 0 0 423,597 L423,629 A14,14 0 0 1 409,643 L289,643 A14,14 0 0 1 275,629 Z"/><path d="M303,287 A14,14 0 0 1 317,273 L381,273 A14,14 0 0 1 395,287 L395,359 A14,14 0 0 0 409,373 L479,373 A14,14 0 0 0 493,359 L493,287 A14,14 0 0 1 507,273 L571,273 A14,14 0 0 1 585,287 L585,541 A14,14 0 0 1 571,555 L507,555 A14,14 0 0 1 493,541 L493,466 A14,14 0 0 0 479,452 L409,452 A14,14 0 0 0 395,466 L395,601 A14,14 0 0 1 381,615 L317,615 A14,14 0 0 1 303,601 Z"/></g></svg>
+
+      <div class="block">
+        <span class="label" data-slot="label">Episode 03</span>
+        <div class="title" data-slot="title"><span class="w" data-at=".42">She</span><span class="w" data-at=".6">got</span><span class="w" data-at=".76">her</span><span class="w hero" data-at="1.0">Saturdays</span><span class="w" data-at="1.42">back</span></div>
+        <span class="sub" data-slot="sub">Dana Ruiz, dog groomer</span>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-title-burn-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-title-burn-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-title-burn";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 6;
+      const OUT = DUR - 0.42;
+      const tl = gsap.timeline({ paused: true });
+
+      // ground drift (background layer only)
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.05, duration: DUR, ease: "none" }, 0);
+
+      // mark + label
+      tl.fromTo($1(".mark"), { scale: .92, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .3, ease: POP }, .1);
+      tl.fromTo($1(".label"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, .2);
+
+      // word on the word (missing data-at falls back to an even stagger)
+      const words = Array.from($(".title .w"));
+      words.forEach((w, i) => {
+        const at = parseFloat(w.dataset.at); const t = isNaN(at) ? .42 + i * .2 : at;
+        tl.fromTo(w, { autoAlpha: 0, y: 12, scale: .94 }, { autoAlpha: 1, y: 0, scale: 1, duration: .32, ease: POP }, t);
+      });
+      const lastAt = words.reduce((m, w, i) => Math.max(m, isNaN(parseFloat(w.dataset.at)) ? .42 + i * .2 : parseFloat(w.dataset.at)), 0);
+      tl.fromTo($1(".sub"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, lastAt + .3);
+
+      // light, not layout: the flow fill sweeps slowly across the hero word through the hold
+      const hero = $1(".title .hero");
+      if (hero) tl.fromTo(hero, { backgroundPosition: "12% 12%" }, { backgroundPosition: "100% 100%", duration: DUR - 1, ease: "sine.inOut" }, .9);
+
+      // exit: mirror, reverse order, 0.28 s
+      tl.to($1(".sub"), { autoAlpha: 0, y: 10, duration: .16, ease: "power2.in" }, OUT);
+      tl.to(words.slice().reverse(), { autoAlpha: 0, y: 12, scale: .94, duration: .16, ease: "power2.in", stagger: .03 }, OUT + .04);
+      tl.to([$1(".label"), $1(".mark")], { autoAlpha: 0, duration: .14, ease: "power2.in" }, OUT + .16);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

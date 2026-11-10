@@ -1,0 +1,264 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · CHAT THREAD
+  A DM thread parked in the right third. A small glass header (avatar + name)
+  resolves first, then four messages arrive one at a time. Before each
+  INCOMING message a dark-glass typing bubble appears and its three dots pulse,
+  then the bubble MORPHS (grows to the message's measured size) while the dots
+  dissolve and the text resolves out of blur. OUTGOING messages are cobalt
+  glass and pop in from the right with a whisper of overshoot. Older messages
+  quietly settle (slight dim) as new ones land. Whole thread dissolves out.
+  Slots: who (<=14), m1..m4 (text, <=60 each; m1 + m3 incoming, m2 + m4 outgoing).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-chat-thread {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t2-chat-thread .thread {
+        position: absolute; left: 1240px; top: 250px; width: 580px;
+        display: flex; flex-direction: column; gap: 16px;
+      }
+      #sanji-t2-chat-thread .head {
+        align-self: flex-start; display: flex; align-items: center; gap: 14px;
+        padding: 8px 24px 8px 8px; border-radius: var(--r-pill); margin-bottom: 10px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 60%), rgba(22,22,32,0.46);
+        border: 1px solid rgba(255,255,255,0.24);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.18);
+        -webkit-backdrop-filter: blur(18px) saturate(1.25); backdrop-filter: blur(18px) saturate(1.25);
+        font-weight: var(--wt-ui); font-size: 26px; letter-spacing: var(--track-ui);
+      }
+      #sanji-t2-chat-thread .av {
+        width: 50px; height: 50px; border-radius: 50%; box-sizing: border-box;
+        background: radial-gradient(circle at 35% 30%, var(--ember-hot), var(--ember) 55%, var(--ember-deep));
+        border: var(--rim) solid rgba(255,255,255,0.5);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 22px;
+      }
+      #sanji-t2-chat-thread .dot-on { width: 10px; height: 10px; border-radius: 50%; background: var(--white); opacity: 0.85; box-shadow: 0 0 10px rgba(255,255,255,0.7); }
+      #sanji-t2-chat-thread .msg {
+        position: relative; box-sizing: border-box; overflow: hidden;
+        border-radius: 30px; font-size: 29px; font-weight: 500; line-height: 1.28; letter-spacing: var(--track-ui);
+      }
+      #sanji-t2-chat-thread .msg .txt { display: block; width: max-content; max-width: 420px; padding: 18px 26px; text-wrap: balance; }
+      #sanji-t2-chat-thread .msg.in {
+        align-self: flex-start; border-bottom-left-radius: 10px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.02) 60%), rgba(22,22,32,0.52);
+        border: 1px solid rgba(255,255,255,0.24);
+        box-shadow: 0 16px 44px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.18);
+        -webkit-backdrop-filter: blur(18px) saturate(1.25); backdrop-filter: blur(18px) saturate(1.25);
+        transform-origin: 0% 100%;
+      }
+      #sanji-t2-chat-thread .msg.out {
+        align-self: flex-end; border-bottom-right-radius: 10px;
+        background: linear-gradient(160deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04) 45%), rgba(var(--cobalt-rgb), 0.88);
+        border: var(--rim) solid rgba(255,255,255,0.55);
+        box-shadow: 0 16px 44px rgba(14,18,150,0.32), inset 0 1.5px 0 rgba(255,255,255,0.35);
+        transform-origin: 100% 100%;
+      }
+      #sanji-t2-chat-thread .dots { position: absolute; left: 0; top: 0; width: 104px; height: 62px; display: flex; align-items: center; justify-content: center; gap: 9px; }
+      #sanji-t2-chat-thread .dots i { display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--white); opacity: 0.45; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-chat-thread" data-composition-id="sanji-t2-chat-thread" data-start="0" data-width="1920" data-height="1080">
+      <div class="thread">
+        <div class="head"><div class="av">M</div><span data-slot="who">Maya, client</span><div class="dot-on"></div></div>
+        <div class="msg in"><div class="dots"><i></i><i></i><i></i></div><span class="txt" data-slot="m1">Loved the first cut. How fast can you ship the rest?</span></div>
+        <div class="msg out"><span class="txt" data-slot="m2">Tomorrow, all twelve scenes</span></div>
+        <div class="msg in"><div class="dots"><i></i><i></i><i></i></div><span class="txt" data-slot="m3">Wait, that used to take weeks</span></div>
+        <div class="msg out"><span class="txt" data-slot="m4">New workflow. Invoice incoming</span></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-chat-thread";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const msgs = $$(".msg"), head = $(".head");
+        const DW = 104, DH = 62;   /* typing bubble size */
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set([head, ...msgs], { autoAlpha: 0 }, 0);
+        msgs.filter((m) => m.classList.contains("in")).forEach((m) => tl.set(m, { width: DW, height: DH }, 0));
+
+        /* header */
+        const tHead = TXT.block(tl, head, 0.15);
+        tl.set(head, { filter: "none" }, tHead + 0.01);   /* a resting filter would flatten the backdrop blur */
+
+        let t = 0.55;
+        msgs.forEach((m, i) => {
+          const txt = m.querySelector(".txt");
+          TXT.split(txt);   /* split before any measuring so the morph target matches the word layout */
+          /* earlier messages settle back a touch when a new one lands */
+          const settle = (at) => { if (i > 0) tl.to(msgs.slice(0, i), { opacity: 0.72, duration: 0.35, ease: "power2.inOut" }, at); };
+          if (m.classList.contains("in")) {
+            const dots = [...m.querySelectorAll(".dots i")];
+            /* typing bubble appears */
+            tl.fromTo(m, { autoAlpha: 0, scale: 0.85, filter: "blur(10px)" },
+                         { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.34, ease: "back.out(1.25)" }, t)
+              .set(m, { filter: "none" }, t + 0.35);
+            /* dots pulse: finite wave, two cycles */
+            dots.forEach((d, k) => {
+              tl.to(d, { keyframes: [{ opacity: 1, y: -5, duration: 0.14, ease: "sine.out" }, { opacity: 0.45, y: 0, duration: 0.16, ease: "sine.in" }], repeat: 1, repeatDelay: 0.02 }, t + 0.12 + k * 0.1);
+            });
+            const M = t + 0.95;   /* morph moment */
+            tl.to(m, { width: () => txt.offsetWidth + 2, height: () => txt.offsetHeight + 2, duration: 0.45, ease: "expo.out" }, M)
+              .to(m.querySelector(".dots"), { autoAlpha: 0, filter: "blur(6px)", scale: 0.8, duration: 0.2, ease: "power2.in" }, M)
+              .set(m, { clearProps: "width,height" }, M + 0.47);
+            TXT.reveal(tl, txt, M + 0.1);
+            settle(M);
+            t = M + 0.7;
+          } else {
+            tl.fromTo(m, { autoAlpha: 0, x: 40, scale: 0.9, filter: "blur(10px)" },
+                         { autoAlpha: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "back.out(1.25)" }, t);
+            TXT.reveal(tl, txt, t + 0.1);
+            settle(t);
+            t = t + 0.75;
+          }
+        });
+
+        /* hold, then the whole thread dissolves */
+        const OUT = t + 0.6;
+        tl.to($(".thread"), { autoAlpha: 0, y: -14, filter: "blur(10px)", duration: 0.4, ease: "power2.in" }, OUT)
+          .set({}, {}, OUT + 0.5);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

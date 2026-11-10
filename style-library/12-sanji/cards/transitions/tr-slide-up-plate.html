@@ -1,0 +1,140 @@
+<!doctype html>
+<!--
+  SANJI · transition · SLIDE-UP PLATE
+  Scene A (STAND-IN talking-head plate) -> scene B (screenshot plate on the
+  cobalt squircle grid). A cobalt ground made of rounded squircle cells rises
+  from the bottom edge with vertical smear (blur + scaleY, its top edge
+  leading), carrying a white rounded screenshot plate that lands with expo.out
+  in ~0.3s, then keeps drifting up ~20px and scaling to 1.02 over the hold.
+  The plate content is a STAND-IN web page (nav dots, links, orange button,
+  headline block, text lines); swap in a real screenshot at assembly.
+  Slots: label (orange button text, <= 18).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-slide-up-plate {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--ink);
+      }
+      /* --- scene A: STAND-IN footage --- */
+      #sanji-tr-slide-up-plate .sceneA { position: absolute; inset: 0; transform-origin: 50% 45%;
+        background: linear-gradient(180deg, #5E544B 0%, #4D443C 60%, #2F2A25 100%); }
+      #sanji-tr-slide-up-plate .sceneA i { position: absolute; display: block; }
+      #sanji-tr-slide-up-plate .sceneA .fr { border-radius: 6px; filter: blur(2px); box-shadow: 0 6px 18px rgba(0,0,0,0.3); }
+
+      /* --- scene B: squircle ground --- */
+      #sanji-tr-slide-up-plate .ground { position: absolute; left: 0; top: -40px; width: 1920px; height: 1160px; transform-origin: 50% 0%;
+        background: var(--cobalt-wash); border-radius: 60px 60px 0 0; }
+      #sanji-tr-slide-up-plate .ground svg { position: absolute; inset: 0; }
+      #sanji-tr-slide-up-plate .plate {
+        position: absolute; left: 182px; top: 98px; width: 1540px; height: 866px; box-sizing: border-box;
+        border-radius: var(--r-plate); background: var(--paper); overflow: hidden; transform-origin: 50% 40%;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.7), 0 40px 100px rgba(10,20,140,0.45), 0 0 60px rgba(120,150,255,0.25);
+      }
+      #sanji-tr-slide-up-plate .nav { position: absolute; left: 66px; right: 66px; top: 0; height: 100px; display: flex; align-items: center; border-bottom: 1.5px solid rgba(0,0,0,0.07); }
+      #sanji-tr-slide-up-plate .dots { display: flex; gap: 10px; }
+      #sanji-tr-slide-up-plate .dots b { width: 16px; height: 16px; border-radius: 50%; background: var(--ink); display: block; }
+      #sanji-tr-slide-up-plate .dots b:nth-child(2) { background: var(--ink-mid); } #sanji-tr-slide-up-plate .dots b:nth-child(3) { background: var(--ink-pre); }
+      #sanji-tr-slide-up-plate .links { position: absolute; left: 0; right: 0; display: flex; justify-content: center; gap: 36px; font-size: 22px; font-weight: 500; letter-spacing: var(--track-ui); pointer-events: none; }
+      #sanji-tr-slide-up-plate .btn {
+        margin-left: auto; height: 50px; padding: 0 24px; border-radius: 12px; background: var(--ember); color: var(--white);
+        display: flex; align-items: center; gap: 14px; font-size: 21px; font-weight: var(--wt-ui); letter-spacing: var(--track-ui);
+        box-shadow: 0 0 40px rgba(255,122,26,0.35);
+      }
+      #sanji-tr-slide-up-plate .body { position: absolute; left: 158px; top: 150px; width: 960px; }
+      #sanji-tr-slide-up-plate .back { font-size: 18px; color: var(--ink-mid); }
+      #sanji-tr-slide-up-plate .meta { margin-top: 40px; display: flex; align-items: center; gap: 18px; font-size: 17px; color: var(--ink-mid); }
+      #sanji-tr-slide-up-plate .chip { padding: 8px 12px; border-radius: 6px; background: color-mix(in srgb, var(--ember) 10%, var(--paper)); color: var(--ember); font-weight: var(--wt-ui); font-size: 15px; letter-spacing: 0.02em; }
+      #sanji-tr-slide-up-plate .h1 { margin-top: 26px; font-size: 76px; font-weight: 500; line-height: 1.06; letter-spacing: -0.04em; }
+      #sanji-tr-slide-up-plate .ln { height: 18px; border-radius: 9px; background: rgba(28,28,30,0.12); margin-top: 18px; }
+      #sanji-tr-slide-up-plate .shot { position: absolute; left: 158px; right: 160px; top: 610px; height: 320px; border-radius: 22px;
+        background: linear-gradient(160deg, color-mix(in srgb, var(--ember) 5%, var(--paper)), var(--paper-2)); box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.05); }
+      #sanji-tr-slide-up-plate .shot .win { position: absolute; left: 64px; right: 64px; top: 92px; bottom: -20px; border-radius: 16px; background: var(--paper); box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+      #sanji-tr-slide-up-plate .shot .win .bar { position: absolute; left: 26px; top: 26px; width: 200px; height: 22px; border-radius: 11px; background: rgba(28,28,30,0.14); }
+      #sanji-tr-slide-up-plate .shot .win .pill { position: absolute; right: 120px; top: 18px; width: 110px; height: 40px; border-radius: 20px; background: color-mix(in srgb, var(--cobalt) 70%, var(--paper)); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-slide-up-plate" data-composition-id="sanji-tr-slide-up-plate" data-start="0" data-width="1920" data-height="1080">
+      <!-- scene A: STAND-IN talking-head footage. Replace with the real clip at assembly. -->
+      <div class="sceneA">
+        <i class="fr" style="left:250px;top:60px;width:230px;height:170px;background:#7A7066"></i>
+        <i class="fr" style="left:560px;top:40px;width:120px;height:150px;background:#9A4A30"></i>
+        <i class="fr" style="left:1380px;top:50px;width:170px;height:220px;background:#2E4A86"></i>
+        <i class="fr" style="left:1600px;top:70px;width:220px;height:200px;background:#6E655C"></i>
+        <i style="left:460px;top:330px;width:330px;height:180px;border-radius:12px;background:linear-gradient(135deg,#6FA6DE,#2E5FB6);filter:blur(8px)"></i>
+        <i style="left:1140px;top:330px;width:330px;height:180px;border-radius:12px;background:linear-gradient(135deg,#2E5FB6,#8DBCEB);filter:blur(8px)"></i>
+        <i style="left:0;top:800px;width:1920px;height:280px;background:linear-gradient(180deg,#CFCBC5,#A9A59F)"></i>
+        <i style="left:700px;top:430px;width:520px;height:560px;border-radius:46% 46% 8% 8%;background:linear-gradient(180deg,#D9CBB0,#B9A884);filter:blur(2px)"></i>
+        <i style="left:868px;top:445px;width:184px;height:100px;border-radius:0 0 50% 50%;background:#EDEAE4"></i>
+        <i style="left:870px;top:190px;width:180px;height:236px;border-radius:46%;background:linear-gradient(180deg,#CF9C7B,#B48262);filter:blur(1px)"></i>
+        <i style="left:852px;top:150px;width:216px;height:160px;border-radius:50% 50% 38% 38%;background:#33251C;filter:blur(3px)"></i>
+        <i style="left:240px;top:640px;width:560px;height:330px;border-radius:18px;background:linear-gradient(160deg,#E6E6E8,#BDBDC2)"></i>
+      </div>
+
+      <div class="ground">
+        <svg width="1920" height="1160" viewBox="0 0 1920 1160">
+          <defs><pattern id="sjSq" width="129" height="129" patternUnits="userSpaceOnUse" x="-3" y="-12">
+            <rect x="6" y="6" width="117" height="117" rx="20" fill="#FFFFFF" fill-opacity="0.075" stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1.5"/>
+          </pattern></defs>
+          <rect width="1920" height="1160" fill="url(#sjSq)"/>
+        </svg>
+      </div>
+
+      <div class="plate">
+        <!-- STAND-IN screenshot content -->
+        <div class="nav">
+          <div class="dots"><b></b><b></b><b></b></div>
+          <div class="links"><span>Product</span><span>How it works</span><span>Company</span><span>Early access</span></div>
+          <div class="btn"><span data-slot="label">Join the waitlist</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        </div>
+        <div class="body">
+          <div class="back">&larr; Back to home</div>
+          <div class="meta"><span class="chip">COMPANY NEWS</span><span>Launch notes</span><span>4 min read</span></div>
+          <div class="h1">We built a faster way to<br>ship launch videos</div>
+          <div class="ln" style="width:900px;margin-top:34px"></div>
+          <div class="ln" style="width:640px"></div>
+        </div>
+        <div class="shot"><div class="win"><div class="bar"></div><div class="pill"></div></div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+        const ID = "sanji-tr-slide-up-plate";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+
+        const tl = gsap.timeline({ paused: true });
+        const T = 0.7;          /* transition point */
+        const HOLD = 2.4;
+
+        /* scene A: slow push while the speaker talks */
+        tl.fromTo($(".sceneA"), { scale: 1 }, { scale: 1.03, duration: T + 0.3, ease: "sine.inOut" }, 0);
+
+        /* ground rises from the bottom edge, top edge leading, vertical smear */
+        tl.fromTo($(".ground"), { y: 1160, scaleY: 1.08, filter: "blur(10px)" },
+          { y: 0, scaleY: 1, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, T);
+
+        /* plate rides up a frame behind, lands with expo.out */
+        tl.fromTo($(".plate"), { y: 1180, scaleY: 1.08, filter: "blur(10px)" },
+          { y: 0, scaleY: 1, filter: "blur(0px)", duration: 0.34, ease: "expo.out" }, T + 0.04)
+          .set($(".sceneA"), { autoAlpha: 0 }, T + 0.4);
+
+        /* hold: keeps drifting up + scaling a hair */
+        tl.fromTo($(".plate"), { yPercent: 0, scale: 1 }, { yPercent: -20 / 8.66, scale: 1.02, duration: HOLD, ease: "sine.out" }, T + 0.38)
+          .fromTo($(".ground"), { yPercent: 0 }, { yPercent: -6 / 11.6, duration: HOLD, ease: "sine.out" }, T + 0.38);
+        tl.set({}, {}, T + 0.38 + HOLD);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

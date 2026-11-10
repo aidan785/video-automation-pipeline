@@ -1,0 +1,66 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · NETFLIX DOC · transition (tier1, 120 f @ 24 fps)
+  The Chef's Table card transition (raw-media/hp-sampler-refs/netflix-doc/ANALYSIS.md, cut rhythm:
+  "two 3-frame dips to white" f153-156 / f259-262 and "1-frame cuts white card to black, each followed by a
+  48-frame near-linear fade up from black" f210 / f311; picks chefs-table_card_jiro_full, chefs-table_footage_bug).
+  Shot A F1-36. F37-39 3-f dip to the cream card (luma ramp as opacity .34/.58/.77), full on F40.
+  F40-45 the empty card holds 6 f (the reference's empty frames). F46 hard cut to black; F46-93 shot B
+  fades up from black over 48 f, linear. F94-120 shot B. No slide, whip or blur.
+  2.0:1 letterbox throughout.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;}
+      #hp2-netflix-doc-transition{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:#000;--cream:#FFF0E6;}
+      #hp2-netflix-doc-transition .layer{position:absolute;inset:0;opacity:0;}
+      #hp2-netflix-doc-transition .layer video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+      #hp2-netflix-doc-transition .card{background:var(--cream);}
+      #hp2-netflix-doc-transition .vig{position:absolute;inset:0;background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(44,11,22,0) 55%, rgba(44,11,22,.065) 100%);}
+      #hp2-netflix-doc-transition .lb{position:absolute;left:0;width:1920px;height:60px;background:#000;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-netflix-doc-transition" data-composition-id="hp2-netflix-doc-transition" data-start="0" data-width="1920" data-height="1080">
+      <div class="layer a" data-slot="media">
+        <video src="../../assets/footage/groom_6132700.mp4" poster="../../assets/footage/groom_6132700.jpg" muted playsinline preload="auto" data-start="0" data-duration="1.6667" data-track-index="0"></video>
+      </div>
+      <div class="layer card"><div class="vig"></div></div>
+      <div class="layer b" data-slot="media-2">
+        <video src="../../assets/footage/groom2_6131038.mp4" poster="../../assets/footage/groom2_6131038.jpg" muted playsinline preload="auto" data-start="1.875" data-duration="3.125" data-track-index="1"></video>
+      </div>
+      <div class="lb" style="top:0"></div><div class="lb" style="top:1020px"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-netflix-doc-transition", FPS = 24, N = 120;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const DIP = [0.34, 0.58, 0.77, 1];
+
+      tl.set($(".layer"), { opacity: 0 }, 0);
+      const a = $1(".a"), card = $1(".card"), b = $1(".b");
+      at(1, a, { opacity: 1 });                                     // F1-36 shot A
+      DIP.forEach((o, i) => at(37 + i, card, { opacity: o }));       // F37-40 dip to cream
+      at(40, a, { opacity: 0 });                                    // F40-45 empty card
+      at(46, card, { opacity: 0 });                                 // F46 hard cut to black
+      for (let i = 0; i < 48; i++) at(46 + i, b, { opacity: i / 47 }); // F46-93 48-f linear fade up
+      // F94-120 shot B
+
+      tl.set({}, {}, N / FPS);
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

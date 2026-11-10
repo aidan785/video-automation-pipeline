@@ -1,0 +1,107 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · caption · PUNCHLINE
+  Colin and Samir's per-word punchline caption: one centered line low in frame, Bricolage 800 cream,
+  each word lands on its spoken word (opacity .4 to 1, y 8 to 0, 0.12 s), the one stressed word in gold.
+  A tight deep scrim strip (feathered ends, sized to the line) keeps it legible over bright footage.
+  Punchlines only, maybe once every 20 to 30 s. Orange: none. Gold: the <em> word.
+  From Colin and Samir move 5 + Fit (references/analysis/colin-samir.md).
+  Word timing: pre-split `.w[data-at]` spans win; else the slot's data-word-at="t1 t2 ..." (one per
+  word, seconds from beat start); else an even stagger from the slot's data-at (default .15 s).
+  Exit: the line clears in 0.15 s (0.25 s before DUR), or the next caption / a cut replaces it.
+  Slots: line (richtext, ~42 chars, one line, one <em> = gold).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-caption-punchline{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t2-caption-punchline .cap{position:absolute;left:0;right:0;bottom:104px;text-align:center;}
+      #hp-t2-caption-punchline .strip{display:inline-block;padding:14px 92px 20px;background:rgba(44,11,22,.7);
+        -webkit-mask-image:linear-gradient(90deg,transparent 0,black 72px,black calc(100% - 72px),transparent 100%);
+                mask-image:linear-gradient(90deg,transparent 0,black 72px,black calc(100% - 72px),transparent 100%);}
+      #hp-t2-caption-punchline .line{display:block;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:64px;line-height:1.04;letter-spacing:var(--track-display);color:var(--hp-cream);white-space:nowrap;}
+      #hp-t2-caption-punchline .w{display:inline-block;}
+      #hp-t2-caption-punchline em{font-style:normal;color:var(--hp-gold);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-caption-punchline" data-composition-id="hp-t2-caption-punchline" data-start="0" data-width="1920" data-height="1080">
+      <div class="cap">
+        <div class="strip">
+          <span class="line" data-slot="line" data-word-at="0.15 0.3 0.42 0.56 0.86 1.08 1.2 1.36 1.5">It wrote a <em>nicer</em> apology than I ever could</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-caption-punchline";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 3.2;
+      const OUT = DUR - .25;
+      const tl = gsap.timeline({ paused: true });
+
+      // split a slot into word spans; an <em> stays one span (the gold unit)
+      function splitWords(slot, start, step) {
+        let words;
+        const pre = slot.querySelectorAll(".w");
+        if (pre.length) words = [...pre];
+        else {
+          words = [];
+          const nodes = [...slot.childNodes];
+          slot.textContent = "";
+          nodes.forEach((n) => {
+            if (n.nodeType === 3) {
+              n.textContent.split(/(\s+)/).forEach((p) => {
+                if (!p) return;
+                if (/^\s+$/.test(p)) { slot.appendChild(document.createTextNode(" ")); return; }
+                const s = document.createElement("span"); s.className = "w"; s.textContent = p; slot.appendChild(s); words.push(s);
+              });
+            } else if (n.nodeType === 1) {
+              const s = document.createElement("span"); s.className = "w"; s.appendChild(n); slot.appendChild(s); words.push(s);
+            }
+          });
+        }
+        const list = (slot.getAttribute("data-word-at") || "").trim().split(/[\s,]+/).filter(Boolean).map(Number);
+        const base = parseFloat(slot.getAttribute("data-at"));
+        const t0 = isFinite(base) ? base : start;
+        return words.map((el, i) => {
+          const own = parseFloat(el.getAttribute("data-at"));
+          const at = isFinite(own) ? own : (isFinite(list[i]) ? list[i] : t0 + i * step);
+          return { el, at, gold: !!(el.tagName === "EM" || el.querySelector("em")) };
+        });
+      }
+
+      const words = splitWords($1(".line"), .15, .14);
+      const first = words.length ? words[0].at : .15;
+
+      // the strip is already at its final width; it comes up just before the first word
+      tl.fromTo($1(".strip"), { autoAlpha: 0 }, { autoAlpha: 1, duration: .14, ease: "power1.out" }, Math.max(0, first - .08));
+      words.forEach((w) => {
+        tl.fromTo(w.el, { autoAlpha: 0 }, { autoAlpha: .4, duration: .001, ease: "none" }, w.at);
+        tl.to(w.el, { autoAlpha: 1, duration: .12, ease: POP }, w.at + .001);
+        tl.fromTo(w.el, { y: 8 }, { y: 0, duration: .12, ease: POP }, w.at);
+      });
+
+      // exit: the line clears
+      tl.to($1(".strip"), { autoAlpha: 0, duration: .15, ease: "power1.in" }, OUT);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+    </script>
+  </body>
+</html>

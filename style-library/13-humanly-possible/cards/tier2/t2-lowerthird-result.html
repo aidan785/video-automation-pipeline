@@ -1,0 +1,115 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · lower-third · RESULT
+  Result-first lower third (the Ramsey "Paid off $160,000 in 7 years" super): the name sits small on
+  top as a tracked caps kicker behind a short orange dash, and the result line builds word by word on
+  the spoken words, ending on the gold number. Flat oxblood plate, 10 px radius, 1 px hairline, flat
+  deep offset so it sits on footage. Orange: the dash. Gold: the <em> number at the end of the result.
+  From the October 15 research, "proof forward" (Ramsey result supers).
+  Word timing: pre-split spans `.w[data-at]` in the result slot win; else the slot's
+  data-word-at="t1 t2 ..." (one time per word, seconds from beat start); else an even stagger
+  starting at the slot's data-at (default .55 s).
+  Exit: animated mirror (0.4 s before DUR), or cut away.
+  Slots: name (text, ~30 chars, shown in caps), result (richtext, ~34 chars, one <em> = the gold number, put it last).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-lower-third-result{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t2-lower-third-result .lt{position:absolute;left:var(--margin);bottom:112px;}
+      #hp-t2-lower-third-result .plate{display:inline-block;background:var(--hp-oxblood);border:1px solid var(--hp-hairline);border-radius:var(--radius);
+        padding:22px 38px 28px 34px;box-shadow:0 8px 0 var(--hp-deep);transform-origin:0% 100%;}
+      #hp-t2-lower-third-result .kicker{display:flex;align-items:center;gap:14px;}
+      #hp-t2-lower-third-result .dash{display:block;width:30px;height:6px;border-radius:3px;background:var(--hp-orange);transform-origin:0 50%;flex:none;}
+      #hp-t2-lower-third-result .name{display:block;font-family:var(--font-body);font-weight:600;font-size:20px;line-height:1;letter-spacing:.16em;
+        text-transform:uppercase;color:var(--hp-cream-muted);white-space:nowrap;}
+      #hp-t2-lower-third-result .result{display:block;margin-top:16px;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:60px;line-height:1.02;letter-spacing:var(--track-display);color:var(--hp-cream);white-space:nowrap;}
+      #hp-t2-lower-third-result .result .w{display:inline-block;transform-origin:50% 80%;}
+      #hp-t2-lower-third-result .result em{font-style:normal;color:var(--hp-gold);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-lower-third-result" data-composition-id="hp-t2-lower-third-result" data-start="0" data-width="1920" data-height="1080">
+      <div class="lt">
+        <div class="plate">
+          <div class="kicker"><i class="dash"></i><span class="name" data-slot="name">Priya Shah, bookkeeper</span></div>
+          <span class="result" data-slot="result" data-word-at="0.55 0.72 0.9 1.08 1.26 1.62">Cut her month-end close to <em>2 days</em></span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-lower-third-result";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 5;
+      const OUT = DUR - .4;
+      const tl = gsap.timeline({ paused: true });
+
+      // split a slot into word spans; an <em> stays one span (the gold unit)
+      function splitWords(slot, start, step) {
+        let words;
+        const pre = slot.querySelectorAll(".w");
+        if (pre.length) words = [...pre];
+        else {
+          words = [];
+          const nodes = [...slot.childNodes];
+          slot.textContent = "";
+          nodes.forEach((n) => {
+            if (n.nodeType === 3) {
+              n.textContent.split(/(\s+)/).forEach((p) => {
+                if (!p) return;
+                if (/^\s+$/.test(p)) { slot.appendChild(document.createTextNode(" ")); return; }
+                const s = document.createElement("span"); s.className = "w"; s.textContent = p; slot.appendChild(s); words.push(s);
+              });
+            } else if (n.nodeType === 1) {
+              const s = document.createElement("span"); s.className = "w"; s.appendChild(n); slot.appendChild(s); words.push(s);
+            }
+          });
+        }
+        const list = (slot.getAttribute("data-word-at") || "").trim().split(/[\s,]+/).filter(Boolean).map(Number);
+        const base = parseFloat(slot.getAttribute("data-at"));
+        const t0 = isFinite(base) ? base : start;
+        return words.map((el, i) => {
+          const own = parseFloat(el.getAttribute("data-at"));
+          const at = isFinite(own) ? own : (isFinite(list[i]) ? list[i] : t0 + i * step);
+          return { el, at, gold: !!(el.tagName === "EM" || el.querySelector("em")) };
+        });
+      }
+
+      const words = splitWords($1(".result"), .55, .16);
+
+      // plate pops, then the kicker (dash + name)
+      tl.fromTo($1(".plate"), { autoAlpha: 0, scale: .96, y: 10 }, { autoAlpha: 1, scale: 1, y: 0, duration: .3, ease: POP }, .05);
+      tl.fromTo($1(".dash"), { scaleX: 0 }, { scaleX: 1, duration: .24, ease: POP }, .2);
+      tl.fromTo($1(".name"), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: .26, ease: POP }, .24);
+      // the result builds on the spoken words; the gold number lands with a bigger pop
+      words.forEach((w) => {
+        if (w.gold) tl.fromTo(w.el, { autoAlpha: 0, scale: 1.15, y: 0 }, { autoAlpha: 1, scale: 1, duration: .22, ease: POP }, w.at);
+        else tl.fromTo(w.el, { autoAlpha: 0, scale: .92, y: 8 }, { autoAlpha: 1, scale: 1, y: 0, duration: .18, ease: POP }, w.at);
+      });
+
+      // exit: mirror (type out, dash retracts, plate pops out)
+      tl.to([$1(".result"), $1(".name")], { autoAlpha: 0, y: 6, duration: .16, ease: "power2.in", stagger: .03 }, OUT);
+      tl.to($1(".dash"), { scaleX: 0, duration: .14, ease: "power2.in" }, OUT + .04);
+      tl.to($1(".plate"), { autoAlpha: 0, scale: .96, y: 8, duration: .2, ease: "power2.in" }, OUT + .14);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+    </script>
+  </body>
+</html>

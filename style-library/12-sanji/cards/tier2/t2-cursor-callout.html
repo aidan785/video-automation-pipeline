@@ -1,0 +1,247 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · CURSOR CALLOUT
+  A white pointer glides in from the lower-right edge along an eased arc
+  (x and y on different eases, with a breath of motion blur), lands on a target
+  in the right third and CLICKS: a press dip, two white ripple rings and a node
+  dot that stays (the same dot + halo used on the glass connectors). A dark
+  liquid-glass tooltip pops out of the click point (scale from its arrow nub,
+  blur resolve) with a bold title and a softer second line. The cursor then
+  drifts away and dissolves while the tooltip holds; tooltip + dot exit.
+  Slots: title (<=26), body (<=34).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-cursor-callout {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-body); color: var(--white);
+        --cx: 1500px; --cy: 650px;   /* click point */
+      }
+      #sanji-t2-cursor-callout .tip {
+        position: absolute; left: var(--cx); top: var(--cy); width: 0; height: 0;
+      }
+      #sanji-t2-cursor-callout .tt {
+        position: absolute; left: -250px; bottom: 34px; width: 500px; box-sizing: border-box;
+        padding: 26px 32px 28px; border-radius: 30px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.02) 60%), rgba(22,22,32,0.54);
+        border: 1px solid rgba(255,255,255,0.28);
+        box-shadow: 0 22px 60px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.22);
+        -webkit-backdrop-filter: blur(20px) saturate(1.25); backdrop-filter: blur(20px) saturate(1.25);
+        transform-origin: 50% calc(100% + 22px);
+      }
+      #sanji-t2-cursor-callout .nubw { position: absolute; left: 50%; bottom: -15px; width: 36px; height: 15px; margin-left: -18px; overflow: hidden; }
+      #sanji-t2-cursor-callout .nub {
+        position: absolute; left: 50%; top: -14px; width: 26px; height: 26px; margin-left: -13px;
+        transform: rotate(45deg); border-radius: 0 0 6px 0;
+        background: rgba(28,28,38,0.80);
+        border-right: 1px solid rgba(255,255,255,0.28); border-bottom: 1px solid rgba(255,255,255,0.28);
+      }
+      #sanji-t2-cursor-callout .t1 { font-weight: var(--wt-bold); font-size: 34px; letter-spacing: var(--track-ui); line-height: 1.15; }
+      #sanji-t2-cursor-callout .t2 { margin-top: 6px; font-weight: 500; font-size: 27px; letter-spacing: var(--track-ui); line-height: 1.25; color: rgba(255,255,255,0.78); }
+      #sanji-t2-cursor-callout .dot { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--white); box-shadow: 0 0 0 9px rgba(255,255,255,0.18), 0 0 24px rgba(255,255,255,0.55); }
+      #sanji-t2-cursor-callout .rip { position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.9); box-sizing: border-box; opacity: 0; }
+      #sanji-t2-cursor-callout .cur { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 5; }
+      #sanji-t2-cursor-callout .cur svg { position: absolute; left: -6px; top: -4px; display: block; overflow: visible; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35)); transform-origin: 6px 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-cursor-callout" data-composition-id="sanji-t2-cursor-callout" data-start="0" data-width="1920" data-height="1080">
+      <div class="tip">
+        <div class="rip r1"></div><div class="rip r2"></div>
+        <div class="dot"></div>
+        <div class="tt">
+          <div class="t1" data-slot="title">Click export once</div>
+          <div class="t2" data-slot="body">The whole edit renders locally</div>
+          <div class="nubw"><div class="nub"></div></div>
+        </div>
+      </div>
+      <div class="cur"><svg width="52" height="66" viewBox="0 0 23 29"><path d="M3 2v21.5l5.6-5.2 3.7 8.3 3.6-1.6-3.6-8.1h7.5z" fill="#FFFFFF" stroke="#16161E" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-cursor-callout";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const cs = getComputedStyle(ROOT);
+        const CX = parseFloat(cs.getPropertyValue("--cx")), CY = parseFloat(cs.getPropertyValue("--cy"));
+        const cur = $(".cur"), csvg = $(".cur svg"), tt = $(".tt"), dot = $(".dot");
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set(cur, { x: 1930, y: 1010, autoAlpha: 0 }, 0).set([tt, dot], { autoAlpha: 0 }, 0);
+
+        /* glide in on an arc: x and y use different eases */
+        const G0 = 0.15, GD = 1.0;
+        tl.to(cur, { autoAlpha: 1, duration: 0.2, ease: "power1.out" }, G0)
+          .to(cur, { x: CX, duration: GD, ease: "power3.inOut" }, G0)
+          .to(cur, { y: CY, duration: GD, ease: "power2.out" }, G0)
+          .fromTo(csvg, { filter: "blur(0px)" }, { filter: "blur(1.6px)", duration: GD * 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, G0);
+
+        /* click: press dip, ripples, node dot */
+        const C = G0 + GD + 0.12;
+        tl.to(csvg, { scale: 0.82, duration: 0.08, ease: "power2.in" }, C)
+          .to(csvg, { scale: 1, duration: 0.26, ease: "back.out(1.3)" }, C + 0.08)
+          .fromTo($(".r1"), { opacity: 0.95, scale: 0.2 }, { opacity: 0, scale: 1.5, duration: 0.7, ease: "expo.out", immediateRender: false }, C + 0.04)
+          .fromTo($(".r2"), { opacity: 0.6, scale: 0.2 }, { opacity: 0, scale: 2.3, duration: 0.9, ease: "expo.out", immediateRender: false }, C + 0.14)
+          .fromTo(dot, { autoAlpha: 0, scale: 0 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)", immediateRender: false }, C + 0.04);
+
+        /* tooltip pops out of the click point */
+        const P = C + 0.14;
+        tl.fromTo(tt, { autoAlpha: 0, scale: 0.55, y: 20, filter: "blur(12px)" },
+                      { autoAlpha: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.46, ease: "back.out(1.25)" }, P)
+          .set(tt, { filter: "none" }, P + 0.47);
+        TXT.reveal(tl, $(".t1"), P + 0.14);
+        TXT.reveal(tl, $(".t2"), P + 0.24, { stagger: 0.03 });
+
+        /* cursor drifts away and dissolves */
+        const D = P + 0.85;
+        tl.to(cur, { x: CX + 170, y: CY + 150, duration: 0.9, ease: "power2.inOut" }, D)
+          .to(cur, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, D + 0.5)
+          .to(csvg, { filter: "blur(4px)", duration: 0.4, ease: "power1.in" }, D + 0.5);
+
+        /* tooltip floats a hair during the hold */
+        tl.to(tt, { y: -5, duration: 1.0, ease: "sine.inOut", yoyo: true, repeat: 1 }, P + 0.6);
+
+        /* exit */
+        const OUT = P + 2.9;
+        tl.to(tt, { autoAlpha: 0, y: -12, filter: "blur(10px)", duration: 0.36, ease: "power2.in" }, OUT)
+          .to(dot, { autoAlpha: 0, scale: 0.4, duration: 0.3, ease: "power2.in" }, OUT + 0.05)
+          .set({}, {}, OUT + 0.45);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

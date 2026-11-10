@@ -1,0 +1,306 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · compare · BEFORE / AFTER
+  PAPER canvas. A rounded plate slides up (plate slide-up grammar) holding the
+  SAME layout twice: BEFORE is a rough grey wireframe (dashed boxes, grey bars,
+  mono TODO notes) on off-white; AFTER is the polished version on cobalt with
+  liquid-glass panels, a stat and a drawn chart line. A divider with a glass
+  handle wipes left to right revealing AFTER, pausing at the midpoint so both
+  states read side by side, then finishing the sweep. BEFORE / AFTER pills sit
+  in the top corners; the caption resolves word by word under the plate.
+  Slots: beforeLabel, afterLabel (caps <= 10), caption (<= 44).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-before-after {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--paper); font-family: var(--font-body); color: var(--ink);
+      }
+      #sanji-t1-before-after .plate {
+        position: absolute; left: 340px; top: 120px; width: 1240px; height: 700px; border-radius: var(--r-plate); overflow: hidden;
+        box-shadow: 0 40px 90px rgba(28,28,30,0.16), 0 0 0 1px rgba(28,28,30,0.06);
+        transform-origin: 50% 60%;
+      }
+      #sanji-t1-before-after .lay { position: absolute; inset: 0; }
+      #sanji-t1-before-after .bef { background: var(--paper-2); }
+      #sanji-t1-before-after .aft { background: var(--cobalt); clip-path: inset(0px 1240px 0px 0px); }
+      #sanji-t1-before-after .aft .ring {
+        position: absolute; left: 50%; top: 50%; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.07); background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.04) 100%);
+      }
+      #sanji-t1-before-after .aft .ring.r2 { transform: scale(0.66); }
+      /* shared geometry */
+      #sanji-t1-before-after .bx { position: absolute; box-sizing: border-box; }
+      #sanji-t1-before-after .main { left: 70px; top: 130px; width: 640px; height: 500px; border-radius: 44px; }
+      #sanji-t1-before-after .s { left: 760px; width: 410px; height: 150px; border-radius: 36px; }
+      /* BEFORE: wireframe */
+      #sanji-t1-before-after .bef .bx { border: 2.5px dashed var(--ink-pre); }
+      #sanji-t1-before-after .bef .bar { position: absolute; height: 22px; border-radius: 11px; background: var(--ink-pre); opacity: 0.7; }
+      #sanji-t1-before-after .bef .dot { position: absolute; border-radius: 50%; border: 2.5px dashed var(--ink-pre); box-sizing: border-box; }
+      #sanji-t1-before-after .bef .note { position: absolute; font-family: var(--font-mono); font-size: 20px; color: var(--ink-mid); opacity: 0.8; }
+      #sanji-t1-before-after .bef .xbox { position: absolute; }
+      /* AFTER: glass */
+      #sanji-t1-before-after .aft .bx { overflow: hidden; }
+      #sanji-t1-before-after .aft .bx > .fill { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-before-after .aft .main > .fill { background: var(--glass-fill-active); border-color: var(--glass-rim-active); box-shadow: var(--glass-shadow-active); }
+      #sanji-t1-before-after .aft .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box; background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-before-after .aft .w { position: absolute; color: var(--white); }
+      #sanji-t1-before-after .aft .k { font-weight: var(--wt-ui); font-size: 30px; letter-spacing: var(--track-ui); color: var(--white-soft); }
+      #sanji-t1-before-after .aft .big { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 128px; letter-spacing: var(--track-caps); line-height: 0.9; text-shadow: 0 0 40px rgba(170,190,255,0.4); }
+      #sanji-t1-before-after .aft .hdr { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 44px; letter-spacing: var(--track-caps); text-transform: uppercase; line-height: 1; }
+      #sanji-t1-before-after .aft .v { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 52px; letter-spacing: var(--track-tight); }
+      /* pills */
+      #sanji-t1-before-after .pill {
+        position: absolute; top: -84px; height: 60px; padding: 0 28px; white-space: nowrap; border-radius: var(--r-pill); display: flex; align-items: center;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 28px; letter-spacing: 0.01em; text-transform: uppercase; box-sizing: border-box;
+      }
+      #sanji-t1-before-after .pill.pb { left: 18px; background: var(--paper-2); color: var(--ink-mid); border: 1.5px solid rgba(28,28,30,0.10); }
+      #sanji-t1-before-after .pill.pa { right: 18px; background: var(--cobalt); color: var(--white); box-shadow: 0 10px 26px rgba(32,66,238,0.35); }
+      #sanji-t1-before-after .div .stem { position: absolute; left: -1px; top: -24px; width: 2px; height: 24px; background: var(--ink-pre); }
+      /* divider */
+      #sanji-t1-before-after .div { position: absolute; left: 340px; top: 120px; width: 0; height: 700px; }
+      #sanji-t1-before-after .div .ln { position: absolute; left: -2px; top: 0; width: 4px; height: 100%; background: var(--white); box-shadow: 0 0 0 1px rgba(28,28,30,0.06), 0 0 24px rgba(10,20,120,0.35); }
+      #sanji-t1-before-after .div .hd {
+        position: absolute; left: -42px; top: 308px; width: 84px; height: 84px; border-radius: 50%; box-sizing: border-box;
+        background: linear-gradient(150deg, rgba(255,255,255,0.98), rgba(236,238,248,0.94)); border: 1.5px solid rgba(255,255,255,1);
+        box-shadow: 0 12px 34px rgba(10,20,120,0.35), inset 0 -6px 14px rgba(32,66,238,0.12);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-before-after .cap {
+        position: absolute; left: 0; right: 0; top: 880px; text-align: center; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 60px; letter-spacing: var(--track-tight); color: var(--ink);
+      }
+      #sanji-t1-before-after .cap .wd { display: inline-block; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-before-after" data-composition-id="sanji-t1-before-after" data-start="0" data-width="1920" data-height="1080">
+      <div class="plate">
+        <!-- BEFORE: wireframe draft -->
+        <div class="lay bef">
+          <div class="bar b" style="left:70px;top:56px;width:300px;height:36px;border-radius:12px"></div>
+          <div class="note b" style="left:390px;top:62px">h1 here?</div>
+          <div class="bx main b">
+            <div class="dot" style="left:44px;top:44px;width:96px;height:96px"></div>
+            <div class="bar" style="left:168px;top:76px;width:230px"></div>
+            <div class="bar" style="left:44px;top:190px;width:300px;height:96px;border-radius:20px"></div>
+            <div class="note" style="left:360px;top:224px">big number</div>
+            <svg class="xbox" style="left:44px;top:320px" width="550" height="140" viewBox="0 0 550 140" fill="none" stroke="var(--ink-pre)" stroke-width="2.5" stroke-dasharray="8 8"><rect x="1" y="1" width="548" height="138" rx="18"/><path d="M1 1L549 139M549 1L1 139"/></svg>
+          </div>
+          <div class="bx s b" style="top:130px"><div class="bar" style="left:36px;top:40px;width:160px"></div><div class="bar" style="left:36px;top:84px;width:240px;height:30px"></div></div>
+          <div class="bx s b" style="top:305px"><div class="bar" style="left:36px;top:40px;width:200px"></div><div class="bar" style="left:36px;top:84px;width:180px;height:30px"></div></div>
+          <div class="bx s b" style="top:480px"><div class="bar" style="left:36px;top:40px;width:120px"></div><div class="bar" style="left:36px;top:84px;width:220px;height:30px"></div><div class="note" style="left:290px;top:50px">TODO</div></div>
+        </div>
+        <!-- AFTER: polished -->
+        <div class="lay aft">
+          <div class="ring"></div><div class="ring r2"></div>
+          <div class="w hdr" style="left:70px;top:58px">Weekly report</div>
+          <div class="bx main"><div class="fill"></div>
+            <div class="badge" style="left:44px;top:44px;width:96px;height:96px"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/></svg></div>
+            <div class="w k" style="left:168px;top:70px">Watch time</div>
+            <div class="w big" style="left:40px;top:186px">+38%</div>
+            <svg class="w chart" style="left:44px;top:320px" width="550" height="140" viewBox="0 0 550 140" fill="none">
+              <path d="M0 139H550" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+              <path class="cl" pathLength="1" d="M4 118 C 70 112, 100 92, 150 96 S 240 70, 290 74 S 380 40, 430 44 S 510 14, 546 10" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="546" cy="10" r="9" fill="#FFFFFF"/><circle cx="546" cy="10" r="20" fill="#FFFFFF" opacity="0.2"/>
+            </svg>
+          </div>
+          <div class="bx s" style="top:130px"><div class="fill"></div><div class="w k" style="left:36px;top:30px">Views</div><div class="w v" style="left:36px;top:70px">12.4K</div></div>
+          <div class="bx s" style="top:305px"><div class="fill"></div><div class="w k" style="left:36px;top:30px">Avg view</div><div class="w v" style="left:36px;top:70px">4:12</div></div>
+          <div class="bx s" style="top:480px"><div class="fill"></div><div class="w k" style="left:36px;top:30px">Click rate</div><div class="w v" style="left:36px;top:70px">6.1%</div></div>
+        </div>
+      </div>
+      <div class="div"><div class="stem"></div><div class="pill pb" data-slot="beforeLabel">Before</div><div class="pill pa" data-slot="afterLabel">After</div><div class="ln"></div><div class="hd">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--cobalt)"><path d="M9 6l-5 6 5 6M15 6l5 6-5 6"/></svg></div></div>
+      <div class="cap" data-slot="caption">Same layout, one styling pass</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-before-after";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const INK = css.getPropertyValue("--ink").trim(), PRE = css.getPropertyValue("--ink-pre").trim();
+        const W = 1240, PX = 340;
+
+        const tl = gsap.timeline({ paused: true });
+        const WIPE = 1.75, END = 6.6;
+
+        /* plate slide-up with vertical smear, then slow drift over the hold */
+        tl.fromTo($(".plate"), { autoAlpha: 0, y: 260, scaleY: 1.08, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, scaleY: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.1)
+          .to($(".plate"), { y: -14, scale: 1.015, duration: END - 0.6, ease: "sine.inOut" }, 0.6)
+          .to($(".div"), { y: -14, duration: END - 0.6, ease: "sine.inOut" }, 0.6);
+
+        /* BEFORE wireframe resolves */
+        TXT.block(tl, $$(".bef .b"), 0.45, { stagger: 0.06, blur: 6 });
+
+        /* divider + wipe: proxy drives clip-path and divider x together */
+        const P = { p: 0 };
+        const apply = () => {
+          $(".aft").style.clipPath = `inset(0px ${(1 - P.p) * W}px 0px 0px)`;
+          gsap.set($(".div"), { x: P.p * W });
+          const cl = (v) => Math.max(0, Math.min(1, v));
+          $(".pill.pa").style.opacity = cl((P.p - 0.1) / 0.12);
+          $(".pill.pb").style.opacity = cl((0.9 - P.p) / 0.12);
+        };
+        tl.set($(".div"), { autoAlpha: 0, x: 0 }, 0)
+          .call(apply, null, 0)
+          .fromTo($(".div"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25, ease: "power2.out" }, 0.9)
+          .fromTo([$(".div .ln"), $(".div .stem")], { scaleY: 0, transformOrigin: "50% 0%" }, { scaleY: 1, duration: 0.45, ease: "expo.out" }, 0.9)
+          .fromTo($(".div .hd"), { scale: 0.6, filter: "blur(8px)" }, { scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.3)" }, 1.05)
+          .fromTo($(".pill.pb"), { y: 10, filter: "blur(8px)" }, { y: 0, filter: "blur(0px)", duration: 0.36, ease: "expo.out" }, 1.1)
+          .fromTo(P, { p: 0 }, { p: 0.5, duration: 0.85, ease: "power3.inOut", onUpdate: apply }, WIPE)
+          .fromTo(P, { p: 0.5 }, { p: 1, duration: 0.85, ease: "power3.inOut", onUpdate: apply, immediateRender: false }, WIPE + 1.45)
+          .to([$(".div .ln"), $(".div .hd"), $(".div .stem")], { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, WIPE + 2.35);
+
+        /* AFTER details come alive as they are revealed */
+        tl.set($$(".aft .cl"), { strokeDasharray: 1, strokeDashoffset: 1 }, 0)
+          .to($(".aft .cl"), { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, WIPE + 0.3)
+          .fromTo($(".aft .big"), { textShadow: "0 0 0px rgba(170,190,255,0)" }, { textShadow: "0 0 40px rgba(170,190,255,0.4)", duration: 0.6 }, WIPE + 0.6)
+          .fromTo($(".aft .main"), { scale: 1 }, { scale: 1.02, duration: 0.6, ease: "expo.out" }, WIPE + 2.4);
+
+        /* caption resolves */
+        TXT.reveal(tl, $(".cap"), WIPE + 2.45);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

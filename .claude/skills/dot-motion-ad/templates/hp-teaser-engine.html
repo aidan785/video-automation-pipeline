@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<!--
+  HP teaser · recreation of the first 15s of the ChatGPT "Intelligence Age" ad, in HP identity
+  (oxblood dots on cream, inverting to cream on oxblood). Shot for shot on their clock; strips + measured curves in
+  ../hp-teaser-translated/_research/. Figures are rigs drawn straight onto the dot grid (no footage).
+    0.00  one dot breathes (measured curve), pops, jiggles
+    3.92  gooey splits 1 -> 2 -> 4 -> 8 (one continuous blob system, cluster keeps turning)
+    6.08  explode + assemble into two cave hunters (20px grid); the hunter carries the spear overhead, the other flails
+    8.40  the chaser falls away, the hunter plants and winds up;  9.00 throw;  spear flies right
+    9.17  SCALE-THROUGH: a giant dot meets the spear tip, sweeps in and becomes the ground (oxblood)
+    9.40  two cream stones drift in, strike on the beat (9.79), fly apart off frame, sparks settle into two embers
+   10.33  fire builds dot by dot from the embers (30px grid), flickers
+   11.71  INVERT CUT: ground back to cream; the fire's curl coils into a coin with a square hole (5f), leftovers drift off
+   11.92  the coin rocks +-15 deg;  13.33 silhouette swap to a spoked wheel, it spins up
+   14.08  the wheel fills solid (2f), becomes one dot, shrinks (ease-in);  14.50 bursts as an over-scaled grid
+   14.50  zoom out (6f) into a galloping horse and rider; a second rider enters from the left
+  Flow rules (Aidan, proof v1 "too choppy"): nothing starts from rest, moves overlap, camera always drifting,
+  180-degree shutter motion blur (8 sub-frames on blobs, streaks on moving dots), WebGL metaballs.
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      html, body { margin: 0; background: #000; }
+      #proof { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: #FFF0E6; }
+      #proof canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #proof canvas.bg, #proof canvas.gl, #proof canvas.fx { display: none; }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap">
+    <style>#proof .fontwarm { position: absolute; left: -9999px; font-family: "Bricolage Grotesque"; font-weight: 800; }</style>
+  </head>
+  <body>
+    <div data-hf-id="hf-a9u8" id="proof" data-composition-id="hp-cg-proof" data-start="0" data-duration="59" data-width="1920" data-height="1080">
+      <audio data-hf-id="hf-8dm7" id="refmusic" src="assets/teaser-audio.m4a" data-start="0" data-duration="59" data-track-index="2" data-volume="0.9"></audio>   <!-- original ad audio to f1407 (46.9s), then Ratatat "Neck Brace" continues clean, no VO (temp, uncleared) -->
+      <span data-hf-id="hf-nt3x" class="fontwarm">New stories every week.</span>
+      <audio data-hf-id="hf-jy7h" id="vo-jillian-end" src="assets/vo-jillian-l4t4-end.m4a" data-start="55.533" data-duration="2.63" data-track-index="4" data-volume="1"></audio>   <!-- Jillian, line 4 take 4 (2nd half): "and we'd love to hear where it's taking you." (f1666) -->
+      <audio data-hf-id="hf-2n98" id="vo-jillian" src="assets/vo-jillian-l1t3.m4a" data-start="47.333" data-duration="3.9" data-track-index="3" data-volume="1"></audio>   <!-- Jillian, line 1 take 3: "With AI, more is now humanly possible." (f1420) -->
+      <canvas data-hf-id="hf-ybug" class="bg"></canvas>
+      <canvas data-hf-id="hf-3yzg" class="gl"></canvas>
+      <canvas data-hf-id="hf-8nnn" class="fx"></canvas>
+      <canvas data-hf-id="hf-yf9f" class="out"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+        const W = 1920, H = 1080, END = 59, CX = 960, CY = 540, FR = 1 / 24, SHUTTER = FR * 0.5;
+        const OX = [75 / 255, 21 / 255, 38 / 255], CR = [1, 240 / 255, 230 / 255];
+        const css = (c) => `rgb(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)})`;
+        const c01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+        const seg = (t, a, d) => c01((t - a) / d);
+        const lerp = (a, b, u) => a + (b - a) * u;
+        function bz(x1, y1, x2, y2) {
+          const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+          const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+          return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x; for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) break; t -= e / d; } return sy(t); };
+        }
+        const BREATHE = bz(0.5, 0, 0.3, 1), OUT = bz(0.16, 1, 0.3, 1), IN = bz(0.7, 0, 0.84, 0), GLIDE = bz(0.45, 0, 0.55, 1), SWEEP = bz(0.6, 0, 0.1, 1);
+        const hash = (a, b, s) => { let h = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263) + Math.imul(s | 0, 1442695041)) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+        const vn = (x, y, s) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+          const a = hash(xi, yi, s), b = hash(xi + 1, yi, s), c = hash(xi, yi + 1, s), d = hash(xi + 1, yi + 1, s); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; };
+        const wob = (t, amp, period, decay) => (t < 0 ? 0 : amp * Math.exp(-t / decay) * Math.cos(6.2832 * t / period));
+        const rot = (x, y, a, ox = 0, oy = 0) => { const c = Math.cos(a), s = Math.sin(a), dx = x - ox, dy = y - oy; return [ox + dx * c - dy * s, oy + dx * s + dy * c]; };
+
+        /* ---------------- canvases + WebGL metaballs (8 sub-frame motion blur) ---------------- */
+        const $ = (s) => document.querySelector("#proof canvas." + s);
+        const bgc = $("bg"), glc = $("gl"), fxc = $("fx"), outc = $("out"), subc = document.createElement("canvas");
+        [bgc, glc, fxc, outc, subc].forEach((c) => { c.width = W; c.height = H; });
+        const bg = bgc.getContext("2d"), fx = fxc.getContext("2d"), out = outc.getContext("2d"), sub = subc.getContext("2d");
+        const gl = glc.getContext("webgl2", { premultipliedAlpha: true, preserveDrawingBuffer: true, antialias: false });
+        const NB = 48, NS = 8;
+        const FS = `#version 300 es
+precision highp float;
+uniform vec2 res; uniform vec3 B[${NB * NS}]; uniform int N[${NS}]; uniform vec3 col;
+out vec4 o;
+void main(){
+  vec2 q = vec2(gl_FragCoord.x, res.y - gl_FragCoord.y);
+  float acc = 0.;
+  for (int s = 0; s < ${NS}; s++) {
+    float f = 0.;
+    for (int i = 0; i < ${NB}; i++) { if (i >= N[s]) break; vec3 b = B[s * ${NB} + i]; vec2 d = q - b.xy; f += b.z * b.z / (dot(d, d) + 1e-3); }
+    f = min(f, 3.);
+    float w = max(fwidth(f), 1e-4);
+    acc += smoothstep(1. - w, 1. + w, f);
+  }
+  float a = acc / float(${NS});
+  o = vec4(col * a, a);
+}`;
+        const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
+        const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, `#version 300 es
+in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        const U = { res: gl.getUniformLocation(prog, "res"), B: gl.getUniformLocation(prog, "B"), N: gl.getUniformLocation(prog, "N"), col: gl.getUniformLocation(prog, "col") };
+        gl.viewport(0, 0, W, H); gl.uniform2f(U.res, W, H);
+        const BA = new Float32Array(NB * NS * 3), NA = new Int32Array(NS);
+        function drawBlobs(sub, col) {
+          gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+          if (!sub.some((s) => s.length)) return;
+          BA.fill(0);
+          sub.forEach((bl, s) => { NA[s] = Math.min(NB, bl.length); bl.slice(0, NB).forEach(([x, y, r], i) => BA.set([x, y, Math.max(0, r)], (s * NB + i) * 3)); });
+          gl.uniform3fv(U.B, BA); gl.uniform1iv(U.N, NA); gl.uniform3f(U.col, col[0], col[1], col[2]);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        }
+
+        /* ---------------- rasterizer: primitives -> cells on a strict grid ---------------- */
+        /* prims: ["s", x1,y1,x2,y2,halfWidth] segment | ["d", x,y,r] disc | ["e", x,y,rx,ry,ang] ellipse */
+        function cells(prims, P) {
+          const set = new Map();
+          const add = (i, j) => set.set(i * 100000 + j, [i * P, j * P]);
+          for (const p of prims) {
+            let x0, x1, y0, y1;
+            if (p[0] === "s") { x0 = Math.min(p[1], p[3]) - p[5]; x1 = Math.max(p[1], p[3]) + p[5]; y0 = Math.min(p[2], p[4]) - p[5]; y1 = Math.max(p[2], p[4]) + p[5]; }
+            else if (p[0] === "d") { x0 = p[1] - p[3]; x1 = p[1] + p[3]; y0 = p[2] - p[3]; y1 = p[2] + p[3]; }
+            else { const m = Math.max(p[3], p[4]); x0 = p[1] - m; x1 = p[1] + m; y0 = p[2] - m; y1 = p[2] + m; }
+            for (let i = Math.floor(x0 / P); i <= Math.ceil(x1 / P); i++) for (let j = Math.floor(y0 / P); j <= Math.ceil(y1 / P); j++) {
+              const x = i * P, y = j * P;
+              let inside = false;
+              if (p[0] === "s") { const vx = p[3] - p[1], vy = p[4] - p[2], L = vx * vx + vy * vy || 1, u = c01(((x - p[1]) * vx + (y - p[2]) * vy) / L); inside = Math.hypot(x - p[1] - u * vx, y - p[2] - u * vy) <= p[5]; }
+              else if (p[0] === "d") inside = Math.hypot(x - p[1], y - p[2]) <= p[3];
+              else { const [lx, ly] = rot(x, y, -p[5], p[1], p[2]); inside = ((lx - p[1]) / p[3]) ** 2 + ((ly - p[2]) / p[4]) ** 2 <= 1; }
+              if (inside) add(i, j);
+            }
+          }
+          return [...set.values()];
+        }
+
+        /* ================= 0 - 6.1: the dot, the splits ================= */
+        function rDot(t) {
+          if (t < 0.83) return lerp(90, 140, BREATHE(seg(t, 0.083, 0.75)));
+          if (t < 1.0) return 140;
+          if (t < 2.04) return lerp(140, 88, BREATHE(seg(t, 1.0, 0.92)));
+          return lerp(88, 142, OUT(seg(t, 2.04, 2 * FR))) + wob(t - 2.12, 7, 0.27, 0.6);
+        }
+        const d1 = (t) => 26 * IN(seg(t, 3.3, 0.62)) + 106 * BREATHE(seg(t, 3.92, 0.29)) + 210 * OUT(seg(t, 4.21, 0.21)) - 60 * BREATHE(seg(t, 4.42, 0.9));
+        const d2 = (t) => 18 * IN(seg(t, 4.55, 0.3)) + 96 * BREATHE(seg(t, 4.85, 0.22)) + 100 * OUT(seg(t, 5.07, 0.18)) - 30 * BREATHE(seg(t, 5.25, 0.7));
+        const d3 = (t) => 14 * IN(seg(t, 5.3, 0.12)) + 58 * BREATHE(seg(t, 5.42, 0.1)) + 80 * OUT(seg(t, 5.52, 0.2)) + 25 * Math.max(0, t - 5.72);
+        const spin = (t) => 0.55 * GLIDE(seg(t, 4.3, 1.9)) + 0.18 * Math.max(0, t - 6.2);
+        const k1 = (t) => lerp(1, 1.5, OUT(seg(t, 4.0, 0.5))), k2 = (t) => lerp(1, 1.05, OUT(seg(t, 4.9, 0.4))), k3 = (t) => lerp(1, 0.8, OUT(seg(t, 5.45, 0.3)));
+        function leaves(t) {
+          const r = rDot(t) / Math.SQRT2 / 2 * k1(t) * k2(t) * k3(t), a = spin(t), out = [], D1 = d1(t), D2 = d2(t), D3 = d3(t), dl = Math.hypot(1.3, 1);
+          for (const s1 of [-1, 1]) for (const s2 of [-1, 1]) for (const s3 of [-1, 1]) {
+            const [x, y] = rot(s1 * D1 + s3 * D3 * 1.3 * s1 / dl, s2 * D2 + s3 * D3 * s2 / dl, a);
+            out.push([CX + x, CY + y, r]);
+          }
+          return out;
+        }
+
+        /* ================= 6.1 - 9.2: the hunters ================= */
+        const PH = 14, DH = PH * 0.44;
+        const T_EX = 6.08, T_RUN = 6.72, T_WIND = 8.4, T_REL = 9.03, T_DOT = 9.17;
+        function leg(hx, hy, ph, stance, side, sc = 1) {
+          let th = 0.62 * Math.sin(ph), be = 0.15 + 0.95 * Math.max(0, Math.sin(ph + 1.9));
+          if (stance > 0) { const sth = side > 0 ? 0.5 : -0.55, sbe = side > 0 ? 0.12 : 0.3; th = lerp(th, sth, stance); be = lerp(be, sbe, stance); }
+          const kx = hx + 84 * sc * Math.sin(th), ky = hy + 84 * sc * Math.cos(th), a2 = th - be * 1.25;
+          return [["s", hx, hy, kx, ky, 10 * sc], ["s", kx, ky, kx + 84 * sc * Math.sin(a2), ky + 84 * sc * Math.cos(a2), 9 * sc]];
+        }
+        function hunterPrims(t) {
+          const c = Math.max(0, t - T_EX), ph = 6.2832 * c / 0.44, wind = BREATHE(seg(t, T_WIND, 0.42)), thr = OUT(seg(t, 8.92, 0.14));
+          const recoil = wob(t - T_REL, 0.3, 0.6, 0.35);
+          const lean = lerp(0.12, -0.32, wind) + 0.5 * thr * (1 - wind * 0) - (t > T_REL ? 0.2 * seg(t, T_REL, 0.3) : 0) + recoil * 0.3;
+          const hx = 1060 - 120 * thr, hy = 600 - 9 * Math.abs(Math.sin(ph)) * (1 - wind);
+          const nx = hx + 128 * Math.sin(lean), ny = hy - 128 * Math.cos(lean), headx = nx + 34 * Math.sin(lean), heady = ny - 34 * Math.cos(lean);
+          const P = [["s", hx, hy, nx, ny, 17], ["d", headx, heady, 23]];
+          const stance = wind;
+          P.push(...leg(hx, hy, ph, stance, 1), ...leg(hx, hy, ph + Math.PI, stance, -1));
+          /* spear: overhead and flat while running, tilts back on the wind-up, thrown forward, then flies free */
+          const sp = spear(t, nx, ny);
+          if (t < T_REL) {
+            const ca = Math.cos(sp.a), sa = Math.sin(sp.a);
+            const hA = [sp.x - 46 * ca, sp.y - 46 * sa], hB = [sp.x + 42 * ca, sp.y + 42 * sa];
+            for (const [hxx, hyy, s] of [[...hA, -1], [...hB, 1]]) { const sx = nx, sy = ny + 12, ex = (sx + hxx) / 2 + s * 26, ey = (sy + hyy) / 2 + 8; P.push(["s", sx, sy, ex, ey, 9], ["s", ex, ey, hxx, hyy, 9]); }
+          } else {
+            const u = seg(t, T_REL, 0.25);
+            P.push(["s", nx, ny + 12, nx + lerp(150, 120, u), ny + lerp(-40, 10, u), 9], ["s", nx, ny + 12, nx - 90, ny + 70, 9]);
+          }
+          return P;
+        }
+        const SP_VX = 1000, SP_VY = -560, SP_G = 2700, GROUND = 772, SP_HALF = 215;
+        let FL = null;
+        function flightInfo() {
+          if (FL) return FL;
+          const y0 = hunterPrims(T_REL - 1e-4)[0][4] - 100;
+          let d = 0; for (; d < 2; d += 1 / 480) { const y = y0 + SP_VY * d + 0.5 * SP_G * d * d, a = Math.atan2(SP_VY + SP_G * d, SP_VX); if (y + SP_HALF * Math.sin(a) >= GROUND) break; }
+          return (FL = { y0, d });
+        }
+        function spear(t, nx, ny) {
+          const wind = BREATHE(seg(t, T_WIND, 0.42)), thr = OUT(seg(t, 8.92, 0.11));
+          let x = nx + 5 + lerp(0, -80, wind) + 260 * thr, y = ny - 70 + lerp(0, 10, wind) - 30 * thr, a = lerp(0, -0.42, wind) + 0.3 * thr;
+          if (t >= T_REL) {
+            const { y0, d: dl } = flightInfo(), d = Math.min(t - T_REL, dl);
+            x = 1180 + SP_VX * d; y = y0 + SP_VY * d + 0.5 * SP_G * d * d; a = Math.atan2(SP_VY + SP_G * d, SP_VX);
+            if (t - T_REL > dl) { const k = t - T_REL - dl; x += 14 * Math.cos(a) * OUT(seg(k, 0, 0.06)); y += 14 * Math.sin(a) * OUT(seg(k, 0, 0.06)); a += wob(k, 0.09, 0.11, 0.22); }   /* sticks, quivers */
+          }
+          return { x, y, a };
+        }
+        function spearPrims(t) {
+          const T = Math.min(t, T_DOT + 0.1), hp = hunterPrims(T), neck = hp[0];
+          const { x, y, a } = spear(t, neck[3], neck[4]);
+          const ca = Math.cos(a), sa = Math.sin(a), tx = x + 215 * ca, ty = y + 215 * sa;
+          return [["s", x - 205 * ca, y - 205 * sa, tx, ty, 8], ["s", tx, ty, tx - 28 * ca + 16 * sa, ty - 28 * sa - 16 * ca, 8], ["s", tx, ty, tx - 28 * ca - 16 * sa, ty - 28 * sa + 16 * ca, 8]];
+        }
+        function chaserPrims(t) {
+          const c = Math.max(0, t - T_EX), ph = 6.2832 * c / 0.4 + 1.1, out = IN(seg(t, 8.1, 0.45));
+          const hx = 690 - 1100 * out, hy = 610 - 10 * Math.abs(Math.sin(ph)), lean = 0.42, sc = 0.88;
+          const nx = hx + 112 * Math.sin(lean), ny = hy - 112 * Math.cos(lean);
+          const P = [["s", hx, hy, nx, ny, 19], ["d", nx + 30 * Math.sin(lean), ny - 30 * Math.cos(lean), 21]];
+          P.push(...leg(hx, hy, ph, 0, 1, sc), ...leg(hx, hy, ph + Math.PI, 0, -1, sc));
+          for (const s of [-1, 1]) { const a1 = -1.2 + s * 1.0 + 0.9 * Math.sin(ph * 1.5 + s), a2 = a1 + 0.9 * Math.sin(ph + s * 2); const ex = nx + 70 * Math.cos(a1), ey = ny + 10 + 70 * Math.sin(a1); P.push(["s", nx, ny + 10, ex, ey, 9], ["s", ex, ey, ex + 66 * Math.cos(a2), ey + 66 * Math.sin(a2), 9]); }
+          return P;
+        }
+        const figCells = (t) => cells([...hunterPrims(t), ...(t < T_REL ? [] : []), ...chaserPrims(t)], PH).concat(cells(spearPrims(t), PH));
+        let LPt = -1, LPv = null;
+        const livePrims = (t) => { if (t !== LPt) { LPt = t; LPv = [...hunterPrims(t), ...chaserPrims(t), ...spearPrims(t)]; } return LPv; };
+        function anchorsOf(prims) {   /* points spread over every primitive, addressed by (prim index, parameters) so they can be re-evaluated on the live pose */
+          const out = [];
+          prims.forEach((p, k) => {
+            if (p[0] === "s") { const L = Math.hypot(p[3] - p[1], p[4] - p[2]), n = Math.max(1, Math.round(L / PH)), m = Math.max(0, Math.floor(p[5] / PH));
+              for (let i = 0; i <= n; i++) for (let o = -m; o <= m; o++) out.push({ k, u: i / n, o: o * PH }); }
+            else if (p[0] === "d") { const m = Math.floor(p[3] / PH); for (let i = -m; i <= m; i++) for (let j = -m; j <= m; j++) if (Math.hypot(i, j) * PH <= p[3]) out.push({ k, dx: i * PH, dy: j * PH }); }
+          });
+          return out;
+        }
+        function anchorAt(a, prims) {
+          const p = prims[a.k];
+          if (p[0] === "s") { const vx = p[3] - p[1], vy = p[4] - p[2], L = Math.hypot(vx, vy) || 1; return [p[1] + vx * a.u - vy / L * a.o, p[2] + vy * a.u + vx / L * a.o]; }
+          return [p[1] + a.dx, p[2] + a.dy];
+        }
+        const snap = (v) => Math.round(v / PH) * PH;
+        let PARTS = null;
+        function parts() {
+          if (PARTS) return PARTS;
+          const ref = livePrims(T_EX), A = anchorsOf(ref), L = leaves(T_EX);
+          PARTS = A.map((a, i) => {
+            const [x, y] = anchorAt(a, ref), ang = Math.atan2(y - 520, x - CX);
+            let j = 0, best = 9; L.forEach(([lx, ly], k) => { let d = Math.abs(Math.atan2(ly - CY, lx - CX) - ang); d = Math.min(d, 6.2832 - d); if (d < best) { best = d; j = k; } });
+            const [lx, ly, lr] = L[j], ja = hash(i, 1, 7) * 6.2832, jr = Math.sqrt(hash(i, 2, 7)) * lr * 0.8;
+            const sx = lx + Math.cos(ja) * jr, sy = ly + Math.sin(ja) * jr, oa = Math.atan2(ly - CY, lx - CX), push = 110 + 160 * hash(i, 3, 7);
+            return { a, sx, sy, cx: sx + Math.cos(oa) * push, cy: sy + Math.sin(oa) * push, delay: 0.18 * c01(Math.hypot(x - sx, y - sy) / 900) + 0.06 * hash(i, 4, 7) };
+          });
+          return PARTS;
+        }
+        function partPos(p, t) {
+          const [lx, ly] = anchorAt(p.a, livePrims(t)), u = OUT(seg(t, T_EX + p.delay, 0.4)), v = 1 - u, sn = OUT(seg(t, T_EX + p.delay + 0.25, 0.15));
+          const tx = lerp(lx, snap(lx), sn), ty = lerp(ly, snap(ly), sn);   /* chase the moving body, then settle onto the grid */
+          return [v * v * p.sx + 2 * v * u * p.cx + u * u * tx, v * v * p.sy + 2 * v * u * p.cy + u * u * ty, lerp(4, DH, OUT(seg(t, T_EX, 0.25)))];
+        }
+
+        /* ================= 9.4 - 11.7: stones, embers, fire (oxblood ground) ================= */
+        const PF = 30, DF = PF * 0.44, FCX = 960, FBY = 890;
+        /* ===== the stones, on their own (longer) clock: shoot out with the dive's momentum, slow to a near stop, then
+           drift back slowly and accelerate into the smack; two quick glitches on the way back (jump back + zoom pop,
+           then snap forward and carry on fast) ===== */
+        const EXTRA = 0, D_ST = 1.35, T_SM = 8.95 + D_ST, T_RESYNC = 11.42, CFIRE = (T_RESYNC - 9.79) / (T_RESYNC - T_SM);   /* stones get 1.35s; the smack->spin stretch is tightened so everything from the spin on stays on the music */
+        const T_GL = 9.95;   /* raw: the glitch that launches the fast run (= comp f353) */
+        /* p = how far back toward contact (0 = far, 1 = smack). Slow drift, then the glitch skips ahead, then fast. */
+        /* no glitch: shoot out, settle, then ONE continuous return, slow at first and accelerating into the smack */
+        const backP = (l) => IN(seg(l, 9.4, T_SM - 9.4));
+        const glitchAt = () => ({ sc: 1, on: 0 });
+        function stonesRaw(l0) {
+          const G = glitchAt(l0), l = Math.min(l0, T_SM);
+          const Zc = lerp(0.18, 1, OUT(seg(l, 8.95, 0.55)));
+          const out = OUT(seg(l, 8.95, 0.45)) * (1 - backP(l));   /* 0 at contact, 1 = far out */
+          const fl = out * 18, c1 = [CX - 52, CY + 10], c2 = [CX + 60, CY + 20], f1 = [300, 250], f2 = [1650, 860];
+          const s1 = [lerp(c1[0], f1[0], out) + fl * Math.sin(l * 2.3), lerp(c1[1], f1[1], out) + fl * Math.cos(l * 1.9)];
+          const s2 = [lerp(c2[0], f2[0], out) - fl * Math.sin(l * 2.1), lerp(c2[1], f2[1], out) - fl * Math.cos(l * 2.5)];
+          const zp = ([x, y, r]) => { const k = Zc * G.sc; return [CX + (x - CX) * k, CY + (y - CY) * k, r * k]; };
+          return { st: [zp([...s1, 58]), zp([...s2, 76])], G };
+        }
+        /* composition time -> late clock (the stone beat is stretched by EXTRA) */
+        const LT = (t) => { const l = t - SH(); return l < 8.95 ? l : l < T_SM ? 8.95 + (l - 8.95) * 0.84 / D_ST : l < T_RESYNC ? 9.79 + (l - T_SM) * CFIRE : l; };
+        function stones(t) {
+          const a = IN(seg(t, 8.95, 0.84)), b = OUT(seg(t, 9.79, 0.4)), fl = (1 - a) * 16;   /* float in slow, then accelerate into the smack */
+          const Zc = lerp(0.18, 1, OUT(seg(t, 8.95, 0.55))), zp = ([x, y, r]) => [CX + (x - CX) * Zc, CY + (y - CY) * Zc, r * Zc];   /* the dive's zoom carries through the cut */
+          const s1 = [lerp(330, CX - 52, a) + fl * Math.sin(t * 2.3), lerp(290, CY + 10, a) + fl * Math.cos(t * 1.9)], s2 = [lerp(1620, CX + 60, a) - fl * Math.sin(t * 2.1), lerp(830, CY + 20, a) - fl * Math.cos(t * 2.5)];
+          if (t < 9.79) return [zp([...s1, 58]), zp([...s2, 76])];
+          return [[s1[0] - 120 * b, s1[1] - 760 * b, 58], [s2[0] + 60 * b, s2[1] + 820 * b, 76]];
+        }
+        /* the fire, as SIGNAL code: 16px glyph grid, three tongues + curling tips + rising embers, built bottom-first
+           from the two embers; each cell carries an intensity -> denser glyph in the hot core */
+        const PG = 30, PGR = PG / 16;   /* chunky dot grid like their fire; shape math stays in the old 16px units */
+        /* a big asymmetric bonfire: crossed logs, 9 uneven tongues pushed by a drifting wind, licks breaking off the tips */
+        const TONGUES = [[-1, 38, 7.5, 0], [-9, 24, 4.6, 1.3], [7, 30, 5.2, 2.1], [-15, 15, 3.4, 3.7], [13, 19, 3.6, 4.4],
+          [3, 34, 3.0, 5.2], [-5, 29, 3.4, 6.1], [10, 13, 2.6, 7.3], [-19, 9, 2.4, 8.2]];
+        function fireCells(t) {
+          const g = seg(t, 10.33, 0.55), out = [];
+          if (g <= 0) return out;
+          const wind = 2.2 + 1.6 * Math.sin(t * 0.9) + 1.2 * (vn(t * 0.7, 1, 41) - 0.5);
+          for (let ci = -15; ci <= 15; ci++) for (let cj = 0; cj < 25; cj++) {
+            const x = FCX + ci * PG, y = FBY - cj * PG, i = ci * PGR, j = cj * PGR;
+            let k = 0;
+            for (const [off, hm, wid, ph] of TONGUES) {
+              const H = hm * (0.72 + 0.55 * vn(t * 3.2 + ph, ph, 7)) + 3, hh = j / H;   /* tongues leap and drop */
+              if (hh < 0 || hh > 1.55) continue;
+              const sway = wind * hh * hh + (vn(j * 0.2, t * 3.3 + ph, 5) - 0.5) * 7 * hh + Math.sin(t * 5.6 + j * 0.3 + ph) * 2.4 * hh * hh
+                + 2.6 * hh * Math.sin(j * 0.21 - t * 7.5 + ph * 0.7);   /* ripples travelling up the flame */
+              const d = Math.abs(i - off * lerp(0.75, 1, c01(j / 8)) - sway * 0.8);   /* tongues gather together at the base */
+              if (hh <= 1) {
+                const w = 1.85 * wid * Math.pow(Math.sin(Math.PI * Math.min(1, (hh + 0.2) / 1.2)), 0.5) * Math.pow(1 - hh, 1.1) * (0.8 + 0.4 * vn(j * 0.5, t * 4.6 + ph, 9)) * lerp(0.95, 1, Math.pow(c01(j / 7), 0.7)) * (1 + 0.22 * Math.sin(j * 0.32 - t * 8.5 + ph));   /* width pulses rising */   /* fatter, tapered in at the base */
+                if (d <= w) k = Math.max(k, c01(1 - d / (w + 0.6)) * (1 - 0.45 * hh) + 0.24);
+              } else {   /* a lick that tore off the tip, rising and shrinking */
+                const cyc = (t * 1.7 + ph * 0.37) % 1, ly = 1.05 + 0.5 * cyc;
+                if (Math.abs(hh - ly) < 0.04 * (1 - cyc) + 0.015 && d < 0.9 * (1 - cyc) + 0.3) k = Math.max(k, 0.35 * (1 - cyc) + 0.2);
+              }
+            }
+            if (j > 24 && Math.abs(i - wind * 2) < 14 && hash(ci, cj, Math.floor(t * 12)) > 0.994) k = Math.max(k, 0.3);   /* sparks */
+            if (k <= 0) continue;
+            if ((j / 45) * 0.8 + 0.2 * hash(ci, cj, 2) > OUT(g) * 1.02) continue;   /* builds bottom first */
+            out.push([x, y, k]);
+          }
+          return out;
+        }
+        const FIRE_RAMP = ".:-=+*cC%#$@", FIRE_SYM = "#$%&@*+=<>/\\[]{}0123456789";
+        const fireSym = (x, y, t) => FIRE_SYM[Math.floor(hash(x, y, Math.floor(t * 10)) * FIRE_SYM.length)];
+        const fireGlyph = (k, i, j, t) => FIRE_RAMP[Math.min(FIRE_RAMP.length - 1, Math.max(0, Math.floor(k * FIRE_RAMP.length + (hash(i, j, Math.floor(t * 18)) - 0.5) * 2.2)))];
+
+        /* ================= 11.71 - 14.5: coin -> wheel -> dot ================= */
+        const PC = 30, DC = PC * 0.44, CC = [960, 560], RO = 330, T_SW = 11.42, T_WH = 12.45, T_FILL = 13.32;
+        const grid = (f) => { const out = []; for (let i = -12; i <= 12; i++) for (let j = -12; j <= 12; j++) { const x = i * PC, y = j * PC; if (f(x, y, Math.hypot(x, y), Math.atan2(y, x))) out.push([x, y]); } return out; };
+        const coinBase = grid((x, y, r) => r <= RO && !(Math.abs(x) <= 122 && Math.abs(y) <= 122));
+        const wheelBase = grid((x, y, r, a) => { if (r > RO) return false; if (r >= RO - 58 || r < 56) return true; for (let k = 0; k < 8; k++) { const sa = k / 8 * 6.2832; if (Math.cos(a - sa) > 0 && Math.abs(Math.sin(a - sa)) * r < 17) return true; } return false; });
+        const fillBase = grid((x, y, r) => r <= RO);
+        const SWIRL = bz(0.45, 0, 0.2, 1);
+        /* one continuous spin: the swirl's momentum carries into the coin, then the wheel spins up */
+        /* ONE spin, never stops: the fire spins up fast (ease-in) and spirals into the full circle while still spinning fast,
+           keeps spinning as it slowly decelerates (long ease-out), merges into the wheel while slowing, the wheel fills into
+           the dot, the dot shrinks (ease-in) and bursts out into the horses (ease-out) */
+        const OM = 12, T_RAMP = 0.3, T_CRUISE = 12.25, D_DEC = 0.8, OMR = 2.0;
+        const spinA = (t) => {
+          const u0 = seg(t, T_SW, T_RAMP); let a = OM * T_RAMP * u0 * u0 * u0 / 3;
+          a += OM * Math.max(0, Math.min(t, T_CRUISE) - (T_SW + T_RAMP));
+          const u2 = seg(t, T_CRUISE, D_DEC); a += OMR * D_DEC * u2 + (OM - OMR) * D_DEC * (1 - (1 - u2) ** 3) / 3;
+          a += OMR * Math.max(0, t - (T_CRUISE + D_DEC));
+          return a;
+        };
+        const decel = (u) => 1 - (1 - u) ** 3;
+        let MORPH = null;
+        function morph() {
+          if (MORPH) return MORPH;
+          const src = fireCells(T_SW), c = CC;
+          const ang = ([x, y]) => Math.atan2(y - c[1], x - c[0]);
+          const fs = src.slice().sort((a, b) => ang(a) - ang(b));
+          const ts = coinBase.slice().sort((a, b) => Math.atan2(a[1], a[0]) - Math.atan2(b[1], b[0]));
+          /* every fire dot is used: each one feeds one or more ring slots, and the extras split off as it spirals */
+          const coin = fs.map((sp, k) => ({ s: sp, t: ts[Math.floor(k * ts.length / fs.length)], d: 0.32 * k / fs.length + 0.02 * hash(k, 3, 3) }));   /* every code cell travels: several can share a ring slot */   /* peel off in order around the circle: a spiral arm sweeps the fire into the ring */
+          /* coin -> wheel: each coin dot migrates to its nearest wheel cell (spokes/rim gather), hub cells grow in */
+          const used = new Set();
+          coin.forEach((m) => { let bi = 0, bd = 1e9; wheelBase.forEach((w, i) => { const d = (w[0] - m.t[0]) ** 2 + (w[1] - m.t[1]) ** 2; if (d < bd) { bd = d; bi = i; } }); m.w = wheelBase[bi]; used.add(bi); m.wd = 0.18 * hash(m.t[0], m.t[1], 5); });
+          coin.grow = wheelBase.filter((w, i) => !used.has(i));
+          return (MORPH = coin);
+        }
+
+        /* ================= 14.5 - END: the horse and rider ================= */
+        const PHo = 30, DHo = PHo * 0.44;
+        function horsePrims(t, ox, oy, phase0, sc = 1) {
+          const ph = 6.2832 * t / 0.42 + phase0, pitch = 0.06 * Math.sin(ph), bob = -10 * Math.abs(Math.sin(ph));
+          const T = (x, y) => { const [rx, ry] = rot(x * sc, y * sc, pitch); return [ox + rx, oy + ry + bob]; };
+          const P = [];
+          const S = (x1, y1, x2, y2, w) => { const a = T(x1, y1), b = T(x2, y2); P.push(["s", a[0], a[1], b[0], b[1], w * sc]); };
+          const [bx, by] = T(0, 0); P.push(["e", bx, by, 165 * sc, 58 * sc, pitch]);
+          S(120, -20, 205, -115, 32); const [hx, hy] = T(238, -122); P.push(["e", hx, hy, 52 * sc, 24 * sc, pitch + 0.45]);
+          S(200, -140, 196, -168, 7);
+          S(-160, -25, -245, 10 + 25 * Math.sin(ph * 2), 12);
+          const legp = (x, a, bend) => { const kx = x + 82 * Math.sin(a), ky = 40 + 82 * Math.cos(a), a2 = a + bend; S(x, 30, kx, ky, 15); S(kx, ky, kx + 82 * Math.sin(a2), ky + 82 * Math.cos(a2), 12); };
+          legp(115, 0.75 * Math.sin(ph), -0.6 * Math.max(0, Math.sin(ph + 1.4)) - 0.1);
+          legp(85, 0.75 * Math.sin(ph + 0.6), -0.6 * Math.max(0, Math.sin(ph + 2.0)) - 0.1);
+          legp(-115, 0.7 * Math.sin(ph + 2.4), 0.7 * Math.max(0, Math.sin(ph + 3.6)) + 0.1);
+          legp(-140, 0.7 * Math.sin(ph + 3.0), 0.7 * Math.max(0, Math.sin(ph + 4.2)) + 0.1);
+          /* rider */
+          S(0, -50, 48, -150, 24); const [rh, rv] = T(64, -184); P.push(["d", rh, rv, 26 * sc]); S(40, -130, 128, -95, 13); S(10, -45, 55, 8, 13);
+          return P;
+        }
+
+        /* ================= ONE HORSE OVER THE HILLS -> GROUND DROPS -> CORN =================
+           The dot bursts into one horse AND the hilly ground it rides on (same 30px grid). The camera follows the horse: the
+           ground scrolls under it, the horse rises and falls with the hills and pitches with the slope. Then the land ahead
+           slopes away, the camera stops following down, horse and ground ride/drop out of frame, and the falling ground dots
+           pop back up as the three corn cobs (centre first, bottom first). Late clock. */
+        const GV = 420, GY0 = 760, T_RAMP_X = 1860, T_DROP = 16.45, D_DROP = 1.15, T_CAP = 16.7, T_POP = 16.95;
+        const gScroll = (t) => GV * Math.max(0, t - 14.1);
+        const hills = (wx) => 70 * Math.sin(wx * 0.0027 + 1.4) + 32 * Math.sin(wx * 0.0068 + 0.3);
+        const ramp = (wx) => 0.0009 * Math.max(0, wx - T_RAMP_X) ** 2;
+        const camOff = (t) => 0.55 * hills(960 + gScroll(t));   /* the camera follows the hills, not the slope away */
+        const gDrop = (t) => 1500 * IN(seg(t, T_DROP, D_DROP));
+        const surfS = (sx, t) => GY0 + hills(sx + gScroll(t)) + ramp(sx + gScroll(t)) - camOff(t) + gDrop(t);
+        const groundPos = (wx, k, t) => { const sx = wx - gScroll(t); return [sx, surfS(sx, t) + 12 + k * 30]; };
+        /* corn, traced from the ChatGPT frames (ref px -> 1920 frame), rasterized on a 30px grid; husk dots a touch bigger than cob dots */
+        const PCN = 30, RX = (x) => (x - 665) * 1.444 + 960, RY = (y) => y * 1.444 - 60;
+        const CORN = [
+          { cx: 665, hw: 63, top: 100, bot: 640, tassel: [665, 78], order: 0,
+            husk: [[[602,360],[520,420],[530,470],[560,510],[585,600],[602,620]], [[728,360],[790,415],[800,465],[770,500],[745,600],[728,620]]],
+            leaves: [[[575,365],[540,303]], [[520,430],[500,405],[460,385]], [[750,365],[790,303]], [[800,420],[830,395],[870,385]]], stalk: [[665,640],[665,800]] },
+          { cx: 300, hw: 55, top: 200, bot: 730, order: 1,
+            husk: [[[248,420],[180,455],[105,470],[150,510],[190,560],[215,640],[245,680]], [[352,420],[420,440],[480,460],[440,490],[395,560],[380,640],[352,680]]],
+            leaves: [[[150,450],[90,447]], [[395,430],[420,405]]] },
+          { cx: 1035, hw: 55, top: 220, bot: 730, order: 2,
+            husk: [[[978,430],[930,430],[890,450],[915,490],[930,560],[950,640],[978,680]], [[1097,430],[1160,440],[1200,425],[1160,470],[1140,530],[1120,620],[1097,680]]],
+            leaves: [[[912,412],[890,365]], [[1200,425],[1225,405]]] },
+        ];
+        const inPoly = (x, y, P) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const [xi, yi] = P[i], [xj, yj] = P[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+        const segD = (x, y, [ax, ay], [bx, by]) => { const vx = bx - ax, vy = by - ay, u = c01(((x - ax) * vx + (y - ay) * vy) / (vx * vx + vy * vy || 1)); return Math.hypot(x - ax - u * vx, y - ay - u * vy); };
+        const CORN_CELLS = (() => {
+          const out = [];
+          CORN.forEach((c, ci) => {
+            const map = (P) => P.map(([x, y]) => [RX(x), RY(y)]), cx = RX(c.cx), hw = c.hw * 1.444, top = RY(c.top), bot = RY(c.bot);
+            const husk = c.husk.map(map), leaves = c.leaves.map(map), stalk = c.stalk ? map(c.stalk) : null, tas = c.tassel ? [RX(c.tassel[0]), RY(c.tassel[1])] : null;
+            for (let y = Math.floor(top / PCN) * PCN - PCN; y < 1110; y += PCN) for (let x = Math.round((cx - 420) / PCN) * PCN; x < cx + 420; x += PCN) {
+              const cy = Math.min(Math.max(y, top + hw), bot - hw);
+              const inCob = y <= bot && Math.hypot(x - cx, y - cy) <= hw + 2;
+              const inHusk = husk.some((P) => inPoly(x, y, P));
+              const onLeaf = leaves.some((L) => L.slice(1).some((b, k) => segD(x, y, L[k], b) < PCN * 0.5));
+              const onStalk = stalk && segD(x, y, stalk[0], stalk[1]) < PCN * 0.5, onTas = tas && Math.hypot(x - tas[0], y - tas[1]) < PCN * 0.55;
+              if (!(inCob || inHusk || onLeaf || onStalk || onTas)) continue;
+              out.push({ x, y, r: PCN * (inHusk || onLeaf ? 0.47 : 0.4), ci, h: c01((y - top) / (bot - top)) });
+            }
+          });
+          return out;
+        })();
+        /* the ground dots on screen at T_CAP are the ones that become corn: matched by rank (x then y) so they gather sideways and up */
+        const popT = (ci) => T_POP + [0, 0.14, 0.26][CORN[ci].order];
+        let GSET = null;
+        function groundSet() {
+          if (GSET) return GSET;
+          const pts = [];
+          const j0 = Math.floor(gScroll(T_CAP) / 30) - 1;
+          for (let j = j0; j < j0 + 68; j++) for (let k = 0; k < 26; k++) { const [x, y] = groundPos(j * 30, k, T_CAP); if (x > -30 && x < 1950) pts.push({ wx: j * 30, k, x, y }); }
+          pts.sort((a, b) => a.x * 4000 + a.y - (b.x * 4000 + b.y));
+          const cs = CORN_CELLS.map((c, n) => [n, c.x * 4000 + c.y]).sort((a, b) => a[1] - b[1]).map((a) => a[0]);
+          cs.forEach((n, r) => { pts[Math.floor(r * pts.length / cs.length)].corn = n; });
+          return (GSET = pts);
+        }
+
+        /* ================= CORN -> ROLLING FIELD + SUN =================
+           A perspective field of furrow rows (dots small at the horizon, merging into stripes up close) that rolls in slow
+           waves like a 3D map. The side cobs fall and their dots land in the near rows; the field spreads outward from there.
+           The centre cob collapses into one dot at the horizon, which floats up as the sun: fast, then slowing to a stop. */
+        const HY = 400, FF = 680, ZMIN = 0.86, ZR = 1.033, NJ = 128, NK = 80, T_FALL = 18.55, T_SUNUP = T_FALL + 0.42, D_SUNUP = 2.5;
+        const SUNE = bz(0.12, 0.62, 0.22, 1), FALLE = bz(0.55, 0, 0.35, 1);
+        /* the field banks with the sun: left side up / right side down on the sun's own ease, then slowly rocks the other way */
+        const humpL = (t) => SUNE(seg(t, T_SUNUP, D_SUNUP)) * (1 - 0.85 * GLIDE(seg(t, T_SUNUP + D_SUNUP * 0.75, 3.0)));
+        const humpR = (t) => 0.75 * GLIDE(seg(t, T_SUNUP + D_SUNUP * 0.75, 3.0));
+        /* screen-space lift: a mound on one side, strongest mid-depth, none at the camera, little at the horizon */
+        function hump(u, z, t) {
+          const g = (1 - Math.exp(-(z - 0.86) / 2.2)) * Math.exp(-z / 14);
+          return 420 * g * (humpL(t) * Math.exp(-(((u + 0.85) / 0.55) ** 2)) + humpR(t) * Math.exp(-(((u - 0.85) / 0.55) ** 2)));
+        }
+        const T_INV3 = 655 / 30 - 1.411, D_MFALL = (674 - 655) / 30,   /* Studio frames @30fps: invert + start at f655, land at f674 */ T_IMP3 = T_INV3 + D_MFALL, Y_WATER = 905, MFALL = bz(0.55, 0, 0.92, 0.55);
+        const T_WAVE3 = 709 / 30 - 1.411;
+        const WV = { d: null, n: 84 };
+        /* ===== the ship (Pexels 33733229, brigantine, Fred Mellink): virtual camera starts tight with the ship off the
+           bottom-right, pushes out + pans so it rides into frame, with constant roll + heave like we're on the water ===== */
+        const T_SHIP3 = 765 / 30 - 1.411, SP = { d: null, n: 97 };   /* Higgsfield galleon (assets/galleon-src.mp4), 4.04s @24 */
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); SP.d = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/ship-lum.png"; }
+        const SHIPCAM = bz(0.3, 0.55, 0.25, 1);
+        function shipL(i, j, t) {
+          if (!SP.d) return 0;
+          const a = t - T_SHIP3, k = Math.min(SP.n - 1, Math.max(0, Math.floor(a * 24))), m = SHIPCAM(seg(a, 0, 2.6));
+          const Z = lerp(1.25, 1.04, m), cx = 0.5 + lerp(0.06, 0, m), cy = 0.5 + 0.01 * Math.sin(a * 2.3);   /* the footage carries the camera; we add a gentle settle */
+          const roll = 0.015 * Math.sin(a * 1.6 + 0.5);
+          let ux = (i + 0.5) / 160 - 0.5, vy = ((j + 0.5) / 90 - 0.5) * 0.5625;
+          const cr = Math.cos(roll), sr = Math.sin(roll), rx = ux * cr - vy * sr, ry = (ux * sr + vy * cr) / 0.5625;
+          const su = cx + rx / Z, sv = cy + ry / Z;
+          if (su < 0 || su > 1 || sv < 0 || sv > 1) return 0;
+          const px = Math.min(319, Math.floor(su * 320)), py = Math.min(179, Math.floor(sv * 180));   /* sprite: ship tracked + framed big (3x), local contrast baked in */
+          const L = SP.d[((Math.floor(k / 8) * 180 + py) * 2560 + (k % 8) * 320 + px) * 4] / 255;
+          /* graded by region: sky only where the sails are (and only the brightest), water lifted so the sea reads */
+          return L;   /* tone baked into the sprite: sails/foam by level, sea by its ripple texture (smooth mist drops out) */   /* continuous tone: sails brightest, sea streaks as small dots */   /* sails + foam bright, sea and mist readable but behind the ship */
+        }
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); WV.d = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/wave-lum.png"; }
+        /* the wave as luminance: a jagged crest ridge rising out of the water line, streaky moving water below it,
+           a bright foam band along the crest, a little spray above it */
+        function waveL(x, y, t, rise) {
+          const a = t - T_WAVE3, n1 = vn(x * 0.004 - a * 0.5, 3.1, 61), n2 = vn(x * 0.011 + a * 0.9, 7.7, 62), n3 = vn(x * 0.03 - a * 1.6, 1.3, 63);
+          const ridge = 0.5 * n1 + 0.32 * n2 + 0.18 * n3, crest = Y_WATER + 40 - rise * (130 + 520 * ridge * (0.6 + 0.4 * Math.sin(x * 0.0021 + 0.7)));
+          const d = y - crest;
+          if (d < 0) { const sp = vn(x * 0.05, y * 0.05 - a * 4, 64); return d > -60 * rise && sp > 0.72 ? (sp - 0.72) * 3 * (1 + d / (60 * rise + 1)) : 0; }
+          const streak = vn(x * 0.009 + a * 0.4 + y * 0.004, y * 0.035 - a * 1.8, 65), swirl = vn(x * 0.02 - a * 0.7, y * 0.02 + a * 0.5, 66);
+          const foam = Math.exp(-d / 55), depthDark = 1 - c01((y - crest) / 700) * 0.55;
+          const body = c01((streak * 0.6 + swirl * 0.7 - 0.55) * 2.6);   /* dark troughs + bright swirls, not a flat mass */
+          const fold = Math.exp(-(((y - crest - 120 - 90 * vn(x * 0.006, a, 67)) / 45) ** 2)) * 0.8;   /* a second bright foam line inside the wave */
+          return c01((0.06 + 0.85 * body + 0.85 * foam + fold * swirl) * depthDark * c01(rise * 2.5));
+        }
+        const fieldFlow = (t) => 0.9 * Math.max(0, t - T_FALL);
+        function fieldPt(k, j, t) {
+          const jj = ((j - fieldFlow(t)) % NJ + NJ) % NJ, z = ZMIN * Math.pow(ZR, jj), x = k * 0.22;
+          const yw = 0.085 * Math.sin(1.5 * x + 0.55 * z - 2.3 * t) + 0.05 * Math.sin(0.6 * x - 0.9 * z + 1.4 * t);
+          const sx = 960 + FF * x / z, u = x / z * FF / 960;
+          return [sx, HY + FF * (1 - yw) / z - hump(u, z, t), Math.max(1.1, 25 / Math.pow(z, 1.1))];   /* a real mound, not a tilt */
+        }
+        const reveal = (sx, sy, t) => OUT(seg(t, T_FALL + 0.32 + 0.55 * Math.hypot(sx - 960, (sy - 1080) * 1.6) / 1500, 0.45));
+        let FLAND = null;
+        function landMap() {   /* side-cob dots -> near field dots (rank by x), centre-cob dots -> the sun seed */
+          if (FLAND) return FLAND;
+          const tL = T_FALL + 0.5, cand = [];
+          for (let k = -NK; k <= NK; k++) for (let j = 0; j < NJ; j++) { const [x, y] = fieldPt(k, j, tL); if (y > 640 && y < 1040 && x > 80 && x < 1840) cand.push({ k, j, x }); }
+          cand.sort((a, b) => a.x - b.x);
+          const side = CORN_CELLS.map((c, n) => [n, c]).filter(([, c]) => CORN[c.ci].order !== 0).sort((a, b) => a[1].x - b[1].x);
+          FLAND = { byCell: {}, used: new Set() };
+          side.forEach(([n], r) => { const f = cand[Math.floor(r * cand.length / side.length)]; FLAND.byCell[n] = f; FLAND.used.add(f.k * 1000 + f.j); });
+          return FLAND;
+        }
+        const sunY = (t) => lerp(HY + 10, 155, SUNE(seg(t, T_SUNUP, D_SUNUP))), sunR = (t) => lerp(18, 120, OUT(seg(t, T_SUNUP - 0.12, D_SUNUP * 0.8)));
+
+        /* ===== frame 851: everything gathers into one ball, then on the next three beats (f868 / f882 / f898) the row
+           shifts left and a new ball pops in: top, bottom, top. Ends on four balls, aligned and centered. ===== */
+        const T_CON = 852 / 30 - 1.411 - 0.46,   /* gather starts ~f838; the streams arrive and the first ball forms at f852 */ BEATS = [868, 882, 898].map((f) => f / 30 - 1.411), BRAD = 58, BD = 200;
+        const slotX = (k, n) => 960 + (k - (n - 1) / 2) * BD;
+        const T_SPIN = 912 / 30 - 1.411, OMS = 26, SPT = 0.75;   /* accelerates (ease-in) from 912; the blur trail grows with speed so it closes into a ring (~f931) before it could strobe */
+        /* PLACEHOLDER head-on locomotive (until the Higgsfield train clip arrives): luminance in local units */
+        function trainL(u, v) {
+          const au = Math.abs(u);
+          if (Math.hypot(u, v + 0.05) < 0.09) return 1;                                  /* the round headlamp */
+          if (Math.hypot(u, v + 0.05) < 0.12) return 0.15;
+          if (au < 0.1 && v > -0.62 && v < -0.3) return 0.55;                             /* smokestack */
+          if (Math.hypot(u, v + 0.7) < 0.16 && v < -0.6) return 0.35;                     /* smoke puff */
+          const bf = Math.hypot(u, v - 0.05);
+          if (bf < 0.32) return bf > 0.28 ? 0.7 : 0.32;                                    /* boiler front, bright rim */
+          if (au < 0.44 && v > 0.05 && v < 0.55) return au > 0.4 ? 0.6 : 0.42;             /* body */
+          if (v >= 0.55 && v < 0.86 && au < 0.5 - (v - 0.55) * 1.1) return (Math.floor((u + 1) * 22) % 2) ? 0.75 : 0.2;   /* cowcatcher */
+          if (v > 0.86 && v < 0.92 && au < 0.9) return 0.5;                                /* rails */
+          return 0;
+        }
+        /* the Higgsfield train (assets/train-src.mp4, overhead, headlight approaching): 97 frames @24, 240x136 */
+        const TV = { d: null, n: 97 };
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); TV.d = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/train-lum.png"; }
+        function trainVid(x, y, tz) {
+          if (!TV.d) return 0;
+          const k = Math.min(TV.n - 1, Math.floor(tz * 24)), fit = GLIDE(seg(tz, 0, 1.6));
+          /* start tight on the headlamp at frame centre (it sits at ~42% height in the clip), ease out to the full shot */
+          const Z = lerp(1.7, 1.0, fit), cu = 0.5, cv = lerp(0.42, 0.5, fit);
+          const u = cu + ((x / 1920) - 0.5) / Z, v = cv + ((y / 1080) - 0.5) / Z;
+          if (u < 0 || u >= 1 || v < 0 || v >= 1) return 0;
+          const px = Math.floor(u * 360), py = Math.floor(v * 204), ox = (k % 8) * 360, oy = Math.floor(k / 8) * 204;
+          const at = (i, j) => TV.d[((oy + Math.max(0, Math.min(203, j))) * 2880 + ox + Math.max(0, Math.min(359, i))) * 4] / 255;
+          const L = at(px, py), gx = at(px + 2, py) - at(px - 2, py), gy = at(px, py + 2) - at(px, py - 2);
+          const edge = c01((Math.hypot(gx, gy) - 0.06) * 4.5);   /* the black locomotive's silhouette against the snow */
+          return Math.max(Math.pow(c01((L - 0.25) / 0.6), 1.3) * 0.8, edge);
+        }
+        /* the goo train: steam loco side view as metaball circles, local coords from the front-bottom (u right, v up) */
+        const SPS = 0.7, TR_GO = 0.68, TR_Z0 = (950 - 912) / 30;   /* swirl/merge time scale; the train starts rolling at ~f932 and the dots are out by f935 */
+        const TR_M = [560, 560], TR_Y = 760, TR_STOP = 980 / 30 - 1.411 - (912 / 30 - 1.411), BRK = bz(0.4, 0, 0.12, 1);
+        /* freight train silhouette mask, local coords: u = px behind the loco front (<= 0), v = px above the rail (<= 0) */
+        const TMW = 3000, TMH = 460, TOX = 2960, TOY = 440, TM = { d: null };
+        const CARS = [[0, -640], [-660, -960], [-990, -1390], [-1420, -1820], [-1850, -2250], [-2280, -2680]];   /* loco, tender, boxcar, hopper, tank, boxcar */
+        const carOf = (u) => { for (let c = 0; c < CARS.length; c++) if (u <= CARS[c][0] && u > CARS[c][1] - 15) return c; return 9; };
+        const WHEELS = [[-110, 28], [-190, 56], [-310, 56], [-430, 56], [-550, 56], [-720, 30], [-800, 30], [-890, 30],
+          [-1040, 26], [-1100, 26], [-1280, 26], [-1340, 26], [-1470, 26], [-1530, 26], [-1710, 26], [-1770, 26],
+          [-1900, 26], [-1960, 26], [-2140, 26], [-2200, 26], [-2330, 26], [-2390, 26], [-2570, 26], [-2630, 26]];
+        {
+          const c = document.createElement("canvas"); c.width = TMW; c.height = TMH; const g = c.getContext("2d");
+          g.translate(TOX, TOY); g.fillStyle = "#fff";
+          const R = (x, y, w, h, r = 0) => { g.beginPath(); g.roundRect(x, y, w, h, r); g.fill(); };
+          /* steam loco (2-8-0 freight): pilot, smokebox, long boiler, domes, stack, cab, running board */
+          g.beginPath(); g.moveTo(10, -18); g.lineTo(-60, -18); g.lineTo(-60, -95); g.closePath(); g.fill();
+          R(-90, -270, 70, 170, 24); R(-470, -250, 400, 140, 60); R(-150, -350, 52, 90, 6); R(-162, -362, 76, 22, 8);
+          g.beginPath(); g.arc(-250, -248, 30, Math.PI, 0); g.fill(); g.beginPath(); g.arc(-360, -248, 26, Math.PI, 0); g.fill();
+          R(-640, -330, 190, 250, 10); R(-660, -350, 230, 28, 10); R(-620, -120, 600, 26, 4); R(-610, -96, 560, 14, 4);
+          /* tender with a coal heap */
+          R(-950, -250, 280, 180, 12); g.beginPath(); g.ellipse(-810, -250, 120, 40, 0, Math.PI, 0); g.fill();
+          /* boxcar */
+          const box = (x0) => { R(x0 - 395, -300, 390, 230, 6); R(x0 - 405, -312, 410, 16, 4); };
+          box(-995); box(-1855);
+          /* hopper */
+          R(-1415, -280, 390, 140, 6); g.beginPath(); g.moveTo(-1415, -140); g.lineTo(-1025, -140); g.lineTo(-1100, -75); g.lineTo(-1340, -75); g.closePath(); g.fill();
+          /* tank car */
+          R(-2275, -255, 390, 150, 75); R(-2110, -285, 60, 40, 8); R(-2270, -110, 380, 30, 6);
+          /* couplers + frames */
+          [[-640, -660], [-950, -1000], [-1415, -1430], [-1850, -1860], [-2275, -2290]].forEach(([a, b]) => R(b, -120, a - b, 14, 4));
+          /* cut-outs: cab window, boxcar doors + ribs, headlamp, tender lettering band */
+          g.globalCompositeOperation = "destination-out";
+          R(-615, -300, 80, 70, 8); R(-24 - 30, -235, 34, 34, 17);
+          [-995, -1855].forEach((x0) => { R(x0 - 245, -270, 8, 190); R(x0 - 155, -270, 8, 190); for (let r = 0; r < 9; r++) if (r !== 4 && r !== 5) R(x0 - 380 + r * 42, -290, 4, 200); });
+          R(-940, -220, 260, 6);
+          g.globalCompositeOperation = "source-over";
+          const d = g.getImageData(0, 0, TMW, TMH).data; TM.d = new Uint8Array(TMW * TMH); for (let i = 0; i < TMW * TMH; i++) TM.d[i] = d[i * 4 + 3] > 120 ? 1 : 0;
+        }
+        /* is (u,v) solid? wheels are live: rim + hub + spokes that turn with distance travelled */
+        function trainAt(u, v, wa) {
+          if (u > 30 || u < -2720) return v > -2 && v < 10;
+          if (v > -120) for (const [wu, wr] of WHEELS) {
+            const dx = u - wu, dy = v + wr, dd2 = Math.hypot(dx, dy);
+            if (dd2 <= wr) { if (dd2 > wr * 0.72 || dd2 < wr * 0.24) return true; const a = Math.atan2(dy, dx) - wa * 56 / wr; return Math.abs(Math.sin(a * 3)) < 0.35; }
+          }
+          if (v > -2 && v < 10) return true;   /* the rail */
+          const px = Math.round(u + TOX), py = Math.round(v + TOY);
+          return px >= 0 && py >= 0 && px < TMW && py < TMH && TM.d[py * TMW + px] === 1;
+        }
+        /* ===== f980 -> : out of the window's cream, a Tesla coil grows from one dot (the toroid); a little person walks in
+           with a rod and taps the coil on the music's taps; every tap fires lightning arcs + electrons off the toroid ===== */
+        const TAPS = [1002, 1009, 1017, 1036, 1047, 1062, 1069, 1077, 1099];
+        const TC = { d: null, W: 700, H: 620, ox: 350, oy: 140 };   /* mask: toroid centre at (0,0) local, ground at y=470 */
+        {
+          const c = document.createElement("canvas"); c.width = TC.W; c.height = TC.H; const g = c.getContext("2d"); g.translate(TC.ox, TC.oy); g.fillStyle = "#fff";
+          g.beginPath(); g.ellipse(0, 0, 175, 58, 0, 0, 6.2832); g.fill();                         /* toroid */
+          g.fillRect(-12, 40, 24, 30);                                                             /* neck */
+          g.fillRect(-60, 70, 120, 330);                                                           /* secondary winding (stripes come from the dot rows) */
+          g.beginPath(); g.roundRect(-150, 410, 300, 60, 8); g.fill();                              /* base */
+          g.beginPath(); g.roundRect(-110, 395, 220, 18, 4); g.fill();
+          g.globalCompositeOperation = "destination-out"; g.beginPath(); g.ellipse(0, 0, 70, 20, 0, 0, 6.2832); g.fill();   /* toroid hole */
+          const d = g.getImageData(0, 0, TC.W, TC.H).data; TC.d = new Uint8Array(TC.W * TC.H); for (let i = 0; i < TC.W * TC.H; i++) TC.d[i] = d[i * 4 + 3] > 120 ? 1 : 0;
+        }
+        const COIL = [1100, 420];   /* (tesla coil kept for reference, unused) */   /* screen pos of the toroid centre */
+        function personPrims(t, cf) {
+          /* walk in from the left, then plant and tap: the rod tip swings onto the coil on each tap */
+          const walk = OUT(seg(cf, 986, 14)), hx = lerp(-120, 640, walk), gy = COIL[1] + 470, ph = cf / 30 * 6.2832 / 0.5;
+          let tap = 0; for (const tf of TAPS) { const k = cf - tf; if (k > -4 && k < 0) tap = Math.max(tap, IN(c01((k + 4) / 4))); else if (k >= 0 && k < 9) tap = Math.max(tap, 1 - OUT(c01(k / 9))); }
+          const hy = gy - 186, ny = hy - 110, stance = walk >= 1 ? 1 : 0;
+          const P = [["s", hx, hy, hx + 6, ny, 11], ["d", hx + 8, ny - 30, 18]];
+          P.push(...leg(hx, hy, ph * (1 - stance), stance, 1, 1.15), ...leg(hx, hy, ph * (1 - stance) + Math.PI, stance, -1, 1.15));
+          /* arm + rod: rest angle points up-forward, the tap swings it down onto the coil column */
+          const sh = [hx + 6, ny + 14], a = lerp(-0.5, 0.1, tap), el = [sh[0] + 60 * Math.cos(a + 0.5), sh[1] + 60 * Math.sin(a + 0.5)];
+          const tip = [el[0] + 360 * Math.cos(a), el[1] + 360 * Math.sin(a)];
+          P.push(["s", sh[0], sh[1], el[0], el[1], 8], ["s", el[0], el[1], tip[0], tip[1], 5]);
+          return { P, tip, tap };
+        }
+        function boltDots(x0, y0, x1, y1, seed, life) {
+          const out = [], n = 9; let px = x0, py = y0;
+          for (let i = 1; i <= n; i++) {
+            const u = i / n, jx = (hash(i, seed, 51) - 0.5) * 70 * (1 - Math.abs(u - 0.5)), jy = (hash(seed, i, 52) - 0.5) * 70 * (1 - Math.abs(u - 0.5));
+            const qx = lerp(x0, x1, u) + (i < n ? jx : 0), qy = lerp(y0, y1, u) + (i < n ? jy : 0), L = Math.hypot(qx - px, qy - py), m = Math.max(1, Math.round(L / 10));
+            for (let k = 0; k < m; k++) out.push([lerp(px, qx, k / m), lerp(py, qy, k / m), 5.5 * (1 - life * 0.6)]);
+            px = qx; py = qy;
+          }
+          return out;
+        }
+        /* their lightbulb beat (T18/T19): out of the window's cream one dot pops, grows into a halftone lightbulb; a tiny
+           dot (their moth) zips around it really fast, streaking, and taps the glass on the music's taps; each tap makes
+           the bulb glow a little more until it is fully lit */
+        const BULB = [960, 531], BR0 = 330;   /* base sits on the bottom edge of frame */
+        function bulbL(x, y, glow) {
+          /* like their bulb: a solid halftone glass, shaded, a hot filament knot in the middle, a slotted base;
+             lit = the glass fills with big dots and a halo of fine dots spreads around it */
+          const dx = x - BULB[0], dy = y - BULB[1], r = Math.hypot(dx, dy);
+          const fil = Math.exp(-((dx / 70) ** 2 + ((dy - 15) / 60) ** 2)) + 0.6 * Math.exp(-((dx / 21) ** 2 + ((dy - 115) / 85) ** 2));
+          if (r <= BR0) {
+            const shade = 0.34 + 0.18 * (1 - r / BR0) - 0.1 * c01((dx + dy) / BR0);
+            return lerp(Math.max(shade, 0.95 * fil), 0.92 + 0.08 * fil, glow);
+          }
+          const ny = y - (BULB[1] + BR0 * 0.8);
+          if (ny > 0 && ny < 137) { const hw = lerp(BR0 * 0.62, 120, ny / 137); if (Math.abs(dx) < hw) return 0.4 + 0.5 * glow; }
+          if (r <= BR0 * 1.4 && glow > 0 && ny < 0) return glow * 0.42 * (1 - (r - BR0) / (BR0 * 0.4));   /* halo */
+          if (ny >= 137 && ny < 300 && Math.abs(dx) < 120) { const slot = Math.abs(Math.abs(dx) - 41) < 15; return slot ? 0 : (Math.floor(ny / 20) % 2 ? 0.75 : 0.4); }
+          return 0;
+        }
+        const BTAPS = [986, 995];   /* exactly two taps */
+        function mothAt(cf) {
+          /* waypoints: a glass-surface hit on every tap, a wide swing out between taps */
+          const pts = [[-80, 300, 968]];
+          BTAPS.forEach((tf, i) => {
+            const prev = i ? BTAPS[i - 1] : 976, an = -Math.PI / 2 + (hash(i, 3, 61) - 0.5) * 2.4;   /* hits land on the upper glass */
+            const sw = an + (hash(i, 6, 66) < 0.5 ? 1.1 : -1.1); pts.push([BULB[0] + Math.cos(sw) * (BR0 + 230 + 120 * hash(i, 4, 62)), Math.min(980, BULB[1] + Math.sin(sw) * (BR0 + 120 + 60 * hash(i, 5, 63))), (prev + tf) / 2]);   /* swing out beside the hit, always outside the glass */
+            pts.push([BULB[0] + Math.cos(an) * (BR0 + 8), BULB[1] + Math.sin(an) * (BR0 + 8), tf]);
+          });
+          pts.push([BULB[0] + 1500, BULB[1] - 1000, BTAPS[BTAPS.length - 1] + 14]);   /* after the second tap it zips off frame */
+          let k = 0; while (k < pts.length - 2 && cf > pts[k + 1][2]) k++;
+          const [a, b] = [pts[k], pts[k + 1]], u = c01((cf - a[2]) / (b[2] - a[2]));
+          const isHit = BTAPS.includes(b[2]), e = isHit ? IN(u) : OUT(u);   /* accelerate into each tap, bounce away and slow */
+          const wig = 18 * Math.sin(cf * 1.9) * Math.sin(Math.PI * u);
+          return [lerp(a[0], b[0], e) + wig, lerp(a[1], b[1], e) - wig * 0.6];
+        }
+        function coilScene(t, S) {
+          const cf = (t + SH()) * 30, P = 15;
+          S.ground = CR; S.dotCol = OX; S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.zoomC = null;
+          let glow = 0; BTAPS.forEach((tf, i) => { const a = cf - tf; if (a >= 0) glow = Math.max(glow, i === BTAPS.length - 1 ? 1 : Math.exp(-a / 2.5)); });   /* tap 1: flash on/off; tap 2: on, and it stays on */
+          if (cf > BTAPS[1]) glow = Math.min(1, glow * (0.96 + 0.04 * Math.sin(cf * 0.9)));
+          /* f977: the dot is there; the camera keeps zooming in and the dot opens up into the bulb (exponential scale) */
+          const zu = OUT(seg(cf, 977, 9)), sc = Math.exp(Math.log(18 / BR0) * (1 - zu));   /* f977 dot -> full bulb at f986, super quick */
+          if (sc < 0.22) S.dots.push([BULB[0], BULB[1], BR0 * sc * 1.02]);
+          if (sc > 0.12) {
+            const al = c01((sc - 0.12) / 0.1), pulses = [];
+            /* each hit: little particles lift off the glass and float around (drift + noise wander), then fade */
+            BTAPS.forEach((tf, i) => { const a = (cf - tf) / 30; if (a < 0 || a > 0.42) return;   /* a little burst: pops out fast, gone in ~0.4s */
+              const hit = mothAt(tf);
+              for (let q = 0; q < 18; q++) {
+                const an = Math.atan2(hit[1] - BULB[1], hit[0] - BULB[0]) + (hash(i, q, 71) - 0.5) * 2.2, sp = 90 + 190 * hash(q, i, 72), d = sp * OUT(c01(a / 0.42));
+                const rr = (3 + 6 * hash(q, i, 76)) * (1 - c01(a / 0.42)) ** 1.3;
+                if (rr > 0.4) S.dots.push([hit[0] + Math.cos(an) * d, hit[1] + Math.sin(an) * d, rr]);
+              } });
+            for (let y = P / 2; y < 1080; y += P) for (let x = P / 2; x < 1920; x += P) {
+              let L = bulbL(BULB[0] + (x - BULB[0]) / sc, BULB[1] + (y - BULB[1]) / sc, glow);
+              if (L < 0.06) continue;
+              S.dots.push([x, y, P * 0.5 * Math.sqrt(Math.min(1, L)) * al]);
+            }
+          }
+          /* the tiny dot: really fast, heavy motion blur (a long streak through its last ~3 frames) */
+          if (cf >= 970) {
+            const n = 6, pts = []; for (let k = 0; k <= n; k++) pts.push(mothAt(cf - 1.1 * k / n));   /* short, punchy smear */
+            for (let k = 0; k < n; k++) S.streaks.push([[...pts[k], 21 * (1 - 0.5 * k / n)], pts[k + 1], 12]);
+            S.dots.push([...pts[0], 22]);
+          }
+        }
+        /* ===== f1018: strobe glitch (maroon / cream / maroon / cream, every step inverted), then a real waving skeleton
+           (Pexels 40360253, keyed) as halftone dots: cream on maroon, like their x-ray ===== */
+        const T_SK = 1018, SKN = 97, SK = { d: null };   /* Higgsfield skeleton (assets/skeleton-hf-src.mp4), 300x300 frames */
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); SK.d = x.getImageData(0, 0, c.width, c.height).data;
+            x.clearRect(0, 0, c.width, c.height); x.filter = "blur(16px)"; x.drawImage(im, 0, 0); x.filter = "none"; SK.b = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/skeleton-lum.png"; }   /* SK.b = blurred copy for the x-ray glow */
+        const skPhase = (cf) => (cf < T_SK ? -1 : Math.min(6, Math.floor((cf - T_SK) / 2)));   /* 0..5 strobe steps, 6 = settled */
+        function skeletonScene(t, S) {
+          const cf = (t + SH()) * 30, ph = skPhase(cf), P = 11;
+          S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.streaks = []; S.zoomC = null;
+          const inv = ph < 6 && ph % 2 === 1;          /* odd steps: cream ground, maroon skeleton */
+          S.ground = inv ? CR : OX; S.dotCol = inv ? OX : CR;
+          if (ph === 0) return;                        /* step 0: the bulb's light floods the frame */
+          if (!SK.d) return;
+          const fi = Math.floor((cf - T_SK) / 30 * 24) % (2 * SKN - 2), k = fi < SKN ? fi : 2 * SKN - 2 - fi, ox = (k % 8) * 300, oy = Math.floor(k / 8) * 300;   /* ping-pong so the wave loops seamlessly */
+          const scan = ((cf - T_SK) / 30 * 0.55) % 1.3 - 0.15;   /* an x-ray scan band sweeping down */
+          const sc = 1080 / 300 * 1.0 * (1 + 0.04 * GLIDE(seg(cf, T_SK, 70))), x0 = 960 - 150 * sc, y0 = 0;
+          for (let y = P / 2; y < 1080; y += P) for (let x = P / 2; x < 1920; x += P) {
+            const u = Math.floor((x - x0) / sc), v = Math.floor((y - y0) / sc); if (u < 0 || v < 0 || u >= 300 || v >= 300) continue;
+            const idx = ((oy + v) * 2400 + ox + u) * 4, bone = c01((SK.d[idx] / 255 - 0.12) / 0.75), halo = SK.b ? Math.pow(c01(SK.b[idx] / 255 / 0.55), 1.2) : 0;
+            const band = Math.exp(-(((y / 1080 - scan) / 0.05) ** 2));
+            const edge = c01(Math.min(u, 299 - u, v) / 60) * c01((299 - v) / 6);   /* feather the clip's frame edges: no box outline */
+            const L = Math.max(bone * (1 + 0.35 * band), (0.3 + 0.35 * band) * Math.min(1, halo * 1.6)) * edge;   /* bones + the soft x-ray glow around them, brighter as the scan passes */
+            if (L < 0.07) continue;
+            S.dots.push([x, y, P * 0.52 * Math.pow(L, 0.62)]);
+          }
+        }
+        /* ===== f1055: cut to a cream screen with one dot in the centre; the dot opens into a plane (front view, made of
+           dots that scale with it, like theirs), it drifts toward camera, then shoots off over the top ===== */
+        const T_PL = 1055;
+        /* bird's-eye plane, nose pointing up (forward = up the screen): fuselage, swept wings, engines, tailplane */
+        const PLANE = (() => { const out = [];
+          for (let j = -14; j <= 14; j++) for (let i = -14; i <= 14; i++) {
+            const ai = Math.abs(i);
+            const fus = ai <= (j < -11 ? (j + 14) * 0.45 : 1.4) && j >= -14 && j <= 13;                  /* tapered nose, long body */
+            const wing = j >= -3 + ai * 0.45 && j <= 1 + ai * 0.45 && ai <= 13 && j >= -3;                /* swept back */
+            const eng = (ai === 5 || ai === 9) && j >= -2 + ai * 0.45 - 1 && j <= -2 + ai * 0.45 + 1.5;   /* engine pods under the wing */
+            const tail = j >= 9 + ai * 0.4 && j <= 12 + ai * 0.4 && ai <= 5;                              /* tailplane */
+            if (fus || wing || eng || tail) out.push([i, j, eng ? 1.15 : 1]); }
+          return out; })();
+        function planeScene(t, S) {
+          const cf = (t + SH()) * 30;
+          S.ground = CR; S.dotCol = OX; S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.streaks = []; S.zoomC = null;
+          const pop = OUT(seg(cf, T_PL, 2)), open = OUT(seg(cf, T_PL + 5, 10));
+          if (open <= 0) { S.dots.push([960, 540, 18 * pop + wob((cf - T_PL - 2) / 30, 3, 0.27, 0.3)]); return; }
+          /* overhead: it cruises forward slowly with a slight yaw, then punches forward (up) and out of frame */
+          const shoot = seg(cf, 1092, 14), Sx = lerp(3, 20, open) * (1 + 0.08 * GLIDE(seg(cf, T_PL + 15, 22)));
+          const cx = 960 + 18 * Math.sin((cf - T_PL) / 30 * 1.3), cy = 540 - 40 * GLIDE(seg(cf, T_PL + 10, 27)) - 1500 * IN(shoot);
+          const bank = 0.04 * Math.sin((cf - T_PL) / 30 * 1.1) * (1 - shoot);
+          /* propulsion: SIGNAL code pouring out behind each engine, longer and hotter as it punches forward */
+          const thrust = open * (0.45 + 0.55 * IN(shoot)), fr = Math.floor(cf / 1.5);
+          if (thrust > 0.05) for (const ex of [-9, -5, 5, 9]) {
+            const [rx, ry] = rot(ex * Sx, (-2 + Math.abs(ex) * 0.45 + 2) * Sx, bank);
+            for (let g = 0; g < 18; g++) {
+              const life = ((g / 18) + (cf / 30) * 2.4 + hash(ex, g, 41) * 0.15) % 1, dl = Sx * 3.5 + life * Sx * (22 + 30 * IN(shoot)) * thrust;   /* starts behind the wing's trailing edge */
+              const jx = (hash(ex, g, fr) - 0.5) * Sx * 2.2 * life;
+              S.glyphs.push([cx + rx + jx, cy + ry + dl, Sx * (1.5 - 0.7 * life), SG_NOISE[Math.floor(hash(ex * 7 + g, fr, 43) * SG_NOISE.length)], Math.min(1, (1 - life) * 1.3)]);
+            }
+          }
+          /* motion streaks behind the dots when it punches out */
+          if (shoot > 0.05) for (const [i, j] of PLANE) if ((i + j) % 3 === 0) { const [rx, ry] = rot(i * Sx, j * Sx, bank); const y = cy + ry; S.streaks.push([[cx + rx, y, Sx * 0.3], [cx + rx, y + 400 * IN(shoot)], 30]); }
+          for (const [i, j, w] of PLANE) {
+            /* each dot starts at the centre and fans out to its spot as the plane opens */
+            const [rx, ry] = rot(i * Sx, j * Sx, bank);
+            const x = lerp(960, cx + rx, open), y = lerp(540, cy + ry, open);
+            if (x < -60 || x > 1980 || y < -60 || y > 1140) continue;
+            S.dots.push([x, y, Sx * 0.44 * w * lerp(2.5, 1, open)]);
+          }
+        }
+        /* ===== f1113: one DNA double helix spins up out of the plane's wake, vortexing; f1146 the camera pulls back and a
+           whole swarm of strands swirls around it; the scene ends at f1174 ===== */
+        const T_DNA = 1113, T_MANY = 1146, T_DNA_END = 1142;
+        function helix(S, cx, cy, len, tilt, sc, spin, build) {
+          /* a real double helix: two chains of BIG beads (the backbones) and small dots stepping across as base pairs */
+          const A = 230, step = 22, ca = Math.cos(tilt), sa = Math.sin(tilt), dz = (z) => (z + 1) / 2, n0 = Math.floor(-len / 2 / step);   /* local units; the camera scales everything by sc */
+          for (let n = n0; n * step <= len / 2; n++) {
+            const s2 = n * step, u = (s2 + len / 2) / len; if (u > build) continue;
+            const ph = s2 * 0.0105 + spin, pop = OUT(c01((build - u) * 12));
+            const P = (off) => { const c = Math.cos(ph + off), z = Math.sin(ph + off); return [cx + sc * (c * A * ca - s2 * sa), cy + sc * (c * A * sa + s2 * ca), z]; };
+            const a = P(0), b = P(Math.PI);
+            const on = (p, r) => p[0] > -r && p[0] < 1920 + r && p[1] > -r && p[1] < 1080 + r;
+            for (const e of [a, b]) { const r = 27 * sc * (0.5 + 0.5 * dz(e[2])) * pop; if (on(e, r)) S.dots.push([e[0], e[1], r]); }
+            if (n % 2 === 0) for (let q = 1; q < 6; q++) { const f = q / 6, z = lerp(a[2], b[2], f), r = 7.5 * sc * (0.35 + 0.65 * dz(z)) * pop, pt = [lerp(a[0], b[0], f), lerp(a[1], b[1], f)]; if (on(pt, r)) S.dots.push([pt[0], pt[1], r]); }
+          }
+        }
+        function dnaScene(t, S) {
+          const cf = (t + SH()) * 30, d = (cf - T_DNA) / 30;
+          S.ground = CR; S.dotCol = OX; S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.streaks = []; S.zoomC = null;
+          if (cf >= T_DNA_END) return;
+          /* one strand: start right up against it, then pull back until it runs corner to corner, bottom-left to top-right */
+          const ZC = bz(0.35, 0, 0.12, 1), zAt = (f) => Math.exp(Math.log(3.4) + (Math.log(0.95) - Math.log(3.4)) * ZC(seg(f, T_DNA + 2, 16)));   /* fast pull-back, ~f1115-1139, then it rides */
+          const zoom = zAt(cf), zPrev = zAt(cf - 0.9);
+          const spin = 2.6 * d + 0.8 * d * d, tilt = 1.08 + 0.08 * Math.sin(d * 0.9);
+          helix(S, 960, 540, 2900, tilt, zoom, spin, OUT(seg(cf, T_DNA, 8)));
+          /* zoom motion blur: every dot streaks radially from where it was a couple of frames ago */
+          const k = zPrev / zoom; if (k > 1.004) { S.streaks = S.dots.map(([x, y, r]) => [[x, y, r], [960 + (x - 960) * k, 540 + (y - 540) * k], 4]); S.dots = []; }
+        }
+        /* ===== f1144: cut to an old TV: a rounded screen of fine raster dots on maroon, Popeye (1936 Fleischer, public domain,
+           archive.org) at the ship's wheel playing as big cream halftone dots, like their cartoon-on-TV shot ===== */
+        const T_TV = 1142, T_GL2 = 1154, T_NEWS = 1170, PV = { d: null, n: 60 }, RV = { d: null, n: 146 }, MV = { d: null, n: 108 }, T_GL3 = 1228, T_MOON = 1235;
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); PV.d = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/popeye-lum.png"; }
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); RV.d = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/reporter-lum.png"; }   /* Pexels 6952251 (Werner Pfennig), male reporter, muted */
+        { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const x = c.getContext("2d"); x.drawImage(im, 0, 0); MV.d = x.getImageData(0, 0, c.width, c.height).data; draw(last); }; im.src = "assets/moon-lum.png"; }   /* NASA Apollo 11 EVA (public domain), flag planting */
+        function tvScene(t, S) {
+          const cf = (t + SH()) * 30, P = 12;
+          S.ground = OX; S.dotCol = CR; S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.streaks = []; S.zoomC = null;
+          const TW = 1140, TH = 855, x0 = 960 - TW / 2, y0 = 545 - TH / 2, RAD = 170, push = 1 + 0.03 * GLIDE(seg(cf, T_TV, 56));
+          const k = Math.min(PV.n - 1, Math.floor((cf - T_TV) / 30 * 24)), ox = (k % 8) * 160, oy = Math.floor(k / 8) * 120;
+          const flick = 0.92 + 0.08 * hash(Math.floor(cf), 3, 91);   /* old-tube flicker */
+          for (let y = P / 2; y < 1080; y += P) for (let x = P / 2; x < 1920; x += P) {
+            const lx = (x - 960) / push + 960 - x0, ly = (y - 545) / push + 545 - y0;
+            if (lx < 0 || ly < 0 || lx > TW || ly > TH) continue;
+            const qx = Math.max(RAD - lx, lx - (TW - RAD), 0), qy = Math.max(RAD - ly, ly - (TH - RAD), 0);
+            if (Math.hypot(qx, qy) > RAD) continue;   /* rounded TV screen */
+            let L = 0;
+            const fr = Math.floor(cf), glitch = (cf >= T_GL2 && cf < T_NEWS) || (cf >= T_GL3 && cf < T_MOON);
+            if (glitch) {
+              /* channel change: static snow, rolling bars, and torn slices of the picture jumping sideways */
+              const roll = ((ly / TH + cf * 0.11) % 1), bar = roll < 0.12 ? 0.6 : 0, row = Math.floor(ly / 34);
+              const tear = hash(row, fr, 95) < 0.35 ? (hash(fr, row, 96) - 0.5) * 300 : 0, snow = hash(Math.floor(lx / 12), Math.floor(ly / 12) + fr * 97, 97);
+              let pic = 0; if (PV.d && hash(row, fr, 98) < 0.4) { const u = Math.floor(((lx + tear + TW) % TW) / TW * 160), v = Math.floor(ly / TH * 120), k2 = Math.min(PV.n - 1, 59); pic = c01((PV.d[((Math.floor(k2 / 8) * 120 + Math.min(119, v)) * 1280 + (k2 % 8) * 160 + Math.min(159, u)) * 4] / 255 - 0.52) / 0.42); }
+              L = Math.max(snow > 0.55 ? (snow - 0.55) * 2.2 : 0, bar * snow, pic);
+            } else if (cf >= T_MOON && MV.d) {
+              const km = Math.min(MV.n - 1, Math.floor((cf - T_MOON) / 30 * 24)), u = Math.floor(lx / TW * 160), v = Math.floor(ly / TH * 120);
+              L = Math.pow(c01((MV.d[((Math.floor(km / 8) * 120 + Math.min(119, v)) * 1280 + (km % 8) * 160 + Math.min(159, u)) * 4] / 255 - 0.18) / 0.62), 1.05);
+            } else if (cf >= T_NEWS && RV.d) {
+              const kr = Math.min(RV.n - 1, Math.floor((cf - T_NEWS) / 30 * 24)), u = Math.floor(lx / TW * 160), v = Math.floor(ly / TH * 120);
+              L = Math.pow(c01((RV.d[((Math.floor(kr / 8) * 120 + Math.min(119, v)) * 1280 + (kr % 8) * 160 + Math.min(159, u)) * 4] / 255 - 0.12) / 0.55), 0.85);
+            } else if (PV.d) { const u = Math.floor(lx / TW * 160), v = Math.floor(ly / TH * 120), at = (i, j) => PV.d[((oy + Math.max(0, Math.min(119, j))) * 1280 + ox + Math.max(0, Math.min(159, i))) * 4] / 255;
+              const lum = at(u, v); L = Math.pow(c01((lum - 0.52) / 0.42), 0.9);   /* only the bright cartoon fills light up: the wheel, his face, arms, cap and pipe */
+            }
+            S.dots.push([x, y, Math.max(1.6, P * 0.5 * Math.sqrt(L) * flick)]);   /* fine raster everywhere, big dots for the picture */
+          }
+        }
+        /* ===== f1298: the Earth connects to a computer (their vintage-window shot): an old OS window made of dots, a
+           spinning dot globe on the left, a classic computer on the right, the link grows dot by dot, then data pulses run ===== */
+        const T_NET = 1298;
+        const GLOBE = (() => { const out = []; for (let i = 0; i < 900; i++) { const y = 1 - (i + 0.5) / 900 * 2, r = Math.sqrt(1 - y * y), th = i * 2.39996; out.push([Math.cos(th) * r, y, Math.sin(th) * r]); } return out; })();
+        const land = (lon, lat) => vn(lon * 1.6 + 3, lat * 2.2 + 1, 88) > 0.5;   /* stylised continents */
+        function netScene(t, S) {
+          const cf = (t + SH()) * 30, d = (cf - T_NET) / 30, P = 12;
+          S.ground = OX; S.dotCol = CR; S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.streaks = []; S.zoomC = null;
+          const ap = OUT(seg(cf, T_NET, 6)), push = 1 + 0.04 * GLIDE(seg(cf, T_NET, 70));
+          const Z = (x, y) => [960 + (x - 960) * push, 540 + (y - 540) * push];
+          /* the window: dotted frame + title bar + close box */
+          const WX = 420, WY = 260, WW = 1080, WH = 560, TB = 54;
+          const line = (x0, y0, x1, y1, r) => { const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / P)); for (let k = 0; k <= n; k++) { const f = k / n; if (f > ap) break; S.dots.push([...Z(lerp(x0, x1, f), lerp(y0, y1, f)), r]); } };
+          line(WX, WY, WX + WW, WY, 4.5); line(WX + WW, WY, WX + WW, WY + WH, 4.5); line(WX + WW, WY + WH, WX, WY + WH, 4.5); line(WX, WY + WH, WX, WY, 4.5); line(WX, WY + TB, WX + WW, WY + TB, 4.5);
+          for (let r = 0; r < 3; r++) line(WX + 70, WY + 15 + r * 12, WX + WW - 120, WY + 15 + r * 12, 2);   /* title-bar stripes */
+          for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) if (ap > 0.9) S.dots.push([...Z(WX + WW - 80 + i * 11, WY + 16 + j * 11), 4]);   /* close box */
+          if (ap > 0.6) S.glyphs.push([...Z(WX + WW / 2, WY + TB / 2), 26, "", 0]);
+          /* the globe: rotating dot sphere, bigger dots on land, front hemisphere only */
+          const gc = [WX + 280, WY + TB + (WH - TB) / 2], GR = 150 * OUT(seg(cf, T_NET + 3, 8)), rot2 = d * 1.1;
+          for (const [x, y, z] of GLOBE) {
+            const X = x * Math.cos(rot2) + z * Math.sin(rot2), Zz = -x * Math.sin(rot2) + z * Math.cos(rot2); if (Zz < 0) continue;
+            const lon = Math.atan2(z, x), lat = Math.asin(y), isL = land(lon, lat);
+            S.dots.push([...Z(gc[0] + X * GR, gc[1] - y * GR), (isL ? 5.2 : 1.8) * (0.55 + 0.45 * Zz) * (GR / 150)]);
+          }
+          /* the computer: classic all-in-one on a strict grid */
+          const cc = [WX + WW - 280, WY + TB + (WH - TB) / 2], cs = OUT(seg(cf, T_NET + 5, 8));
+          for (let j = -9; j <= 10; j++) for (let i = -7; i <= 7; i++) {
+            const ai = Math.abs(i), body = ai <= 6 && j >= -9 && j <= 6, screenIn = ai <= 4 && j >= -7 && j <= 0, slot = j === 3 && i >= 1 && i <= 4, base = j >= 7 && j <= 9 && ai <= 7, kb = j === 10 && ai <= 6;
+            if (!(body || base || kb) || (screenIn && !(j === -7 || j === 0 || ai === 4)) || slot) continue;
+            S.dots.push([...Z(cc[0] + i * 15 * cs, cc[1] + j * 15 * cs), 5.4 * cs]);
+          }
+          /* the link: one dot every 4 frames, then data pulses race along it */
+          const L0 = gc[0] + 175, L1 = cc[0] - 125, n = 9, shown = Math.floor((cf - (T_NET + 14)) / 4) + 1;
+          for (let k = 0; k < Math.min(n, shown); k++) { const x = lerp(L0, L1, k / (n - 1)), pulse = shown > n ? Math.exp(-(((k - ((cf - T_NET - 14 - n * 4) / 2) % (n + 4)) / 0.8) ** 2)) : 0; S.dots.push([...Z(x, gc[1]), 7 + 6 * pulse]); }
+        }
+        /* ===== f1360: a chip (open square core + pins) on maroon; circuit traces grow out of every pin in all directions
+           (straight, 45-degree jog, straight, end pad) until they fill the frame; f1395 the camera dives into the open
+           centre of the chip (ease-in, like their 9-frame push), which becomes the whole frame ===== */
+        const T_CHIP = 1360, T_CZ = 1395, D_CZ = 12, CHW = 150;
+        const TRACES = (() => { const out = [], rd = (a, b) => hash(a, b, 131);
+          for (let side = 0; side < 4; side++) for (let k = 0; k < 13; k++) {
+            const off = -CHW + 12 + k * ((2 * CHW - 24) / 12), nx = [1, 0, -1, 0][side], ny = [0, 1, 0, -1][side], tx = -ny, ty = nx;
+            const sx = nx * CHW + tx * off, sy = ny * CHW + ty * off, jog = (rd(side, k) < 0.5 ? -1 : 1) * (off > 0 ? 1 : -1);
+            const L1 = 40 + 160 * rd(k, side), L2 = 60 + 220 * rd(side + 9, k), L3 = 300 + 900 * rd(k + 5, side + 3);
+            const p1 = [sx + nx * L1, sy + ny * L1], p2 = [p1[0] + (nx + tx * jog) * L2 * 0.707, p1[1] + (ny + ty * jog) * L2 * 0.707], p3 = [p2[0] + nx * L3, p2[1] + ny * L3];
+            out.push({ pts: [[sx, sy], p1, p2, p3], d: rd(side * 13 + k, 7) * 8 });
+          } return out; })();
+        const VOENV = [0.00,0.00,0.00,0.00,0.00,0.35,0.42,0.38,0.47,0.54,0.47,0.20,0.01,0.38,0.58,0.62,0.56,0.49,0.50,0.57,0.62,0.62,0.56,0.46,0.36,0.32,0.26,0.19,0.19,0.13,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.08,0.44,0.60,0.69,0.69,0.72,0.74,0.68,0.58,0.55,0.48,0.37,0.31,0.26,0.24,0.19,0.10,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.42,0.53,0.50,0.38,0.49,0.60,0.61,0.59,0.51,0.30,0.15,0.05,0.42,0.52,0.54,0.54,0.53,0.53,0.55,0.54,0.48,0.32,0.00,0.00,0.21,0.36,0.31,0.10,0.12,0.20,0.16,0.00,0.00,0.14,0.24,0.22,0.15,0.08,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00];
+        const T_VO = 1420, T_RAD = 1540, T_TXT = 1556;
+        /* ===== the ending, on their clock pattern: row -> columns -> explode into curling depth rays -> headline -> implode
+           -> end card. All positions are pure functions of cf. ===== */
+        const T_ROW = 1540, T_COL = 1545, T_EXP = 1550, T_HEAD = 1566, T_IMP = 1640, T_CARD = 1652;
+        const ENC = 10, ENJ = 80, ENR = 20, ENK = 40;
+        const colX = (c) => 96 + c * 192;
+        const E_ROW = bz(0.45, 0, 0.2, 1), E_COL = bz(0.4, 0, 0.55, 1), E_EXP = bz(0.25, 0.55, 0.2, 1), E_IMP = bz(0.6, 0, 0.85, 0.4);
+        function rayPt(a, k, cf) {
+          /* upper rays fan across the top, lower across the bottom, mirrored; each curls like a tentacle, carries a wave
+             travelling outward along it, and gets bigger + sparser toward the edges (depth) */
+          const up = a < 10, c = up ? a : a - 10, sg = up ? 1 : -1, base = up ? Math.PI + 0.22 + (c / 9) * (Math.PI - 0.44) : Math.PI - 0.22 - (c / 9) * (Math.PI - 0.44);
+          const tt = (cf - T_EXP) / 30, kk = k / (ENK - 1), ext = 1 + 0.45 * E_COL(seg(cf, T_EXP + 6, 20));   /* the rays reach further off frame */
+          k *= ext;
+          const s2 = (30 + 7 * k + 0.62 * k * k) * (1 + 0.035 * Math.sin(tt * 2.6 - k * 0.22 + a));
+          const curl = 0.6 * Math.exp(-s2 / 300) * Math.sin(tt * 1.7 + a * 0.9) * sg;
+          const an = base + curl + 0.07 * Math.sin(tt * 1.2 + a);
+          const w = (8 + 34 * Math.pow(kk, 0.9)) * Math.sin(k * 0.34 - tt * 6.2 + a * 1.3) + 10 * kk * Math.sin(k * 0.13 - tt * 2.9 + a * 2.1);   /* travelling waves */
+          const ox = Math.cos(base) * 640, oy = Math.sin(base) * 120;
+          return [960 + ox + Math.cos(an) * s2 * 1.15 - Math.sin(an) * w, 540 + oy + Math.sin(an) * s2 + Math.cos(an) * w, 1.3 + 15 * Math.pow(Math.min(1, kk * ext), 2.2)];
+        }
+        function endDot(c, j, cf, back = 0) {
+          /* one continuous path per dot: pill row -> column -> ray -> implode; every stage starts before the last settles,
+             so the speed carries across */
+          const ru = E_ROW(seg(cf, T_ROW, 8)), src = 960 + (Math.min(3, Math.floor(c * 4 / ENC)) - 1.5) * 150;
+          const rx = lerp(src, colX(c), ru), ry = 540 + 34 * Math.sin(Math.PI * ru) * Math.sin(c * 0.9 - (cf - T_ROW) * 0.5);
+          const g = E_COL(seg(cf, T_COL, 9)), off = (j - (ENJ - 1) / 2) * (1080 / ENJ) * 1.02, ofn = Math.abs(off) / 551;
+          const rip = 26 * g * Math.sin(j * 0.17 - (cf - T_COL) * 0.55 + c * 0.7);   /* the columns ripple as they shoot out */
+          const p0 = [rx + rip, ry + off * g, lerp(lerp(46, 20, ru), 3.4, E_ROW(seg(cf, T_COL - 1, 6)))];
+          if (cf < T_EXP) return p0;
+          const upper = j < ENJ / 2, a = upper ? c : ENC + c, k = upper ? ENJ / 2 - 1 - j : j - ENJ / 2;
+          const ft = cf - back - T_EXP - 6, flow = ft > 0 ? 0.42 * (ft - 9 + 9 * Math.exp(-ft / 9)) : 0;   /* dots stream outward forever (eased in), wrapping back in at the centre */
+          const ke = (k + flow) % ENK, e = E_EXP(seg(cf, T_EXP + 3 * (1 - ofn), 13)), p1 = rayPt(a, ke, cf);
+          let x = lerp(p0[0], p1[0], e), y = lerp(p0[1], p1[1], e), r = lerp(p0[2], p1[2], e);
+          const imp = E_IMP(seg(cf, T_IMP + 2 * (1 - k / ENK), 11));
+          if (imp > 0) { const dx = x - 960, dy = y - 540, sw = 1.1 * imp * (upper ? 1 : -1), cs = Math.cos(sw), sn = Math.sin(sw), m = 1 - imp;   /* swirl in */
+            x = 960 + (dx * cs - dy * sn) * m; y = 540 + (dx * sn + dy * cs) * m; r *= 1 - 0.9 * Math.sqrt(imp); }
+          return [x, y, r];
+        }
+        function ending(cf, S) {
+          if (cf < T_IMP + 13) for (let c = 0; c < ENC; c++) for (let j = 0; j < ENJ; j++) {
+            const [x, y, r] = endDot(c, j, cf);
+            if (x < -40 || x > 1960 || y < -40 || y > 1120) continue;
+            const sh = 1.25;
+            let [px, py] = cf < T_EXP + 16 ? endDot(c, j, cf - 1.25) : endDot(c, j, cf, sh);   /* once settled, smear only along the stream (not the waves) */ if (Math.hypot(px - x, py - y) > 260) { px = x; py = y; }   /* no smear across the wrap */
+            S.streaks.push([[x, y, r], [px, py], Math.max(2, Math.min(40, 150 / r))]);
+          }
+          if (cf >= T_IMP + 10 && cf < T_CARD) S.dots.push([960, 540, 22 * OUT(seg(cf, T_IMP + 10, 3)) + wob((cf - T_IMP - 13) / 30, 6, 0.27, 0.3)]);
+          S.soft = 2.2 * E_COL(seg(cf, T_EXP + 10, 16)) * (1 - E_COL(seg(cf, T_IMP - 4, 8)));   /* soft blur while they stream */
+          if (cf >= T_HEAD && cf < T_IMP + 6) S.headline = { t0: T_HEAD, cf };
+          if (cf >= T_CARD) S.card = cf;
+        }
+        function chipScene(t, S) {
+          const cf = (t + SH()) * 30, P = 9;
+          S.ground = OX; S.dotCol = CR; S.dots = []; S.glyphs = []; S.blobs = []; S.arcs = []; S.streaks = []; S.zoomC = null;
+          const zu = seg(cf, T_CZ, D_CZ), Z = Math.exp(Math.log(16) * IN(zu)) * (1 + 0.05 * GLIDE(seg(cf, T_CHIP, T_CZ - T_CHIP))), C = [960, 540];
+          const put = (x, y, r) => { const X = C[0] + x * Z, Y = C[1] + y * Z, R = r * Z; if (X > -R && X < 1920 + R && Y > -R && Y < 1080 + R) S.dots.push([X, Y, R]); };
+          const ap = OUT(seg(cf, T_CHIP, 6));
+          /* the chip: a thick dotted square frame around an open centre, pins on every side */
+          for (let ring = 0; ring < 3; ring++) { const h = CHW - 6 - ring * 13; for (let k = 0; k < 4; k++) { const n = Math.round(2 * h / 11); for (let i = 0; i <= n; i++) { const f = i / n; if (f > ap) break; const a = -h + 2 * h * f; const [x, y] = [[a, -h], [h, a], [-a, h], [-h, -a]][k]; put(x, y, 4.6); } } }
+          /* traces grow from each pin, dot by dot */
+          TRACES.forEach((tr) => {
+            const grow = (cf - T_CHIP - 4 - tr.d) * 55; if (grow <= 0) return;
+            let left = grow;
+            for (let k = 0; k < 3 && left > 0; k++) {
+              const [a, b] = [tr.pts[k], tr.pts[k + 1]], L = Math.hypot(b[0] - a[0], b[1] - a[1]), m = Math.min(L, left), n = Math.max(1, Math.round(m / P));
+              for (let i = 0; i <= n; i++) { const f = (i / n) * (m / L); put(lerp(a[0], b[0], f), lerp(a[1], b[1], f), 3.2); }
+              left -= L;
+            }
+            if (left > 0) put(tr.pts[3][0], tr.pts[3][1], 8);   /* end pad */
+          });
+          if (zu >= 1) {
+            /* inside the chip: four dots are born at the centre, pop out into a row and settle (their voice-indicator dots,
+               like our earlier four balls); then they idle, breathing on the beat until Jillian's VO drives them */
+            S.dots = [];
+            const T4 = T_CZ + D_CZ, vi = Math.floor(cf - T_VO), ve = (k) => { const n = vi - k; return n >= 0 && n < VOENV.length ? VOENV[n] : 0; };
+            if (cf < T_ROW) for (let k = 0; k < 4; k++) {
+              /* pills: each dot stretches up AND down with Jillian's voice (capsules, like their voice indicator) */
+              const b = OUT(seg(cf, T4 + 1 + k * 1.5, 7)), x = lerp(960, 960 + (k - 1.5) * 150, OUT(seg(cf, T4 + 2, 9)));
+              const talk = Math.max(ve(k), ve(k + 1) * 0.8), pop = wob((cf - T4 - 1 - k * 1.5 - 7) / 30, 0.12, 0.25, 0.3), r = 46 * b * (1 + pop);
+              if (r > 0.5) S.caps.push([x, 540, r, r * 1.5 * talk]);
+            }
+            else ending(cf, S);
+          }
+        }
+        function fourDots(t, S, bo = false) {
+          if ((t + SH()) * 30 >= T_CHIP) { if (!bo) chipScene(t, S); else S.blobs = []; return; }
+          if ((t + SH()) * 30 >= T_NET) { if (!bo) netScene(t, S); else S.blobs = []; return; }
+          if ((t + SH()) * 30 >= T_TV) { if (!bo) tvScene(t, S); else S.blobs = []; return; }
+          if ((t + SH()) * 30 >= T_DNA) { if (!bo) dnaScene(t, S); else S.blobs = []; return; }
+          if ((t + SH()) * 30 >= T_PL) { if (!bo) planeScene(t, S); else S.blobs = []; return; }
+          if ((t + SH()) * 30 >= T_SK) { if (!bo) skeletonScene(t, S); else S.blobs = []; return; }
+          if ((t + SH()) * 30 >= 980.5) { if (!bo) coilScene(t, S); else S.blobs = []; return; }
+          /* the maroon frame itself closes down into the ball, like a mask: cream shows around it, the ship shrinks inside */
+          const g = seg(t, T_CON, 0.46), e = Math.pow(g, 2.4);
+          S.blobs = []; S.streaks = []; S.sun = null; S.glyphs = [];
+          if (g < 1) {
+            const w = lerp(1920, 2 * BRAD, e), h = lerp(1080, 2 * BRAD, e), sx = w / 1920, sy = h / 1080;
+            S.dots = S.dots.map(([x, y, r]) => [960 + (x - 960) * sx, 540 + (y - 540) * sy, r * Math.min(sx, sy)]);
+            S.ground = OX; S.dotCol = CR; S.mask = [w, h, lerp(0, BRAD, Math.pow(e, 0.6))];
+            return;
+          }
+          S.dots = []; S.ground = CR; S.dotCol = OX;
+          const ball0 = 1;
+          if (ball0 <= 0) return;
+          let n = 1; BEATS.forEach((b) => { if (t >= b) n++; });
+          const bobAmp = 16 * seg(t, T_CON + 0.5, 0.35);   /* the row rides a little wave the whole time, each ball offset */
+          for (let k = 0; k < n; k++) {
+            let x, y = 540, r = BRAD, sx = 1, sy = 1;
+            if (k === 0 && n === 1) { x = 960; const w = wob(t - T_CON - 0.48, 0.16, 0.27, 0.3); r = BRAD * ball0; sx = 1 + w; sy = 1 - w; }
+            else {
+              const b = BEATS[n - 2], u = seg(t, b, 0.34), U = OUT(u);
+              if (k < n - 1) {
+                /* slide left: stretch along the move while fast, a little squash as it settles */
+                x = lerp(slotX(k, n - 1), slotX(k, n), U);
+                const st = 0.28 * Math.max(0, Math.sin(Math.PI * Math.min(1, u * 1.6))) * (1 - u), sq = wob(t - b - 0.3, 0.08, 0.24, 0.22);
+                sx = 1 + st - sq; sy = 1 - st * 0.7 + sq;
+                y += 6 * Math.sin(Math.PI * U) * (k % 2 ? 1 : -1);   /* a small hop as the row shifts */
+              } else {
+                const from = n === 3 ? 1220 : -140, v = seg(t, b + 0.03, 0.36), V = OUT(v);
+                x = slotX(k, n); y = lerp(from, 540, V);
+                const fall = 0.32 * Math.sin(Math.PI * Math.min(1, v * 1.3)) * (1 - v), land = wob(t - b - 0.39, 0.2, 0.25, 0.25);
+                sx = 1 - fall * 0.6 + land; sy = 1 + fall - land;   /* stretched in flight, squash on landing */
+              }
+            }
+            y += bobAmp * Math.sin((t - T_CON) * 4.2 - k * 1.05);
+            /* f912 (their 30-31s): the balls float off into a wide swirl, stretching into gooey arcs; a small maroon
+               dot holds the tiny train in the middle; the arcs spiral in and MERGE into it (metaballs), and the merged
+               blob swells to become the whole background. No ring. */
+            if (t >= T_SPIN) {
+              const d = (t - T_SPIN) / SPS, m = GLIDE(seg(d, 0, 0.5)), w = 8.5 * Math.min(1, (d / 0.6) ** 2), Om = d < 0.6 ? 8.5 * d ** 3 / (3 * 0.36) : 8.5 * (0.2 + d - 0.6);
+              const base = [[Math.PI, 300, 0], [Math.PI, 100, Math.PI / 2], [0, 100, Math.PI / 2], [0, 300, 0]][k];
+              const fall = IN(seg(d, 0.45 + 0.05 * k, 0.4)), a = base[0] + base[2] * m + Om;
+              const R = lerp(base[1], 360 + 40 * Math.sin(k * 2.1), m) * (1 - fall) + 10 * fall;   /* float out wide, then spiral in */
+              const oc = [lerp(960, TR_M[0], IN(seg(d, 0.5, 0.5))), lerp(540, TR_M[1], IN(seg(d, 0.5, 0.5)))], gone = 1 - OUT(seg(d, 0.95, 0.25));   /* the merged goo lingers, then thins out as the train's dots spread from it */   /* the swirl's centre slides left to where the train is born */
+              const sweep = Math.min(0.75, w * 2 / 18) * (1 - fall * 0.7), rr = r * lerp(1, 0.8, m), NQ = 6;
+              const rho = rr * lerp(1 / Math.sqrt(NQ), 0.72, c01(sweep / 0.35));   /* a still ball = one circle's worth of field; stretched = one smooth gooey tube */
+              if (gone > 0.01) for (let q = 0; q < NQ; q++) { const aq = a - sweep * q / (NQ - 1); S.blobs.push([oc[0] + Math.cos(aq) * R, oc[1] + Math.sin(aq) * R + bobAmp * (1 - m) * Math.sin((t - T_CON) * 4.2 - k * 1.05), rho * (1 - 0.25 * q / (NQ - 1)) * gone]); }
+              continue;
+            }
+            S.dots.push([x, y, r, sx, sy]);
+          }
+          /* the merged goo becomes a steam train (metaballs) that chugs in from the left, smoking, and brakes to a stop at f980 */
+          const dd = t - T_SPIN, ds = dd / SPS;   /* ds: swirl/merge clock, compressed so the merge is done by f935 */
+          S.blobCol = OX;
+          if (ds >= 0.8) { const lump = 80 * OUT(seg(ds, 0.8, 0.2)) * (1 - OUT(seg(ds, 0.95, 0.22))); if (lump > 1) S.blobs.push([TR_M[0], TR_M[1], lump]); }
+          if (ds >= 0.9 && !bo) {
+            /* a freight train made of dots: steam loco + tender + boxcar, hopper, tank car, boxcar; it rolls in from the
+               left out of the merged goo, rumbles (rail-joint jolts per car + camera shake) and brakes to a stop at f980 */
+            const mv = BRK(seg(dd, TR_GO, TR_STOP - TR_GO)), X = lerp(560, 1580, mv), spd = (lerp(560, 1580, BRK(seg(dd + 0.02, TR_GO, TR_STOP - TR_GO))) - X) / 0.02;
+            const rum = c01(spd / 900), sh = [3.5 * rum * (vn(dd * 22, 1, 81) - 0.5) * 2, 3 * rum * (vn(dd * 25, 2, 82) - 0.5) * 2];
+            const rev = 2300 * Math.pow(seg(ds, 0.9, 0.7), 1.6), P = 12, wa = (X - 560) / 50;
+            if (TM.d) for (let yy = P / 2; yy < 1080; yy += P) for (let xx = P / 2; xx < 1920; xx += P) {
+              const sx = xx - sh[0], sy = yy - sh[1], u = sx - X, car = carOf(u), jolt = 4 * rum * Math.max(0, Math.sin((dd * 9 + car * 1.7) * 3.1)) ** 8;
+              const v = sy - TR_Y + jolt;
+              if (!trainAt(u, v, wa)) continue;
+              const dm = Math.hypot(xx - TR_M[0], yy - TR_M[1]); if (dm > rev) continue;
+              S.dots.push([xx, yy, P * 0.44 * c01((rev - dm) / 140)]);
+            }
+            /* f950 -> f980: the camera locks onto the cab window and pushes in (ease-in, exponential) while the train is
+               still rolling; the window's cream fills the frame = the next scene */
+            const zu = seg(dd, TR_Z0, TR_STOP - TR_Z0);
+            if (zu > 0) S.zoomC = [X - 575 + sh[0], TR_Y - 265 + sh[1], Math.exp(Math.log(34) * IN(zu)), GLIDE(c01(zu * 1.6))];
+            /* smoke: puffs of SIGNAL code from the stack, swept back by the speed, rising and spreading */
+            const stack = [X - 105 + sh[0], TR_Y - 345 + sh[1]];
+            for (let n = 0; n < 26; n++) {
+              const te = TR_GO + n * 0.09; if (dd < te) continue;
+              const a2 = dd - te, life = seg(a2, 0, 1.25); if (life >= 1) continue;
+              const ex = lerp(560, 1580, BRK(seg(te, TR_GO, TR_STOP - TR_GO))) - 105, drift = -60 * a2 - (X - 105 - ex) * 0.0;
+              const cx = ex + drift + (X - 105 - ex) * 0.08, cy = TR_Y - 345 - 230 * OUT(life) - 40 * a2, rad = 26 + 120 * OUT(life);
+              for (let g = 0; g < 14; g++) {
+                const an = hash(n, g, 91) * 6.2832, rr = rad * Math.sqrt(hash(g, n, 92)), fr = Math.floor(dd * 12);
+                const ch = SG_NOISE[Math.floor(hash(n * 31 + g, fr, 93) * SG_NOISE.length)];
+                S.glyphs.push([cx + Math.cos(an) * rr, cy + Math.sin(an) * rr * 0.75, 20 + 10 * (1 - life), ch, (1 - life) * (0.55 + 0.45 * hash(g, n, 94)) * c01(a2 / 0.08)]);
+              }
+            }
+          }
+          if ((t + SH()) * 30 >= 977) S.post = [BULB[0], BULB[1], 18 * OUT(seg((t + SH()) * 30, 977, 1.2))];
+          if (S.zoomC) {
+            const [wx, wy, Z, f] = S.zoomC, cx = lerp(wx, 960, f), cy = lerp(wy, 540, f);
+            const zp = (x, y) => [cx + (x - wx) * Z, cy + (y - wy) * Z];
+            S.dots = S.dots.map(([x, y, r]) => { const [a, b] = zp(x, y); return [a, b, r * Z]; }).filter(([a, b, r]) => a > -r && a < 1920 + r && b > -r && b < 1080 + r);
+            S.glyphs = S.glyphs.map(([x, y, sz, ch, al]) => { const [a, b] = zp(x, y); return [a, b, sz * Z, ch, al]; }).filter(([a, b, sz]) => a > -sz && a < 1920 + sz && b > -sz && b < 1080 + sz);
+          }
+        }
+        /* ---------------- camera ---------------- */
+        const LAND = () => T_REL + flightInfo().d;
+        const Z_DELAY = -0.32, Z_DUR = 0.98;   /* spear sticks, a beat, then the camera dives into the spearhead */
+        const T_COVER = () => LAND() + Z_DELAY + Z_DUR;
+        const SH = () => T_COVER() - 8.95;   /* everything after the bloom runs on the reference clock, shifted by the spear's flight */
+        function cam(t) {
+          if (t < 9.3) return 1 + 0.07 * GLIDE(seg(t, 0, 9.3));
+          if (t < 11.71) return 1 + 0.04 * GLIDE(seg(t, 9.3, 2.4));
+          if (t < 14.1) return 1 + 0.04 * GLIDE(seg(t, 11.71, 2.4));
+          return 1 + 0.03 * GLIDE(seg(t, 14.1, 1));
+        }
+        const Cm = (t, pan = 0) => { const s = cam(t); return ([x, y, r]) => [CX + (x + pan - CX) * s, CY + (y - CY) * s, r * s]; };
+        const panX = (t) => -640 * GLIDE(seg(t, 8.95, 0.85));   /* the camera follows the spear */
+
+        /* ================= scene state (pure function of t) ================= */
+        function state(t, bo = false) {
+          const S = { ground: CR, disc: null, blobs: [], blobCol: OX, dots: [], dotCol: OX, streaks: [], sun: null, glyphs: [], mask: null, arcs: [], blob2: null, train: [], loco: null, zoomC: null, post: null, headline: null, caps: [], card: null };
+          if (t < T_COVER()) early(t, S, bo); else if (t - SH() >= T_CON) { if (!bo) late(t - SH(), S, bo); fourDots(t - SH(), S, bo); } else { const l = t - SH(); if (l >= 8.95 && l < T_SM) late(9.789, S, bo, l); else late(l < 8.95 ? l : l < T_RESYNC ? 9.79 + (l - T_SM) * CFIRE : l, S, bo); }
+          return S;
+        }
+        function early(t, S, bo) {
+          const cm0 = Cm(t, panX(t)), tL = LAND(), zu = seg(t, tL + Z_DELAY, Z_DUR);
+          let cm = cm0, tipCell = null;
+          if (zu > 0) {
+            /* camera push into the spearhead: creeps in, then accelerates (ease-in) straight into the tip dot, which becomes the ground */
+            const sp = spear(tL + 0.3, 0, 0), tip = [sp.x + SP_HALF * Math.cos(sp.a), sp.y + SP_HALF * Math.sin(sp.a)];
+            tipCell = [Math.round(tip[0] / PH) * PH, Math.round(tip[1] / PH) * PH];
+            const ts = cm0([tipCell[0], tipCell[1], 0]), Z = Math.exp(Math.log(320) * IN(zu)), g = GLIDE(zu), c = [lerp(ts[0], CX, g), lerp(ts[1], CY, g)];
+            cm = (p) => { const q = cm0(p); return [c[0] + (q[0] - ts[0]) * Z, c[1] + (q[1] - ts[1]) * Z, q[2] * Z]; };
+          }
+          if (t < T_EX + 0.14) { const k = 1 - OUT(seg(t, T_EX, 0.14)); S.blobs = leaves(t).map(([x, y, r]) => cm([x, y, r * k])); }
+          if (t >= T_EX && !bo) {
+            if (t < T_RUN) S.streaks = parts().map((p) => [cm(partPos(p, t)), cm(partPos(p, t - SHUTTER * 0.5))]);
+            else {
+              const fc = cells([...hunterPrims(Math.min(t, 9.6)), ...chaserPrims(t)], PH).map(([x, y]) => cm([x, y, DH]));
+              const sc = cells(spearPrims(t), PH).map(([x, y]) => cm([x, y, DH]));
+              S.dots = fc.concat(sc);
+              if (tipCell && t >= tL) S.dots.push(cm([tipCell[0], tipCell[1], DH * 1.06]));   /* the dot we dive into */
+            }
+          }
+        }
+        function late(t, S, bo, raw) {
+          const cm = Cm(t);
+          if (bo) { if (raw != null) { S.blobCol = CR; S.blobs = stonesRaw(raw).st.map(cm); } else if (t < 10.4 && t >= 9.79) { S.blobCol = CR; S.blobs = stones(t).map(cm); } return; }
+          if (t < 11.71) {
+            S.ground = OX; S.blobCol = CR; S.dotCol = CR;
+            if (raw != null) {
+              const R = stonesRaw(raw); S.blobs = R.st.map(cm);
+              return;
+            }
+            if (t < 10.4) S.blobs = stones(t).map(cm);
+            if (t > 9.79 && t < 10.5) for (let i = 0; i < 12; i++) {
+              const sp = (tt) => { const k = seg(tt, 9.79, 0.55), an = -1.57 + (hash(i, 4, 1) - 0.5) * 2.6, d = 30 + OUT(k) * (90 + hash(i, 5, 1) * 260);
+                const settle = OUT(seg(tt, 10.05, 0.3)), ex = FCX + (i % 2 ? 14 : -14), ey = FBY;
+                return [lerp(CX + Math.cos(an) * d, ex, settle * (i < 2 ? 1 : 0)), lerp(CY + Math.sin(an) * d + 140 * k * k, ey, settle * (i < 2 ? 1 : 0)), i < 2 ? 7 : (1 - k) * (3 + hash(i, 6, 1) * 6)]; };
+              S.streaks.push([cm(sp(t)), cm(sp(t - SHUTTER))]);
+            }
+            if (t >= 10.33 && t < T_SW) fireCells(t).forEach(([x, y, k]) => S.glyphs.push([...cm([x, y, PG * 1.0]), fireSym(x, y, t), 1]));   /* their chunky grid, our symbols */
+          }
+          if (t >= 11.71) { S.ground = CR; S.dotCol = OX; S.blobCol = OX; }   /* the invert lands mid-swirl, on the beat */
+          if (t >= T_SW && t < 14.1) {
+            const M = morph(), c0 = CC;
+            /* position of one coin/wheel dot at time tt (swirl in a frame that is itself turning) */
+            const coinDot = (m, tt) => {
+              /* the ring turns as one frame (spinA); each fire dot spirals in ON TOP of that rotation, so landing never stops it */
+              const a = spinA(tt), t0 = T_SW + m.d, u = SWIRL(seg(tt, t0, 0.7)), v = decel(seg(tt, T_WH + m.wd * 0.4, 0.5));
+              const lx = lerp(m.t[0], m.w[0], v), ly = lerp(m.t[1], m.w[1], v);
+              if (u >= 1) { const [x, y] = rot(lx, ly, a); return [c0[0] + x, c0[1] + y, DC]; }
+              const sa = Math.atan2(m.s[1] - c0[1], m.s[0] - c0[0]), sr = Math.hypot(m.s[0] - c0[0], m.s[1] - c0[1]);
+              const a0 = spinA(t0), ps = sa - a0, pt = Math.atan2(m.t[1], m.t[0]);
+              let dp = pt - ps; while (dp > Math.PI) dp -= 6.2832; while (dp < -Math.PI) dp += 6.2832;
+              const an = sa + (a - a0 + dp) * u,   /* u = 0: exactly the fire dot; u = 1: riding the spinning ring */ rr = lerp(sr, Math.hypot(m.t[0], m.t[1]), u) + 60 * Math.sin(Math.PI * u);
+              return [c0[0] + Math.cos(an) * rr, c0[1] + Math.sin(an) * rr, lerp(PG * 0.4, DC, u)];
+            };
+            const spun = (x, y, tt, r) => { const [rx, ry] = rot(x, y, spinA(tt)); return [c0[0] + rx, c0[1] + ry, r]; };
+            const blur = (f) => S.streaks.push([cm(f(t)), cm(f(t - SHUTTER)), 9]);   /* 180-degree shutter: fast spins smear around the circle */
+            if (t < 13.72) {
+              M.forEach((m) => { const u0 = SWIRL(seg(t, T_SW + m.d, 0.7));
+                if (u0 < 0.25) { const q = coinDot(m, t); S.glyphs.push([...cm([q[0], q[1], PG * 1.0]), fireSym(m.s[0], m.s[1], t), 1 - u0 / 0.25]); if (u0 > 0.05) blur((tt) => { const p = coinDot(m, tt); return [p[0], p[1], p[2] * (u0 - 0.05) / 0.2]; }); }
+                else blur((tt) => coinDot(m, tt)); });   /* symbols peel off, become the ring's dots */
+              const g = decel(seg(t, T_WH + 0.15, 0.5));
+              if (g > 0) M.grow.forEach(([x, y]) => blur((tt) => spun(x, y, tt, DC * g)));
+              /* the wheel fills into the dot from the hub outward while it keeps turning */
+              if (t >= T_FILL) { const sw = 1 + 0.85 * BREATHE(seg(t, 13.53, 0.17));   /* the grid dots swell until they merge into one solid dot */
+                fillBase.forEach(([x, y]) => { const k = decel(seg(t, T_FILL + 0.22 * Math.hypot(x, y) / RO, 0.16)); if (k > 0) blur((tt) => spun(x, y, tt, DC * k * sw)); }); }
+            } else {
+              S.disc = cm([c0[0], c0[1], t < 13.77 ? RO + 14 : lerp(RO + 14, 140, IN(seg(t, 13.77, 0.3)))]);
+            }
+          }
+          if (t >= 14.1) {
+            const Z = lerp(5.5, 1, OUT(seg(t, 14.1, 0.26))), hc = [960, 560];
+            const bz = ([x, y, r]) => cm([hc[0] + (x - hc[0]) * Z, hc[1] + (y - hc[1]) * Z, r * Z]);   /* the burst's over-scale, shared by horse + ground */
+            /* the horse: rasterized in its own frame, then carried on the ground surface and pitched to the slope */
+            if (t < T_DROP + D_DROP) {
+              const fy = surfS(960, t), sl = Math.max(-0.45, Math.min(0.45, Math.atan2(surfS(1000, t) - surfS(920, t), 80)));
+              cells(horsePrims(t, 0, 0, 0), PHo).forEach(([x, y]) => { const [rx, ry] = rot(x, y - 150, sl);   /* hooves on the surface */ S.dots.push(bz([960 + rx, fy + ry, DHo])); });
+            }
+            /* the ground: scrolling columns under the horse; after T_CAP the captured dots become corn */
+            const set = t >= T_CAP ? groundSet() : null, push = 1 + 0.035 * GLIDE(seg(t, T_POP + 0.6, 2.4));
+            if (!set) {
+              const j0 = Math.floor(gScroll(t) / 30) - 1;
+              for (let j = j0; j < j0 + 68; j++) for (let k = 0; k < 26; k++) { const [x, y] = groundPos(j * 30, k, t); if (x > -40 && x < 1960 && y < 1130) S.dots.push(bz([x, y, DHo * 0.9])); }
+            } else set.forEach((g, i) => {
+              const [x, y] = groundPos(g.wx, g.k, t);
+              if (g.corn == null) { if (y < 1130 && x > -40) S.dots.push(cm([x, y, DHo * 0.9])); return; }
+              const c = CORN_CELLS[g.corn], u = OUT(seg(t, popT(c.ci) + 0.32 * (1 - c.h) + 0.02 * hash(i, 9, 3), 0.55)), v = 1 - u;
+              const tx = 960 + (c.x - 960) * push, ty = 640 + (c.y - 640) * push, my = Math.max(y, ty) + 140;
+              let P = [v * v * x + 2 * v * u * tx + u * u * tx, v * v * y + 2 * v * u * my + u * u * ty, lerp(DHo * 0.9, c.r * push, u)];
+              if (t >= T_FALL) {
+                if (CORN[c.ci].order === 0) {   /* centre cob collapses into the sun seed at the horizon */
+                  const w = FALLE(seg(t, T_FALL + 0.15 * (1 - c.h), 0.45));
+                  if (w >= 1) return;
+                  P = [lerp(P[0], 960, w), lerp(P[1], HY + 10, w), P[2] * (1 - 0.8 * w)];
+                } else {                         /* side cobs fall and land in the field rows, then ride them */
+                  const f = landMap().byCell[g.corn], q = fieldPt(f.k, f.j, t), w = FALLE(seg(t, T_FALL + 0.12 * c.h + 0.04 * hash(i, 4, 4), 0.55));
+                  P = [lerp(P[0], q[0], w), lerp(P[1], q[1], w), lerp(P[2], q[2], w)];
+                }
+              }
+              S.dots.push(cm(P));
+            });
+            if (t >= T_FALL) {
+              const L = landMap();
+              for (let k = -NK; k <= NK; k++) for (let j = 0; j < NJ; j++) {
+                if (L.used.has(k * 1000 + j)) continue;
+                const [x, y, r] = fieldPt(k, j, t); if (x < -40 || x > 1960 || y > 1120) continue;
+                const rv = reveal(x, y, t); if (rv > 0.01) S.dots.push(cm([x, y, r * rv]));
+              }
+              if (t >= T_SUNUP - 0.15) { const q = cm([960, sunY(t), sunR(t)]); S.sun = q; }
+            }
+          }
+          /* ===== frame 674 (our 22.47s): everything cuts to maroon except the sun, which stays cream.
+             It falls (ease-in: slow, then fast), and near the bottom it lands in water: ripple rings spread out. ===== */
+          if (t >= T_INV3) {
+            S.dots = []; S.sun = null; S.ground = OX; S.dotCol = CR;
+            /* ===== frame 709: the water swells into a big halftone wave (cream dots on a strict grid) ===== */
+            if (t >= T_WAVE3) {
+              /* real footage (Pexels 35257509, wave on rocks) halftoned on a 16px grid; revealed upward from the water line */
+              const xf = GLIDE(seg(t, T_SHIP3, 0.55)), PW = 12, k = Math.min(WV.n - 1, Math.floor((t - T_WAVE3) * 24)), rise = OUT(seg(t, T_WAVE3, 0.7)), line = lerp(Y_WATER + 60, -200, rise);
+              if (WV.d) for (let j = 0; j < 90; j++) for (let i = 0; i < 160; i++) {
+                const y = j * PW + PW / 2, x = i * PW + PW / 2;
+                let L = Math.pow(c01((WV.d[((Math.floor(k / 8) * 90 + j) * 1280 + (k % 8) * 160 + i) * 4] / 255 - 0.2) / 0.85), 1.65) * 0.92 * c01((y - line) / 160) * c01((j - 7) / 5);   /* continuous tone (rock dark, sea mid, foam bright); sky rows faded out */
+                if (xf > 0) L = lerp(L, shipL(i, j, t), xf);   /* the ship dissolves in on the same grid */
+                if (L > 0.035) S.dots.push(cm([x, y, PW * 0.52 * Math.sqrt(L)]));
+              }
+            }
+            const d = seg(t, T_INV3, D_MFALL), y0 = sunY(T_INV3), r0 = sunR(T_INV3), y = lerp(y0, Y_WATER, MFALL(d));
+            if (t < T_IMP3 + 0.08) {
+              const sq = seg(t, T_IMP3 - 0.04, 0.12);   /* sinks into the water */
+              S.dots.push(cm([960, y + 40 * sq, lerp(r0, 70, MFALL(d)) * (1 - sq)]));
+            }
+            if (t >= T_IMP3) for (let k = 0; k < 5; k++) {
+              const a = t - T_IMP3 - k * 0.13; if (a <= 0) continue;
+              const R = 30 + 1250 * OUT(c01(a / 2.6)), fade = (1 - 0.85 * c01(a / 2.6)) * (1 - OUT(seg(t, T_WAVE3, 0.45))), n = Math.max(10, Math.floor(R / 12));
+              for (let i = 0; i < n; i++) {
+                const an = i / n * 6.2832, sy = Math.sin(an);
+                S.dots.push(cm([960 + Math.cos(an) * R, Y_WATER + 40 + sy * R * 0.15, (7 + 6 * (sy + 1)) * fade * (k === 0 ? 1.2 : 1)]));
+              }
+            }
+          }
+        }
+
+        /* gradient noise: every dot drifts and breathes a touch on a smooth evolving field, so even holds feel alive */
+        const BOIL = 2.2, BR = 0.07;
+        const boil = (x, y, t) => [BOIL * (vn(x * 0.006 + 3.1, y * 0.006 + t * 0.9, 11) - 0.5) * 2, BOIL * (vn(x * 0.006 + 7.7, y * 0.006 - t * 0.9, 12) - 0.5) * 2, 1 + BR * (vn(x * 0.01, y * 0.01 + t * 1.3, 13) - 0.5) * 2];
+        /* faint film grain: one noise tile, re-positioned each frame */
+        const GT = document.createElement("canvas"); GT.width = GT.height = 256;
+        { const g = GT.getContext("2d"), d = g.createImageData(256, 256); for (let i = 0; i < 256 * 256; i++) { const v = Math.floor(hash(i, 7, 77) * 255); d.data.set([v, v, v, 255], i * 4); } g.putImageData(d, 0, 0); }
+        const GP = out.createPattern(GT, "repeat");
+        /* ===== SIGNAL corners (opening): mono glyph noise blooms in from the four corners on an organic front,
+           flickers on the frame clock, and recedes; a smaller echo at the dot's pop. From the v3 SIGNAL kit. ===== */
+        const SG_CW = 14, SG_CH = 20, SG_COLS = Math.ceil(1920 / SG_CW), SG_ROWS = Math.ceil(1080 / SG_CH);
+        const SG_RAMP = ".,:-~>*+cC%#$", SG_NOISE = "#$%&*+-/<=>?@[]^_{|}~0123456789ABCDEFxz";
+        /* pulses on the music's tense hits (ChatGPT ref onsets) + our separations: [time, reach, rise, fall] */
+        const SG_PULSES = [[0.06, 0.13, 0.3, 0.38], [2.02, 0.075, 0.12, 0.3], [3.55, 0.06, 0.35, 0.4], [4.18, 0.08, 0.12, 0.3], [4.5, 0.115, 0.08, 0.35],
+          [4.97, 0.125, 0.08, 0.35], [5.5, 0.09, 0.08, 0.3], [5.78, 0.11, 0.08, 0.33], [6.06, 0.15, 0.07, 0.5],
+          [852 / 30, 0.065, 0.1, 0.32], [868 / 30, 0.07, 0.08, 0.3], [882 / 30, 0.07, 0.08, 0.3], [898 / 30, 0.075, 0.08, 0.3], [912 / 30, 0.09, 0.08, 0.4],
+          ...[986, 995].map((f) => [f / 30, 0.07, 0.06, 0.25]), [1018 / 30, 0.13, 0.05, 0.3],
+          ...[1062, 1077, 1099, 1124, 1129, 1160, 1190].map((f) => [f / 30, 0.065, 0.07, 0.3])];   /* skeleton: strobe hit + soft pulses on the music */
+        /* each corner (0 TL, 1 TR, 2 BL, 3 BR) feels each pulse a little differently: own strength + a few frames of lag */
+        function sgReach(t, k = 0) {
+          let R = 0;
+          SG_PULSES.forEach(([t0, a, ri, fa], i) => {
+            const lag = 0.05 * hash(i, k, 91), w = 0.7 + 0.6 * hash(k, i, 92), tt = t - t0 - lag;
+            if (tt < 0 || tt > ri + 0.25 + fa) return;
+            R = Math.max(R, a * w * (OUT(c01(tt / ri)) - IN(c01((tt - ri - 0.08) / fa))));
+          });
+          const win = (a, b) => (t > a && t < b ? c01((t - a) / 0.4) * c01((b - t) / 0.4) : 0);
+          const breath = 0.028 * (0.6 + 0.4 * Math.sin(t * 7.3 + k * 1.7)) * Math.max(win(3.4, 6.7), 0.8 * win(852 / 30, 31.6), 2.7 * win(1018 / 30, 41));   /* a steady, breathing frame of code around the x-ray */
+          return Math.max(R, breath);
+        }
+        function cornerSignal(t) {
+          const sph = skPhase(t * 30), sgOnOx = sph >= 0 && (t * 30 < 1055 || t * 30 >= 1142) && !(sph < 6 && sph % 2 === 1);   /* cream code on the maroon ground */
+          const RK = [0, 1, 2, 3].map((k) => sgReach(t, k)); if (Math.max(...RK) <= 0.004) return;
+          const fr = Math.floor(t * 24);
+          out.save(); out.font = `600 ${SG_CH - 2}px Menlo, ui-monospace, monospace`; out.textBaseline = "top";
+          for (let r = 0; r < SG_ROWS; r++) for (let c = 0; c < SG_COLS; c++) {
+            const u = (c + 0.5) / SG_COLS, v = (r + 0.5) / SG_ROWS;
+            const du = Math.min(u, 1 - u), dv = Math.min(v, 1 - v) * 0.5625, d = Math.hypot(du * 1.0, dv * 1.25);   /* distance to the nearest corner */
+            const R = RK[(u < 0.5 ? 0 : 1) + (v < 0.5 ? 0 : 2)];
+            if (d > R + 0.08) continue;
+            const edge = R + 0.035 * (vn(c * 0.22, r * 0.22 + t * 3, 81) - 0.5) - 0.03 * (vn(c * 0.6 + fr * 0.4, r * 0.6, 82));
+            if (d > edge) continue;
+            const k = c01((edge - d) / 0.07);   /* dense at the corner, sparse at the front */
+            if (hash(c, r, fr * 7 + 3) > 0.25 + 0.7 * k) continue;
+            const ch = hash(c, r, fr) < 0.35 ? SG_NOISE[Math.floor(hash(r, c, fr + 9) * SG_NOISE.length)] : SG_RAMP[Math.min(SG_RAMP.length - 1, Math.floor(k * SG_RAMP.length + hash(c, r, fr + 1) * 2))];
+            out.fillStyle = sgOnOx ? `rgba(255,240,230,${(0.3 + 0.55 * k).toFixed(3)})` : `rgba(75,21,38,${(0.25 + 0.5 * k).toFixed(3)})`;
+            out.fillText(ch, c * SG_CW, r * SG_CH);
+          }
+          out.restore();
+        }
+        const LOGO = new Image(); LOGO.onload = () => draw(last); LOGO.src = "assets/logo/hp-horizontal-cream.svg";
+        let last = 0;
+        const NSUB = 5, SHUT = FR * 0.75;
+        function layers(t) {
+          const S = state(t);
+          bg.fillStyle = css(S.ground); bg.fillRect(0, 0, W, H);
+          if (S.sun) { const [x, y, r] = S.sun; bg.save(); bg.beginPath(); bg.rect(0, 0, W, HY + 12); bg.clip(); bg.fillStyle = css(OX); bg.beginPath(); bg.arc(x, y, r, 0, 6.2832); bg.fill(); bg.restore(); }
+          bg.fillStyle = css(S.dotCol); bg.strokeStyle = css(S.dotCol); bg.lineCap = "round";
+          bg.beginPath(); for (const [x, y, r, sx, sy] of S.dots) { const [nx, ny, nr] = boil(x, y, t); if (sx) { bg.moveTo(x + nx + r * nr * sx, y + ny); bg.ellipse(x + nx, y + ny, r * nr * sx, r * nr * sy, 0, 0, 6.2832); } else { bg.moveTo(x + nx + r * nr, y + ny); bg.arc(x + nx, y + ny, r * nr, 0, 6.2832); } } bg.fill();
+          for (let [[x, y, r], [px, py], cap] of S.streaks) { if (r <= 0.2) continue; { const [nx, ny] = boil(x, y, t); x += nx; y += ny; px += nx; py += ny; }   /* same noise drift as the still dots, so nothing hops when a dot starts moving */ const L = Math.hypot(x - px, y - py), mx = r * (cap || 3); if (L > mx) { px = x + (px - x) * mx / L; py = y + (py - y) * mx / L; } bg.lineWidth = r * 2; bg.beginPath(); bg.moveTo(px, py); bg.lineTo(x + 0.01, y); bg.stroke(); }
+          if (S.caps.length) { bg.fillStyle = css(S.dotCol); for (const [x, y, r, h] of S.caps) { bg.beginPath(); bg.roundRect(x - r, y - r - h, 2 * r, 2 * r + 2 * h, r); bg.fill(); } }
+          if (S.arcs.length) { bg.save(); bg.strokeStyle = css(S.dotCol); bg.lineCap = "round"; for (const [cx, cy, R, a0, a1, r] of S.arcs) { bg.lineWidth = 2 * r; bg.beginPath(); bg.arc(cx, cy, R, a0, a1); bg.stroke(); } bg.restore(); }
+          if (S.blob2) { const [cx, cy, R, tt] = S.blob2; bg.save(); bg.fillStyle = css(OX); bg.beginPath();
+            for (let k = 0; k <= 64; k++) { const a = k / 64 * 6.2832, rr = R * (1 + 0.13 * (vn(Math.cos(a) * 1.6 + 5, Math.sin(a) * 1.6 + tt * 1.3, 71) - 0.5) * 2) ; const px = cx + Math.cos(a) * rr, py = cy + Math.sin(a) * rr; k ? bg.lineTo(px, py) : bg.moveTo(px, py); }
+            bg.closePath(); bg.fill(); bg.restore(); }
+          if (S.loco) { const [X, Y, wa, al] = S.loco; bg.save(); bg.globalAlpha = al; bg.translate(X, Y); bg.fillStyle = css(OX);
+            const R = (x, y, w, h, r) => { bg.beginPath(); bg.roundRect(x, y, w, h, r); bg.fill(); };
+            R(-400, -228, 390, 152, 70);              /* boiler */
+            R(-560, -300, 175, 245, 14); R(-580, -318, 215, 30, 12);   /* cab + roof */
+            R(-560, -86, 545, 30, 8);                 /* frame */
+            R(-780, -205, 200, 150, 18);              /* tender */
+            bg.beginPath(); bg.moveTo(-128, -228); bg.lineTo(-62, -228); bg.lineTo(-52, -335); bg.lineTo(-138, -335); bg.fill();   /* stack */
+            R(-150, -350, 108, 26, 10);
+            bg.beginPath(); bg.arc(-235, -228, 32, Math.PI, 0); bg.fill();   /* dome */
+            bg.beginPath(); bg.moveTo(-10, -100); bg.lineTo(40, -14); bg.lineTo(-40, -14); bg.fill();   /* cowcatcher */
+            bg.fillStyle = css(CR); R(-532, -270, 70, 62, 10);   /* cab window */
+            [[-140, 50], [-285, 50], [-430, 50], [-635, 34], [-725, 34]].forEach(([wx, wr]) => {
+              bg.fillStyle = css(OX); bg.beginPath(); bg.arc(wx, -wr, wr, 0, 6.2832); bg.fill();
+              bg.strokeStyle = css(CR); bg.lineWidth = Math.max(3, wr * 0.09); bg.lineCap = "round";
+              for (let k2 = 0; k2 < 3; k2++) { const a = wa * 48 / wr + k2 * Math.PI / 3; bg.beginPath(); bg.moveTo(wx - Math.cos(a) * wr * 0.72, -wr - Math.sin(a) * wr * 0.72); bg.lineTo(wx + Math.cos(a) * wr * 0.72, -wr + Math.sin(a) * wr * 0.72); bg.stroke(); }
+              bg.fillStyle = css(CR); bg.beginPath(); bg.arc(wx, -wr, wr * 0.16, 0, 6.2832); bg.fill(); });
+            bg.strokeStyle = css(CR); bg.lineWidth = 7; const pa = wa;   /* drive rod */
+            bg.beginPath(); bg.moveTo(-140 + Math.cos(pa) * 26, -50 + Math.sin(pa) * 26); bg.lineTo(-430 + Math.cos(pa) * 26, -50 + Math.sin(pa) * 26); bg.stroke();
+            bg.restore(); }
+          if (S.disc) { const [x, y, r] = S.disc; bg.fillStyle = css(OX); bg.beginPath(); bg.arc(x, y, r, 0, 6.2832); bg.fill(); }
+          if (S.glyphs.length) { bg.save(); bg.textAlign = "center"; bg.textBaseline = "middle"; const gc = css(S.dotCol);
+            for (const [x, y, sz, ch, a] of S.glyphs) { bg.globalAlpha = a; bg.fillStyle = gc; bg.font = `700 ${Math.round(sz)}px Menlo, ui-monospace, monospace`; bg.fillText(ch, x, y); } bg.restore(); }
+          const gl0 = (() => { const l = t - SH(); return l >= 8.95 && l < T_SM ? glitchAt(l).on : 0; })(), lt = LT(t), sh = gl0 ? 0 : (lt > 9.79 && lt < 10.3) ? 0.3 : 1, d = SHUT / (NSUB - 1) * sh;
+          const half = state(t - d * 0.5, true).blobs;   /* the blob shader fills the gap between sub-frames */
+          drawBlobs([S.blobs, S.blobs, S.blobs, S.blobs, half, half, half, half], S.blobCol);
+          sub.globalAlpha = 1; if (S.soft > 0.05) { sub.filter = `blur(${S.soft.toFixed(2)}px)`; sub.drawImage(bgc, 0, 0); sub.filter = "none"; } else sub.drawImage(bgc, 0, 0); sub.drawImage(glc, 0, 0);
+          if (S.post) { sub.save(); sub.fillStyle = css(OX); sub.beginPath(); sub.arc(S.post[0], S.post[1], S.post[2], 0, 6.2832); sub.fill(); sub.restore(); }
+          if (S.train.length) { sub.save(); sub.fillStyle = css(CR); sub.beginPath(); for (const [x, y, r] of S.train) { sub.moveTo(x + r, y); sub.arc(x, y, r, 0, 6.2832); } sub.fill(); sub.restore(); }
+          if (S.mask) { const [w, h, rr] = S.mask; sub.save(); sub.globalCompositeOperation = "destination-in"; sub.beginPath(); sub.roundRect(960 - w / 2, 540 - h / 2, w, h, Math.min(rr, w / 2, h / 2)); sub.fill(); sub.globalCompositeOperation = "destination-over"; sub.fillStyle = css(CR); sub.fillRect(0, 0, W, H); sub.restore(); }
+        }
+        function draw(t) {
+          last = t;
+          for (let k = 0; k < NSUB; k++) {
+            const gl = (tt) => { const l = tt - SH(); return l >= 8.95 && l < T_SM ? glitchAt(l).on : 0; }, glf = gl(t) || gl(t - SHUT);   /* glitch frames are crisp */
+            const gAt = (tt) => { if (tt < T_COVER()) return 0; if (tt * 30 >= 1360) return 33; if (tt * 30 >= 1298) return 32; if (tt * 30 >= 1142) return 31; if (tt * 30 >= 1055) return 30; const ph = skPhase(tt * 30); if (ph >= 0) return 10 + ph; const l = LT(tt); return l < 11.71 ? 1 : l < T_INV3 ? 2 : 3; }, flip = gAt(t) !== gAt(t - SHUT);   /* never blur across the 1-frame invert */
+            const lt = LT(t), zf = seg(t, LAND() + Z_DELAY, Z_DUR), sf = (lt > 14.08 && lt < 14.42) || (zf > 0.5 && zf < 1) ? 0.25 : 1;   /* the zoom-out burst moves too far per frame for 5 samples: shorter shutter there */
+            const mk = (t - SH() >= T_CON && t - SH() < T_CON + 0.5) || t - SH() >= T_SPIN + 0.3;   /* the ending carries its own path smears (endDot), so no sub-frame stacking */   /* + the spin carries its own arc blur */   /* the closing mask: short shutter or it leaves stepped rings */
+            layers(t - SHUT * (flip || glf ? 0 : mk ? (t - SH() >= T_SPIN + 0.3 ? 0 : 0.15) : sf) * k / (NSUB - 1));
+            out.globalAlpha = 1 / (k + 1); out.drawImage(subc, 0, 0);   /* running average of the sub-frames */
+          }
+          out.globalAlpha = 1;
+          cornerSignal(t);
+          const SL = state(t);
+          if (SL.headline) {
+            const words = ["New", "stories", "every", "single", "week."], cf2 = SL.headline.cf, EZ = bz(0.23, 1, 0.32, 1), ex = seg(cf2, T_IMP - 4, 8);
+            out.save(); out.font = '800 84px "Bricolage Grotesque", sans-serif'; out.textBaseline = "middle";
+            const ws = words.map((w) => out.measureText(w + " ").width), tw = ws.reduce((a, b) => a + b, 0) - out.measureText(" ").width;
+            let x = 960 - tw / 2;
+            words.forEach((w, i) => {
+              const u = EZ(seg(cf2, SL.headline.t0 + i * 1.2, 21)) * (1 - IN(ex));
+              if (u > 0) { out.globalAlpha = u; out.filter = `blur(${(6 * (1 - u)).toFixed(2)}px)`; out.fillStyle = i >= 2 ? "#FFC145" : css(CR); out.fillText(w, x, 540 + 0.3 * 84 * (1 - u)); }
+              x += ws[i];
+            });
+            out.restore();
+          }
+          if (SL.card != null) {
+            /* end card: the burn (HP noise gradient) opens out of the dot, the horizontal lockup settles in, grain over it */
+            const cc = SL.card, op = OUT(seg(cc, T_CARD, 14)), R = 2300 * op;
+            out.save(); out.beginPath(); out.arc(960, 540, Math.max(1, R), 0, 6.2832); out.clip();
+            const gx = -0.08 * 1920 + 220 * GLIDE(seg(cc, T_CARD, 90)), g = out.createRadialGradient(gx + 150, 1080, 0, gx + 150, 1080, 2200);
+            [[0, "#FFC145"], [0.28, "#FF8A4C"], [0.54, "#7A1E1E"], [0.76, "#4B1526"], [1, "#2C0B16"]].forEach(([o, c]) => g.addColorStop(o, c));
+            out.fillStyle = g; out.fillRect(0, 0, W, H);
+            if (LOGO.complete && LOGO.naturalWidth) {
+              const u = bz(0.23, 1, 0.32, 1)(seg(cc, T_CARD + 4, 21)), lw = 620, lh = lw * LOGO.naturalHeight / LOGO.naturalWidth;
+              out.globalAlpha = u; out.filter = `blur(${(6 * (1 - u)).toFixed(2)}px)`; out.drawImage(LOGO, 960 - lw / 2, 540 - lh / 2 + 18 * (1 - u), lw, lh); out.filter = "none"; out.globalAlpha = 1;
+            }
+            out.globalAlpha = 0.16 * op; out.fillStyle = GP; out.translate(-Math.floor(hash(Math.floor(t * 24), 1, 5) * 256), -Math.floor(hash(Math.floor(t * 24), 2, 5) * 256)); out.fillRect(0, 0, W + 256, H + 256);
+            out.restore();
+          }
+          const f = Math.floor(t * 24); out.save(); out.globalAlpha = 0.05;
+          out.translate(-Math.floor(hash(f, 1, 3) * 256), -Math.floor(hash(f, 2, 3) * 256)); out.fillStyle = GP; out.fillRect(0, 0, W + 256, H + 256); out.restore();
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        const P = { t: 0 };
+        const STEP_FPS = 18;   /* hold each frame 1/STEP_FPS s (12 = on twos, 18 = in between); 0 = smooth, every frame */
+        const q = (t) => (STEP_FPS ? Math.floor(t * STEP_FPS + 1e-6) / STEP_FPS : t);
+        tl.fromTo(P, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(q(P.t)) }, 0);
+        tl.set({}, {}, END);
+        draw(0);
+        window.__timelines["hp-cg-proof"] = tl;
+      })();
+    </script>
+  </body>
+</html>

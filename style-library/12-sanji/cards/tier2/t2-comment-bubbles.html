@@ -1,0 +1,240 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · COMMENT BUBBLES
+  Design-review moment in the right third. Three comment pins land one after
+  another, each a teardrop avatar marker (initials on a solid disc, white rim)
+  that pops out of blur; a soft white line draws from the pin and a frosted
+  white comment bubble resolves at its end (name + time + a short comment, ink
+  type, paper glass with backdrop blur). Earlier pins stay; all three gently
+  float on offset phases during the hold, then dissolve one by one.
+  Slots: n1..n3 (names, <=12), c1..c3 (comments, <=40, wraps to 2 lines).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-comment-bubbles {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-body);
+      }
+      #sanji-t2-comment-bubbles .cm { position: absolute; width: 0; height: 0; }
+      #sanji-t2-comment-bubbles .pin {
+        position: absolute; left: -34px; top: -68px; width: 68px; height: 68px; box-sizing: border-box;
+        border-radius: 50% 50% 50% 8px; border: 3px solid var(--paper);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.18);
+        display: flex; align-items: center; justify-content: center; transform-origin: 0% 100%;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 24px; letter-spacing: -0.01em; color: var(--white);
+      }
+      #sanji-t2-comment-bubbles .pin.a { background: radial-gradient(circle at 35% 30%, var(--cobalt-lift), var(--cobalt) 60%, var(--cobalt-ink)); }
+      #sanji-t2-comment-bubbles .pin.b { background: radial-gradient(circle at 35% 30%, var(--ember-hot), var(--ember) 60%, var(--ember-deep)); }
+      #sanji-t2-comment-bubbles .pin.c { background: radial-gradient(circle at 35% 30%, var(--ink-mid), var(--ink) 70%); }
+      #sanji-t2-comment-bubbles .bub {
+        position: absolute; left: 92px; top: -128px; width: max-content; max-width: 330px; box-sizing: border-box;
+        padding: 18px 24px 20px; border-radius: 26px; border-top-left-radius: 10px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(244,245,248,0.84));
+        border: 1px solid rgba(255,255,255,0.9);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,1);
+        -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+        transform-origin: 0% 30%;
+      }
+      #sanji-t2-comment-bubbles .who { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+      #sanji-t2-comment-bubbles .nm { font-weight: var(--wt-bold); font-size: 25px; letter-spacing: var(--track-ui); color: var(--ink); }
+      #sanji-t2-comment-bubbles .ago { font-weight: 500; font-size: 20px; color: var(--ink-mid); }
+      #sanji-t2-comment-bubbles .tx { margin-top: 5px; font-weight: 500; font-size: 26px; line-height: 1.26; letter-spacing: var(--track-ui); color: var(--ink); text-wrap: balance; }
+      #sanji-t2-comment-bubbles svg.ln { position: absolute; left: 0; top: 0; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-comment-bubbles" data-composition-id="sanji-t2-comment-bubbles" data-start="0" data-width="1920" data-height="1080">
+      <div class="cm" style="left:1330px; top:300px">
+        <svg class="ln" width="1" height="1"><path d="M30 -52 C 52 -64, 66 -78, 92 -86" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="pin a">AK</div>
+        <div class="bub"><div class="who"><span class="nm" data-slot="n1">Ava</span><span class="ago">2m</span></div><div class="tx" data-slot="c1">Make the logo resolve slower</div></div>
+      </div>
+      <div class="cm" style="left:1410px; top:590px">
+        <svg class="ln" width="1" height="1"><path d="M30 -52 C 52 -64, 66 -78, 92 -86" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="pin b">JR</div>
+        <div class="bub"><div class="who"><span class="nm" data-slot="n2">Jonah</span><span class="ago">1m</span></div><div class="tx" data-slot="c2">Love this transition, keep it</div></div>
+      </div>
+      <div class="cm" style="left:1320px; top:880px">
+        <svg class="ln" width="1" height="1"><path d="M30 -52 C 52 -64, 66 -78, 92 -86" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="pin c">MS</div>
+        <div class="bub"><div class="who"><span class="nm" data-slot="n3">Mila</span><span class="ago">now</span></div><div class="tx" data-slot="c3">Approved. Ship it tonight</div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-comment-bubbles";
+        const ROOT = document.getElementById(ID);
+        const cms = [...ROOT.querySelectorAll(".cm")];
+        /* initials follow the name slots */
+        cms.forEach((cm) => {
+          const nm = cm.querySelector(".nm").textContent.trim();
+          const pin = cm.querySelector(".pin");
+          if (nm) pin.textContent = nm.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+        });
+
+        const tl = gsap.timeline({ paused: true });
+        const STEP = 0.75, T0 = 0.25, OUT = 5.0;
+
+        cms.forEach((cm, i) => {
+          const pin = cm.querySelector(".pin"), bub = cm.querySelector(".bub"), ln = cm.querySelector("path");
+          const L = ln.getTotalLength();
+          tl.set([pin, bub], { autoAlpha: 0 }, 0).set(ln, { strokeDasharray: L, strokeDashoffset: L, opacity: 0 }, 0);
+          const t = T0 + i * STEP;
+          /* pin pops out of blur from its point */
+          tl.fromTo(pin, { autoAlpha: 0, scale: 0.3, filter: "blur(10px)" },
+                         { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "back.out(1.3)" }, t)
+            .set(ln, { opacity: 1 }, t + 0.16)
+            .to(ln, { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, t + 0.16)
+            .fromTo(bub, { autoAlpha: 0, scale: 0.88, x: -10, filter: "blur(12px)" },
+                         { autoAlpha: 1, scale: 1, x: 0, filter: "blur(0px)", duration: 0.42, ease: "back.out(1.2)" }, t + 0.3)
+            .set(bub, { filter: "none" }, t + 0.73);
+          /* bubble text: name/time row rises as a block, the comment pours in */
+          TXT.block(tl, bub.querySelector(".who"), t + 0.4);
+          TXT.reveal(tl, bub.querySelector(".tx"), t + 0.47);
+          /* gentle float, offset phases, finite and ends before OUT */
+          const F0 = t + 0.8, FL = 1.15 + i * 0.12;
+          const reps = Math.max(0, Math.floor((OUT - F0) / FL) - 1);
+          tl.to(cm, { y: i % 2 ? 7 : -7, duration: FL, ease: "sine.inOut", yoyo: true, repeat: reps }, F0);
+          /* exit */
+          tl.to(cm, { autoAlpha: 0, filter: "blur(10px)", duration: 0.34, ease: "power2.in" }, OUT + i * 0.08);
+        });
+        tl.set({}, {}, OUT + 0.2 + 0.4);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

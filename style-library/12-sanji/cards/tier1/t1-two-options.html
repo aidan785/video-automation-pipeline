@@ -1,0 +1,287 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · compare · TWO OPTIONS
+  Cobalt-to-sky gradient canvas. A GIANT sentence-case title resolves word by
+  word at the top (white-to-transparent vertical gradient clip: the one allowed
+  single gradient title). A white profile card rises from below center and
+  overlaps the title's baseline: pale-blue photo area with a generic person
+  silhouette, small "Option 1" label + name, then three key / value rows
+  resolve in. The card glides left as card B rises beside it; B's values land
+  as cobalt highlights (the better option). Both cards keep a soft drift.
+  Slots: title (<= 12), nameA nameB (<= 10), a1k a2k a3k (<= 16),
+  a1v a2v a3v b1v b2v b3v (<= 14).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-two-options {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: linear-gradient(180deg, var(--sky-2) 0%, var(--sky) 14%, var(--cobalt) 34%, var(--cobalt) 64%, var(--sky) 86%, var(--sky-2) 100%);
+        font-family: var(--font-body); color: var(--ink);
+      }
+      #sanji-t1-two-options .glow { position: absolute; inset: 0;
+        background: radial-gradient(50% 40% at 50% 0%, rgba(32,160,245,0.45), rgba(32,160,245,0) 70%),
+                    radial-gradient(60% 30% at 50% 100%, rgba(32,160,245,0.40), rgba(32,160,245,0) 70%); }
+      #sanji-t1-two-options .title {
+        position: absolute; left: 0; right: 0; top: 76px; text-align: center; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 300px; line-height: 1;
+        letter-spacing: -0.04em;
+      }
+      #sanji-t1-two-options .title .w {
+        display: inline-block; white-space: pre; padding: 0 0.02em 0.26em; margin-bottom: -0.18em;
+        background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 42%, rgba(225,228,255,0.8) 64%, rgba(200,205,255,0.4) 80%, rgba(200,205,255,0.15) 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      #sanji-t1-two-options .cw { position: absolute; top: 335px; left: 650px; width: 620px; height: 625px; }
+      #sanji-t1-two-options .card {
+        position: absolute; inset: 0; box-sizing: border-box; background: var(--paper); border-radius: 42px;
+        border: 2.5px solid color-mix(in srgb, var(--sky-2) 55%, var(--paper));
+        box-shadow: 0 0 0 1.5px rgba(20,40,200,0.35), 0 40px 90px rgba(10,20,140,0.35);
+      }
+      #sanji-t1-two-options .photo {
+        position: absolute; left: 12px; right: 12px; top: 12px; height: 372px; border-radius: 30px; overflow: hidden;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--sky) 14%, var(--paper)) 0%, color-mix(in srgb, var(--sky) 30%, var(--paper)) 50%, color-mix(in srgb, var(--sky) 62%, var(--paper)) 100%);
+      }
+      #sanji-t1-two-options .photo svg { position: absolute; left: 50%; top: 40px; margin-left: -170px; }
+      #sanji-t1-two-options .opt { position: absolute; left: 26px; bottom: 92px; font-weight: var(--wt-ui); font-size: 22px; letter-spacing: var(--track-ui); color: var(--white); }
+      #sanji-t1-two-options .nm { position: absolute; left: 24px; bottom: 18px; font-weight: var(--wt-bold); font-size: 66px; letter-spacing: -0.03em; line-height: 1; color: var(--white); text-shadow: 0 4px 20px rgba(20,60,160,0.25); }
+      #sanji-t1-two-options .rows { position: absolute; left: 30px; right: 54px; top: 412px; }
+      #sanji-t1-two-options .row { position: relative; height: 66px; display: flex; align-items: center; justify-content: space-between; font-size: 31px; letter-spacing: var(--track-ui); }
+      #sanji-t1-two-options .k { color: var(--dormant); font-weight: 500; }
+      #sanji-t1-two-options .v { color: var(--ink); font-weight: var(--wt-ui); position: relative; z-index: 0; }
+      #sanji-t1-two-options .b .v { color: var(--cobalt); font-weight: var(--wt-bold); }
+      #sanji-t1-two-options .b .v .hi {
+        position: absolute; left: -14px; right: -14px; top: -6px; bottom: -6px; border-radius: 12px; z-index: -1;
+        background: color-mix(in srgb, var(--cobalt) 10%, var(--paper)); transform-origin: 0% 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-two-options" data-composition-id="sanji-t1-two-options" data-start="0" data-width="1920" data-height="1080">
+      <div class="glow"></div>
+      <div class="title" data-slot="title">Two Options</div>
+
+      <div class="cw a"><div class="card">
+        <div class="photo">
+          <svg width="340" height="340" viewBox="0 0 340 340"><defs>
+            <linearGradient id="sjA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9DDF6"/><stop offset="1" stop-color="#8DB6EC"/></linearGradient>
+            <linearGradient id="sjB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FAAE6"/><stop offset="1" stop-color="#5F95E2"/></linearGradient></defs>
+            <ellipse cx="170" cy="98" rx="62" ry="72" fill="url(#sjA)"/><path d="M20 340c0-90 60-128 150-128s150 38 150 128z" fill="url(#sjB)"/></svg>
+          <div class="opt">Option 1</div>
+          <div class="nm" data-slot="nameA">Alex</div>
+        </div>
+        <div class="rows">
+          <div class="row"><span class="k" data-slot="a1k">Video quality</span><span class="v" data-slot="a1v">Good</span></div>
+          <div class="row"><span class="k" data-slot="a2k">Delivery</span><span class="v" data-slot="a2v">7 days</span></div>
+          <div class="row"><span class="k" data-slot="a3k">Revisions</span><span class="v" data-slot="a3v">Back and forth</span></div>
+        </div>
+      </div></div>
+
+      <div class="cw b"><div class="card">
+        <div class="photo">
+          <svg width="340" height="340" viewBox="0 0 340 340"><defs>
+            <linearGradient id="sjC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4D6F8"/><stop offset="1" stop-color="#8AA9EE"/></linearGradient>
+            <linearGradient id="sjD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C9CEB"/><stop offset="1" stop-color="#5B82E6"/></linearGradient></defs>
+            <ellipse cx="170" cy="98" rx="62" ry="72" fill="url(#sjC)"/><path d="M20 340c0-90 60-128 150-128s150 38 150 128z" fill="url(#sjD)"/></svg>
+          <div class="opt">Option 2</div>
+          <div class="nm" data-slot="nameB">Me</div>
+        </div>
+        <div class="rows">
+          <div class="row"><span class="k kb1">Video quality</span><span class="v"><i class="hi"></i><span data-slot="b1v">Same quality</span></span></div>
+          <div class="row"><span class="k kb2">Delivery</span><span class="v"><i class="hi"></i><span data-slot="b2v">1 day</span></span></div>
+          <div class="row"><span class="k kb3">Revisions</span><span class="v"><i class="hi"></i><span data-slot="b3v">1 hour</span></span></div>
+        </div>
+      </div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-two-options";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+
+        /* B reuses A's keys */
+        ["1", "2", "3"].forEach((n) => { $(".kb" + n).textContent = $("[data-slot=a" + n + "k]").textContent; });
+
+        /* title words */
+        const title = $(".title");
+        const ws = title.textContent.trim().split(/\s+/);
+        title.textContent = "";
+        const words = ws.map((w, i) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : ""); title.appendChild(s); return s; });
+
+        const A = $(".cw.a"), B = $(".cw.b"), cA = A.querySelector(".card"), cB = B.querySelector(".card");
+        const tl = gsap.timeline({ paused: true });
+        tl.set([cA, cB], { autoAlpha: 0 }, 0).set(words, { autoAlpha: 0 }, 0)
+          .set($$(".hi"), { scaleX: 0 }, 0)
+          .set(B, { x: 340 }, 0);
+
+        /* 1. giant title pours in (text preset values, tweened on the clipped .w words so the gradient clip survives) */
+        const TD = TXT.DEFAULTS, emW = parseFloat(getComputedStyle(title).fontSize);
+        words.forEach((w, i) => tl.fromTo(w, { autoAlpha: 0, filter: `blur(${TD.blur}px)`, y: emW * TD.y },
+          { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: TD.dur, ease: TXT.EASE, immediateRender: true }, 0.15 + i * 0.12));
+
+        /* 2. card A rises from below center */
+        const rise = (c, t) => tl.fromTo(c, { autoAlpha: 0, y: 520, filter: "blur(14px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.75, ease: "expo.out" }, t);
+        rise(cA, 0.75);
+        const nameIn = (c, t) => { TXT.block(tl, c.querySelector(".opt"), t); TXT.reveal(tl, c.querySelector(".nm"), t + 0.08); };
+        nameIn(cA, 1.15);
+        const rowsIn = (rows, t) => rows.forEach((r, i) => {
+          TXT.reveal(tl, [r.querySelector(".k"), r.querySelector(".v")], t + i * 0.32, { stagger: 0.05 });
+        });
+        rowsIn([...cA.querySelectorAll(".row")], 1.4);
+
+        /* 3. A glides left, B rises beside it */
+        const SH = 2.75;
+        tl.to(A, { x: -340, duration: 0.7, ease: "power3.inOut" }, SH);
+        rise(cB, SH + 0.32);
+        nameIn(cB, SH + 0.5);
+        const bRows = [...cB.querySelectorAll(".row")];
+        rowsIn(bRows, SH + 0.75);
+        bRows.forEach((r, i) => tl.to(r.querySelector(".hi"), { scaleX: 1, duration: 0.4, ease: "expo.out" }, SH + 0.9 + i * 0.32));
+
+        /* 4. soft drift (inner card y after its rise is done; on the wrapper so no overlap) */
+        tl.fromTo(A, { y: 0 }, { y: -12, duration: 3.6, ease: "sine.inOut" }, 1.6)
+          .fromTo(B, { y: 0 }, { y: -10, duration: 2.4, ease: "sine.inOut" }, SH + 0.9);
+
+        /* 5. exit */
+        const OUT = SH + 3.0;
+        tl.to([cA, cB], { autoAlpha: 0, filter: "blur(10px)", duration: 0.35, ease: "power2.in", stagger: 0.05 }, OUT)
+          .to(words, { autoAlpha: 0, filter: `blur(${TD.blur}px)`, y: -emW * TD.exitY, duration: TD.exitDur, ease: "power2.in", stagger: TD.exitStagger }, OUT + 0.05);
+        tl.set({}, {}, OUT + 0.5);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

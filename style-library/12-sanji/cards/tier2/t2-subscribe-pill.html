@@ -1,0 +1,287 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · SUBSCRIBE PILL
+  Creator CTA in the lower-left third. A dark liquid-glass pill rises out of
+  blur: avatar disc (initial on cobalt, white rim), channel name + follower
+  count, a cobalt "Subscribe" button and a bell. A white pointer glides in and
+  clicks the button: press dip, ripple, and the button FLIPS from cobalt fill
+  to white with a cobalt check + "Subscribed" (labels cross-resolve through
+  blur). Then the bell fills in and rings: two eased swings that settle, with
+  a soft halo. Cursor drifts off, pill dissolves down.
+  Slots: name (<=18), followers (<=18).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-subscribe-pill {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t2-subscribe-pill .pill {
+        position: absolute; left: 260px; bottom: 116px; height: 116px; box-sizing: border-box;
+        display: flex; align-items: center; gap: 22px; padding: 0 30px 0 16px; border-radius: var(--r-pill);
+        background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02) 60%), rgba(22,22,32,0.52);
+        border: 1px solid rgba(255,255,255,0.26);
+        box-shadow: 0 22px 60px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.2);
+        -webkit-backdrop-filter: blur(20px) saturate(1.25); backdrop-filter: blur(20px) saturate(1.25);
+        transform-origin: 0% 50%;
+      }
+      #sanji-t2-subscribe-pill .av {
+        flex: none; width: 84px; height: 84px; border-radius: 50%; box-sizing: border-box;
+        background: radial-gradient(circle at 35% 30%, var(--sky-2), var(--cobalt) 58%, var(--cobalt-ink));
+        border: 2.5px solid rgba(255,255,255,0.85);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 38px; letter-spacing: -0.02em;
+      }
+      #sanji-t2-subscribe-pill .id { display: flex; flex-direction: column; gap: 2px; white-space: nowrap; padding-right: 8px; }
+      #sanji-t2-subscribe-pill .nm { font-weight: var(--wt-bold); font-size: 31px; letter-spacing: var(--track-ui); }
+      #sanji-t2-subscribe-pill .fl { font-weight: 500; font-size: 23px; letter-spacing: var(--track-ui); color: var(--white-soft); }
+      #sanji-t2-subscribe-pill .btn {
+        position: relative; flex: none; width: 246px; height: 68px; border-radius: var(--r-pill); box-sizing: border-box;
+        background: var(--cobalt); border: var(--rim) solid rgba(255,255,255,0.6);
+        box-shadow: 0 10px 26px rgba(14,18,150,0.40), inset 0 1.5px 0 rgba(255,255,255,0.35);
+        font-weight: var(--wt-bold); font-size: 27px; letter-spacing: var(--track-ui);
+      }
+      #sanji-t2-subscribe-pill .btn .s { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px; white-space: nowrap; }
+      #sanji-t2-subscribe-pill .btn .s2 { color: var(--cobalt); }
+      #sanji-t2-subscribe-pill .btn .s2 svg { display: block; }
+      #sanji-t2-subscribe-pill .btn .rip { position: absolute; left: 50%; top: 50%; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; background: rgba(255,255,255,0.45); opacity: 0; }
+      #sanji-t2-subscribe-pill .bell { position: relative; flex: none; width: 52px; height: 52px; }
+      #sanji-t2-subscribe-pill .bell .halo { position: absolute; inset: -22px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.4), rgba(255,255,255,0) 65%); opacity: 0; }
+      #sanji-t2-subscribe-pill .bell .sw { position: absolute; inset: 0; transform-origin: 50% 10%; }
+      #sanji-t2-subscribe-pill .bell svg { position: absolute; inset: 0; display: block; }
+      #sanji-t2-subscribe-pill .cur { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 5; }
+      #sanji-t2-subscribe-pill .cur svg { position: absolute; left: -6px; top: -4px; display: block; overflow: visible; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35)); transform-origin: 6px 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-subscribe-pill" data-composition-id="sanji-t2-subscribe-pill" data-start="0" data-width="1920" data-height="1080">
+      <div class="pill">
+        <div class="av">N</div>
+        <div class="id"><span class="nm" data-slot="name">Northline Studio</span><span class="fl" data-slot="followers">128K subscribers</span></div>
+        <div class="btn">
+          <div class="rip"></div>
+          <div class="s s1">Subscribe</div>
+          <div class="s s2"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2042EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path class="tick" d="M5 12.5l4.5 4.5L19 7.5"/></svg>Subscribed</div>
+        </div>
+        <div class="bell">
+          <div class="halo"></div>
+          <div class="sw">
+            <svg class="b0" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 1.8H4.4z"/><path d="M10 20.6a2.2 2.2 0 0 0 4 0"/></svg>
+            <svg class="b1" width="52" height="52" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 1.8H4.4z"/><path d="M10 20.6a2.2 2.2 0 0 0 4 0" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="cur"><svg width="52" height="66" viewBox="0 0 23 29"><path d="M3 2v21.5l5.6-5.2 3.7 8.3 3.6-1.6-3.6-8.1h7.5z" fill="#FFFFFF" stroke="#16161E" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-subscribe-pill";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const COBALT = tok("--cobalt"), WHITE = tok("--white");
+        const pill = $(".pill"), btn = $(".btn"), cur = $(".cur"), csvg = $(".cur svg"), tick = $(".tick");
+        const nm = $(".nm").textContent.trim(); if (nm) $(".av").textContent = nm[0].toUpperCase();
+        const TL_ = tick.getTotalLength(); tick.style.strokeDasharray = TL_; tick.style.strokeDashoffset = TL_;
+
+        /* button centre in root coords, measured lazily (after fonts / layout) */
+        const bc = () => { const r = btn.getBoundingClientRect(), o = ROOT.getBoundingClientRect(); return { x: r.left - o.left + r.width * 0.56, y: r.top - o.top + r.height * 0.58 }; };
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set(pill, { autoAlpha: 0 }, 0).set($(".s2"), { autoAlpha: 0 }, 0).set($(".b1"), { autoAlpha: 0 }, 0)
+          .set(cur, { x: 1300, y: 1120, autoAlpha: 0 }, 0);
+
+        /* pill rises in, contents resolve */
+        tl.fromTo(pill, { autoAlpha: 0, y: 40, scale: 0.95, filter: "blur(12px)" },
+                        { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.2)" }, 0.15)
+          .set(pill, { filter: "none" }, 0.66)
+;
+        /* contents: avatar as a block, name + followers pour in, button + bell as blocks (house preset) */
+        TXT.block(tl, $(".av"), 0.28);
+        TXT.reveal(tl, $(".nm"), 0.32);
+        TXT.reveal(tl, $(".fl"), 0.4, { stagger: 0.03 });
+        TXT.block(tl, [btn, $(".bell")], 0.46);
+
+        /* cursor glides to the button on an arc */
+        const G0 = 0.85, GD = 0.85;
+        tl.to(cur, { autoAlpha: 1, duration: 0.18 }, G0)
+          .to(cur, { x: () => bc().x, duration: GD, ease: "power3.inOut" }, G0)
+          .to(cur, { y: () => bc().y, duration: GD, ease: "power2.out" }, G0)
+          .fromTo(csvg, { filter: "blur(0px)" }, { filter: "blur(1.4px)", duration: GD * 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, G0);
+
+        /* click + flip */
+        const C = G0 + GD + 0.1;
+        tl.to(csvg, { scale: 0.82, duration: 0.08, ease: "power2.in" }, C)
+          .to(csvg, { scale: 1, duration: 0.26, ease: "back.out(1.3)" }, C + 0.08)
+          .to(btn, { scale: 0.94, duration: 0.08, ease: "power2.in" }, C)
+          .to(btn, { scale: 1, duration: 0.34, ease: "back.out(1.3)" }, C + 0.08)
+          .fromTo($(".rip"), { opacity: 0.7, scale: 0.2 }, { opacity: 0, scale: 3.2, duration: 0.6, ease: "expo.out", immediateRender: false }, C + 0.02)
+          .fromTo(btn, { backgroundColor: COBALT }, { backgroundColor: WHITE, duration: 0.3, ease: "power2.out", immediateRender: false }, C + 0.06)
+          .to(btn, { boxShadow: "0 10px 30px rgba(255,255,255,0.28), inset 0 1.5px 0 rgba(255,255,255,1)", borderColor: "rgba(255,255,255,1)", duration: 0.3 }, C + 0.06)
+          .to($(".s1"), { autoAlpha: 0, filter: "blur(8px)", y: -6, duration: 0.18, ease: "power2.in" }, C + 0.04)
+          .fromTo($(".s2"), { autoAlpha: 0, filter: "blur(8px)", y: 6 }, { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: 0.32, ease: "expo.out", immediateRender: false }, C + 0.16)
+          .to(tick, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, C + 0.26);
+
+        /* bell fills, then rings: two swings that settle */
+        const B = C + 0.7;
+        tl.to($(".b1"), { autoAlpha: 1, duration: 0.2, ease: "power2.out" }, B)
+          .to($(".b0"), { autoAlpha: 0, duration: 0.2 }, B)
+          .fromTo($(".halo"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, B)
+          .to($(".halo"), { opacity: 0, scale: 1.3, duration: 0.7, ease: "power2.out" }, B + 0.5)
+          .to($(".sw"), { keyframes: [
+              { rotation: 18, duration: 0.14, ease: "sine.out" },
+              { rotation: -16, duration: 0.24, ease: "sine.inOut" },
+              { rotation: 11, duration: 0.22, ease: "sine.inOut" },
+              { rotation: -6, duration: 0.2, ease: "sine.inOut" },
+              { rotation: 0, duration: 0.24, ease: "sine.out" } ] }, B + 0.05);
+
+        /* cursor drifts off */
+        tl.to(cur, { x: "+=150", y: "+=130", duration: 0.8, ease: "power2.inOut" }, C + 0.5)
+          .to(cur, { autoAlpha: 0, duration: 0.35, ease: "power1.in" }, C + 0.9)
+          .to(csvg, { filter: "blur(4px)", duration: 0.35, ease: "power1.in" }, C + 0.9);
+
+        /* hold, exit */
+        const OUT = B + 2.0;
+        TXT.exit(tl, [$(".nm"), $(".fl")], OUT - 0.1);
+        tl.to(pill, { autoAlpha: 0, y: 24, filter: "blur(10px)", duration: 0.36, ease: "power2.in" }, OUT)
+          .set({}, {}, OUT + 0.45);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

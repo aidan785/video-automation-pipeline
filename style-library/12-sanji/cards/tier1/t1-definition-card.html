@@ -1,0 +1,268 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · instructional · DEFINITION CARD (dictionary entry)
+  EMBER canvas: true black, orange corner light breathing, blue-free dot grid
+  only at the frame edges, grain. A small dark chip ("noun") arrives glowing
+  and cools to its plain rim. The term types in letter by letter in huge
+  Inter Tight 800, each letter landing ember-hot with a heavy glow and
+  cooling to warm white, with a soft ember bloom behind the word. A mono
+  pronunciation line resolves, a hairline draws left to right in ember light,
+  then the definition resolves word by word out of blur underneath.
+  Slots: kind (<=12, e.g. noun / verb), term (<=12 at 200px), say (mono,
+  <=28), definition (<=120, wraps to 3 lines).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-definition-card {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-definition-card .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-definition-card .dots {
+        position: absolute; inset: 0; opacity: 0.32;
+        background: radial-gradient(circle, rgba(255,140,60,0.5) 1.3px, transparent 1.8px) 0 0 / 9px 9px;
+        -webkit-mask-image: radial-gradient(ellipse at 50% 50%, transparent 52%, #000 100%);
+                mask-image: radial-gradient(ellipse at 50% 50%, transparent 52%, #000 100%);
+      }
+      #sanji-t1-definition-card .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.55; }
+      #sanji-t1-definition-card .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+
+      #sanji-t1-definition-card .blk { position: absolute; left: 250px; top: 250px; width: 1420px; }
+      #sanji-t1-definition-card .bloom {
+        position: absolute; left: -120px; top: 60px; width: 1000px; height: 300px; border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(255,140,40,0.42), rgba(255,122,26,0.12) 55%, rgba(3,1,0,0));
+        filter: blur(30px); opacity: 0;
+      }
+      #sanji-t1-definition-card .chip {
+        position: relative; display: inline-flex; align-items: center; gap: 12px; height: 54px; padding: 0 26px 0 20px;
+        border-radius: var(--r-pill); background: var(--chip-fill); box-shadow: 0 0 0 1.5px var(--chip-rim);
+        font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 26px; letter-spacing: var(--track-ui); color: var(--white);
+      }
+      #sanji-t1-definition-card .chip i { display: block; width: 10px; height: 10px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 12px rgba(255,122,26,0.9); }
+      #sanji-t1-definition-card .term {
+        position: relative; margin-top: 34px; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 200px; line-height: 0.9;
+        letter-spacing: var(--track-caps); color: var(--white);
+      }
+      #sanji-t1-definition-card .term .c { display: inline-block; white-space: pre; }
+      #sanji-t1-definition-card .say {
+        position: relative; margin-top: 30px; font-family: var(--font-mono); font-weight: 400; font-size: 30px; color: var(--white-soft);
+      }
+      #sanji-t1-definition-card .rule {
+        position: relative; margin-top: 34px; height: 2px; width: 1420px; transform-origin: 0% 50%;
+        background: linear-gradient(90deg, rgba(255,160,70,0.95), rgba(255,122,26,0.55) 40%, rgba(255,255,255,0.10) 100%);
+        box-shadow: 0 0 14px rgba(255,122,26,0.55);
+      }
+      #sanji-t1-definition-card .def {
+        position: relative; margin-top: 40px; width: 1300px;
+        font-family: var(--font-body); font-weight: 500; font-size: 52px; line-height: 1.24; letter-spacing: var(--track-ui); color: var(--white);
+      }
+      #sanji-t1-definition-card .def .w { display: inline-block; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-definition-card" data-composition-id="sanji-t1-definition-card" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="dots"></div>
+      <div class="vig"></div>
+      <div class="blk">
+        <div class="bloom"></div>
+        <div class="chip"><i></i><span data-slot="kind">noun</span></div>
+        <div class="term" data-slot="term">Easing</div>
+        <div class="say" data-slot="say">/ ˈē-ziŋ /</div>
+        <div class="rule"></div>
+        <div class="def" data-slot="definition">The curve that sets how a move speeds up and slows down, so it feels physical instead of mechanical.</div>
+      </div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-definition-card";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre"), SOFT = tok("--white-soft");
+        const HOT = "#FFB347", WARM = "#F4ECE6";   /* per-letter transitional tints (as in the gold cards) */
+
+        const term = $(".term");
+        const tstr = (term.textContent || "").trim(); term.textContent = "";
+        const chars = [...tstr].map((ch) => { const c = document.createElement("span"); c.className = "c"; c.textContent = ch; term.appendChild(c); return c; });
+
+        const def = $(".def");
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set(chars, { autoAlpha: 0 }, 0).set($(".rule"), { scaleX: 0 }, 0);
+
+        /* corner light breathes the whole card */
+        tl.fromTo($(".warm"), { opacity: 0.55 }, { opacity: 1, duration: 2.6, ease: "sine.inOut" }, 0)
+          .to($(".warm"), { opacity: 0.7, duration: 3.2, ease: "sine.inOut" }, 2.6);
+
+        /* 1. part-of-speech chip arrives glowing, cools */
+        TXT.block(tl, $(".chip"), 0.2);
+        tl.fromTo($(".chip"), { boxShadow: tok("--chip-glow") }, { boxShadow: "0 0 0 1.5px " + tok("--chip-rim"), duration: 0.6, ease: "power2.out" }, 0.62);
+
+        /* 2. the term types in hot and cools; bloom swells behind it */
+        const T0 = 0.55, CPS = 0.075;
+        chars.forEach((c, i) => {
+          const t = T0 + i * CPS;
+          tl.fromTo(c,
+            { autoAlpha: 0, filter: "blur(8px)", color: HOT, textShadow: "0 0 26px rgba(255,140,40,0.95), 0 0 70px rgba(255,122,26,0.6)", y: 14 },
+            { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: 0.2, ease: "expo.out" }, t)
+            .to(c, { color: WARM, textShadow: "0 0 0px rgba(255,140,40,0), 0 0 0px rgba(255,122,26,0)", duration: 0.6, ease: "power2.out" }, t + 0.18);
+        });
+        const TT = T0 + chars.length * CPS;
+        tl.fromTo($(".bloom"), { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, T0 + 0.1)
+          .to($(".bloom"), { opacity: 0.35, duration: 1.6, ease: "sine.inOut" }, TT + 0.6);
+
+        /* 3. pronunciation + hairline */
+        TXT.reveal(tl, $(".say"), TT + 0.15);
+        tl.to($(".rule"), { scaleX: 1, duration: 0.7, ease: "power3.inOut" }, TT + 0.3);
+
+        /* 4. definition resolves word by word */
+        const TD = TT + 0.75;
+        const TE = TXT.reveal(tl, def, TD) - 0.45;
+
+        /* rule cools from ember to a quiet hairline during the hold */
+        tl.to($(".rule"), { opacity: 0.55, duration: 1.0, ease: "sine.inOut" }, TE + 0.2);
+
+        const END = Math.max(TE + 2.0, 6.0);
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,301 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · instructional · MATRIX 2x2 (framework)
+  COBALT with sonar rings. Two white axes draw on from the center outward
+  (arrowheads land last) and their caps labels resolve at the tips. Four
+  glass quadrant panels fade up out of blur, each with a mono index and a
+  caps title. Then one item chip per quadrant drops in out of blur and
+  settles (no bounce); the quadrant receiving it lights ACTIVE while the
+  previous one settles back. Final beat: one quadrant (slot hi) lights and
+  lifts while the other three focus-shift dormant.
+  Quadrant order: q1 top-left, q2 top-right, q3 bottom-left, q4 bottom-right.
+  y axis points up, x axis points right.
+  Slots: yLabel / xLabel (<=12), q1..q4 (<=14), chip1..chip4 (<=16, chipN
+  lands in qN), hi (1-4).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-matrix-2x2 {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-matrix-2x2 .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-matrix-2x2 .g { position: absolute; box-sizing: border-box; border-radius: var(--r-card); }
+      #sanji-t1-matrix-2x2 .g > .fill, #sanji-t1-matrix-2x2 .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-matrix-2x2 .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-matrix-2x2 .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-matrix-2x2 .g > .in { position: absolute; inset: 0; }
+
+      #sanji-t1-matrix-2x2 .quad { width: 500px; height: 330px; }
+      #sanji-t1-matrix-2x2 .quad .idx { position: absolute; left: 38px; top: 36px; font-family: var(--font-mono); font-size: 22px; color: var(--white-soft); }
+      #sanji-t1-matrix-2x2 .quad .ttl {
+        position: absolute; left: 38px; top: 70px; white-space: nowrap;
+        font-weight: var(--wt-heavy); font-size: 44px; line-height: 0.92; letter-spacing: var(--track-caps); text-transform: uppercase;
+      }
+
+      #sanji-t1-matrix-2x2 .chip { height: 66px; border-radius: var(--r-pill); }
+      #sanji-t1-matrix-2x2 .chip .in { position: relative; display: flex; align-items: center; gap: 14px; height: 66px; padding: 0 28px 0 22px; white-space: nowrap; }
+      #sanji-t1-matrix-2x2 .chip i { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--white); box-shadow: 0 0 0 5px rgba(255,255,255,0.16); }
+      #sanji-t1-matrix-2x2 .chip span { font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 30px; letter-spacing: var(--track-ui); }
+
+      #sanji-t1-matrix-2x2 svg.ax { position: absolute; inset: 0; overflow: visible; }
+      #sanji-t1-matrix-2x2 .axl {
+        position: absolute; white-space: nowrap; font-weight: var(--wt-heavy); font-size: 28px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--white);
+      }
+      #sanji-t1-matrix-2x2 .axl.y { left: 0; right: 0; top: 128px; text-align: center; }
+      #sanji-t1-matrix-2x2 .axl.x { left: 1532px; top: 557px; }
+      #sanji-t1-matrix-2x2 .slots { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-matrix-2x2" data-composition-id="sanji-t1-matrix-2x2" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <div class="g quad" style="left:446px;top:231px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="idx">Q1</div><div class="ttl" data-slot="q1">Quick wins</div></div></div>
+      <div class="g quad" style="left:974px;top:231px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="idx">Q2</div><div class="ttl" data-slot="q2">Big bets</div></div></div>
+      <div class="g quad" style="left:446px;top:589px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="idx">Q3</div><div class="ttl" data-slot="q3">Fill ins</div></div></div>
+      <div class="g quad" style="left:974px;top:589px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="idx">Q4</div><div class="ttl" data-slot="q4">Money pits</div></div></div>
+
+      <svg class="ax" viewBox="0 0 1920 1080" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path class="a ay" d="M960 575 L960 186" />
+        <path class="a ay2" d="M960 575 L960 950" />
+        <path class="a ax1" d="M960 575 L1506 575" />
+        <path class="a ax2" d="M960 575 L414 575" />
+        <path class="tip ty" d="M946 202 L960 186 L974 202" />
+        <path class="tip tx" d="M1490 561 L1506 575 L1490 589" />
+        <g class="ctr" fill="#FFFFFF" stroke="none"><circle cx="960" cy="575" r="20" opacity="0.22"/><circle cx="960" cy="575" r="9"/></g>
+      </svg>
+      <div class="axl y" data-slot="yLabel">Impact</div>
+      <div class="axl x" data-slot="xLabel">Effort</div>
+
+      <div class="g chip" style="left:486px;top:425px"><div class="fill"></div><div class="lit"></div><div class="in"><i></i><span data-slot="chip1">Templates</span></div></div>
+      <div class="g chip" style="left:1104px;top:405px"><div class="fill"></div><div class="lit"></div><div class="in"><i></i><span data-slot="chip2">New product</span></div></div>
+      <div class="g chip" style="left:566px;top:795px"><div class="fill"></div><div class="lit"></div><div class="in"><i></i><span data-slot="chip3">Tidy docs</span></div></div>
+      <div class="g chip" style="left:1034px;top:775px"><div class="fill"></div><div class="lit"></div><div class="in"><i></i><span data-slot="chip4">Rebuild the site</span></div></div>
+
+      <div class="slots"><span data-slot="hi">1</span></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-matrix-2x2";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const DORM = tok("--dormant");
+
+        const quads = $$(".quad"), chips = $$(".chip");
+        const HI = Math.min(3, Math.max(0, (parseInt($("[data-slot=hi]").textContent, 10) || 1) - 1));
+        const lines = $$("path.a"), tips = $$("path.tip");
+        [...lines, ...tips].forEach((p) => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+
+        const tl = gsap.timeline({ paused: true });
+        const pop = (el, t) => tl.fromTo(el, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, t);
+        const blurIn = (els, t, st = 0.06) => tl.fromTo(els, { autoAlpha: 0, y: 8, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", stagger: st }, t);
+
+        tl.set([...quads, ...chips, ...$$(".axl")], { autoAlpha: 0 }, 0).set($(".ctr"), { autoAlpha: 0 }, 0);
+
+        /* 1. axes draw out of the center node, arrowheads land last */
+        tl.fromTo($(".ctr"), { autoAlpha: 0, scale: 0, transformOrigin: "960px 575px" }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 0.15)
+          .to(lines, { strokeDashoffset: 0, duration: 0.7, ease: "power3.inOut", stagger: 0.05 }, 0.25)
+          .to(tips, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" }, 0.85);
+        TXT.block(tl, $$(".axl"), 0.9);                    /* one-word axis labels rise as blocks */
+
+        /* 2. quadrant panels rise out of blur (a soft diagonal stagger) */
+        const TQ = 1.05;
+        [0, 1, 2, 3].forEach((i) => {
+          const t = TQ + [0, 0.1, 0.1, 0.2][i];
+          tl.fromTo(quads[i], { autoAlpha: 0, scale: 0.95, filter: "blur(12px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, t);
+          TXT.block(tl, quads[i].querySelector(".idx"), t + 0.12);
+          TXT.reveal(tl, quads[i].querySelector(".ttl"), t + 0.16);
+        });
+        tl.to(lines, { opacity: 0.55, duration: 0.5, ease: "power2.inOut" }, TQ + 0.4)
+          .to(tips, { opacity: 0.55, duration: 0.5, ease: "power2.inOut" }, TQ + 0.4);
+
+        /* 3. chips drop into their quadrants one at a time; focus follows */
+        const TC = TQ + 0.95, STEP = 0.9;
+        chips.forEach((c, i) => {
+          const t = TC + i * STEP;
+          if (i > 0) tl.to(quads[i - 1].querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, t + 0.05)
+                       .to(chips[i - 1].querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, t + 0.05);
+          tl.fromTo(c, { autoAlpha: 0, y: -70, scale: 0.92, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, t)
+            .to(c.querySelector(".lit"), { opacity: 1, duration: 0.35, ease: "power2.out" }, t + 0.15)
+            .to(quads[i].querySelector(".lit"), { opacity: 0.8, duration: 0.4, ease: "power2.out" }, t + 0.18);
+          TXT.reveal(tl, c.querySelector("span"), t + 0.1);
+        });
+
+        /* grow AWAY from the axes: origin = the quad corner touching the center */
+        const originIn = (q, el) => {
+          const cx = q.offsetLeft < 960 ? q.offsetLeft + q.offsetWidth : q.offsetLeft;
+          const cy = q.offsetTop < 575 ? q.offsetTop + q.offsetHeight : q.offsetTop;
+          return (cx - el.offsetLeft) + "px " + (cy - el.offsetTop) + "px";
+        };
+
+        /* 4. verdict: one quadrant lights and lifts, the rest go dormant */
+        const TV = TC + 4 * STEP + 0.35;
+        tl.to(quads[3].querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, TV)
+          .to(chips[3].querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, TV);
+        quads.forEach((q, i) => {
+          if (i === HI) {
+            tl.to(q.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, TV + 0.05)
+              .to(q, { scale: 1.035, transformOrigin: originIn(q, q), duration: 0.6, ease: "expo.out" }, TV + 0.05)
+              .to(chips[i], { scale: 1.035, transformOrigin: originIn(q, chips[i]), duration: 0.6, ease: "expo.out" }, TV + 0.05)
+              .to(chips[i].querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, TV + 0.05);
+          } else {
+            tl.to([q.querySelector(".ttl"), q.querySelector(".idx"), chips[i].querySelector("span")], { color: DORM, duration: 0.35, ease: "power2.inOut" }, TV + 0.05)
+              .to(chips[i].querySelector("i"), { opacity: 0.5, duration: 0.35 }, TV + 0.05)
+              .to([q.querySelector(".fill"), chips[i].querySelector(".fill")], { opacity: 0.7, duration: 0.35, ease: "power2.inOut" }, TV + 0.05);
+          }
+        });
+
+        const END = TV + 2.0;
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · name · FULL
+  Full-screen name card for the cold open (the "full frame" edit style: the guest is named once,
+  big, and the episode never needs a lower third for them again). The guest portrait opens as a
+  darkened side panel on the right (born from a cream line at its edge), the name lands huge in
+  Bricolage 800 word by word, a short orange dash draws, then the one-line result lands with its
+  number in gold. Portrait drifts inside its panel; type holds still. Grain on top.
+  Exit: mirrored 0.3 s, or cut away.
+  Source: DOAC cold-open name moments + the October research "full frame" style.
+  Slots: label (text, job + place), name (text, one or two words; each word sits on its own line),
+  result (richtext, one <em> = the gold number), media (portrait, cover-cropped).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-name-full{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+      #hp-t1-name-full .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      /* side panel: right 36%, full bleed, portrait darkened by a deep scrim */
+      #hp-t1-name-full .panel{position:absolute;left:1240px;top:0;right:0;bottom:0;overflow:hidden;background:var(--hp-deep);}
+      #hp-t1-name-full .panel img{position:absolute;left:-56px;top:-40px;width:calc(100% + 112px);height:calc(100% + 80px);object-fit:cover;object-position:50% 28%;transform-origin:50% 30%;}
+      #hp-t1-name-full .panel .shade{position:absolute;inset:0;background:linear-gradient(90deg, rgba(44,11,22,.72) 0%, rgba(44,11,22,.38) 40%, rgba(44,11,22,.3) 100%);}
+      #hp-t1-name-full .seam{position:absolute;left:1240px;top:0;width:3px;height:1080px;background:var(--hp-cream);transform-origin:50% 50%;}
+
+      #hp-t1-name-full .block{position:absolute;left:var(--margin);top:236px;width:1040px;}
+      #hp-t1-name-full .label{display:block;font-weight:700;font-size:24px;letter-spacing:.2em;text-transform:uppercase;color:var(--hp-cream-muted);margin-bottom:30px;}
+      #hp-t1-name-full .name{font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:212px;line-height:.9;
+        letter-spacing:var(--track-tight);color:var(--hp-cream);}
+      #hp-t1-name-full .name .w{display:block;width:max-content;transform-origin:0 80%;}
+      #hp-t1-name-full .dash{display:block;margin-top:54px;width:72px;height:8px;border-radius:4px;background:var(--hp-orange);transform-origin:0 50%;}
+      #hp-t1-name-full .result{display:block;margin-top:30px;font-family:var(--font-display);font-weight:600;font-variation-settings:"opsz" 96;font-size:60px;line-height:1.05;
+        letter-spacing:-.02em;color:var(--hp-cream);}
+      #hp-t1-name-full .result .w{display:inline-block;margin-right:.24em;}
+      #hp-t1-name-full .result em{font-style:normal;color:var(--hp-gold);font-weight:800;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-name-full" data-composition-id="hp-t1-name-full" data-start="0" data-width="1920" data-height="1080">
+      <div class="panel"><img data-slot="media" src="../../assets/demo/dana.jpg" alt="" /><div class="shade"></div></div>
+      <div class="seam"></div>
+
+      <div class="block">
+        <span class="label" data-slot="label">Dog groomer, Tulsa</span>
+        <div class="name" data-slot="name"><span class="w" data-at=".35">Dana</span><span class="w" data-at=".62">Ruiz</span></div>
+        <i class="dash"></i>
+        <div class="result" data-slot="result"><span class="w" data-at="1.3">Saved</span><span class="w" data-at="1.5"><em>six hours</em></span><span class="w" data-at="1.82">a week</span></div>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-name-full-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-name-full-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-name-full";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 5;
+      const OUT = DUR - 0.42;
+      const tl = gsap.timeline({ paused: true });
+      const atOf = (el, i, base, step) => { const a = parseFloat(el.dataset.at); return isNaN(a) ? base + i * step : a; };
+
+      // portrait drift inside the panel (background layer only)
+      tl.fromTo($1(".panel img"), { scale: 1 }, { scale: 1.05, duration: DUR, ease: "none" }, 0);
+
+      // born from a line: the seam grows top to bottom, then the panel opens rightward from it
+      tl.fromTo($1(".seam"), { scaleY: 0 }, { scaleY: 1, duration: .3, ease: POP }, .05);
+      tl.fromTo($1(".panel"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: .45, ease: POP }, .22);
+      tl.to($1(".seam"), { autoAlpha: 0, duration: .12, ease: "power2.in" }, .55);
+
+      tl.fromTo($1(".label"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .28, ease: POP }, .2);
+      const nameW = Array.from($(".name .w"));
+      nameW.forEach((w, i) => tl.fromTo(w, { autoAlpha: 0, y: 14, scale: .95 }, { autoAlpha: 1, y: 0, scale: 1, duration: .34, ease: POP }, atOf(w, i, .35, .27)));
+      const resW = Array.from($(".result .w"));
+      const firstRes = resW.length ? atOf(resW[0], 0, 1.3, .2) : 1.3;
+      tl.fromTo($1(".dash"), { scaleX: 0 }, { scaleX: 1, duration: .26, ease: POP }, firstRes - .22);
+      resW.forEach((w, i) => tl.fromTo(w, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .26, ease: POP }, atOf(w, i, 1.3, .2)));
+      // light, not layout: the number flips cream to gold on its landing frame
+      const em = $1(".result em");
+      if (em) tl.fromTo(em, { color: "#FFF0E6" }, { color: "#FFC145", duration: .2, ease: POP }, atOf(em.closest(".w"), resW.indexOf(em.closest(".w")), 1.3, .2) + .12);
+
+      // exit: mirror, 0.3 s
+      tl.to(resW.slice().reverse(), { autoAlpha: 0, y: 10, duration: .14, ease: "power2.in", stagger: .03 }, OUT);
+      tl.to($1(".dash"), { scaleX: 0, duration: .14, ease: "power2.in" }, OUT + .06);
+      tl.to(nameW.slice().reverse().concat($1(".label")), { autoAlpha: 0, y: 12, duration: .16, ease: "power2.in", stagger: .03 }, OUT + .08);
+      tl.to($1(".panel"), { clipPath: "inset(0 100% 0 0)", duration: .24, ease: "power2.in" }, OUT + .06);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

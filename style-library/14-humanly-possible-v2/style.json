@@ -1,0 +1,1128 @@
+{
+  "$schema": "../registry.schema.json",
+  "id": "humanly-possible-v2",
+  "name": "Humanly Possible v2",
+  "number": "14",
+  "status": "draft",
+  "inspiration": "Frame-by-frame research: Burger King/JKR, Spotify Wrapped, Chef's Table, Great Big Story, The North Face, Salomon, Patagonia, Apple, A24, Vox, Aidan's reel. raw-media/hp-sampler-refs/<style>/ANALYSIS.md.",
+  "summary": "Five researched families (kinetic, netflix-doc, outdoor-doc, apple-a24, collage) x name, number, ai-screen, quote, title, transition. Built from frame-by-frame research of real human-made work. The Sanji track lives separately in 15-sanji-hp. No edge stripes, outline boxes, shadows or simulated textures (lint-hp-tells.mjs).",
+  "palette": {
+    "bg": "#4B1526",
+    "fg": "#FFF0E6",
+    "accent": "#FF8A4C",
+    "accent2": "#FFC145",
+    "surface": "#7A1E1E",
+    "shade": "#2C0B16"
+  },
+  "fonts": {
+    "display": "Bricolage Grotesque",
+    "body": "Inter Tight"
+  },
+  "motion": "Snappy | fluid | dramatic \u2014 the easing signature (mirror into tokens.css --ease-*).",
+  "transitions": "Which entrance/exit feel matches this style.",
+  "cards": [
+    {
+      "id": "humanly-possible-v2.apple-a24.name",
+      "tier": "tier1",
+      "purpose": "name",
+      "family": "apple-a24",
+      "file": "cards/apple-a24/name.html",
+      "fps": 24,
+      "duration": {
+        "min": 4.5,
+        "max": 4.5
+      },
+      "slots": [
+        {
+          "name": "name",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "detail",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "maxChars": 40
+        },
+        {
+          "name": "photo",
+          "type": "media"
+        },
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "mac-dorm_f0240_namecard-photo.jpg",
+        "mac-dorm_f0290_role-caption.jpg"
+      ],
+      "summary": "Text-field name card (caret alone, then photo + name in one frame), hard cut to a role caption that carries across a cut and leaves by right-to-left select-delete."
+    },
+    {
+      "id": "humanly-possible-v2.apple-a24.number",
+      "tier": "tier2",
+      "purpose": "number",
+      "family": "apple-a24",
+      "file": "cards/apple-a24/number.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.5,
+        "max": 3
+      },
+      "slots": [
+        {
+          "name": "value",
+          "type": "text",
+          "maxChars": 8
+        },
+        {
+          "name": "unit",
+          "type": "text",
+          "maxChars": 8
+        },
+        {
+          "name": "kicker",
+          "type": "text",
+          "maxChars": 12
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "mac-dorm_f0182_hacking-productivity.jpg",
+        "mac-dorm_f2061_tagline-selected.jpg"
+      ],
+      "summary": "Number typed one character per frame at caption size, then a one-frame scale jump to display size over picture; second line jumps 4 f later; italic kicker typed under it."
+    },
+    {
+      "id": "humanly-possible-v2.apple-a24.ai-screen",
+      "tier": "tier1",
+      "purpose": "ai-screen",
+      "family": "apple-a24",
+      "file": "cards/apple-a24/ai-screen.html",
+      "fps": 24,
+      "duration": {
+        "min": 7,
+        "max": 7
+      },
+      "slots": [
+        {
+          "name": "prompt",
+          "type": "text",
+          "maxChars": 60
+        },
+        {
+          "name": "reply",
+          "type": "richtext",
+          "maxChars": 60
+        },
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "mac-dorm_f1230_typed-at19.jpg",
+        "mac-dorm_f0807_select-sweep.jpg",
+        "mac-dorm_f1500_ai-screenrec.jpg"
+      ],
+      "summary": "Prompt hand-typed (irregular gaps) over phone footage across a cut, one oxblood frame, then the reply pastes in chunks on the cream text field and the key line is selected left to right. Swap in a real 1:1 screen capture when one exists."
+    },
+    {
+      "id": "humanly-possible-v2.apple-a24.quote",
+      "tier": "tier2",
+      "purpose": "quote",
+      "family": "apple-a24",
+      "file": "cards/apple-a24/quote.html",
+      "fps": 24,
+      "duration": {
+        "min": 5,
+        "max": 5
+      },
+      "slots": [
+        {
+          "name": "quote",
+          "type": "richtext",
+          "maxChars": 70
+        },
+        {
+          "name": "credit-name",
+          "type": "text",
+          "maxChars": 24
+        },
+        {
+          "name": "credit-source",
+          "type": "text",
+          "maxChars": 20
+        },
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        },
+        {
+          "name": "media-3",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "aftersun_f0520_pressquote.jpg"
+      ],
+      "summary": "A24 press-quote: EB Garamond Bold/Regular two lines centred over a flat soft shot, on and off exactly on the picture cuts, no fade, no plate."
+    },
+    {
+      "id": "humanly-possible-v2.apple-a24.title",
+      "tier": "tier1",
+      "purpose": "title",
+      "family": "apple-a24",
+      "file": "cards/apple-a24/title.html",
+      "fps": 24,
+      "duration": {
+        "min": 4.25,
+        "max": 4.25
+      },
+      "slots": [
+        {
+          "name": "title",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "chapter",
+          "type": "text",
+          "maxChars": 20
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "aftersun_f2500_title.jpg",
+        "aftersun_f0020_logo-datamosh.jpg",
+        "aftersun_f2430_paper-quote.jpg"
+      ],
+      "summary": "Tracked-caps title on a real CC0 paper scan, typewriter chapter line 15 f later, paper grade drifts warm to cool; real I-frame-drop datamosh in from a shot and break-up out into the next (pre-built plate, rebuild after text changes)."
+    },
+    {
+      "id": "humanly-possible-v2.apple-a24.transition",
+      "tier": "transition",
+      "purpose": "transition",
+      "family": "apple-a24",
+      "file": "cards/apple-a24/transition.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.5,
+        "max": 2.5
+      },
+      "slots": [
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "aftersun_f0020_logo-datamosh.jpg"
+      ],
+      "summary": "Shot-to-shot real datamosh (shot B's I-frame dropped, its motion drags shot A apart for 14 f, then B snaps clean); live clips either side, plate rebuilt by build-mosh.sh when shots change."
+    },
+    {
+      "id": "humanly-possible-v2.collage.name",
+      "tier": "tier1",
+      "purpose": "name",
+      "family": "collage",
+      "file": "cards/collage/name.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.5,
+        "max": 3.5
+      },
+      "slots": [
+        {
+          "name": "name",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "maxChars": 28
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "vox-ok_f01445.jpg",
+        "vox-ok_f02125.jpg",
+        "ig-reel_f00001.jpg",
+        "ig-reel_f00002.jpg",
+        "ig-reel_f00035.jpg"
+      ],
+      "summary": "One-frame flicker open (scribbled D, oxblood, gold), then a cut-out 1755 barbet on a torn strip of its plate in front of a giant brick D; name rises from its baseline roughed up, role types in word by word, hand-drawn orange ellipse overshoots around the town."
+    },
+    {
+      "id": "humanly-possible-v2.collage.number",
+      "tier": "tier1",
+      "purpose": "number",
+      "family": "collage",
+      "file": "cards/collage/number.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.5,
+        "max": 3.5
+      },
+      "slots": [
+        {
+          "name": "number",
+          "type": "number",
+          "maxChars": 2
+        },
+        {
+          "name": "unit",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "tag",
+          "type": "text",
+          "maxChars": 8
+        },
+        {
+          "name": "media-back",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "ig-reel_f00002.jpg",
+        "ig-reel_f00001.jpg",
+        "vox-ok_f01170.jpg",
+        "ig-reel_f00035.jpg"
+      ],
+      "summary": "Flicker open into a giant cream 6 cropped by the frame edge on paper-textured oxblood; tiny unit types word by word with a blinking caret, gold highlighter stops short of the k, orange \"back.\" (placeholder until the tablet-drawn sequence exists)."
+    },
+    {
+      "id": "humanly-possible-v2.collage.ai-screen",
+      "tier": "tier1",
+      "purpose": "ai-screen",
+      "family": "collage",
+      "file": "cards/collage/ai-screen.html",
+      "fps": 24,
+      "duration": {
+        "min": 3,
+        "max": 4
+      },
+      "slots": [
+        {
+          "name": "prompt",
+          "type": "text",
+          "maxChars": 60
+        },
+        {
+          "name": "reply-1",
+          "type": "text",
+          "maxChars": 70
+        },
+        {
+          "name": "key-line",
+          "type": "richtext",
+          "maxChars": 56
+        },
+        {
+          "name": "reply-3",
+          "type": "text",
+          "maxChars": 40
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "vox-ok_f01560_red-pen-bracket-newspaper.jpg",
+        "vox-ok_f01549.jpg",
+        "vox-ok_f01170.jpg"
+      ],
+      "summary": "Printed chat on a real paper sheet over a defocused copy of itself; replies pop in 2 f apart, gold highlighter stops before \"time.\", Vox-style orange bracket-arrow runs left, up the margin and lands, then a hard crop-cut to 1.35x and a long hold."
+    },
+    {
+      "id": "humanly-possible-v2.collage.quote",
+      "tier": "tier1",
+      "purpose": "quote",
+      "family": "collage",
+      "file": "cards/collage/quote.html",
+      "fps": 24,
+      "duration": {
+        "min": 3.5,
+        "max": 5
+      },
+      "slots": [
+        {
+          "name": "quote-1",
+          "type": "text",
+          "maxChars": 24
+        },
+        {
+          "name": "quote-2",
+          "type": "richtext",
+          "maxChars": 26
+        },
+        {
+          "name": "attribution",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "vox-ok_f01170.jpg",
+        "vox-ok_f01166.jpg",
+        "vox-ok_f00990.jpg"
+      ],
+      "summary": "Chalon's 1820 hand-colored dog groomers plate on scanned paper; a gold callout line kinks out of a groomer and the name rises off its arm, then the two-line quote lands roughed up for 3 f and a highlighter stops short of the last letter."
+    },
+    {
+      "id": "humanly-possible-v2.collage.title",
+      "tier": "tier1",
+      "purpose": "title",
+      "family": "collage",
+      "file": "cards/collage/title.html",
+      "fps": 24,
+      "duration": {
+        "min": 3,
+        "max": 5
+      },
+      "slots": [
+        {
+          "name": "chapter-number",
+          "type": "number",
+          "maxChars": 2
+        },
+        {
+          "name": "chapter-label",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "maxChars": 32
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "vox-borders_f00345.jpg",
+        "vox-borders_f00352.jpg",
+        "vox-borders_f00366.jpg",
+        "vox-borders_f01765.jpg"
+      ],
+      "summary": "Borders-style lockup: scanned planes and an overprinted brick 02 rotate to level, one slot flips through real archival scans on irregular counts and lands on a 1933 appointment book inside a hand-drawn notched orange frame, title rises word by word over it."
+    },
+    {
+      "id": "humanly-possible-v2.collage.transition",
+      "tier": "transition",
+      "purpose": "transition",
+      "family": "collage",
+      "file": "cards/collage/transition.html",
+      "fps": 24,
+      "duration": {
+        "min": 1.5,
+        "max": 2
+      },
+      "slots": [
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "ig-reel_f00415.jpg",
+        "ig-reel_f00417.jpg"
+      ],
+      "summary": "Ink swipe into defocus: three scanned India-ink brush strokes cross shot A in 3 frames with horizontal motion blur, shot B arrives at 18 px blur and racks to sharp in 4 frames."
+    },
+    {
+      "id": "humanly-possible-v2.kinetic.name",
+      "tier": "tier1",
+      "purpose": "name",
+      "family": "kinetic",
+      "file": "cards/kinetic/name.html",
+      "fps": 24,
+      "duration": {
+        "min": 3.0,
+        "max": 3.6
+      },
+      "slots": [
+        {
+          "name": "first-name",
+          "type": "text",
+          "maxChars": 12
+        },
+        {
+          "name": "last-name",
+          "type": "text",
+          "maxChars": 8
+        },
+        {
+          "name": "role-1",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "role-2",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "bk_rebrand_f116_real-small-hold.jpg",
+        "bk_rebrand_f126_real-settled.jpg",
+        "bk_rebrand_f83_era-invert-flicker.jpg",
+        "bk_rebrand_f1625_person-seamless.jpg"
+      ],
+      "summary": "First name placed on oxblood, last name small-then-slam to full bleed with two 1-frame inverts, orange breath, role types per frame while the cutout slides in; hard-cut ending."
+    },
+    {
+      "id": "humanly-possible-v2.kinetic.number",
+      "tier": "tier1",
+      "purpose": "number",
+      "family": "kinetic",
+      "file": "cards/kinetic/number.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.75,
+        "max": 3.3
+      },
+      "slots": [
+        {
+          "name": "number",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "kicker",
+          "type": "text",
+          "maxChars": 6
+        }
+      ],
+      "matches": [
+        "bk_rebrand_f285_giant-glyph-crop.jpg",
+        "wrapped_onplatform_f780_number-stripes.jpg",
+        "bk_rebrand_f198_thanever-letter-tint.jpg",
+        "wrapped10yrs_f286_circle-iris.jpg"
+      ],
+      "summary": "Two giant glyph crops of the digit, repeated-number color bands on twos, number line with the kicker tinting in letter by letter, then an orange iris from the period fills the frame (or cut at F66)."
+    },
+    {
+      "id": "humanly-possible-v2.kinetic.ai-screen",
+      "tier": "tier1",
+      "purpose": "ai-screen",
+      "family": "kinetic",
+      "file": "cards/kinetic/ai-screen.html",
+      "fps": 24,
+      "duration": {
+        "min": 4.2,
+        "max": 5.2
+      },
+      "slots": [
+        {
+          "name": "prompt",
+          "type": "text",
+          "maxChars": 56
+        },
+        {
+          "name": "reply-intro",
+          "type": "text",
+          "maxChars": 90
+        },
+        {
+          "name": "reply-key",
+          "type": "richtext",
+          "maxChars": 70
+        }
+      ],
+      "matches": [
+        "wrapped10yrs_f2405_search-typing.jpg",
+        "wrapped10yrs_f2493_answer-highlight.jpg",
+        "wrapped10yrs_f2533_card-tilt-exit.jpg"
+      ],
+      "summary": "Filled prompt pill types 2 chars/frame, hard cut to a flat cream answer card, gold block grows behind the key reply line by line, dead hold, 3D tilt exit accelerating away."
+    },
+    {
+      "id": "humanly-possible-v2.kinetic.quote",
+      "tier": "tier1",
+      "purpose": "quote",
+      "family": "kinetic",
+      "file": "cards/kinetic/quote.html",
+      "fps": 24,
+      "duration": {
+        "min": 5.0,
+        "max": 9.0
+      },
+      "slots": [
+        {
+          "name": "quote",
+          "type": "richtext",
+          "maxChars": 70
+        },
+        {
+          "name": "attribution",
+          "type": "text",
+          "maxChars": 40
+        }
+      ],
+      "matches": [
+        "bk_rebrand_f60_era-fullbleed.jpg",
+        "bk_rebrand_f83_era-invert-flicker.jpg",
+        "bk_rebrand_f116_real-small-hold.jpg",
+        "bk_rebrand_f126_real-settled.jpg",
+        "bk_rebrand_f198_thanever-letter-tint.jpg"
+      ],
+      "summary": "Word per cut: small cream connecting words on oxblood, <em> payoff words swap to cream and go full bleed (placed with inverts, then small-then-slam), last word tints in, hard cut to the ragged lockup."
+    },
+    {
+      "id": "humanly-possible-v2.kinetic.title",
+      "tier": "tier1",
+      "purpose": "title",
+      "family": "kinetic",
+      "file": "cards/kinetic/title.html",
+      "fps": 24,
+      "duration": {
+        "min": 6.67,
+        "max": 6.67
+      },
+      "slots": [
+        {
+          "name": "chapter",
+          "type": "text",
+          "maxChars": 2
+        },
+        {
+          "name": "title",
+          "type": "richtext",
+          "maxChars": 40
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "wrapped10yrs_f286_circle-iris.jpg",
+        "bk_rebrand_f285_giant-glyph-crop.jpg",
+        "bk_rebrand_f1790_haveit-build.jpg"
+      ],
+      "summary": "Gold circle iris grows from the subject on live footage, three drifting glyph crops of the chapter number with field swaps, hard cut to the chapter lockup with hand-set ragged title lines."
+    },
+    {
+      "id": "humanly-possible-v2.kinetic.transition",
+      "tier": "transition",
+      "purpose": "transition",
+      "family": "kinetic",
+      "file": "cards/kinetic/transition.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.1,
+        "max": 3.0
+      },
+      "slots": [
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "bk_rebrand_f1465_stripe-wipe.jpg"
+      ],
+      "summary": "Stacked stripe wipe: brick, oxblood, gold bars sweep in from the left with a staircase lead (0/2/4 f), ease out, then accelerate away revealing shot B behind their trailing edges."
+    },
+    {
+      "id": "humanly-possible-v2.netflix-doc.name",
+      "tier": "tier2",
+      "purpose": "name",
+      "family": "netflix-doc",
+      "file": "cards/netflix-doc/name.html",
+      "fps": 24,
+      "duration": {
+        "min": 4.17,
+        "max": 4.17
+      },
+      "slots": [
+        {
+          "name": "name",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "maxChars": 18
+        },
+        {
+          "name": "place",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "gbs-homeless_lockup.jpg",
+        "gbs-homeless_title_opening.jpg",
+        "gbs-homeless_title_box.jpg",
+        "gbs-homeless_title_collapse.jpg",
+        "gbs-marathons-slice_title_box.jpg",
+        "gbs-marathons-slice_title_collapse.jpg"
+      ],
+      "summary": "Great Big Story line-born title box: orange HP disc sinks onto a 3 px line that opens into a box and unmasks the name, still hold, squash-to-line close."
+    },
+    {
+      "id": "humanly-possible-v2.netflix-doc.number",
+      "tier": "tier2",
+      "purpose": "number",
+      "family": "netflix-doc",
+      "file": "cards/netflix-doc/number.html",
+      "fps": 24,
+      "duration": {
+        "min": 3.5,
+        "max": 3.5
+      },
+      "slots": [
+        {
+          "name": "value",
+          "type": "number"
+        },
+        {
+          "name": "unit",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "tail",
+          "type": "text",
+          "maxChars": 8
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "gbs-marathons-slice_counter_mid.jpg",
+        "gbs-marathons-slice_counter_landed.jpg",
+        "gbs-marathons-slice_name_super.jpg"
+      ],
+      "summary": "GBS counter: plate-less cream numeral rolls in tenths on ones over 20 f on a symmetric S curve, label and orange dash cut on at landing, dead hold."
+    },
+    {
+      "id": "humanly-possible-v2.netflix-doc.ai-screen",
+      "tier": "tier1",
+      "purpose": "ai-screen",
+      "family": "netflix-doc",
+      "file": "cards/netflix-doc/ai-screen.html",
+      "fps": 24,
+      "duration": {
+        "min": 5.5,
+        "max": 5.5
+      },
+      "slots": [
+        {
+          "name": "kicker",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "prompt",
+          "type": "richtext",
+          "maxChars": 60
+        },
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "reply-kicker",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "reply",
+          "type": "richtext",
+          "maxChars": 56
+        }
+      ],
+      "matches": [
+        "chefs-table_card_midfade.jpg",
+        "chefs-table_card_farthest_full.jpg",
+        "chefs-table_card_jiro_full.jpg"
+      ],
+      "summary": "Chef's Table ink-in: prompt inks onto a vignetted cream card on the measured 44-f curve, 12-f phone insert, hard cut to the oxblood reply card with a center-out orange underline."
+    },
+    {
+      "id": "humanly-possible-v2.netflix-doc.quote",
+      "tier": "tier1",
+      "purpose": "quote",
+      "family": "netflix-doc",
+      "file": "cards/netflix-doc/quote.html",
+      "fps": 24,
+      "duration": {
+        "min": 7,
+        "max": 7
+      },
+      "slots": [
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "line-1",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "line-2",
+          "type": "text",
+          "maxChars": 24
+        },
+        {
+          "name": "attribution",
+          "type": "text",
+          "maxChars": 24
+        }
+      ],
+      "matches": [
+        "chefs-table_card_farthest_full.jpg",
+        "chefs-table_card_midfade.jpg",
+        "chefs-table_namecard_bottura.jpg"
+      ],
+      "summary": "12-f shot, 3-f dip to cream, quote inks in as a light line over a bold metallic line, attribution hard-cuts on below like the name-card place line."
+    },
+    {
+      "id": "humanly-possible-v2.netflix-doc.title",
+      "tier": "tier1",
+      "purpose": "title",
+      "family": "netflix-doc",
+      "file": "cards/netflix-doc/title.html",
+      "fps": 24,
+      "duration": {
+        "min": 6.5,
+        "max": 6.5
+      },
+      "slots": [
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "chapter-label",
+          "type": "text",
+          "maxChars": 10
+        },
+        {
+          "name": "chapter",
+          "type": "text",
+          "maxChars": 3
+        },
+        {
+          "name": "title-1",
+          "type": "text",
+          "maxChars": 16
+        },
+        {
+          "name": "title-2",
+          "type": "text",
+          "maxChars": 16
+        }
+      ],
+      "matches": [
+        "chefs-table_titlecard.jpg",
+        "chefs-table_tagline.jpg",
+        "chefs-table_card_midfade.jpg"
+      ],
+      "summary": "Chef's Table title-to-tagline: CHAPTER 02 inks in, dissolves out in 5 f, the light/bold title inks in over 12 f, card dips toward grey over 14 f."
+    },
+    {
+      "id": "humanly-possible-v2.netflix-doc.transition",
+      "tier": "transition",
+      "purpose": "transition",
+      "family": "netflix-doc",
+      "file": "cards/netflix-doc/transition.html",
+      "fps": 24,
+      "duration": {
+        "min": 5,
+        "max": 5
+      },
+      "slots": [
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "chefs-table_card_jiro_full.jpg",
+        "chefs-table_footage_bug.jpg"
+      ],
+      "summary": "Chef's Table card transition: shot A, 3-f dip to an empty cream card, 1-frame cut to black, 48-f linear fade up into shot B."
+    },
+    {
+      "id": "humanly-possible-v2.outdoor-doc.name",
+      "tier": "tier2",
+      "purpose": "name",
+      "family": "outdoor-doc",
+      "file": "cards/outdoor-doc/name.html",
+      "fps": 24,
+      "duration": {
+        "min": 2.5,
+        "max": 5
+      },
+      "slots": [
+        {
+          "name": "name",
+          "type": "text",
+          "maxChars": 22
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "salomon_namesuper_kevin.jpg",
+        "salomon_location_leadville.jpg"
+      ],
+      "summary": "Salomon name super: unboxed cream caps + italic caption lower left over a graded shop plate, 10 f clean then a 30 f opacity-only fade on the measured Kevin curve, gone on the cut."
+    },
+    {
+      "id": "humanly-possible-v2.outdoor-doc.number",
+      "tier": "tier1",
+      "purpose": "number",
+      "family": "outdoor-doc",
+      "file": "cards/outdoor-doc/number.html",
+      "fps": 24,
+      "duration": {
+        "min": 3.5,
+        "max": 6
+      },
+      "slots": [
+        {
+          "name": "number",
+          "type": "text",
+          "maxChars": 14
+        },
+        {
+          "name": "label",
+          "type": "text",
+          "maxChars": 28
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "salomon_racetitle_hardrock.jpg",
+        "salomon_record_ws100.jpg"
+      ],
+      "summary": "Number typeset, not performed: bold cream number then light tracked label 30 f later, centred in the dark road of a dusk street held 6 s, with a 10% grade dip; no count-up, rule or icon."
+    },
+    {
+      "id": "humanly-possible-v2.outdoor-doc.ai-screen",
+      "tier": "tier2",
+      "purpose": "ai-screen",
+      "family": "outdoor-doc",
+      "file": "cards/outdoor-doc/ai-screen.html",
+      "fps": 24,
+      "duration": {
+        "min": 5,
+        "max": 6
+      },
+      "slots": [
+        {
+          "name": "prompt",
+          "type": "text",
+          "maxChars": 60
+        },
+        {
+          "name": "reply",
+          "type": "richtext",
+          "maxChars": 66
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "pata_route_label_scalein.jpg",
+        "pata_peaklabels_full.jpg",
+        "salomon_namesuper_roy.jpg"
+      ],
+      "summary": "Phone-in-hand plate with prompt and reply set as supers in the dark of the shot, pinned by a baked per-frame track; open triangle settles from 300% and a 3 px hairline is traced under the reply (Patagonia route-map move). Swapping the plate needs a re-baked TRACK."
+    },
+    {
+      "id": "humanly-possible-v2.outdoor-doc.quote",
+      "tier": "tier1",
+      "purpose": "quote",
+      "family": "outdoor-doc",
+      "file": "cards/outdoor-doc/quote.html",
+      "fps": 24,
+      "duration": {
+        "min": 4.5,
+        "max": 7
+      },
+      "slots": [
+        {
+          "name": "line-1",
+          "type": "text",
+          "maxChars": 34
+        },
+        {
+          "name": "line-2",
+          "type": "text",
+          "maxChars": 30
+        },
+        {
+          "name": "attribution",
+          "type": "text",
+          "maxChars": 24
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "salomon_record_ws100.jpg",
+        "salomon_racetitle_utmb.jpg"
+      ],
+      "summary": "Guest line as staggered reading over an evening grass plate: light line, 36 f clean gap, heavy line, then tracked-caps attribution; emphasis by weight only, all gone on the cut."
+    },
+    {
+      "id": "humanly-possible-v2.outdoor-doc.title",
+      "tier": "tier1",
+      "purpose": "title",
+      "family": "outdoor-doc",
+      "file": "cards/outdoor-doc/title.html",
+      "fps": 24,
+      "duration": {
+        "min": 3,
+        "max": 5
+      },
+      "slots": [
+        {
+          "name": "title",
+          "type": "text",
+          "maxChars": 32
+        },
+        {
+          "name": "kicker",
+          "type": "text",
+          "maxChars": 10
+        },
+        {
+          "name": "chapter",
+          "type": "text",
+          "maxChars": 4
+        },
+        {
+          "name": "media",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "salomon_chapter_teamsport.jpg",
+        "pata_titlecard.jpg"
+      ],
+      "summary": "Chapter card: one line of bold cream caps above a sunset horizon with a hairline rule (measured 9 f Salomon fade), tracked light-caps CHAPTER 02 subtitle 27 f later (Patagonia title), hard out on the cut."
+    },
+    {
+      "id": "humanly-possible-v2.outdoor-doc.transition",
+      "tier": "transition",
+      "purpose": "transition",
+      "family": "outdoor-doc",
+      "file": "cards/outdoor-doc/transition.html",
+      "fps": 24,
+      "duration": {
+        "min": 4,
+        "max": 4
+      },
+      "slots": [
+        {
+          "name": "place",
+          "type": "text",
+          "maxChars": 20
+        },
+        {
+          "name": "region",
+          "type": "text",
+          "maxChars": 24
+        },
+        {
+          "name": "media",
+          "type": "media"
+        },
+        {
+          "name": "media-2",
+          "type": "media"
+        }
+      ],
+      "matches": [
+        "salomon_location_chamonix_acrosscut.jpg",
+        "salomon_location_leadville.jpg"
+      ],
+      "summary": "The family transition is the hard cut: shot A, location super fades on (Leadville 27 f), hard cut at F61 to shot B, the super carries across the cut and fades out 24 f later over 5 f (Chamonix)."
+    }
+  ]
+}

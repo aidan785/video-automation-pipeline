@@ -1,0 +1,171 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · thesis · CODE STREAM
+  The "it wrote the code" moment. True black with an ember light pool rising
+  from the bottom-left. Lines of HTML/SVG-ish code type in fast (JetBrains Mono),
+  every character arriving --code-hot with a heavy orange glow; each finished
+  line cools over ~0.5s to syntax colours (tags, attribute names, strings,
+  text) via a tiny tokenizer. The block auto-scrolls upward as lines pile up.
+  On the last lines the camera punches in to ~2.4x (power3.inOut) and a final
+  plain sentence types in ember and cools to a settled ember with a soft halo.
+  Slots: code (text, raw code lines, one per line, 10-16 lines, <= 64 chars each),
+         sign (text, <= 22 chars).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-code-stream {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-mono);
+      }
+      #sanji-t1-code-stream .pool {
+        position: absolute; left: -560px; bottom: -560px; width: 1700px; height: 1700px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,200,90,0.95) 0%, rgba(255,150,40,0.75) 22%, rgba(230,110,30,0.45) 42%, rgba(103,39,13,0.22) 60%, rgba(3,1,0,0) 72%);
+        filter: blur(30px);
+      }
+      #sanji-t1-code-stream .warm {
+        position: absolute; inset: 0;
+        background: radial-gradient(55% 60% at 0% 100%, rgba(var(--ember-rgb),0.35), rgba(3,1,0,0) 70%);
+      }
+      #sanji-t1-code-stream .cam { position: absolute; inset: 0; transform-origin: 0 0; }
+      #sanji-t1-code-stream .block { position: absolute; left: 180px; top: 300px; }
+      #sanji-t1-code-stream .ln {
+        height: 56px; line-height: 56px; white-space: pre;
+        font-size: 34px; font-weight: 500; letter-spacing: 0;
+      }
+      #sanji-t1-code-stream .ln .k { white-space: pre; }
+      #sanji-t1-code-stream .ln .ch { display: none; }
+      #sanji-t1-code-stream .ln.sign { font-weight: 500; }
+      #sanji-t1-code-stream .src { display: none; }
+      #sanji-t1-code-stream .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.35; }
+      #sanji-t1-code-stream .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-code-stream" data-composition-id="sanji-t1-code-stream" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="pool"></div>
+      <div class="cam"><div class="block"></div></div>
+      <div class="vig"></div>
+      <div class="grain"></div>
+<pre class="src" data-slot="code">&lt;section class="hero" id="launch"&gt;
+&lt;svg viewBox="0 0 120 24" class="sparkline"&gt;
+&lt;path d="M0,18 Q30,2 60,14 T120,6" fill="none" /&gt;
+&lt;/svg&gt;
+&lt;div class="grid-cell node-beta" id="node-011"&gt;
+&lt;span class="matrix-glyph"&gt;&lt;/span&gt;
+&lt;h3&gt;Render pipeline&lt;/h3&gt;
+&lt;p&gt;Latency: 0.004ms&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="hud-console-overlay" data-mode="live"&gt;
+&lt;div class="console-row"&gt;[SYS] build ready&lt;/div&gt;
+&lt;div class="console-row success"&gt;[OK] 60 fps&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;</pre>
+      <span class="src" data-slot="sign">Written in one pass.</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+        const ID = "sanji-t1-code-stream";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const C = { tag: tok("--code-tag"), attr: tok("--code-attr"), str: tok("--code-str"), text: tok("--code-text"), hot: tok("--code-hot"), ember: tok("--ember") };
+        const ER = tok("--ember-rgb");
+        const HOT = `0 0 4px rgba(${ER},0.95), 0 0 14px rgba(${ER},0.8), 0 0 34px rgba(${ER},0.55)`;
+        const COOL = `0 0 4px rgba(${ER},0), 0 0 14px rgba(${ER},0), 0 0 34px rgba(${ER},0)`;
+        const SOFT = `0 0 4px rgba(${ER},0.25), 0 0 14px rgba(${ER},0.18), 0 0 34px rgba(${ER},0.1)`;
+
+        /* ---- tiny tokenizer: tag / punct / attr / = / string / text ---- */
+        const RX = /(<\/?[A-Za-z][\w-]*)|(\/?>)|([A-Za-z_:][\w:-]*)(?==)|(=)|("[^"]*"?)|(\s+)|([^<>"=\s]+)/g;
+        function tokenize(s) {
+          const out = []; let m; RX.lastIndex = 0;
+          while ((m = RX.exec(s))) {
+            const t = m[0];
+            const kind = m[1] || m[2] ? "tag" : m[3] ? "attr" : m[4] ? "text" : m[5] ? "str" : "text";
+            out.push({ t, kind });
+          }
+          return out;
+        }
+
+        const block = $(".block");
+        const srcLines = $(".src[data-slot=code]").textContent.split("\n").map((l) => l.replace(/\s+$/, "")).filter((l) => l.length);
+        const sign = $(".src[data-slot=sign]").textContent.trim();
+        const LH = 56, TOP = 300;
+
+        const mkLine = (str, isSign) => {
+          const ln = document.createElement("div"); ln.className = "ln" + (isSign ? " sign" : "");
+          const toks = isSign ? [{ t: str, kind: "sign" }] : tokenize(str);
+          const spans = [], chars = [];
+          toks.forEach(({ t, kind }) => {
+            const k = document.createElement("span"); k.className = "k"; k.dataset.kind = kind;
+            [...t].forEach((ch) => { const c = document.createElement("span"); c.className = "ch"; c.textContent = ch; k.appendChild(c); chars.push(c); });
+            ln.appendChild(k); spans.push(k);
+          });
+          block.appendChild(ln);
+          return { ln, spans, chars };
+        };
+        const lines = srcLines.map((s) => mkLine(s, false));
+        const signLn = mkLine(sign, true);
+        const N = lines.length;
+
+        /* scroll offset so the writing line never sits below y ~ 600 */
+        const scrollFor = (i) => -Math.max(0, i * LH - 440);
+
+        const tl = gsap.timeline({ paused: true });
+        const T0 = 0.35, LINE = 0.17;
+        const T_ZOOM = T0 + (N - 2) * LINE;              /* punch in while the last lines type */
+        const ZOOM = 2.4, ZDUR = 0.5;
+        const T_SIGN = T0 + N * LINE + 0.45;
+        const SCPS = 0.05;
+        const T_SDONE = T_SIGN + sign.length * SCPS;
+        const END = T_SDONE + 1.5;
+
+        $$(".k").forEach((k) => gsap.set(k, { color: C.hot, textShadow: HOT }));
+        gsap.set(signLn.spans[0], { color: C.ember });
+
+        /* ambient: pool breathes and climbs a touch */
+        tl.fromTo($(".pool"), { opacity: 0.7, y: 60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: T_ZOOM, ease: "sine.inOut" }, 0)
+          .to($(".pool"), { opacity: 0.45, duration: ZDUR + 0.4, ease: "power2.inOut" }, T_ZOOM)
+          .fromTo($(".block"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, T0 - 0.01);
+
+        /* each code line types hot, then cools token by token to syntax colours */
+        lines.forEach(({ spans, chars }, i) => {
+          const t = T0 + i * LINE;
+          const step = (LINE - 0.02) / chars.length;
+          if (i > 0) tl.to(block, { y: scrollFor(i), duration: 0.28, ease: "power3.out" }, t);
+          chars.forEach((c, j) => tl.set(c, { display: "inline" }, t + j * step));
+          spans.forEach((k) => {
+            tl.to(k, { color: C[k.dataset.kind] || C.text, textShadow: COOL, duration: 0.5, ease: "power2.inOut" }, t + LINE + 0.12);
+          });
+          /* older lines settle back a hair so the hot edge reads as the focus */
+          tl.to(spans, { opacity: 0.82, duration: 0.6, ease: "sine.inOut" }, t + LINE + 0.6);
+        });
+
+        /* camera punch-in on the last lines; the sign line lands at ~(170, 600) */
+        const signIdx = N;
+        const ySign = TOP + signIdx * LH + scrollFor(signIdx) + LH / 2;
+        tl.to(block, { y: scrollFor(signIdx), duration: 0.3, ease: "power3.out" }, T_SIGN - 0.3)
+          .to($(".cam"), { scale: ZOOM, x: 170 - 180 * ZOOM, y: 600 - ySign * ZOOM, duration: ZDUR, ease: "power3.inOut" }, T_ZOOM)
+          .to($(".cam"), { filter: "blur(3px)", duration: ZDUR / 2, ease: "power1.in", yoyo: true, repeat: 1 }, T_ZOOM)
+          /* depth: the far, older lines drift out of focus once we are close */
+          .to(lines.slice(0, Math.max(0, N - 4)).map((l) => l.ln), { filter: "blur(2.5px)", duration: 0.5, ease: "power2.out" }, T_ZOOM + ZDUR * 0.6);
+
+        /* the plain sentence types in ember-hot and cools to a settled ember */
+        signLn.chars.forEach((c, j) => tl.set(c, { display: "inline" }, T_SIGN + j * SCPS));
+        tl.fromTo(signLn.spans[0], { color: C.hot, textShadow: HOT }, { color: C.hot, textShadow: HOT, duration: 0.01 }, T_SIGN - 0.01)
+          .to(signLn.spans[0], { color: C.ember, textShadow: SOFT, duration: 0.55, ease: "power2.inOut" }, T_SDONE + 0.2)
+          .set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

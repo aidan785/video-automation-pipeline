@@ -1,0 +1,270 @@
+<!doctype html>
+<!--
+  SANJI · transition · NUMBER THROUGH
+  Scene A (COBALT chapter numeral) to scene B (NATURE photo + glass pill).
+  A giant white numeral sits on the cobalt wash with its small caps label.
+  The numeral starts flying at camera: an exponential dolly aimed at the
+  centre of the first digit's counter (the hole of the 0), steering that
+  point to frame centre while the motion blur builds. Once the digit's outer
+  edge has left the frame, the cobalt behind it is swapped out, so the
+  counter becomes a window onto scene B; the camera passes through the hole,
+  the white ring of the glyph sweeps off every edge and scene B settles out
+  of a push, its pill resolving in.
+  The first glyph must have a closed counter (0 4 6 8 9 or O). The aim point
+  is measured from the glyph's tight bounding box (canvas measureText) after
+  fonts load, so it is lazy and exact.
+  Both scenes are STAND-INS. Slots: num (<= 3, first glyph with a counter),
+  kicker (caps <= 12), title (caps <= 14), pill (text <= 30).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-number-through {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-tr-number-through .scene { position: absolute; inset: 0; overflow: hidden; }
+      /* scene B: nature */
+      #sanji-tr-number-through .sceneB { transform-origin: 50% 50%; }
+      #sanji-tr-number-through .sceneB img { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; display: block; }
+      #sanji-tr-number-through .pill {
+        position: relative; height: 124px; padding: 0 76px;
+        box-sizing: border-box; border-radius: var(--r-pill); overflow: hidden; white-space: nowrap; display: flex; align-items: center;
+        -webkit-backdrop-filter: blur(22px) saturate(1.4) brightness(1.1); backdrop-filter: blur(22px) saturate(1.4) brightness(1.1);
+        background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 46%, rgba(0,0,0,0.07) 100%);
+        border: var(--rim) solid rgba(255,255,255,0.35);
+        box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -18px 34px rgba(0,0,0,0.10), 0 22px 60px rgba(0,0,0,0.20);
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 64px; letter-spacing: var(--track-ui); text-shadow: 0 2px 14px rgba(0,0,0,0.16);
+      }
+      #sanji-tr-number-through .pillwrap { position: absolute; left: 0; right: 0; top: 478px; display: flex; justify-content: center; }
+      /* scene A: cobalt wash ground (separate so it can drop out behind the glyph) */
+      #sanji-tr-number-through .groundA { position: absolute; inset: 0; background: var(--cobalt-wash); }
+      #sanji-tr-number-through .groundA .cells { position: absolute; inset: 0; background: var(--cell-grid); }
+      #sanji-tr-number-through .cam { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+      #sanji-tr-number-through .kick { position: absolute; left: 0; right: 0; top: 214px; text-align: center; font-family: var(--font-mono); font-size: 28px; letter-spacing: 0.08em; color: var(--white-soft); text-transform: uppercase; }
+      #sanji-tr-number-through .num {
+        position: absolute; left: 0; right: 0; top: 250px; height: 520px; text-align: center; white-space: nowrap;
+        font-weight: var(--wt-heavy); font-size: 520px; line-height: 520px; letter-spacing: -0.04em;
+        text-shadow: 0 0 60px rgba(170,200,255,0.45);
+      }
+      #sanji-tr-number-through .num span { display: inline-block; }
+      #sanji-tr-number-through .title { position: absolute; left: 0; right: 0; top: 790px; text-align: center; font-weight: var(--wt-heavy); font-size: 72px; line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-number-through" data-composition-id="sanji-tr-number-through" data-start="0" data-width="1920" data-height="1080">
+      <div class="scene sceneB">
+        <img src="../../assets/nature/hills-sunset.jpg" alt="" />
+        <div class="pillwrap"><div class="pill" data-slot="pill">Where the money comes from</div></div>
+      </div>
+      <div class="groundA"><div class="cells"></div></div>
+      <div class="cam">
+        <div class="kick" data-slot="kicker">Chapter</div>
+        <div class="num" data-slot="num">02</div>
+        <div class="title" data-slot="title">The math</div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-number-through";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const cam = $(".cam"), num = $(".num");
+
+        /* split numeral: first glyph is the door */
+        const str = num.textContent.trim(); num.textContent = "";
+        const g0 = document.createElement("span"); g0.textContent = str.slice(0, 1); num.appendChild(g0);
+        const rest = document.createElement("span"); rest.textContent = str.slice(1); num.appendChild(rest);
+
+        /* counter centre of the first glyph: tight glyph box from canvas, baseline from font metrics */
+        const mctx = document.createElement("canvas").getContext("2d");
+        let aim = null;
+        function getAim() {
+          if (aim && document.fonts.status === "loaded") return aim;
+          const cs = getComputedStyle(num);
+          mctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          const m = mctx.measureText(g0.textContent);
+          const F = parseFloat(cs.fontSize), LH = parseFloat(cs.lineHeight);
+          const fa = m.fontBoundingBoxAscent, fd = m.fontBoundingBoxDescent;
+          const baseline = num.offsetTop + (LH - (fa + fd)) / 2 + fa;
+          const x = num.offsetLeft + g0.offsetLeft + (m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 2;
+          const y = baseline - (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2;
+          /* outer half-extent of the glyph: used to know when it has covered the frame */
+          aim = { x, y, hw: (m.actualBoundingBoxRight + m.actualBoundingBoxLeft) / 2, hh: (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) / 2, F };
+          return aim;
+        }
+
+        const PUSH0 = 0.2, PUSH = 0.95, SMAX = 70;
+        const END = 2.15;   /* pill words land at ~2.1 */
+        const eP = gsap.parseEase("power3.in"), eC = gsap.parseEase("power2.inOut");
+        const D = { p: 0 };
+        let swapped = false;
+        function applyCam() {
+          const a = getAim(), p = D.p;
+          const s = Math.exp(Math.log(SMAX) * eP(p));
+          const c = eC(Math.min(1, p * 1.5));
+          const tx = a.x + (960 - a.x) * c, ty = a.y + (540 - a.y) * c;
+          cam.style.transform = `translate(${tx}px, ${ty}px) scale(${s}) translate(${-a.x}px, ${-a.y}px)`;
+          cam.style.filter = `blur(${Math.min(12, Math.max(0, s - 1.2) * 0.35).toFixed(2)}px)`;
+          /* once the glyph's outer contour is past every frame edge, the counter can open onto B */
+          const covered = c > 0.98 && a.hw * s > 1000 && a.hh * s > 600;
+          $(".groundA").style.visibility = covered ? "hidden" : "visible";
+          /* the 2 (and label/title) must not reappear inside the counter: they are far off-frame by then */
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        /* scene A idle: label + title already settled, numeral glow breathes */
+        tl.fromTo(num, { textShadow: "0 0 40px rgba(170,200,255,0.35)" }, { textShadow: "0 0 90px rgba(170,200,255,0.6)", duration: PUSH0 + 0.3, ease: "sine.inOut" }, 0)
+          ;
+        /* house text preset: label + title lift out (exit preset) as the dolly starts */
+        TXT.exit(tl, [$(".kick"), $(".title")], PUSH0 + 0.02);
+        tl          .to(rest, { autoAlpha: 0.0, duration: 0.5, ease: "power2.in" }, PUSH0 + 0.35);
+        tl.fromTo(D, { p: 0 }, { p: 1, duration: PUSH, ease: "none", onUpdate: applyCam }, PUSH0)
+          .set(cam, { autoAlpha: 0 }, PUSH0 + PUSH);
+        /* scene B: pushed in while seen through the counter, settles as we pass through */
+        tl.fromTo($(".sceneB"), { scale: 1.25 }, { scale: 1, duration: 1.0, ease: "expo.out" }, PUSH0 + PUSH * 0.72)
+          ;
+        /* house text preset: the glass pill rises as a block, its line pours in on top */
+        /* .pill is display:flex, which would collapse the spaces between word boxes: pour into an inline wrapper */
+        const pillTxt = document.createElement("span"); pillTxt.append(...$(".pill").childNodes); $(".pill").appendChild(pillTxt);
+        TXT.block(tl, $(".pill"), PUSH0 + PUSH);
+        TXT.reveal(tl, pillTxt, PUSH0 + PUSH + 0.04);
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

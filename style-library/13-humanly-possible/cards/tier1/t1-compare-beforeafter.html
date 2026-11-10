@@ -1,0 +1,140 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · compare · BEFORE-AFTER
+  Proof-forward before/after. Two panels on oxblood: "Before" on a deep panel, "After" on a
+  brick panel. Each carries a label, a big value (number + unit) and one line of what it was
+  like. Before lands first, a short orange rule with a chevron end draws across the gap (the
+  frame's one orange), then after lands and its number flips cream to gold on its landing frame
+  (the one gold). The ground drifts under still type.
+  From the October 15 research, "proof forward" editing style (DESIGN.md card plan).
+  Slots: kicker (text), before-label / after-label (text), before-num / after-num (number or
+         short text), before-unit / after-unit (text), before-line / after-line (text, one line).
+         Timing: .side.before / .side.after carry data-at.
+  Exit: animated mirror in the last 0.3 s; also safe to cut away.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-compare-beforeafter{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t1-compare-beforeafter .bg{position:absolute;inset:-5%;will-change:transform;transform-origin:70% 60%;
+        background:
+          radial-gradient(50% 60% at 75% 55%, rgba(122,30,30,.5) 0%, rgba(122,30,30,0) 100%),
+          radial-gradient(70% 70% at 0% 100%, var(--hp-deep) 0%, rgba(44,11,22,0) 100%),
+          var(--hp-oxblood);}
+      #hp-t1-compare-beforeafter .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      #hp-t1-compare-beforeafter .kicker{position:absolute;left:var(--margin);top:196px;font-family:var(--font-body);font-weight:600;font-size:22px;
+        letter-spacing:.16em;text-transform:uppercase;color:var(--hp-cream-muted);white-space:nowrap;}
+
+      #hp-t1-compare-beforeafter .side{position:absolute;top:262px;width:748px;height:560px;border-radius:var(--radius);padding:56px 60px 0;}
+      #hp-t1-compare-beforeafter .side.before{left:var(--margin);background:var(--hp-deep);}
+      #hp-t1-compare-beforeafter .side.after{left:1056px;background:var(--hp-brick);}
+      #hp-t1-compare-beforeafter .label{display:block;font-family:var(--font-body);font-weight:700;font-size:24px;letter-spacing:.16em;text-transform:uppercase;
+        color:var(--hp-cream-muted);white-space:nowrap;}
+      #hp-t1-compare-beforeafter .val{display:flex;align-items:baseline;gap:22px;margin-top:64px;white-space:nowrap;}
+      #hp-t1-compare-beforeafter .num{font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:220px;line-height:.86;
+        letter-spacing:var(--track-tight);color:var(--hp-cream);font-variant-numeric:tabular-nums;}
+      #hp-t1-compare-beforeafter .unit{font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:64px;line-height:1;
+        letter-spacing:var(--track-display);color:var(--hp-cream);}
+      #hp-t1-compare-beforeafter .line{position:absolute;left:60px;right:60px;top:442px;font-family:var(--font-body);font-weight:500;font-size:32px;line-height:1.25;
+        color:var(--hp-cream-muted);}
+      #hp-t1-compare-beforeafter .rule-hl{position:absolute;left:60px;right:60px;bottom:150px;height:1px;background:var(--hp-hairline);}
+
+      /* the orange connector: straight rule with a simple chevron end */
+      #hp-t1-compare-beforeafter .arrow{position:absolute;left:880px;top:518px;width:160px;height:48px;clip-path:inset(0px 160px 0px 0px);}
+      #hp-t1-compare-beforeafter .arrow svg{display:block;width:160px;height:48px;overflow:visible;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-compare-beforeafter" data-composition-id="hp-t1-compare-beforeafter" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="kicker" data-slot="kicker">Weekly invoicing, Ray's bookkeeping office</div>
+
+      <div class="side before" data-at="0.3">
+        <span class="label" data-slot="before-label">Before</span>
+        <div class="val"><span class="num" data-slot="before-num">9</span><span class="unit" data-slot="before-unit">hours</span></div>
+        <i class="rule-hl"></i>
+        <div class="line" data-slot="before-line">Typing every invoice by hand on Fridays</div>
+      </div>
+
+      <div class="arrow" aria-hidden="true">
+        <svg viewBox="0 0 160 48"><path class="ar" d="M4 24 H150 M134 8 L152 24 L134 40" fill="none" stroke="#FF8A4C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="side after" data-at="1.5">
+        <span class="label" data-slot="after-label">After</span>
+        <div class="val"><span class="num" data-slot="after-num">45</span><span class="unit" data-slot="after-unit">minutes</span></div>
+        <i class="rule-hl"></i>
+        <div class="line" data-slot="after-line">The assistant drafts, he checks and sends</div>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-compare-beforeafter-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-compare-beforeafter-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-compare-beforeafter";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+
+      const before = $1(".side.before"), after = $1(".side.after");
+      const atOf = (el, d) => { const a = parseFloat(el.getAttribute("data-at")); return isNaN(a) ? d : a; };
+      const B = atOf(before, .3);
+      const A = Math.max(B + .7, atOf(after, B + 1.2));
+      const R = A - .5;                    // the rule draws in the half second before "after" lands
+      const DUR = Math.max(5.5, A + 3);
+      const OUT = DUR - .3;
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.04, duration: DUR, ease: "none" }, 0);
+
+      function landSide(side, t) {
+        tl.fromTo(side, { autoAlpha: 0, scale: .96, y: 12 }, { autoAlpha: 1, scale: 1, y: 0, duration: .4, ease: POP }, t);
+        tl.fromTo(side.querySelector(".label"), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .28, ease: POP }, t + .1);
+        tl.fromTo(side.querySelector(".val"), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .34, ease: POP }, t + .16);
+        tl.fromTo(side.querySelector(".rule-hl"), { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: .3, ease: POP }, t + .22);
+        tl.fromTo(side.querySelector(".line"), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, t + .28);
+      }
+      tl.fromTo($1(".kicker"), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, Math.max(0, B - .15));
+      landSide(before, B);
+      // draws left to right (clip from the right; the chevron arrives last)
+      tl.fromTo($1(".arrow"), { clipPath: "inset(0px 160px 0px 0px)" }, { clipPath: "inset(0px 0px 0px 0px)", duration: .4, ease: POP }, R);
+      landSide(after, A);
+      // light, not layout: the after number turns gold on its landing frame
+      tl.fromTo(after.querySelector(".num"), { color: "#FFF0E6" }, { color: "#FFC145", duration: .2, ease: POP }, A + .3);
+
+      // exit (mirror, 0.3 s): after, rule, before, kicker
+      tl.to(after, { autoAlpha: 0, scale: .96, duration: .16, ease: "power2.in" }, OUT);
+      tl.to($1(".arrow"), { clipPath: "inset(0px 160px 0px 0px)", duration: .14, ease: "power2.in" }, OUT + .06);
+      tl.to(before, { autoAlpha: 0, scale: .96, duration: .16, ease: "power2.in" }, OUT + .12);
+      tl.to($1(".kicker"), { autoAlpha: 0, duration: .14, ease: "power2.in" }, OUT + .14);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,251 @@
+<!doctype html>
+<!--
+  SANJI · transition · PILL MORPH
+  A glass pill becomes the next scene's canvas. Scene A is COBALT: three
+  numbered glass pills stacked (01 / 02 / 03); 02 is ACTIVE, the others
+  dormant. The active pill then morphs: it stretches WIDE first (power3.inOut),
+  then grows TALL, its radius going pill -> card (56px) -> 0 as it reaches the
+  frame edges. The neighbours are pushed off and blur out, the pill's badge and
+  label dissolve, and the full-frame glass panel IS scene B's ground: a caps
+  title resolves top-left and three glass stat tiles pop in one by one.
+  ~1.9s. Slots: pill1 / pill2 / pill3 (caps, <= 10), title (caps, <= 12),
+  sub (<= 40), s1v..s3v (<= 5), s1l..s3l (<= 14).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-pill-morph {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-tr-pill-morph .ring {
+        position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.03) 100%);
+      }
+      #sanji-tr-pill-morph .g { position: absolute; box-sizing: border-box; }
+      #sanji-tr-pill-morph .g > .fill, #sanji-tr-pill-morph .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-tr-pill-morph .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-tr-pill-morph .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-tr-pill-morph .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-weight: var(--wt-ui);
+      }
+      #sanji-tr-pill-morph .pill { left: 700px; width: 520px; height: 124px; border-radius: 62px; }
+      #sanji-tr-pill-morph .pill .badge { left: 14px; top: 14px; width: 96px; height: 96px; font-size: 32px; }
+      #sanji-tr-pill-morph .pill .lab {
+        position: absolute; left: 136px; top: 0; height: 124px; display: flex; align-items: center; white-space: nowrap;
+        font-weight: var(--wt-heavy); font-size: 54px; letter-spacing: var(--track-caps); text-transform: uppercase;
+      }
+      #sanji-tr-pill-morph .pill.dorm .lab { color: var(--dormant); }
+      #sanji-tr-pill-morph .pill.dorm .badge { opacity: 0.6; }
+
+      /* scene B content, laid over the full-frame panel */
+      #sanji-tr-pill-morph .sceneB { position: absolute; inset: 0; pointer-events: none; }
+      #sanji-tr-pill-morph .title { position: absolute; left: 150px; top: 170px; font-weight: var(--wt-heavy); font-size: var(--size-title); line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; }
+      #sanji-tr-pill-morph .sub { position: absolute; left: 154px; top: 290px; font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 40px; letter-spacing: var(--track-ui); color: var(--white-soft); }
+      #sanji-tr-pill-morph .stat { top: 470px; width: 500px; height: 380px; border-radius: var(--r-tile); }
+      #sanji-tr-pill-morph .stat .v { position: absolute; left: 40px; top: 44px; font-weight: var(--wt-heavy); font-size: 120px; line-height: 1; letter-spacing: var(--track-caps); }
+      #sanji-tr-pill-morph .stat .l { position: absolute; left: 44px; bottom: 44px; font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 42px; letter-spacing: var(--track-ui); }
+      #sanji-tr-pill-morph .stat .m { position: absolute; right: 40px; top: 52px; font-family: var(--font-mono); font-size: 22px; color: var(--white-soft); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-pill-morph" data-composition-id="sanji-tr-pill-morph" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring" style="width:1400px;height:1400px;margin:-700px 0 0 -700px"></div>
+      <div class="ring" style="width:2100px;height:2100px;margin:-1050px 0 0 -1050px"></div>
+
+      <div class="g pill dorm p1" style="top:310px"><div class="fill"></div><div class="lit"></div><div class="badge">01</div><div class="lab" data-slot="pill1">Story</div></div>
+      <div class="g pill dorm p3" style="top:646px"><div class="fill"></div><div class="lit"></div><div class="badge">03</div><div class="lab" data-slot="pill3">Motion</div></div>
+      <div class="g pill hero" style="top:478px"><div class="fill"></div><div class="lit"></div><div class="badge pc">02</div><div class="lab pc" data-slot="pill2">Timing</div></div>
+
+      <div class="sceneB">
+        <div class="title" data-slot="title">Timing</div>
+        <div class="sub" data-slot="sub">Every move has a measured length</div>
+        <div class="g stat" style="left:150px"><div class="fill"></div><div class="m">resolve</div><div class="v" data-slot="s1v">0.2s</div><div class="l" data-slot="s1l">Word blur-in</div></div>
+        <div class="g stat" style="left:710px"><div class="fill"></div><div class="m">pop</div><div class="v" data-slot="s2v">0.4s</div><div class="l" data-slot="s2l">Glass arrival</div></div>
+        <div class="g stat" style="left:1270px"><div class="fill"></div><div class="m">exit</div><div class="v" data-slot="s3v">0.6x</div><div class="l" data-slot="s3l">Faster out</div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-pill-morph";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+
+        const hero = $(".pill.hero");
+        const tl = gsap.timeline({ paused: true });
+        const M = 0.36;                    /* morph starts */
+        const WIDE = 0.4, TALL = 0.62, END = M + 0.3 + TALL + 0.78;   /* stat tiles land at ~1.96 */
+
+        tl.set($(".sceneB"), { autoAlpha: 1 }, 0)
+          .set([$(".title"), $(".sub"), ...$$(".stat")], { autoAlpha: 0 }, 0);
+
+        /* scene A: hero pill lights */
+        tl.to(hero.querySelector(".lit"), { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.04)
+          .fromTo(hero, { scale: 1 }, { scale: 1.04, duration: 0.36, ease: "expo.out" }, 0.04)
+          .to(hero, { scale: 1, duration: 0.3, ease: "power2.inOut" }, M);
+
+        /* morph phase 1: wide */
+        tl.to(hero, { left: 120, width: 1680, duration: WIDE, ease: "power3.inOut" }, M);
+        /* morph phase 2: tall, radius pill -> card -> 0 */
+        tl.to(hero, { keyframes: [
+            { top: 150, height: 780, left: 70, width: 1780, borderRadius: 56, duration: TALL * 0.5, ease: "power2.in" },
+            { top: 0, height: 1080, left: 0, width: 1920, borderRadius: 0, duration: TALL * 0.5, ease: "expo.out" },
+          ] }, M + 0.3);
+        /* the rim melts away once the glass meets the frame edge */
+        tl.to([hero.querySelector(".lit"), hero.querySelector(".fill")], { borderColor: "rgba(255,255,255,0)", duration: 0.3, ease: "power2.out" }, M + 0.3 + TALL * 0.6);
+
+        tl.set([hero.querySelector(".lit"), hero.querySelector(".fill")], { boxShadow: "none" }, M + 0.3 + TALL * 0.8);
+
+        /* pill content dissolves, neighbours pushed out of frame + blurred */
+        tl.to($$(".pill.hero .pc"), { autoAlpha: 0, filter: "blur(10px)", duration: 0.26, ease: "power2.in" }, M + 0.12)
+          .to($(".p1"), { y: -300, autoAlpha: 0, filter: "blur(16px)", duration: 0.5, ease: "power2.inOut" }, M + 0.08)
+          .to($(".p3"), { y: 300, autoAlpha: 0, filter: "blur(16px)", duration: 0.5, ease: "power2.inOut" }, M + 0.08);
+
+        /* scene B: title resolves, stat tiles pop */
+        const B = M + 0.3 + TALL * 0.55;
+        /* house text preset: title + sub pour in, the stat tiles rise as blocks */
+        tl.set([$(".title"), $(".sub")], { autoAlpha: 1 }, B);
+        TXT.reveal(tl, $(".title"), B);
+        TXT.reveal(tl, $(".sub"), B + 0.06, { stagger: 0.03 });
+        TXT.block(tl, $$(".stat"), B + 0.1);
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

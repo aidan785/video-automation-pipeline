@@ -1,0 +1,286 @@
+<!doctype html>
+<!--
+  SANJI · transition · RING RIPPLE
+  A sonar wave carries the cut. Scene A is COBALT (sonar rings + a glass
+  pill). A white seed dot blooms at frame center, then one ring wave expands
+  from it (power3.inOut): INSIDE the ring is scene B, a PAPER text scene;
+  OUTSIDE is still scene A. The ring edge is a liquid-glass refraction band:
+  a copy of scene B magnified 6% and softly blurred, masked to an annulus
+  that rides the edge, plus a bright 2px rim with a cool halo, and two faint
+  echo rings trailing outward over A. The paper line resolves word by word
+  out of blur as the wave passes. ~1.6s.
+  Slots: pillA (caps, <= 16), line (text, <= 30).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-ring-ripple {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+        --r: 0px;
+      }
+      /* scene A: cobalt with rings + a glass pill */
+      #sanji-tr-ring-ripple .sceneA { position: absolute; inset: 0; background: radial-gradient(55% 60% at 50% 50%, rgba(255,255,255,0.08), rgba(255,255,255,0) 70%), var(--cobalt); }
+      #sanji-tr-ring-ripple .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-tr-ring-ripple .pill {
+        position: absolute; left: 50%; top: 50%; width: 640px; height: 132px; margin: -66px 0 0 -320px;
+        box-sizing: border-box; border-radius: var(--r-pill);
+        background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active);
+      }
+      #sanji-tr-ring-ripple .pill .badge {
+        position: absolute; left: 16px; top: 16px; width: 100px; height: 100px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 34px;
+      }
+      #sanji-tr-ring-ripple .pill .lab {
+        position: absolute; left: 146px; right: 30px; top: 0; height: 132px; display: flex; align-items: center;
+        font-weight: var(--wt-heavy); font-size: 58px; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap;
+      }
+      #sanji-tr-ring-ripple .echo {
+        position: absolute; left: 960px; top: 540px; width: 0; height: 0; border-radius: 50%; pointer-events: none;
+        border: 2px solid rgba(255,255,255,0.22); transform: translate(-50%, -50%); opacity: 0;
+      }
+
+      /* scene B: paper text, clipped to the wave */
+      #sanji-tr-ring-ripple .sceneB { position: absolute; inset: 0; background: var(--paper); clip-path: circle(var(--r) at 960px 540px); }
+      #sanji-tr-ring-ripple .stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+      #sanji-tr-ring-ripple .line {
+        white-space: nowrap; font-family: var(--font-display); font-weight: var(--wt-bold);
+        font-size: 96px; letter-spacing: var(--track-tight); line-height: 1.1; color: var(--ink);
+      }
+      #sanji-tr-ring-ripple .line .w { display: inline-block; white-space: pre; }
+
+      /* refraction band: magnified, soft copy of B, masked to an annulus on the edge */
+      #sanji-tr-ring-ripple .band {
+        position: absolute; inset: 0; pointer-events: none;
+        -webkit-mask-image: radial-gradient(circle at 960px 540px, transparent calc(var(--r) - 64px), #000 calc(var(--r) - 30px), #000 calc(var(--r) - 4px), transparent calc(var(--r) + 2px));
+                mask-image: radial-gradient(circle at 960px 540px, transparent calc(var(--r) - 64px), #000 calc(var(--r) - 30px), #000 calc(var(--r) - 4px), transparent calc(var(--r) + 2px));
+      }
+      #sanji-tr-ring-ripple .band .lens { position: absolute; inset: 0; transform-origin: 960px 540px; transform: scale(1.06); filter: blur(3px) brightness(1.04); }
+      #sanji-tr-ring-ripple .band .tint { position: absolute; inset: 0; background: radial-gradient(circle at 960px 540px, rgba(32,66,238,0) calc(var(--r) - 60px), rgba(64,94,240,0.16) calc(var(--r) - 6px), rgba(32,66,238,0) var(--r)); }
+      #sanji-tr-ring-ripple .rimring {
+        position: absolute; left: 960px; top: 540px; width: 0; height: 0; border-radius: 50%; pointer-events: none;
+        transform: translate(-50%, -50%); box-sizing: border-box;
+        border: 2px solid rgba(255,255,255,0.95);
+        box-shadow: 0 0 26px 4px rgba(170,190,255,0.55), inset 0 0 22px 2px rgba(255,255,255,0.55);
+      }
+      #sanji-tr-ring-ripple .seed {
+        position: absolute; left: 940px; top: 520px; width: 40px; height: 40px; border-radius: 50%; background: var(--white);
+        box-shadow: 0 0 0 14px rgba(255,255,255,0.16), 0 0 80px 30px rgba(190,205,255,0.75); opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-ring-ripple" data-composition-id="sanji-tr-ring-ripple" data-start="0" data-width="1920" data-height="1080">
+      <div class="sceneA">
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        <div class="pill"><div class="badge">03</div><div class="lab" data-slot="pillA">Feedback</div></div>
+      </div>
+      <div class="echo"></div><div class="echo"></div>
+      <div class="sceneB">
+        <div class="stage"><div class="line" data-slot="line">Clients feel the difference</div></div>
+      </div>
+      <div class="band"><div class="lens"></div><div class="tint"></div></div>
+      <div class="rimring"></div>
+      <div class="seed"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-ring-ripple";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const INK = tok("--ink"), PRE = tok("--ink-pre");
+
+        /* the paper line (words are split by the house text preset below) */
+        const line = $(".line");
+
+        /* lens = live copy of scene B (slot attrs stripped), so fills carry over */
+        const lens = $(".band .lens");
+        const copy = $(".sceneB").cloneNode(true);
+        copy.style.clipPath = "none"; copy.querySelectorAll("[data-slot]").forEach((n) => n.removeAttribute("data-slot"));
+        lens.appendChild(copy);
+        const lensLine = copy.querySelector(".line");
+
+        /* rings ambient on A, finite */
+        const tl = gsap.timeline({ paused: true });
+        const SEED = 0.12, WAVE = 0.32, WD = 0.92, RMAX = 1180, END = WAVE + WD + 0.32;
+        $$(".ring").forEach((r, i) => {
+          tl.fromTo(r, { scale: 0.3 + i * 0.22, opacity: 0.2 }, { scale: 0.62 + i * 0.22, opacity: 1, duration: WAVE + WD, ease: "sine.out" }, 0);
+        });
+        tl.fromTo($(".pill"), { scale: 0.99 }, { scale: 1.015, duration: WAVE + 0.4, ease: "sine.inOut" }, 0);
+
+        /* seed dot blooms */
+        tl.fromTo($(".seed"), { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(1.25)" }, SEED)
+          .fromTo($(".seed"), { opacity: 1, scale: 1 }, { opacity: 0, scale: 2.4, duration: 0.3, ease: "power2.out", immediateRender: false }, WAVE + 0.1);
+
+        /* the wave: one proxy drives clip radius, mask band and rim */
+        const P = { r: 0 };
+        const rim = $(".rimring");
+        const apply = () => {
+          ROOT.style.setProperty("--r", P.r + "px");
+          rim.style.width = rim.style.height = P.r * 2 + "px";
+        };
+        apply();
+        tl.fromTo(P, { r: 0 }, { r: RMAX, duration: WD, ease: "power2.inOut", onUpdate: apply }, WAVE)
+          .fromTo(rim, { opacity: 0 }, { keyframes: [{ opacity: 1, duration: 0.12 }, { opacity: 1, duration: WD - 0.42 }, { opacity: 0, duration: 0.3, ease: "power2.in" }] }, WAVE)
+          .fromTo($(".band"), { opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }, WAVE + WD - 0.25);
+
+        /* scene A recedes slightly as the wave pushes outward */
+        tl.to($(".sceneA"), { scale: 1.05, filter: "blur(3px)", duration: WD, ease: "power2.in" }, WAVE);
+
+        /* echo rings run just ahead of the wave, over A */
+        $$(".echo").forEach((e, i) => {
+          const t = WAVE - 0.02 + i * 0.07, d = WD * (0.8 - i * 0.08);
+          tl.fromTo(e, { width: 0, height: 0 }, { width: RMAX * 2.3, height: RMAX * 2.3, duration: d, ease: "power3.inOut" }, t)
+            .fromTo(e, { opacity: 0 }, { keyframes: [{ opacity: 0.75 - i * 0.25, duration: 0.18 }, { opacity: 0, duration: d - 0.18, ease: "power2.in" }] }, t);
+        });
+
+        /* paper words pour in (house text preset) as the wave passes; the lens copy mirrors them exactly */
+        TXT.reveal(tl, line, WAVE + 0.22);
+        TXT.reveal(tl, lensLine, WAVE + 0.22);
+        tl.fromTo([line, lensLine], { color: PRE }, { color: INK, duration: 0.7, ease: TXT.EASE }, WAVE + 0.22);
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

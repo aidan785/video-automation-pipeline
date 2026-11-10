@@ -1,0 +1,120 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · NETFLIX DOC · name (tier2, 100 f @ 24 fps)
+  Great Big Story line-born title box (raw-media/hp-sampler-refs/netflix-doc/ANALYSIS.md, signature move 1;
+  picks gbs-homeless_lockup, _title_opening, _title_box, _title_collapse, gbs-marathons-slice_title_box).
+  Disc on, sinks onto the top edge; a 3 px line snaps out with a gap around the disc; the bottom edge
+  drops and unmasks the name; dead still hold; close = sub-label off, box squashes about its center,
+  one line lingers, shrinks to nothing. Every change is a tl.set on an exact frame (F is 1-based, t=(F-1)/24).
+  The footage plate is a preview stand-in (data-slot="media"); remove it to lay the card over the show.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;700&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp2-netflix-doc-name{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --cream:#FFF0E6;--orange:#FF8A4C;--deep:#2C0B16;font-family:"Inter Tight",sans-serif;}
+      #hp2-netflix-doc-name .plate{position:absolute;inset:0;}
+      #hp2-netflix-doc-name .plate video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+      #hp2-netflix-doc-name .box{position:absolute;inset:0;width:1920px;height:1080px;}
+      #hp2-netflix-doc-name .box line{stroke:var(--orange);stroke-width:3;}
+      #hp2-netflix-doc-name .disc{position:absolute;left:932px;top:402px;width:56px;height:56px;border-radius:50%;background:var(--orange);}
+      #hp2-netflix-doc-name .disc img{position:absolute;left:16px;top:14px;width:24px;height:auto;}
+      #hp2-netflix-doc-name .win{position:absolute;left:510px;top:442px;width:900px;height:0;overflow:hidden;}
+      #hp2-netflix-doc-name .nm{position:absolute;left:0;width:900px;top:100px;height:120px;margin-top:-60px;line-height:120px;text-align:center;
+        font-weight:700;font-size:88px;letter-spacing:.06em;text-indent:.06em;color:var(--cream);white-space:nowrap;text-transform:uppercase;transform-origin:50% 50%;}
+      #hp2-netflix-doc-name .sub{position:absolute;left:0;width:1920px;top:668px;height:44px;line-height:44px;text-align:center;
+        font-size:36px;letter-spacing:.14em;text-indent:.14em;color:var(--cream);white-space:nowrap;opacity:0;}
+      #hp2-netflix-doc-name .sub b{font-weight:700;}
+      #hp2-netflix-doc-name .sub span{font-weight:300;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-netflix-doc-name" data-composition-id="hp2-netflix-doc-name" data-start="0" data-width="1920" data-height="1080">
+      <div class="plate" data-slot="media">
+        <video src="../../assets/footage/groom2_6131038.mp4" poster="../../assets/footage/groom2_6131038.jpg" muted playsinline preload="auto" data-start="0" data-duration="4.1667" data-track-index="0"></video>
+      </div>
+      <svg class="box" data-tell-ok="stroke-box" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+        <line class="tl" x1="918" y1="442" x2="918" y2="442" />
+        <line class="tr" x1="1002" y1="442" x2="1002" y2="442" />
+        <line class="bt" x1="510" y1="442" x2="1410" y2="442" />
+        <line class="sl" x1="510" y1="442" x2="510" y2="442" />
+        <line class="sr" x1="1410" y1="442" x2="1410" y2="442" />
+      </svg>
+      <div class="win"><div class="nm" data-slot="name">Dana Ruiz</div></div>
+      <div class="disc"><img src="../../assets/logo/hp-mark-cream.svg" alt="" /></div>
+      <div class="sub"><b data-slot="role">DOG GROOMER</b> <span data-slot="place">IN TULSA</span></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-netflix-doc-name", FPS = 24, N = 100;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const attr = (F, el, a) => tl.set(el, { attr: a }, T(F));
+      function sample(F0, n, ease, fn) { const e = gsap.parseEase(ease); for (let i = 0; i <= n; i++) fn(F0 + i, e(i / n)); }
+
+      const L = 510, R = 1410, TOP = 442, H = 200, BOT = TOP + H, CY = TOP + H / 2, GL = 918, GR = 1002;
+      const disc = $1(".disc"), win = $1(".win"), nm = $1(".nm"), sub = $1(".sub");
+      const tL = $1(".tl"), tR = $1(".tr"), bt = $1(".bt"), sL = $1(".sl"), sR = $1(".sr");
+      const lines = [tL, tR, bt, sL, sR];
+
+      // start state: nothing on
+      at(1, disc, { opacity: 0, y: -12 }); lines.forEach((l) => at(1, l, { opacity: 0 }));
+      at(1, win, { top: TOP, height: 0 }); at(1, nm, { top: CY - TOP, scaleY: 1 }); at(1, sub, { opacity: 0 });
+
+      // F4 disc hard on 12 px high; F4-12 sinks onto the top edge (decelerating drift, measured ease-out)
+      at(4, disc, { opacity: 1 });
+      sample(4, 8, "power2.out", (F, k) => at(F, disc, { y: -12 + 12 * k }));
+      // F12-13 the line snaps out from the disc gap to full width (drew out in 1-2 f)
+      [[12, 0.9375], [13, 1]].forEach(([F, k]) => {
+        at(F, tL, { opacity: 1 }); at(F, tR, { opacity: 1 });
+        attr(F, tL, { x1: GL - (GL - L) * k }); attr(F, tR, { x2: GR + (R - GR) * k });
+      });
+      // F14-22 the bottom edge splits off and travels down, side strokes grow with it, the name unmasks under it
+      [bt, sL, sR].forEach((l) => at(14, l, { opacity: 1 }));
+      sample(13, 9, "power3.out", (F, k) => {
+        if (F < 14) return;
+        const y = TOP + H * k;
+        attr(F, bt, { y1: y, y2: y }); attr(F, sL, { y2: y }); attr(F, sR, { y2: y });
+        at(F, win, { height: H * k });
+      });
+      // F20-25 sub-label fades up over 6 f
+      for (let i = 0; i < 6; i++) at(20 + i, sub, { opacity: (i + 1) / 6 });
+
+      // F26-83 dead still hold
+
+      // close: F84-86 sub-label out over 3 f, disc off, top line closes over the gap
+      for (let i = 0; i < 3; i++) at(84 + i, sub, { opacity: 1 - (i + 1) / 3 });
+      at(84, disc, { opacity: 0 }); attr(84, tL, { x2: 960 }); attr(84, tR, { x1: 960 });
+      // F87-92 box and name squash about the center (accelerating)
+      sample(86, 6, "power2.in", (F, k) => {
+        if (F < 87) return;
+        const yT = TOP + (H / 2) * k, yB = BOT - (H / 2) * k;
+        [tL, tR].forEach((l) => attr(F, l, { y1: yT, y2: yT }));
+        attr(F, bt, { y1: yB, y2: yB }); attr(F, sL, { y1: yT, y2: yB }); attr(F, sR, { y1: yT, y2: yB });
+        at(F, win, { top: yT, height: yB - yT }); at(F, nm, { top: CY - yT, scaleY: Math.max(0.015, 1 - k) });
+      });
+      at(92, win, { opacity: 0 }); [tR, sL, sR].forEach((l) => at(92, l, { opacity: 0 }));
+      // F92-95 one line holds; F96-98 it shrinks to the center; F99 gone
+      attr(92, tL, { x1: L, x2: R });
+      [[96, 1 / 3], [97, 2 / 3], [98, 0.9]].forEach(([F, k]) => attr(F, tL, { x1: L + (960 - L) * k, x2: R - (R - 960) * k }));
+      at(92, bt, { opacity: 0 }); at(99, tL, { opacity: 0 });
+
+      tl.set({}, {}, N / FPS);
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

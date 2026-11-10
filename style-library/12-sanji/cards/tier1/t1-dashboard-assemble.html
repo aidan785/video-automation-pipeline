@@ -1,0 +1,327 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · overview · DASHBOARD ASSEMBLE
+  Cobalt + faint grid + sonar rings. Five liquid-glass UI panels (sidebar,
+  header bar, two stat tiles, a line-chart panel) fly in out of blur from
+  different directions and snap together into a dashboard; each panel flashes
+  its active sheen as it lands. The two stats count up, the chart line draws
+  with a glowing head and its area fades in, then one soft glow sweep crosses
+  every panel. Use for "here's the product", "everything in one place".
+  Slots: title (<=18), stat1 / stat2 (value, number with optional prefix /
+  suffix, <=7), stat1Label / stat2Label (<=22).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-dashboard-assemble {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-dashboard-assemble .grid { position: absolute; inset: 0; background: var(--cell-grid); opacity: 0.6;
+        -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 35%, transparent 80%); mask-image: radial-gradient(ellipse at 50% 50%, #000 35%, transparent 80%); }
+      #sanji-t1-dashboard-assemble .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-dashboard-assemble .g { position: absolute; box-sizing: border-box; border-radius: 40px; overflow: hidden; }
+      #sanji-t1-dashboard-assemble .g > .fill, #sanji-t1-dashboard-assemble .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-dashboard-assemble .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-dashboard-assemble .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-dashboard-assemble .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-dashboard-assemble .sheen { position: absolute; width: 1920px; height: 1080px; pointer-events: none; }
+      #sanji-t1-dashboard-assemble .sheen .band {
+        position: absolute; left: 0; top: -200px; width: 340px; height: 1480px; transform: rotate(18deg);
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.20) 50%, rgba(255,255,255,0) 100%);
+      }
+      #sanji-t1-dashboard-assemble .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      /* panels */
+      #sanji-t1-dashboard-assemble .side { left: 200px; top: 140px; width: 200px; height: 800px; }
+      #sanji-t1-dashboard-assemble .side .badge { left: 46px; top: 40px; width: 108px; height: 108px; }
+      #sanji-t1-dashboard-assemble .side .nav { position: absolute; left: 64px; width: 72px; height: 72px; border-radius: 22px; box-sizing: border-box; border: var(--rim) solid rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; }
+      #sanji-t1-dashboard-assemble .side .nav.on { background: rgba(255,255,255,0.20); border-color: rgba(255,255,255,0.5); }
+      #sanji-t1-dashboard-assemble .head { left: 430px; top: 140px; width: 1290px; height: 120px; border-radius: 60px; }
+      #sanji-t1-dashboard-assemble .head .ttl { position: absolute; left: 48px; top: 0; height: 120px; display: flex; align-items: center; font-weight: var(--wt-bold); font-size: 46px; letter-spacing: var(--track-ui); white-space: nowrap; }
+      #sanji-t1-dashboard-assemble .head .search { position: absolute; right: 130px; top: 30px; width: 340px; height: 60px; border-radius: 30px; box-sizing: border-box; background: rgba(255,255,255,0.10); border: var(--rim) solid rgba(255,255,255,0.2);
+        display: flex; align-items: center; gap: 14px; padding-left: 22px; color: var(--white-soft); font-size: 24px; font-weight: 500; }
+      #sanji-t1-dashboard-assemble .head .av { position: absolute; right: 30px; top: 20px; width: 80px; height: 80px; }
+      #sanji-t1-dashboard-assemble .stat { top: 290px; width: 630px; height: 230px; }
+      #sanji-t1-dashboard-assemble .stat .lab { position: absolute; left: 44px; top: 40px; font-weight: var(--wt-ui); font-size: 30px; letter-spacing: var(--track-ui); color: var(--white-soft); white-space: nowrap; }
+      #sanji-t1-dashboard-assemble .stat .val { position: absolute; left: 40px; bottom: 30px; font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 112px; line-height: 1; letter-spacing: var(--track-tight); white-space: nowrap; }
+      #sanji-t1-dashboard-assemble .stat .delta { position: absolute; right: 40px; bottom: 48px; height: 52px; padding: 0 20px; border-radius: 26px; box-sizing: border-box; background: rgba(255,255,255,0.14); border: var(--rim) solid rgba(255,255,255,0.3);
+        display: flex; align-items: center; gap: 8px; font-weight: var(--wt-bold); font-size: 26px; }
+      #sanji-t1-dashboard-assemble .chart { left: 430px; top: 550px; width: 1290px; height: 390px; }
+      #sanji-t1-dashboard-assemble .chart .clab { position: absolute; left: 44px; top: 36px; font-weight: var(--wt-ui); font-size: 30px; color: var(--white-soft); letter-spacing: var(--track-ui); }
+      #sanji-t1-dashboard-assemble .chart .range { position: absolute; right: 44px; top: 40px; font-family: var(--font-mono); font-size: 22px; color: var(--white-soft); }
+      #sanji-t1-dashboard-assemble .chart svg { position: absolute; left: 0; top: 0; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-dashboard-assemble" data-composition-id="sanji-t1-dashboard-assemble" data-start="0" data-width="1920" data-height="1080">
+      <div class="grid"></div>
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <div class="g side"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="48" height="48" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/></svg></div>
+        <div class="nav on" style="top:212px"><svg width="32" height="32" viewBox="0 0 24 24" fill="#FFFFFF"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2" opacity="0.7"/><rect x="3" y="13" width="8" height="8" rx="2" opacity="0.7"/><rect x="13" y="13" width="8" height="8" rx="2" opacity="0.45"/></svg></div>
+        <div class="nav" style="top:314px"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+        <div class="nav" style="top:416px"><svg width="30" height="30" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></div>
+        <div class="nav" style="top:518px"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></div>
+        <div class="nav" style="top:690px"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4"><circle cx="12" cy="12" r="3.4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke-linecap="round"/></svg></div>
+      </div></div>
+
+      <div class="g head"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="ttl" data-slot="title">Overview</div>
+        <div class="search"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" opacity="0.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>Search</div>
+        <div class="badge av"><svg width="40" height="40" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></div>
+      </div></div>
+
+      <div class="g stat s1" style="left:430px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="lab" data-slot="stat1Label">Monthly revenue</div>
+        <div class="val" data-slot="stat1">$48.2K</div>
+        <div class="delta"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 4l8 10h-5v6H9v-6H4z"/></svg>18%</div>
+      </div></div>
+      <div class="g stat s2" style="left:1090px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="lab" data-slot="stat2Label">Active users</div>
+        <div class="val" data-slot="stat2">1,284</div>
+        <div class="delta"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 4l8 10h-5v6H9v-6H4z"/></svg>9%</div>
+      </div></div>
+
+      <div class="g chart"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="clab">Growth</div><div class="range">LAST 30 DAYS</div>
+        <svg width="1290" height="390" viewBox="0 0 1290 390" fill="none">
+          <defs><linearGradient id="dash-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.30"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs>
+          <g stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1.5" stroke-dasharray="4 10">
+            <path d="M60 150H1230"/><path d="M60 230H1230"/><path d="M60 310H1230"/>
+          </g>
+          <path class="area" d="M60 300 C 160 290, 220 250, 300 262 S 440 300, 520 240 S 660 200, 740 214 S 880 170, 960 150 S 1120 120, 1230 104 L 1230 340 L 60 340 Z" fill="url(#dash-area)" />
+          <path class="line" d="M60 300 C 160 290, 220 250, 300 262 S 440 300, 520 240 S 660 200, 740 214 S 880 170, 960 150 S 1120 120, 1230 104" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" />
+          <g class="headdot"><circle r="22" fill="#FFFFFF" opacity="0.18"/><circle r="10" fill="#FFFFFF"/></g>
+        </svg>
+      </div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-dashboard-assemble";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+
+        /* count-up parsing: prefix, number (commas / decimals), suffix */
+        const counter = (el) => {
+          const raw = el.textContent.trim();
+          const m = raw.match(/^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/);
+          if (!m) return null;
+          const dec = (m[2].split(".")[1] || "").length, commas = m[2].includes(",");
+          const target = parseFloat(m[2].replace(/,/g, ""));
+          const fmt = (v) => { const s = v.toFixed(dec); if (!commas) return s; const [a, b] = s.split("."); return a.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (b ? "." + b : ""); };
+          return { el, target, set: (v) => { el.textContent = m[1] + fmt(v) + m[3]; } };
+        };
+        const counts = $$(".stat .val").map(counter).filter(Boolean);
+        counts.forEach((c) => c.set(0));
+
+        const panels = [$(".side"), $(".head"), $(".s1"), $(".s2"), $(".chart")];
+        /* one sheen layer per panel, placed in global frame coordinates so the sweep is continuous */
+        panels.forEach((p) => {
+          const sh = document.createElement("div"); sh.className = "sheen";
+          sh.style.left = -p.offsetLeft + "px"; sh.style.top = -p.offsetTop + "px";
+          sh.innerHTML = '<div class="band"></div>'; p.appendChild(sh);
+        });
+
+        const line = $(".line"), L = line.getTotalLength();
+        line.style.strokeDasharray = L; line.style.strokeDashoffset = L;
+        const hd = $(".headdot");
+        const D = { p: 0 };
+        const drawHead = () => { const pt = line.getPointAtLength(L * D.p); hd.setAttribute("transform", `translate(${pt.x} ${pt.y})`); line.style.strokeDashoffset = L * (1 - D.p); };
+        drawHead();
+
+        /* flex containers: wrap their text in one inline box so the preset's word boxes keep their spaces */
+        const inl = (el) => { const s = document.createElement("span"); while (el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return s; };
+        const tl = gsap.timeline({ paused: true });
+        const T_CNT = 1.75, END = 6.4;
+
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) { tl.set(r, { opacity: 0 }, 0); return; }
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        /* fly-ins: each from its own direction, out of blur, snapping home */
+        const FROM = [
+          { x: -520, y: 0, rotation: -4 },
+          { x: 0, y: -360, rotation: 2 },
+          { x: -380, y: 420, rotation: -5 },
+          { x: 620, y: -160, rotation: 5 },
+          { x: 120, y: 560, rotation: 3 },
+        ];
+        panels.forEach((p, i) => {
+          const t = 0.15 + i * 0.13;
+          tl.fromTo(p, { autoAlpha: 0, scale: 0.9, filter: "blur(16px)", ...FROM[i] },
+            { autoAlpha: 1, scale: 1, filter: "blur(0px)", x: 0, y: 0, rotation: 0, duration: 0.78, ease: "back.out(1.15)" }, t);
+          /* landing flash */
+          tl.fromTo(p.querySelector(".lit"), { opacity: 0 }, { keyframes: [{ opacity: 0.9, duration: 0.22, ease: "power2.out" }, { opacity: 0, duration: 0.6, ease: "power2.inOut" }] }, t + 0.5);
+          /* panel text pours in as the panel lands (counts keep their count-up) */
+          const words = [...p.querySelectorAll(".ttl, .lab, .clab, .range")].map((e) => (getComputedStyle(e).display.includes("flex") ? inl(e) : e)), blocks = [...p.querySelectorAll(".search, .delta")];
+          const tt = TXT.reveal(tl, words, t + 0.38, { stagger: 0.04 });
+          if (blocks.length) TXT.block(tl, blocks, Math.min(tt - 0.5, t + 0.5));
+        });
+
+        /* counts + chart */
+        counts.forEach((c, i) => {
+          const P = { v: 0 };
+          tl.fromTo(P, { v: 0 }, { v: c.target, duration: 1.0, ease: "power2.out", onUpdate: () => c.set(P.v), immediateRender: false }, T_CNT + i * 0.12);
+          tl.fromTo(c.el, { textShadow: "0 0 0px rgba(255,255,255,0)" }, { keyframes: [{ textShadow: "0 0 36px rgba(255,255,255,0.65)", duration: 0.25 }, { textShadow: "0 0 14px rgba(255,255,255,0.18)", duration: 0.6 }] }, T_CNT + 0.85 + i * 0.12);
+        });
+        tl.fromTo(hd, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, T_CNT + 0.05);
+        tl.fromTo(D, { p: 0 }, { p: 1, duration: 1.5, ease: "power2.inOut", onUpdate: drawHead, immediateRender: false }, T_CNT + 0.05);
+        tl.fromTo($(".area"), { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power2.out" }, T_CNT + 0.9);
+        tl.fromTo(hd.querySelector("circle"), { attr: { r: 22 } }, { attr: { r: 40 }, opacity: 0.0, duration: 0.8, ease: "power2.out" }, T_CNT + 1.55);
+
+        /* final glow sweep across every panel */
+        tl.fromTo($$(".sheen .band"), { x: -500 }, { x: 2200, duration: 1.3, ease: "power2.inOut" }, 3.75);
+        tl.to($(".chart .lit"), { opacity: 0.6, duration: 0.5, ease: "power2.out" }, 4.3);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,696 @@
+<!doctype html>
+<!--
+  HP V3 · tier1 · text · SIGNAL SCRAMBLE TITLE  (SIGNAL canvas, port of sanji t1-system-scramble-title)
+  A bold claim written into a field notebook at dusk. Grass against a low sun,
+  drawn in glyphs and lit by the burn from the bottom-left. A "// kicker" note
+  resolves, then the statement writes itself left to right in big cream mono,
+  a short tail of pencil-mark glyphs riding the edge (no blur, glyphs only).
+  The one <em> word lands in the inverse chip (cream cell, oxblood text) that
+  flickers on and holds. Field marks step in the open space. On the bar the
+  letters let go on a ragged front, lifting up and right like seeds, and the
+  grass comes up to full light behind them.
+  Use for a thesis or a bold claim.
+  Slots: kicker (<= 24), headline (richtext, <= 54 chars, wraps to 1-3 lines,
+  size steps down; wrap exactly ONE word in <em> for the chip),
+  photo (nature stem, default grass-silhouette).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #hp3-t1-signal-scramble-title { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--hp-deep); color: var(--hp-cream); font-family: var(--font-mono); }
+      #hp3-t1-signal-scramble-title .slot, #hp3-t1-signal-scramble-title .slot-photo { display: none; }
+      #hp3-t1-signal-scramble-title canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #hp3-t1-signal-scramble-title .fg-flare { opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="hp3-t1-signal-scramble-title" data-composition-id="hp3-t1-signal-scramble-title" data-start="0" data-width="1920" data-height="1080">
+      <span class="fg-slot" data-slot="ground">photo</span><span class="fg-slot" data-slot="grain">on</span><span class="fg-slot" data-slot="light">off</span>
+      <div class="fg-ground"></div>
+      <span class="slot-photo" data-slot="photo">grass-silhouette</span>
+      <div class="slot">
+        <span data-slot="kicker">what we found</span>
+        <span data-slot="headline">Nobody got into this work to answer the <em>phone</em>.</span>
+      </div>
+      <div class="fg-flare"></div>
+      <canvas class="field"></canvas>
+      <canvas class="kick"></canvas>
+      <canvas class="type"></canvas>
+      <div class="fg-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* HP V3 copy of the Sanji TEXT PRESET "uppit-reveal" (source of truth for 15-humanly-possible-v3).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+/* @field-glass:start v3 */
+/* HP V3 · FIELD GLASS motion helpers (single source of truth).
+   Cards carry an inlined copy between the @field-glass markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs`
+   (restamps both the @text-preset and @field-glass blocks).
+
+   Markup it expects (CSS lives in tokens.css, "FIELD GLASS utilities"):
+     .fg-photo > img          the graded nature photo (drifts, sways)
+     .fg-night                pre-sunrise veil, masked by --sr (radius %)
+     .fg-flare                sun bloom at the burn origin (bottom-left)
+     .fg-glass                glass pane; --fb blur px, --fm condense radius %,
+                              --fx/--fy condense origin; child .fg-tint, .fg-dapple
+   GROUND SWITCHES (v3, Aidan 11/3: not every card needs nature / the corner glow;
+   some flat, some with grain, some with no background at all). Every card carries
+   three hidden slots and calls FG.ground(ROOT, defaults) before building its timeline:
+     <span class="fg-slot" data-slot="ground">oxblood</span>  photo | oxblood | deep | brick | cream | burn | wash | none
+     <span class="fg-slot" data-slot="grain">off</span>       on | off
+     <span class="fg-slot" data-slot="light">off</span>       on | off  (the bottom-left sunrise + flare)
+   FG.ground sets data-ground / data-grain / data-light on the root; tokens.css does
+   the rest (hides the photo / flare / night / grain, paints flat grounds, switches
+   glass to the solid Sanji-style fill on flat grounds, makes "none" transparent).
+     FG.ground(ROOT, {ground, grain, light}) -> {ground, photo, flat, none, grain, light}
+   API (timeline-driven, deterministic):
+     FG.sunrise(tl, root, at, {dur})        light burns up from bottom-left, flare peaks then settles
+     FG.condense(tl, el, at, {dur, x, y})   glass fogs in from a point: clear -> frosted, tint rises
+     FG.clear(tl, el, at, {dur})            glass evaporates (exit), edges first
+     FG.beat(tl, el, at, {amp})             the logo's lub-dub: 1.07, back, 1.045, back
+     FG.sway(tl, root, at, dur)             wind on the photo: slow drift + a breath of rotation
+     FG.dapple(tl, el, at, dur)             leaf-shadow plate drifts across a pane
+     FG.POP / FG.SETTLE                     HP pop ease (no overshoot) / uppit settle */
+const FG = (function () {
+  function bz(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x; for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; } return sy(t); };
+  }
+  const POP = bz(0.2, 0.9, 0.25, 1), SETTLE = bz(0.23, 1, 0.32, 1), GLIDE = bz(0.65, 0, 0.35, 1);
+  const q = (root, s) => (root.matches && root.matches(s) ? root : root.querySelector(s));
+
+  const comp = (el) => (el && el.closest ? el.closest("[data-composition-id]") : null);
+  const FLAT = ["oxblood", "deep", "brick", "cream"];
+  function ground(ROOT, d = {}) {
+    const slot = (n) => { const e = ROOT.querySelector(`[data-slot="${n}"]`); return e ? e.textContent.trim().toLowerCase() : ""; };
+    const g = slot("ground") || d.ground || "photo", grain = slot("grain") || d.grain || "off", light = slot("light") || d.light || "off";
+    Object.assign(ROOT.dataset, { ground: g, grain, light: g === "none" ? "off" : light });
+    const base = ROOT.querySelector(".fg-ground");
+    if (base && g === "wash" && !base.querySelector(".fg-blob")) {
+      [["gold", -260, 520], ["orange", 1180, -320], ["brick", 520, 340], ["deep", 1400, 560]].forEach(([c, x, y]) => {
+        const b = document.createElement("div"); b.className = "fg-blob " + c; b.style.left = x + "px"; b.style.top = y + "px"; base.appendChild(b); });
+    }
+    return { ground: g, photo: g === "photo", flat: FLAT.includes(g), none: g === "none", grain: grain === "on", light: ROOT.dataset.light === "on" };
+  }
+  const lightOff = (root) => { const c = comp(root); return c && c.dataset.light === "off"; };
+  function sunrise(tl, root, at = 0, o = {}) {
+    if (lightOff(root)) return at;
+    const dur = o.dur ?? 1.4, night = q(root, ".fg-night"), flare = q(root, ".fg-flare");
+    if (night) tl.fromTo(night, { "--sr": 0 }, { "--sr": 150, duration: dur, ease: GLIDE }, at);
+    if (flare) tl.fromTo(flare, { opacity: 0, scale: 0.4 }, { keyframes: [{ opacity: 1, scale: 1.1, duration: dur * 0.45, ease: "power2.out" }, { opacity: o.flareRest ?? 0.38, scale: 1, duration: dur * 0.9, ease: "sine.inOut" }] }, at);
+    return at + dur;
+  }
+  function condense(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.9, tint = el.querySelector(":scope > .fg-tint");
+    tl.set(el, { "--fx": o.x ?? "0%", "--fy": o.y ?? "100%", autoAlpha: 1 }, at);
+    tl.fromTo(el, { "--fm": 0, "--fb": 0 }, { "--fm": 170, duration: dur, ease: SETTLE }, at)
+      .to(el, { "--fb": o.blur ?? 28, duration: dur * 1.1, ease: "power2.out" }, at);
+    if (tint) tl.fromTo(tint, { opacity: 0 }, { opacity: 1, duration: dur, ease: "power2.out" }, at + 0.05);
+    return at + dur;
+  }
+  function clear(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.55;
+    tl.to(el, { "--fb": 0, duration: dur, ease: "power2.in" }, at).to(el, { autoAlpha: 0, duration: dur * 0.7, ease: "power2.in" }, at + dur * 0.3);
+    return at + dur;
+  }
+  function beat(tl, el, at = 0, o = {}) {
+    const a = o.amp ?? 1;
+    tl.to(el, { keyframes: [
+      { scale: 1 + 0.07 * a, duration: 0.11, ease: "sine.inOut" }, { scale: 1, duration: 0.14, ease: "sine.inOut" },
+      { scale: 1 + 0.045 * a, duration: 0.1, ease: "sine.inOut" }, { scale: 1, duration: 0.27, ease: "sine.inOut" }] }, at);
+    return at + 0.62;
+  }
+  /* ambient motion for whatever the ground is: wind on a photo, drifting wash blobs, a slow sun on the burn */
+  function sway(tl, root, at, dur) {
+    const c = comp(root) || root, g = c.dataset.ground || "photo";
+    if (g === "photo") { const img = q(root, ".fg-photo"); if (img) tl.fromTo(img, { scale: 1.1, x: -18, rotation: -0.25 }, { scale: 1.03, x: 14, rotation: 0.2, duration: dur, ease: "sine.inOut" }, at); }
+    else if (g === "wash") root.querySelectorAll(".fg-blob").forEach((b, i) => tl.fromTo(b, { x: 0, y: 0 }, { x: (i % 2 ? -1 : 1) * 140, y: (i < 2 ? -1 : 1) * 70, duration: dur, ease: "sine.inOut" }, at));
+    else if (g === "burn") { const gr = q(root, ".fg-ground"); if (gr) tl.fromTo(gr, { "--bx": "4%", "--by": "104%" }, { "--bx": "14%", "--by": "96%", duration: dur, ease: "sine.inOut" }, at); }
+  }
+  function dapple(tl, el, at, dur) {
+    const d = el.matches(".fg-dapple") ? el : el.querySelector(".fg-dapple");
+    if (d) tl.fromTo(d, { x: -60, y: 10 }, { x: 60, y: -14, duration: dur, ease: "sine.inOut" }, at);
+  }
+  return { ground, sunrise, condense, clear, beat, sway, dapple, POP, SETTLE, GLIDE, bz };
+})();
+/* @field-glass:end */
+/* @ascii-engine:start v1 */
+/* HP V3 · SIGNAL canvas · ASCII engine (copied from 12-sanji; source of truth for 15-humanly-possible-v3).
+   Cards carry an INLINED copy between the @ascii-engine markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs` to restamp every v3 card.
+
+   Model (measured from the BUCK blue-screen spots): every image is a
+   grayscale paint mapped to a density ramp of glyphs on a fixed grid.
+     const F = SYS.field(canvasEl, { cw: 15, ch: 22 });
+     F.paint((g) => { ...draw grayscale in 1920x1080 coords... });  // white = dense glyph
+     F.clearText(); F.text(col, row, "Send:", { alpha: 1, inv: false });
+     F.render(t, { flicker: 0.25 });
+   Everything is a pure function of t (seeded hashes, no Math.random). */
+const SYS = (function () {
+  const RAMP = " .,:-~>*+cC%#$";
+  const NOISE = "#$%&*+-/<=>?@[]^_{|}~0123456789ABCDEFxz";
+  const c01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const hash = (x, y, s) => {
+    let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  };
+  const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296); };
+  const sm = (t) => t * t * (3 - 2 * t);
+  const vnoise = (x, y, s) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = sm(x - xi), yf = sm(y - yi);
+    const a = hash(xi, yi, s), b = hash(xi + 1, yi, s), c = hash(xi, yi + 1, s), d = hash(xi + 1, yi + 1, s);
+    return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf;
+  };
+  const fbm = (x, y, s, oct = 4) => { let v = 0, amp = 0.5, f = 1; for (let i = 0; i < oct; i++) { v += amp * vnoise(x * f, y * f, s + i * 17); f *= 2; amp *= 0.5; } return v; };
+  /* frame index at 24fps: glyph noise ticks on frames, like the reference */
+  const frame = (t) => Math.floor(t * 24 + 1e-6);
+
+  /* scramble: resolved prefix + a short tail of noise glyphs that rides the edge.
+     p 0..1 = progress; tail = noise chars ahead of the resolved edge. */
+  function scramble(final, p, t, seed = 7, tail = 3) {
+    const n = final.length, k = Math.floor(c01(p) * n + 1e-6);
+    if (k >= n) return final;
+    let out = final.slice(0, k);
+    const f = frame(t);
+    for (let i = k; i < Math.min(n, k + tail); i++) out += final[i] === " " ? " " : NOISE[Math.floor(hash(i, f, seed) * NOISE.length)];
+    return out;
+  }
+  /* noise-only string of length n (for chip glitch frames) */
+  function noiseStr(n, t, seed = 3) { let s = ""; const f = frame(t); for (let i = 0; i < n; i++) s += NOISE[Math.floor(hash(i, f, seed) * NOISE.length)]; return s; }
+
+  function field(canvas, opts = {}) {
+    const W = opts.width || 1920, H = opts.height || 1080;
+    const cw = opts.cw || 15, ch = opts.ch || 22;
+    const cols = Math.ceil(W / cw), rows = Math.ceil(H / ch);
+    const font = opts.font || `600 ${Math.round(ch * 0.98)}px "IBM Plex Mono", "JetBrains Mono", monospace`;
+    const ink = opts.ink || "243,245,255", bg = opts.bg || "#0F18FB";
+    const ramp = opts.ramp || RAMP;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    const src = document.createElement("canvas"); src.width = cols; src.height = rows;
+    const sctx = src.getContext("2d", { willReadFrequently: true });
+    let lum = new Float32Array(cols * rows);
+    const ovC = new Array(cols * rows).fill(null), ovA = new Float32Array(cols * rows), ovI = new Uint8Array(cols * rows);
+
+    const F = {
+      cols, rows, cw, ch, W, H, ctx, src: sctx,
+      /* grayscale paint in 1920x1080 coordinates; white = bright/dense */
+      paint(fn) {
+        sctx.setTransform(1, 0, 0, 1, 0, 0);
+        sctx.globalAlpha = 1; sctx.globalCompositeOperation = "source-over";
+        sctx.fillStyle = "#000"; sctx.fillRect(0, 0, cols, rows);
+        sctx.setTransform(cols / W, 0, 0, rows / H, 0, 0);
+        sctx.fillStyle = "#fff"; sctx.strokeStyle = "#fff";
+        fn(sctx);
+        const d = sctx.getImageData(0, 0, cols, rows).data;
+        for (let i = 0; i < cols * rows; i++) lum[i] = d[i * 4] / 255;
+      },
+      /* direct luminance function per cell: fn(col,row,x,y) -> 0..1 (added to paint) */
+      fn(fn, mode = "max") {
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const i = r * cols + c, v = fn(c, r, (c + 0.5) * cw, (r + 0.5) * ch);
+          lum[i] = mode === "add" ? c01(lum[i] + v) : mode === "set" ? c01(v) : Math.max(lum[i], v);
+        }
+      },
+      clearLum() { lum.fill(0); },
+      clearText() { ovC.fill(null); ovA.fill(0); ovI.fill(0); },
+      /* write a string into the grid. col/row in cells; inv = inverse-video chip */
+      text(col, row, str, o = {}) {
+        if (row < 0 || row >= rows) return;
+        for (let i = 0; i < str.length; i++) {
+          const c = col + i; if (c < 0 || c >= cols) continue;
+          const k = row * cols + c;
+          if (str[i] === " " && !o.inv && !o.keepSpace) continue;
+          ovC[k] = str[i]; ovA[k] = o.alpha == null ? 1 : o.alpha; ovI[k] = o.inv ? 1 : 0;
+        }
+      },
+      /* text placed by pixel position (snapped to the grid) */
+      textAt(x, y, str, o = {}) { F.text(Math.round(x / cw), Math.round(y / ch), str, o); },
+      lumAt(c, r) { return c < 0 || r < 0 || c >= cols || r >= rows ? 0 : lum[r * cols + c]; },
+      render(t, o = {}) {
+        const flick = o.flicker == null ? 0.18 : o.flicker;   /* prob a cell hops one ramp level per frame */
+        const gain = o.gain == null ? 1 : o.gain, floor = o.floor == null ? 0.06 : o.floor;
+        const aMin = o.alphaMin == null ? 0.38 : o.alphaMin, aMax = o.alphaMax == null ? 1 : o.alphaMax;
+        const seed = o.seed || 11, f = frame(t), R = o.ramp || ramp, N = R.length - 1;
+        ctx.clearRect(0, 0, W, H);
+        if (o.fillBg) { ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); }
+        ctx.font = font; ctx.textBaseline = "top"; ctx.textAlign = "left";
+        /* bucket by alpha so fillStyle changes stay cheap */
+        const B = 8, buckets = Array.from({ length: B }, () => []);
+        const inv = [];
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const k = r * cols + c;
+          if (ovC[k] !== null) { if (ovI[k]) inv.push(k); else buckets[Math.min(B - 1, Math.floor(ovA[k] * (B - 1) + 0.5))].push([k, ovC[k]]); continue; }
+          let v = lum[k] * gain;
+          if (v < floor) continue;
+          v = c01(v);
+          let idx = Math.round(v * N);
+          if (flick > 0 && hash(c, r, f * 31 + seed) < flick) idx += hash(r, c, f + seed) < 0.5 ? -1 : 1;
+          idx = Math.max(1, Math.min(N, idx));
+          const a = aMin + (aMax - aMin) * v;
+          buckets[Math.min(B - 1, Math.floor(a * (B - 1) + 0.5))].push([k, R[idx]]);
+        }
+        for (let b = 0; b < B; b++) {
+          if (!buckets[b].length) continue;
+          ctx.fillStyle = `rgba(${ink},${(b / (B - 1)).toFixed(3)})`;
+          for (const [k, chr] of buckets[b]) ctx.fillText(chr, (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+        if (inv.length) {
+          ctx.fillStyle = `rgb(${ink})`;
+          for (const k of inv) ctx.fillRect((k % cols) * cw, Math.floor(k / cols) * ch, cw, ch);
+          ctx.fillStyle = bg;
+          for (const k of inv) ctx.fillText(ovC[k], (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+      },
+    };
+    return F;
+  }
+
+  /* ---- grayscale paint helpers (draw onto F.src inside F.paint) ---------- */
+  /* spinning coin: angle in radians around the vertical axis. Generic face
+     (rim + inner ring + diagonal sheen bands); pass a glyph string for the face. */
+  function coin(g, x, y, R, angle, o = {}) {
+    const sx = Math.cos(angle), w = Math.max(R * 0.07, Math.abs(sx) * R);
+    const thick = R * (o.thick || 0.16) * Math.abs(Math.sin(angle));
+    const face = o.face == null ? 0.3 : o.face;
+    g.save(); g.translate(x, y);
+    /* edge band (visible as the coin turns): bright, reads as the sliver when edge-on */
+    if (thick > 0.5) { g.fillStyle = `rgba(255,255,255,${o.edge || 0.8})`; g.beginPath(); g.ellipse(Math.sign(Math.sin(angle)) * thick * 0.5, 0, w, R, 0, 0, 6.2832); g.fill(); }
+    g.fillStyle = `rgb(${Math.round(face * 255)},${Math.round(face * 255)},${Math.round(face * 255)})`; g.beginPath(); g.ellipse(0, 0, w, R, 0, 0, 6.2832); g.fill();
+    /* lighter diagonal sheen bands (the reference's striped face) */
+    g.save(); g.beginPath(); g.ellipse(0, 0, w * 0.92, R * 0.92, 0, 0, 6.2832); g.clip();
+    g.rotate(-0.75); const ph = ((o.sheen || 0) * R * 1.4) % (R * 0.6);
+    g.fillStyle = "rgba(255,255,255,0.32)";
+    for (let b = -4; b <= 4; b++) g.fillRect(-R * 2, b * R * 0.6 + ph, R * 4, R * 0.2);
+    g.restore();
+    g.lineWidth = R * 0.11; g.strokeStyle = "#fff"; g.beginPath(); g.ellipse(0, 0, w * 0.95, R * 0.95, 0, 0, 6.2832); g.stroke();
+    g.lineWidth = R * 0.04; g.strokeStyle = "rgba(255,255,255,0.85)"; g.beginPath(); g.ellipse(0, 0, w * 0.76, R * 0.76, 0, 0, 6.2832); g.stroke();
+    if (o.glyph && Math.abs(sx) > 0.18) {
+      g.save(); g.scale(sx, 1); g.fillStyle = "#fff";
+      g.font = `800 ${R * 1.0}px "Inter Tight", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
+      g.fillText(o.glyph, 0, R * 0.05); g.restore();
+    }
+    g.restore();
+  }
+  /* soft dot (particle) */
+  function dot(g, x, y, r, a = 1) { g.fillStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+  /* big glyph-mask text, e.g. a word rendered as ASCII */
+  function word(g, str, x, y, size, o = {}) {
+    g.save(); g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`;
+    g.font = `${o.weight || 800} ${size}px ${o.family || '"Inter Tight", sans-serif'}`;
+    g.textAlign = o.align || "center"; g.textBaseline = "middle"; g.fillText(str, x, y); g.restore();
+  }
+  /* SVG path (24-unit icon, e.g. Lucide) stroked into the paint */
+  function icon(g, d, x, y, size, o = {}) {
+    g.save(); g.translate(x - size / 2, y - size / 2); g.scale(size / 24, size / 24);
+    const p = new Path2D(d);
+    if (o.fill) { g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.fill(p); }
+    g.lineWidth = o.width || 2; g.lineCap = "round"; g.lineJoin = "round";
+    g.strokeStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.stroke(p); g.restore();
+  }
+
+  return { RAMP, NOISE, c01, hash, lcg, vnoise, fbm, frame, scramble, noiseStr, field, coin, dot, word, icon };
+})();
+/* @ascii-engine:end */
+        /* ---- SIGNAL kit (card-local helpers, same block in every S1 card) ----
+           ground(): the image as glyphs (SYS.field), painted grayscale, then tinted
+                     with the burn (source-atop) so the light comes from the bottom-left.
+           tgrid():  cream mono type on its own grid canvas. Scramble resolve, the
+                     inverse chip (cream cell, oxblood text, radius 4), and the
+                     let-go (letters lift off up-right like seeds on the wind).
+           Pure functions of t, seeded hashes only. */
+        const K = (function () {
+          const { c01, hash, frame } = SYS;
+          const CREAM = "255,240,230", OX = "#4B1526";
+          const MONO = "ui-monospace, Menlo, monospace";
+          const RAMP = " .,:;~-+=*oxO#";
+          const SOFT = "abcdefghkmnorstuvwxyz.,:;'~*+";   /* warm scramble set: pencil marks, not hacker noise */
+          /* ground switches (FG.ground writes ROOT.dataset): photo = the photo as glyphs,
+             flat (oxblood/deep/brick/...) = Sanji-style clean field with faint dust, none = transparent.
+             light on = burn-ramp tint + corner glow + sunrise reveal; off = plain cream glyphs. */
+          const M = { photo: true, light: true, flat: false, none: false };
+          function mode(root) { const d = root.dataset; Object.assign(M, { photo: d.ground === "photo", light: d.light === "on", none: d.ground === "none", flat: !["photo", "none"].includes(d.ground) }); return M; }
+          const sm = (x) => { x = c01(x); return x * x * (3 - 2 * x); };
+          function scr(final, p, t, seed = 7, tail = 3) {
+            const n = final.length, k = Math.floor(c01(p) * n + 1e-6);
+            if (k >= n) return final;
+            let out = final.slice(0, k); const f = frame(t);
+            for (let i = k; i < Math.min(n, k + tail); i++) out += final[i] === " " ? " " : SOFT[Math.floor(hash(i, f, seed) * SOFT.length)];
+            return out;
+          }
+          const noise = (n, t, seed = 3) => { let s = ""; const f = frame(t); for (let i = 0; i < n; i++) s += SOFT[Math.floor(hash(i, f, seed) * SOFT.length)]; return s; };
+          /* inverse chip flicker: on/off every 2 frames for 12 frames, then holds on */
+          const flick = (t, at) => { if (t < at) return false; const k = frame(t) - frame(at); return k >= 12 ? true : ((k >> 1) & 1) === 0; };
+          const typed = (s, t, at, cps) => s.slice(0, Math.max(0, Math.min(s.length, Math.floor((t - at) * cps + 1e-6))));
+
+          /* balanced greedy wrap: fewest lines at maxC, then the narrowest width that keeps that count */
+          function wrap(str, maxC) {
+            const g = (w) => { const L = []; let cur = "", at = 0; str.split(" ").forEach((x) => { if (cur && cur.length + 1 + x.length > w) { L.push({ s: cur, at }); at += cur.length + 1; cur = x; } else cur = cur ? cur + " " + x : x; }); L.push({ s: cur, at }); return L; };
+            const n = g(maxC).length; if (n === 1) return g(maxC);
+            for (let w = Math.ceil(str.length / n); w <= maxC; w++) { const L = g(w); if (L.length === n) return L; }
+            return g(maxC);
+          }
+          function photo(stem, onload) { const im = new Image(); im.onload = onload; im.src = "../../assets/nature/" + stem + ".jpg"; return im; }
+          function burn(ctx, o = {}) {
+            const x = o.x ?? 154, y = o.y ?? 1080, r = o.r ?? 2150;
+            ctx.save(); ctx.globalCompositeOperation = "source-atop";
+            const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+            g.addColorStop(0, "#FFC145"); g.addColorStop(0.17, "#FF8A4C"); g.addColorStop(0.4, "#F7C2A4"); g.addColorStop(0.72, "#FFF0E6"); g.addColorStop(1, "#DCC3BF");
+            ctx.fillStyle = g; ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.restore();
+          }
+          /* the glyph ground: paint(g, t) draws grayscale in 1920x1080 coords */
+          function ground(cv, o = {}) {
+            const cw = o.cw || 11, ch = o.ch || 16;
+            const F = SYS.field(cv, { width: o.width, height: o.height, cw, ch, ink: CREAM, bg: OX, font: `500 ${Math.round(ch * 0.86)}px ${MONO}`, ramp: o.ramp || RAMP });
+            return { F, draw(t, paint, r = {}) {
+              F.paint((g) => paint(g, t));
+              if (r.fn) F.fn(r.fn, r.fnMode || "add");
+              /* flat grounds get the Sanji ambient: a sparse dust of glyphs that shimmers */
+              if (M.flat && r.dust !== false) F.fn((c, rr) => (hash(c, rr, 9) < 0.03 ? 0.16 : 0), "max");
+              const o = Object.assign({}, r);
+              if (!M.light && !r.full) o.alphaMax = (r.alphaMax ?? 1) * (M.photo ? 0.72 : 0.85);   /* plain cream glyphs sit back behind the type */
+              if (r.fadeIn !== false) o.gain = (r.gain ?? 1) * sm((t - 0.04) / 0.5);
+              F.render(t, o);
+              if (M.light && !r.noTint) burn(F.ctx, r.tint);
+            } };
+          }
+          /* paint helpers */
+          const P = {
+            photo(g, im, t, o = {}) {
+              if (!M.photo) return;
+              if (!im || !im.complete || !im.naturalWidth) return;
+              g.save(); g.filter = `grayscale(1) contrast(${o.contrast ?? 1.3}) brightness(${o.bright ?? 1})`;
+              const dx = o.wind ? Math.sin(t * 0.7) * 10 + t * 4 : 0;
+              g.drawImage(im, -96 + dx + (o.x || 0), -54 + (o.y || 0), 2112, 1188); g.restore();
+            },
+            /* darkness outside a sunrise radius r (px) grown from the burn origin */
+            sun(g, r, o = {}) {
+              const x = o.x ?? 154, y = o.y ?? 1080;
+              if (r > 3000 || !M.light) return;
+              const gr = g.createRadialGradient(x, y, Math.max(0, r * 0.55), x, y, Math.max(1, r));
+              gr.addColorStop(0, "rgba(0,0,0,0)"); gr.addColorStop(1, "rgba(0,0,0,1)");
+              g.fillStyle = gr; g.fillRect(0, 0, 1920, 1080);
+            },
+            /* soft dark oval so type stays readable: center (x,y), radii (rx,ry), core alpha */
+            shade(g, x, y, rx, ry, a = 0.9, core = 0.55) {
+              g.save(); g.translate(x, y); g.scale(rx, ry);
+              const gr = g.createRadialGradient(0, 0, 0, 0, 0, 1); gr.addColorStop(0, `rgba(0,0,0,${a})`); gr.addColorStop(core, `rgba(0,0,0,${a})`); gr.addColorStop(1, "rgba(0,0,0,0)");
+              g.fillStyle = gr; g.fillRect(-1, -1, 2, 2); g.restore();
+            },
+            /* the burn-corner glow: only when light is on */
+            corner(g, x, y, r, a = 1) { if (M.light) P.blob(g, x, y, r, a); },
+            blob(g, x, y, r, a = 1) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(255,255,255,${a})`); gr.addColorStop(0.45, `rgba(255,255,255,${a * 0.42})`); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); },
+            /* the HP mark (Mark B) painted as light: top-left at (x,y), height h */
+            mark(g, x, y, h, a = 1) {
+              const k = h / 486; g.save(); g.translate(x, y); g.scale(k, k); g.translate(-231, -201); g.fillStyle = `rgba(255,255,255,${a})`;
+              g.fill(new Path2D("M231,215 A14,14 0 0 1 245,201 L643,201 A14,14 0 0 1 657,215 L657,613 A14,14 0 0 1 643,627 L481,627 A14,14 0 0 0 467,641 L467,673 A14,14 0 0 1 453,687 L245,687 A14,14 0 0 1 231,673 Z M275,259 A14,14 0 0 1 289,245 L599,245 A14,14 0 0 1 613,259 L613,569 A14,14 0 0 1 599,583 L437,583 A14,14 0 0 0 423,597 L423,629 A14,14 0 0 1 409,643 L289,643 A14,14 0 0 1 275,629 Z"), "evenodd");
+              g.fill(new Path2D("M303,287 A14,14 0 0 1 317,273 L381,273 A14,14 0 0 1 395,287 L395,359 A14,14 0 0 0 409,373 L479,373 A14,14 0 0 0 493,359 L493,287 A14,14 0 0 1 507,273 L571,273 A14,14 0 0 1 585,287 L585,541 A14,14 0 0 1 571,555 L507,555 A14,14 0 0 1 493,541 L493,466 A14,14 0 0 0 479,452 L409,452 A14,14 0 0 0 395,466 L395,601 A14,14 0 0 1 381,615 L317,615 A14,14 0 0 1 303,601 Z"));
+              g.restore();
+            },
+          };
+
+          /* cream mono type on a grid */
+          function tgrid(cv, size, o = {}) {
+            cv.width = 1920; cv.height = 1080;
+            const ctx = cv.getContext("2d");
+            const font = `${o.weight || 600} ${size}px ${MONO}`, sfont = `600 ${Math.max(14, Math.round(size * 0.36))}px ${MONO}`, SEEDS = "*.'";
+            ctx.font = font;
+            const cw = ctx.measureText("0").width, lh = o.lh || Math.round(size * 1.34);
+            const ops = [];
+            const G = { ctx, cw, lh, size, x0: o.x || 0, y0: o.y || 0, ops,
+              px: (c) => G.x0 + c * cw, py: (r) => G.y0 + r * lh,
+              clear() { ops.length = 0; },
+              /* s at (col,row). op: alpha, inv (chip), go (0..1 let-go), seed. o.keep: share a canvas (no clear) */
+              str(col, row, s, op = {}) { if (s) ops.push({ col, row, s, op }); },
+              /* a lone cream cell / chip of n cells with no text (chip growing in) */
+              cell(col, row, n, op = {}) { ops.push({ col, row, s: " ".repeat(Math.max(1, n)), op: Object.assign({ inv: true }, op) }); },
+              draw(t) {
+                if (!o.keep) ctx.clearRect(0, 0, 1920, 1080);
+                ctx.font = font; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+                for (const p of ops) {
+                  const { col, row, s, op } = p, a0 = op.alpha ?? 1, go = op.go || 0, seed = op.seed || 1;
+                  const x0 = G.px(col), yc = G.py(row) + lh / 2;
+                  if (op.inv) {
+                    const ca = a0 * (1 - c01(go * 2.2));
+                    if (ca > 0.01) { ctx.fillStyle = `rgba(${CREAM},${ca})`; ctx.beginPath(); ctx.roundRect(x0 - cw * 0.3, yc - size * 0.66, cw * (s.length + 0.6), size * 1.32, 4); ctx.fill(); }
+                  }
+                  for (let i = 0; i < s.length; i++) {
+                    const c = s[i]; if (c === " ") continue;
+                    let x = x0 + i * cw, y = yc, a = a0, chr = c;
+                    if (go > 0) {
+                      const d0 = hash(i + col * 7, row * 13, seed) * 0.55 + c01((x - 100) / 1800) * 0.3;
+                      const d = c01((go - d0) / 0.42), e = sm(d);
+                      if (d > 0) {
+                        /* the letter breaks into a few seeds that ride the wind up and right */
+                        ctx.font = sfont;
+                        for (let j = 0; j < 3; j++) {
+                          const h1 = hash(i * 3 + j, row + col, seed + 3), h2 = hash(row * 5 + j, i, seed + 5);
+                          const sx = x + cw * (0.2 + h1 * 0.6) + e * (160 + h1 * 340) * (0.7 + j * 0.2);
+                          const sy = y + size * (h2 - 0.5) * 0.5 - e * (90 + h2 * 280) + Math.sin(i * 1.7 + row + j) * e * 24;
+                          const sa = a * (1 - c01((d - 0.3) / 0.7)) * (0.55 + 0.45 * h2);
+                          if (sa > 0.02) { ctx.fillStyle = `rgba(${CREAM},${sa.toFixed(3)})`; ctx.fillText(SEEDS[(j + i) % SEEDS.length], sx, sy); }
+                        }
+                        ctx.font = font;
+                        a *= 1 - c01(d / 0.22);
+                        if (a < 0.02) continue;
+                      }
+                    }
+                    const inv = op.inv && go < 0.3;
+                    ctx.fillStyle = inv ? OX : `rgba(${CREAM},${a.toFixed(3)})`;
+                    ctx.fillText(chr, x, y);
+                  }
+                }
+              },
+            };
+            return G;
+          }
+          /* little field marks that step on the grid: birds and pollen */
+          const MARKS = [["v  v", "  v"], ["* .", " ."], ["v", " v"], [". *", "  ."], ["~ ~"]];
+          function marks(G, list, t, a = 0.5) {
+            const f = frame(t);
+            list.forEach((m, k) => {
+              const step = Math.floor(f / (3 + (k % 4)));
+              const dc = Math.round(Math.sin(step * 0.9 + k) * 1.4) + (step % 9 > 5 ? 1 : 0), dr = -(Math.floor(step / 7) % 2);
+              const shape = MARKS[(m[2] ?? k) % MARKS.length];
+              shape.forEach((ln, r) => G.str(m[0] + dc, m[1] + r + dr, ln, { alpha: a * (m[3] ?? 1) }));
+            });
+          }
+          return { M, mode, wrap, c01, hash, frame, sm, scr, noise, flick, typed, photo, burn, ground, P, tgrid, marks, MONO, CREAM, OX, SOFT };
+        })();
+        /* ---- end SIGNAL kit ---- */
+        const ID = "hp3-t1-signal-scramble-title";
+        const ROOT = document.getElementById(ID);
+        FG.ground(ROOT, { ground: "photo", grain: "on", light: "off" });   /* same values as the slots */
+        K.mode(ROOT);
+        const $ = (s) => ROOT.querySelector(s);
+        const { c01, sm, scr, flick } = K;
+        const f = (n) => n / 24;
+        let LAST = 0;
+        const img = K.photo(($(".slot-photo").textContent || "grass-silhouette").trim(), () => draw(LAST));
+
+        /* richtext headline -> plain string + the em range */
+        const KICK = "// " + $('[data-slot="kicker"]').textContent.trim();
+        let PLAIN = "", EM0 = -1, EM1 = -1;
+        $('[data-slot="headline"]').childNodes.forEach((n) => {
+          const s = n.textContent.replace(/\s+/g, " ");
+          if (n.nodeType === 1 && /^(EM|STRONG|B|MARK)$/.test(n.tagName)) { EM0 = PLAIN.length; PLAIN += s; EM1 = PLAIN.length; } else PLAIN += s;
+        });
+        const lead = PLAIN.length - PLAIN.trimStart().length; PLAIN = PLAIN.trim(); EM0 -= lead; EM1 -= lead;
+
+        /* greedy wrap, stepping the size down until it fits 3 lines inside 1640px */
+        let T, LINES;
+        for (const size of [104, 92, 80, 72]) {
+          T = K.tgrid($("canvas.type"), size, { lh: Math.round(size * 1.24) });
+          const maxC = Math.floor(1640 / T.cw);
+          LINES = K.wrap(PLAIN, maxC);
+          if (LINES.length <= 3) break;
+        }
+        const X0 = 150, blockH = LINES.length * T.lh;
+        T.x0 = X0; T.y0 = Math.round(560 - blockH / 2);
+        const KG = K.tgrid($("canvas.kick"), 30, { x: X0 + 4, y: T.y0 - 70 });
+
+        /* beats: glyphs resolve ~1.6 per frame, line after line */
+        const T_KICK = f(4), KICK_D = f(3), T_HEAD = f(10), CPF = 1.6;
+        LINES.forEach((L, i) => { L.t0 = T_HEAD + Math.ceil(L.at / CPF) / 24; L.d = Math.max(f(3), L.s.length / CPF / 24); });
+        const HEAD_END = LINES[LINES.length - 1].t0 + LINES[LINES.length - 1].d;
+        const T_EM = EM1 > 0 ? T_HEAD + Math.ceil(EM1 / CPF) / 24 + f(2) : 1e9;
+        const T_EXIT = Math.max(3.5, Math.ceil((HEAD_END + 1.6) * 2) / 2);
+        const END = T_EXIT + 2.0;
+        const BIRDS = [[52, -4, 0, 0.8], [62, -2, 2, 0.6], [6, 12, 3, 0.6], [48, 13, 1, 0.7]];
+
+        const GR = K.ground($("canvas.field"));
+        function draw(t) {
+          LAST = t;
+          const go = c01((t - T_EXIT) / 1.5), wake = sm((t - T_EXIT) / 1.6);
+          GR.draw(t, (g) => {
+            K.P.photo(g, img, t, { contrast: 1.55, bright: 0.95, wind: true });
+            K.P.corner(g, 154, 1080, 520, 0.7);
+            K.P.sun(g, 300 + sm((t - 0.1) / 1.5) * 2400);
+            K.P.shade(g, X0 + 760, T.y0 + blockH / 2 - 20, 980, 300 + blockH * 0.55, 0.9 * (1 - wake * 0.8), 0.55);
+          }, { flicker: 0.13, gain: 0.85 + wake * 0.3, floor: 0.08, alphaMin: 0.4, alphaMax: 1 });
+
+          KG.clear(); T.clear();
+          if (t >= T_KICK) KG.str(0, 0, scr(KICK, (t - T_KICK) / KICK_D, t, 4), { alpha: 0.7, go, seed: 90 });
+          K.marks(KG, BIRDS, t, 0.5 * c01((t - 0.8) / 0.4) * (1 - go));
+          LINES.forEach((L, li) => {
+            if (t < L.t0) return;
+            const s = scr(L.s, (t - L.t0) / L.d, t, 10 + li);
+            const a = Math.max(0, Math.min(s.length, EM0 - L.at)), b = Math.max(0, Math.min(s.length, EM1 - L.at));
+            const op = { go, seed: li + 1 };
+            if (a > 0) T.str(0, li, s.slice(0, a), op);
+            if (b > a) T.str(a, li, s.slice(a, b), Object.assign({ inv: flick(t, T_EM) }, op));
+            if (s.length > b) T.str(b, li, s.slice(b), op);
+          });
+          KG.draw(t); T.draw(t);
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        FG.sunrise(tl, ROOT, 0, { dur: 1.5, flareRest: 0.24 });
+        tl.to($(".fg-flare"), { opacity: 0.45, scale: 1.2, duration: 1.6, ease: FG.GLIDE }, T_EXIT);
+        const PX = { t: 0 };
+        tl.fromTo(PX, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(PX.t) }, 0);
+        tl.set({}, {}, END);
+        draw(0);
+        if (document.fonts) document.fonts.ready.then(() => draw(PX.t));
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

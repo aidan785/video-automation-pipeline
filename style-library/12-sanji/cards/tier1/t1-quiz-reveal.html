@@ -1,0 +1,335 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · instructional · QUIZ REVEAL (knowledge check)
+  COBALT with slow sonar rings. A small glass kicker pill pops, the question
+  resolves word by word out of blur, then three wide glass answer pills pop in
+  a stack (A / B / C badges). A white cursor glides in, hovers one wrong option
+  (it half-lights), drifts to the correct one and clicks: that pill lights
+  ACTIVE, its letter badge swaps for a check and a single sonar ring leaves
+  it, while the other two focus-shift to dormant (grey-lavender, glass dims,
+  no shake). A one-line explanation resolves underneath.
+  Slots: kicker (<=18), question (<=64, wraps to 2 lines), a / b / c (<=36),
+  correct (a|b|c), why (<=80, one line at 36px).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-quiz-reveal {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-quiz-reveal .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-quiz-reveal .g { position: absolute; box-sizing: border-box; border-radius: var(--r-pill); }
+      #sanji-t1-quiz-reveal .g > .fill, #sanji-t1-quiz-reveal .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-quiz-reveal .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-quiz-reveal .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-quiz-reveal .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-quiz-reveal .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+
+      #sanji-t1-quiz-reveal .kwrap { position: absolute; left: 0; right: 0; top: 150px; display: flex; justify-content: center; }
+      #sanji-t1-quiz-reveal .g.kick { position: relative; height: 64px; }
+      #sanji-t1-quiz-reveal .kick .in { position: relative; display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 30px 0 16px; white-space: nowrap; }
+      #sanji-t1-quiz-reveal .kick .badge { position: relative; width: 38px; height: 38px; font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 22px; }
+      #sanji-t1-quiz-reveal .kick .lab { font-weight: var(--wt-heavy); font-size: 26px; letter-spacing: 0.02em; text-transform: uppercase; }
+
+      #sanji-t1-quiz-reveal .q {
+        position: absolute; left: 260px; right: 260px; top: 254px; text-align: center;
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 64px; line-height: 1.1;
+        letter-spacing: var(--track-tight);
+      }
+      #sanji-t1-quiz-reveal .w { display: inline-block; white-space: pre; }
+
+      #sanji-t1-quiz-reveal .ans { left: 460px; width: 1000px; height: 112px; transform-origin: 50% 50%; }
+      #sanji-t1-quiz-reveal .ans .badge { left: 16px; top: 16px; width: 80px; height: 80px; }
+      #sanji-t1-quiz-reveal .ans .let { position: absolute; font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 36px; }
+      #sanji-t1-quiz-reveal .ans .chk { position: absolute; opacity: 0; }
+      #sanji-t1-quiz-reveal .ans .txt {
+        position: absolute; left: 126px; right: 40px; top: 0; height: 112px; display: flex; align-items: center;
+        font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 40px; letter-spacing: var(--track-ui); white-space: nowrap;
+      }
+      #sanji-t1-quiz-reveal .ans .ping { position: absolute; left: 16px; top: 16px; width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.7); opacity: 0; }
+
+      #sanji-t1-quiz-reveal .why {
+        position: absolute; left: 200px; right: 200px; top: 902px; text-align: center; white-space: nowrap;
+        font-family: var(--font-body); font-weight: 500; font-size: 36px; letter-spacing: var(--track-ui); color: var(--white-soft);
+      }
+      #sanji-t1-quiz-reveal .why .lead { display: inline-block; font-weight: var(--wt-bold); color: var(--white); margin-right: 14px; }
+
+      #sanji-t1-quiz-reveal .cursor { position: absolute; left: 0; top: 0; width: 46px; height: 46px; filter: drop-shadow(0 6px 14px rgba(10,14,120,0.45)); }
+      #sanji-t1-quiz-reveal .slots { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-quiz-reveal" data-composition-id="sanji-t1-quiz-reveal" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <div class="kwrap"><div class="g kick"><div class="fill"></div><div class="lit"></div><div class="in"><div class="badge">?</div><div class="lab" data-slot="kicker">Quick check</div></div></div></div>
+
+      <div class="q" data-slot="question">Which move makes motion feel premium?</div>
+
+      <div class="g ans" style="top:452px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="ping"></div>
+        <div class="badge"><span class="let">A</span><svg class="chk" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div class="txt" data-slot="a">Linear easing on every move</div></div></div>
+      <div class="g ans" style="top:588px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="ping"></div>
+        <div class="badge"><span class="let">B</span><svg class="chk" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div class="txt" data-slot="b">Resolving elements out of blur</div></div></div>
+      <div class="g ans" style="top:724px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="ping"></div>
+        <div class="badge"><span class="let">C</span><svg class="chk" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div class="txt" data-slot="c">A big bounce on every entrance</div></div></div>
+
+      <div class="why"><span class="lead">Why:</span><span class="body" data-slot="why">blur gives the eye a soft landing before the detail arrives</span></div>
+
+      <svg class="cursor" viewBox="0 0 24 24"><path d="M5 2.8v16.6l4.3-4.1 2.9 6.4 2.7-1.2-2.9-6.3h6z" fill="#FFFFFF" stroke="#1A22B8" stroke-width="1.1" stroke-linejoin="round"/></svg>
+      <div class="slots"><span data-slot="correct">b</span></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-quiz-reveal";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre"), DORM = tok("--dormant"), SOFT = tok("--white-soft");
+
+        const split = (el) => {
+          const ws = (el.textContent || "").trim().split(/\s+/).filter(Boolean);
+          el.textContent = "";
+          return ws.map((w, i) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : ""); el.appendChild(s); return s; });
+        };
+        const qWords = split($(".q"));
+        const whyWords = [$(".why .lead"), ...split($(".why .body"))];
+
+        const answers = $$(".ans");
+        const key = ($("[data-slot=correct]").textContent || "b").trim().toLowerCase();
+        const C = Math.max(0, ["a", "b", "c"].indexOf(key));
+        const WRONG = C === 0 ? 1 : C - 1;           /* the decoy the cursor hovers first */
+        const TOPS = [452, 588, 724];
+        const aim = (i) => ({ x: 1290, y: TOPS[i] + 44 });
+
+        const tl = gsap.timeline({ paused: true });
+
+        /* sonar rings, finite */
+        const rings = $$(".ring"), PER = 4.2;
+        const pop = (el, t, d = 0.38) => tl.fromTo(el, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: d, ease: "back.out(1.25)" }, t);
+        const blurIn = (els, t, st = 0.06) => tl.fromTo(els, { autoAlpha: 0, y: 8, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", stagger: st }, t);
+        const resolve = (els, t, gap, from = PRE, to = WHITE) => {
+          els.forEach((w, i) => tl.fromTo(w, { autoAlpha: 0, filter: "blur(12px)", color: from, y: 10 }, { autoAlpha: 1, filter: "blur(0px)", color: to, y: 0, duration: 0.22, ease: "expo.out" }, t + i * gap));
+          return t + els.length * gap;
+        };
+
+        tl.set([$(".kick"), ...answers, $(".cursor")], { autoAlpha: 0 }, 0)
+          .set([...qWords, ...whyWords], { autoAlpha: 0 }, 0);
+
+        /* 1. kicker + question */
+        pop($(".kick"), 0.12);
+        TXT.block(tl, $(".kick .badge"), 0.2);
+        TXT.reveal(tl, $(".kick .lab"), 0.26);
+        tl.set(qWords, { autoAlpha: 1 }, 0);
+        const qEnd = TXT.reveal(tl, qWords, 0.42);         /* house preset pour-in */
+        /* 2. answer pills pop in a stack */
+        const TA = qEnd - 0.1;
+        const aWords = answers.map((a) => split(a.querySelector(".txt")));   /* .txt is flex: reveal pre-split words */
+        answers.forEach((a, i) => {
+          pop(a, TA + i * 0.16);
+          TXT.block(tl, a.querySelector(".badge"), TA + i * 0.16 + 0.06);
+          TXT.reveal(tl, aWords[i], TA + i * 0.16 + 0.1);
+        });
+
+        /* 3. cursor: glide in, hover the decoy, drift to the answer, click */
+        const TC = TA + 0.9;
+        const start = { x: 1660, y: 1000 };
+        tl.fromTo($(".cursor"), { autoAlpha: 0, x: start.x, y: start.y, filter: "blur(6px)" }, { autoAlpha: 1, filter: "blur(0px)", duration: 0.25, ease: "power2.out" }, TC)
+          .to($(".cursor"), { x: aim(WRONG).x, y: aim(WRONG).y, duration: 0.7, ease: "power3.inOut" }, TC)
+          .to(answers[WRONG].querySelector(".lit"), { opacity: 0.45, duration: 0.25, ease: "power2.out" }, TC + 0.55)
+          .to(answers[WRONG], { scale: 1.015, duration: 0.3, ease: "power2.out" }, TC + 0.55);
+
+        const TM = TC + 1.45;
+        tl.to(answers[WRONG].querySelector(".lit"), { opacity: 0, duration: 0.25, ease: "power2.inOut" }, TM)
+          .to(answers[WRONG], { scale: 1, duration: 0.3, ease: "power2.inOut" }, TM)
+          .to($(".cursor"), { x: aim(C).x, y: aim(C).y, duration: 0.55, ease: "power3.inOut" }, TM)
+          .to(answers[C].querySelector(".lit"), { opacity: 0.45, duration: 0.22, ease: "power2.out" }, TM + 0.42);
+
+        /* click: cursor + pill dip, then the reveal */
+        const TK = TM + 0.75;
+        tl.to($(".cursor"), { scale: 0.84, duration: 0.08, ease: "power2.in", transformOrigin: "20% 10%" }, TK)
+          .to($(".cursor"), { scale: 1, duration: 0.3, ease: "back.out(1.6)" }, TK + 0.08)
+          .to(answers[C], { scale: 0.985, duration: 0.08, ease: "power2.in" }, TK)
+          .to(answers[C], { scale: 1.04, duration: 0.5, ease: "expo.out" }, TK + 0.08)
+          .to(answers[C].querySelector(".lit"), { opacity: 1, duration: 0.35, ease: "power2.out" }, TK + 0.08)
+          .to(answers[C].querySelector(".let"), { autoAlpha: 0, scale: 0.6, filter: "blur(6px)", duration: 0.18, ease: "power2.in" }, TK + 0.08)
+          .fromTo(answers[C].querySelector(".chk"), { opacity: 0, scale: 0.5, filter: "blur(6px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.34, ease: "back.out(1.3)" }, TK + 0.2)
+          .fromTo(answers[C].querySelector(".badge"), { boxShadow: "0 0 0 rgba(255,255,255,0)" }, { boxShadow: "0 0 34px rgba(255,255,255,0.55)", duration: 0.25, ease: "power2.out" }, TK + 0.2)
+          .to(answers[C].querySelector(".badge"), { boxShadow: "0 0 14px rgba(255,255,255,0.18)", duration: 0.7, ease: "power2.out" }, TK + 0.45)
+          .fromTo(answers[C].querySelector(".ping"), { opacity: 0.85, scale: 1 }, { opacity: 0, scale: 2.6, duration: 0.9, ease: "expo.out" }, TK + 0.2)
+          .to($(".cursor"), { autoAlpha: 0, x: "+=26", y: "+=30", filter: "blur(4px)", duration: 0.4, ease: "power2.in" }, TK + 0.6);
+
+        /* focus shift: the two wrong options go dormant (no shake) */
+        answers.forEach((a, i) => {
+          if (i === C) return;
+          tl.to(a.querySelector(".txt"), { color: DORM, duration: 0.35, ease: "power2.inOut" }, TK + 0.18)
+            .to(a.querySelector(".badge"), { opacity: 0.55, duration: 0.35, ease: "power2.inOut" }, TK + 0.18)
+            .to(a.querySelector(".fill"), { opacity: 0.7, duration: 0.35, ease: "power2.inOut" }, TK + 0.18)
+            .to(a, { scale: 0.985, duration: 0.45, ease: "power2.inOut" }, TK + 0.18);
+        });
+
+        /* 4. the why line */
+        const TW = TK + 0.75;
+        tl.set(whyWords, { autoAlpha: 1 }, TW);
+        const wEnd = TXT.reveal(tl, whyWords, TW);
+        const END = Math.max(wEnd + 1.7, 7.2);
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

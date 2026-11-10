@@ -1,0 +1,288 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · quote · QUOTE RESOLVE
+  COBALT pull quote. Slow sonar rings on flat electric blue. A big liquid-glass
+  squircle holding a white quotation-mark glyph pops in top-left of the quote
+  block, then the quote (Inter 600, sentence case, 2-3 lines) resolves word by
+  word out of blur, dim white to full white. When the last word lands, the
+  attribution resolves underneath in a small glass pill: avatar circle with
+  initials (taken from the name), name, role. Exit: everything softens + fades.
+  Slots: quote (text <=140), name (text <=24), role (text <=32).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-quote-resolve {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); color: var(--white); font-family: var(--font-body);
+      }
+      #sanji-t1-quote-resolve .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-quote-resolve .g { position: absolute; box-sizing: border-box; }
+      #sanji-t1-quote-resolve .g > .fill, #sanji-t1-quote-resolve .g > .lit {
+        position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box;
+      }
+      #sanji-t1-quote-resolve .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-quote-resolve .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-quote-resolve .g > .in { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+
+      #sanji-t1-quote-resolve .mark { left: -270px; top: -44px; width: 196px; height: 196px; border-radius: 52px; }
+
+      #sanji-t1-quote-resolve .block {
+        position: absolute; left: 490px; top: 50%; width: 1240px; transform: translateY(-50%);
+      }
+      #sanji-t1-quote-resolve .quote {
+        font-weight: var(--wt-ui); font-size: 68px; line-height: 1.18; letter-spacing: var(--track-ui);
+        color: var(--white); text-shadow: 0 4px 30px rgba(14,18,150,0.25);
+      }
+      #sanji-t1-quote-resolve .quote .w { display: inline-block; white-space: pre; }
+
+      #sanji-t1-quote-resolve .attr {
+        position: relative; display: inline-flex; align-items: center; gap: 22px;
+        margin-top: 64px; height: 104px; padding: 0 44px 0 16px; box-sizing: border-box;
+        border-radius: var(--r-pill);
+      }
+      #sanji-t1-quote-resolve .attr > .fill, #sanji-t1-quote-resolve .attr > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-quote-resolve .attr > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-quote-resolve .attr > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-quote-resolve .ava {
+        position: relative; width: 72px; height: 72px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 27px; letter-spacing: -0.02em;
+      }
+      #sanji-t1-quote-resolve .who { position: relative; display: flex; flex-direction: column; gap: 4px; }
+      #sanji-t1-quote-resolve .name { font-weight: var(--wt-bold); font-size: 30px; letter-spacing: var(--track-ui); line-height: 1.05; white-space: nowrap; }
+      #sanji-t1-quote-resolve .role { font-weight: 500; font-size: 23px; letter-spacing: var(--track-ui); color: var(--white-soft); line-height: 1.1; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-quote-resolve" data-composition-id="sanji-t1-quote-resolve" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+
+      <div class="block">
+        <div class="g mark"><div class="fill"></div><div class="lit"></div><div class="in">
+        <svg width="96" height="96" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M3.5 18.5v-5.2c0-4.6 2.3-7.6 6.4-8.8l.8 1.9c-2.3.9-3.4 2.4-3.6 4.6h3.4v7.5zM13.4 18.5v-5.2c0-4.6 2.3-7.6 6.4-8.8l.8 1.9c-2.3.9-3.4 2.4-3.6 4.6h3.4v7.5z"/></svg>
+      </div></div>
+        <div class="quote" data-slot="quote">The best edits feel invisible. You stop noticing the cuts and start feeling the story.</div>
+        <div class="attr">
+          <div class="fill"></div><div class="lit"></div>
+          <div class="ava"></div>
+          <div class="who">
+            <div class="name" data-slot="name">Maya Chen</div>
+            <div class="role" data-slot="role">Creative Director</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-quote-resolve";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre");
+
+        /* split quote into word spans */
+        const q = $(".quote");
+        const ws = (q.textContent || "").trim().split(/\s+/).filter(Boolean);
+        q.textContent = "";
+        const words = ws.map((w, i) => {
+          const s = document.createElement("span");
+          s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : "");
+          q.appendChild(s); return s;
+        });
+
+        /* initials for the avatar */
+        const nm = ($(".name").textContent || "").trim().split(/\s+/).filter(Boolean);
+        $(".ava").textContent = nm.slice(0, 2).map((p) => p[0].toUpperCase()).join("");
+
+        const GAP = words.length > 18 ? 0.11 : 0.14;
+        const T0 = 0.55;
+        const TQ = T0 + (words.length - 1) * 0.04 + 0.7;   /* last word lands (house preset) */
+        const TA = TQ - 0.15;                    /* attribution overlaps the tail */
+        const OUT = TA + 2.6;                    /* reading hold */
+        const END = OUT + 0.5;
+
+        const tl = gsap.timeline({ paused: true });
+
+        /* sonar rings, finite */
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          const reps = Math.floor((END - st) / PER) - 1;
+          if (reps < 0) { tl.set(r, { opacity: 0 }, 0); return; }   /* would outlive the card */
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        tl.set(words, { autoAlpha: 0 }, 0).set($(".attr"), { autoAlpha: 0 }, 0);
+
+        /* quote-mark tile: glass pop, lights active, settles a touch */
+        const mark = $(".mark");
+        tl.fromTo(mark, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)", rotate: -4 }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", rotate: 0, duration: 0.42, ease: "back.out(1.25)" }, 0.15)
+          .to(mark.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.25)
+          .fromTo(mark.querySelector("svg"), { autoAlpha: 0, y: 10, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 0.3)
+          .to(mark.querySelector(".lit"), { opacity: 0.35, duration: 0.6, ease: "power2.inOut" }, TQ - 0.2);
+
+        /* words resolve out of blur */
+        tl.set(words, { autoAlpha: 1 }, 0);
+        TXT.reveal(tl, words, T0);                         /* house preset pour-in */
+
+        /* attribution pill */
+        const attr = $(".attr");
+        tl.fromTo(attr, { autoAlpha: 0, scale: 0.92, y: 14, filter: "blur(10px)", transformOrigin: "0% 50%" }, { autoAlpha: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "back.out(1.25)" }, TA)
+          .to(attr.querySelector(".lit"), { opacity: 1, duration: 0.35, ease: "power2.out" }, TA + 0.08)
+          .to(attr.querySelector(".lit"), { opacity: 0.4, duration: 0.6, ease: "power2.inOut" }, TA + 0.9);
+        TXT.block(tl, $(".ava"), TA + 0.1);
+        TXT.reveal(tl, $(".name"), TA + 0.16);
+        TXT.reveal(tl, $(".role"), TA + 0.26, { stagger: 0.03 });
+
+        /* exit: dissolve with blur */
+        TXT.blockExit(tl, mark, OUT);
+        TXT.exit(tl, words, OUT + 0.03);
+        TXT.exit(tl, [$(".name"), $(".role")], OUT + 0.08);
+        TXT.blockExit(tl, attr, OUT + 0.12);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

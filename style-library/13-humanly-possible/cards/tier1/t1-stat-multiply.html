@@ -1,0 +1,173 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · stat · MULTIPLY
+  The number as a picture. One hero object (a flat clock tile on a brick 14 px card) pops and
+  holds big, then shrinks into slot 1 of a grid, and copies pop in one every 2 frames until the
+  count is reached. The caption's gold number ticks up with every copy, so the picture and the
+  number land together. ONE copy (the last, or data-highlight) flips to orange as the count lands:
+  the frame's one orange. Oxblood ground with a slow drift and grain under still type.
+  From Great Big Story's visual-math plate (references/analysis/gbs-marathons.md, signature
+  move 4 + Fit).
+  Seek-safe: the caption number is derived from a tweened proxy on every render.
+  Exit: mirrors the entrance in 0.3 s (copies pop out in reverse, caption drops); can be cut away.
+  Slots: caption (richtext; one <em> holding the count, e.g. "<em>12</em> hours back every week";
+         the <em> number sets how many copies, 2 to 24), sub (text, optional), media (optional:
+         replace the .obj SVG with another flat icon). Root data-highlight="<1-based index>"
+         picks the orange copy (default: the last).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+      #hp-t1-stat-multiply{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t1-stat-multiply .bg{position:absolute;inset:-4%;will-change:transform;transform-origin:30% 50%;
+        background:radial-gradient(90% 100% at 30% 50%, var(--hp-oxblood) 0%, var(--hp-oxblood) 48%, var(--hp-deep) 100%);}
+      #hp-t1-stat-multiply .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      /* the grid box (left), filled by JS from the count */
+      #hp-t1-stat-multiply .grid{position:absolute;left:var(--margin);top:190px;width:760px;height:700px;}
+      #hp-t1-stat-multiply .cell{position:absolute;left:0;top:0;border-radius:var(--radius-lg);background:var(--hp-brick);
+        display:flex;align-items:center;justify-content:center;will-change:transform;}
+      #hp-t1-stat-multiply .cell svg{width:62%;height:62%;display:block;}
+      #hp-t1-stat-multiply .cell svg .ink{stroke:var(--hp-cream);}
+      #hp-t1-stat-multiply .cell.hot svg .ink{stroke:var(--hp-deep);}
+
+      /* caption (right) */
+      #hp-t1-stat-multiply .cap{position:absolute;left:1000px;top:540px;transform:translateY(-50%);width:804px;}
+      #hp-t1-stat-multiply .line{display:block;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:104px;line-height:.96;
+        letter-spacing:var(--track-display);color:var(--hp-cream);text-wrap:balance;}
+      #hp-t1-stat-multiply .line em{font-style:normal;color:var(--hp-gold);}
+      #hp-t1-stat-multiply .line.hero{font-size:252px;line-height:.86;letter-spacing:var(--track-tight);margin-bottom:22px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+      #hp-t1-stat-multiply .sub{display:block;margin-top:30px;font-family:var(--font-body);font-weight:500;font-size:30px;line-height:1.25;color:var(--hp-cream-muted);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-stat-multiply" data-composition-id="hp-t1-stat-multiply" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="grid">
+        <!-- the hero object; JS clones it into the copies -->
+        <div class="cell obj" data-slot="media">
+          <svg viewBox="0 0 100 100" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle class="ink" cx="50" cy="52" r="34"/><path class="ink" d="M50 32v20l13 9M40 10h20"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="cap">
+        <span class="line-src" data-slot="caption" hidden><em>12</em> hours back every week</span>
+        <span class="sub" data-slot="sub">Rosa, a baker, lets AI answer the order texts</span>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-stat-multiply-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-stat-multiply-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-stat-multiply";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const F = 1 / 24;
+      const DUR = 6;
+      const OUT = DUR - .45;
+      const tl = gsap.timeline({ paused: true });
+
+      // caption: the <em> number goes on its own hero line (so ticking never shifts other words)
+      const src = $1(".line-src");
+      const em = src.querySelector("em");
+      const N = Math.max(2, Math.min(24, parseInt(em ? em.textContent : "12", 10) || 12));
+      const rest = src.innerHTML.replace(/<em>[\s\S]*?<\/em>/, "").trim();
+      const cap = $1(".cap");
+      const hero = document.createElement("span"); hero.className = "line hero";
+      hero.innerHTML = "<em>" + N + "</em>";
+      const body = document.createElement("span"); body.className = "line"; body.innerHTML = rest;
+      cap.insertBefore(body, src.nextSibling); cap.insertBefore(hero, body);
+      const heroNum = hero.querySelector("em");
+      const sub = $1(".sub");
+      if (!sub.textContent.trim()) sub.remove();
+
+      // grid geometry from the count (fixed box, no text measuring)
+      const cols = N <= 4 ? N : N <= 9 ? 3 : N <= 16 ? 4 : 6;
+      const rows = Math.ceil(N / cols);
+      const BOX_W = 760, BOX_H = 700, GAP = 22;
+      const size = Math.floor(Math.min((BOX_W - GAP * (cols - 1)) / cols, (BOX_H - GAP * (rows - 1)) / rows, 220));
+      const gridH = rows * size + (rows - 1) * GAP;
+      const top0 = (BOX_H - gridH) / 2;
+      const obj = $1(".obj");
+      const cells = [obj];
+      for (let i = 1; i < N; i++) { const c = obj.cloneNode(true); c.classList.remove("obj"); c.removeAttribute("data-slot"); $1(".grid").appendChild(c); cells.push(c); }
+      cells.forEach((c, i) => {
+        const r = Math.floor(i / cols), k = i % cols;
+        gsap.set(c, { width: size, height: size, left: k * (size + GAP), top: top0 + r * (size + GAP) });
+      });
+      const hiAttr = parseInt(ROOT.getAttribute("data-highlight"), 10);
+      const hot = cells[(hiAttr >= 1 && hiAttr <= N ? hiAttr : N) - 1];
+
+      // hero placement: centered in frame, about 440 px, then into slot 1
+      // (animated as box geometry, not scale, so the 14 px radius stays 14 px at every size)
+      const gridLeft = 116, gridTop = 190, HERO = 440;
+      const heroBox = { left: 960 - gridLeft - HERO / 2, top: 540 - gridTop - HERO / 2, width: HERO, height: HERO };
+      const slot1 = { left: 0, top: top0, width: size, height: size };
+
+      const proxy = { v: 0 };
+      const paint = () => { heroNum.textContent = Math.max(1, Math.round(proxy.v)); };
+
+      // ground drift
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.05, duration: DUR, ease: "none" }, 0);
+
+      // 1. hero object pops at center and holds
+      tl.fromTo(obj, { ...heroBox, scale: .94, autoAlpha: 0 }, { ...heroBox, scale: 1, autoAlpha: 1, duration: .38, ease: POP, immediateRender: true }, .12);
+      // 2. it shrinks into slot 1 (about 7 frames)
+      const T_SHRINK = 1.35;
+      tl.fromTo(obj, { ...heroBox }, { ...slot1, duration: .3, ease: POP, immediateRender: false }, T_SHRINK);
+      // 3. caption lands as the hero settles into the grid
+      const T_CAP = T_SHRINK + .12;
+      tl.fromTo(hero, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, T_CAP);
+      tl.fromTo(body, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, T_CAP + .08);
+      if (sub.isConnected) tl.fromTo(sub, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, T_CAP + .16);
+      // 4. copies pop one every 2 frames; the gold number ticks with them
+      const T_COPY = T_SHRINK + .3;
+      const copies = cells.slice(1);
+      tl.fromTo(copies, { scale: .86, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 4 * F, ease: POP, stagger: 2 * F }, T_COPY);
+      tl.fromTo(proxy, { v: 1 }, { v: N, duration: (N - 1) * 2 * F, ease: "none", onUpdate: paint }, T_COPY);
+      // 5. light, not layout: the one copy flips brick to orange as the count lands
+      const T_LAND = T_COPY + (N - 1) * 2 * F + 2 * F;
+      tl.to(hot, { backgroundColor: "#FF8A4C", duration: .12, ease: POP }, T_LAND);
+      tl.to(hot.querySelectorAll(".ink"), { stroke: "#2C0B16", duration: .12, ease: POP }, T_LAND);
+
+      // exit: mirror. copies pop out in reverse, caption drops, the hero goes last
+      tl.to([sub.isConnected ? sub : null, body, hero].filter(Boolean), { autoAlpha: 0, y: 8, duration: .18, ease: "power2.in", stagger: .03 }, OUT);
+      tl.to(copies.slice().reverse(), { scale: .86, autoAlpha: 0, duration: 3 * F, ease: "power2.in", stagger: .3 / Math.max(N, 8) }, OUT);
+      tl.to(obj, { scale: .86, autoAlpha: 0, duration: 3 * F, ease: "power2.in" }, OUT + .3);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      const grain = () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97);
+      tl.eventCallback("onUpdate", grain);
+      const _render = tl.render;
+      tl.render = function () { const r = _render.apply(this, arguments); paint(); grain(); return r; };
+      paint();
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); paint(); grain(); }
+    </script>
+  </body>
+</html>

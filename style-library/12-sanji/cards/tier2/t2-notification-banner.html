@@ -1,0 +1,259 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · NOTIFICATION BANNER
+  A phone-style liquid-glass notification drops in at the top-right corner of
+  the frame (slides down out of blur with a whisper of overshoot): cobalt glass
+  app tile with a white glyph, app name + "now", a bold title and a one-line
+  body. A beat later a second notification lands on top of it and the first
+  COMPRESSES behind: it scales back, sinks a few px and dims so only its lower
+  sliver peeks out under the new one (the stack look). Both lift out with blur.
+  Keep for "you get a ping / a message / a sale" moments.
+  Slots: app (<=14), title (<=30), body (<=40), title2 (<=30), body2 (<=40).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-notification-banner {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t2-notification-banner .stack { position: absolute; right: 72px; top: 64px; width: 640px; height: 220px; }
+      #sanji-t2-notification-banner .nt {
+        position: absolute; left: 0; top: 0; width: 640px; box-sizing: border-box;
+        padding: 22px 26px 24px 24px; border-radius: 34px;
+        display: flex; gap: 20px; align-items: flex-start;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.02) 60%),
+          rgba(22, 22, 32, 0.50);
+        border: 1px solid rgba(255,255,255,0.26);
+        box-shadow: 0 22px 60px rgba(0,0,0,0.30), 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.22);
+        -webkit-backdrop-filter: blur(22px) saturate(1.3); backdrop-filter: blur(22px) saturate(1.3);
+        transform-origin: 50% 0%;
+      }
+      #sanji-t2-notification-banner .nt.n2 { z-index: 2; }
+      #sanji-t2-notification-banner .nt.n1 { z-index: 1; }
+      #sanji-t2-notification-banner .tile {
+        flex: none; width: 76px; height: 76px; border-radius: 20px; box-sizing: border-box; position: relative;
+        background: var(--glass-fill-active), var(--cobalt);
+        border: var(--rim) solid var(--glass-rim-active);
+        box-shadow: 0 6px 18px rgba(14,18,150,0.35), inset 0 1.5px 0 rgba(255,255,255,0.45);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t2-notification-banner .tile svg { display: block; }
+      #sanji-t2-notification-banner .col { flex: 1; min-width: 0; padding-top: 2px; }
+      #sanji-t2-notification-banner .meta {
+        display: flex; justify-content: space-between; align-items: baseline;
+        font-size: 22px; font-weight: var(--wt-ui); letter-spacing: 0.04em; text-transform: uppercase;
+        color: var(--white-soft);
+      }
+      #sanji-t2-notification-banner .meta .now { text-transform: none; letter-spacing: var(--track-ui); font-weight: 500; }
+      #sanji-t2-notification-banner .ttl {
+        margin-top: 6px; font-size: 31px; font-weight: var(--wt-bold); letter-spacing: var(--track-ui); line-height: 1.15;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      #sanji-t2-notification-banner .bd {
+        margin-top: 3px; font-size: 26px; font-weight: 500; letter-spacing: var(--track-ui); line-height: 1.2;
+        color: rgba(255,255,255,0.82); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-notification-banner" data-composition-id="sanji-t2-notification-banner" data-start="0" data-width="1920" data-height="1080">
+      <div class="stack">
+        <div class="nt n1">
+          <div class="tile"><svg width="40" height="40" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M12 1.8l2.1 5.6 5.9.3-4.6 3.7 1.6 5.8L12 14l-5 3.2 1.6-5.8L4 7.7l5.9-.3z"/><path fill="#FFFFFF" opacity="0.55" d="M5 20.2h14v2H5z"/></svg></div>
+          <div class="col">
+            <div class="meta"><span data-slot="app">Studio</span><span class="now">now</span></div>
+            <div class="ttl" data-slot="title">New client request</div>
+            <div class="bd" data-slot="body">Can you animate our launch video?</div>
+          </div>
+        </div>
+        <div class="nt n2">
+          <div class="tile"><svg width="40" height="40" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M12 1.8l2.1 5.6 5.9.3-4.6 3.7 1.6 5.8L12 14l-5 3.2 1.6-5.8L4 7.7l5.9-.3z"/><path fill="#FFFFFF" opacity="0.55" d="M5 20.2h14v2H5z"/></svg></div>
+          <div class="col">
+            <div class="meta"><span class="app2">Studio</span><span class="now">now</span></div>
+            <div class="ttl" data-slot="title2">Payment received</div>
+            <div class="bd" data-slot="body2">Invoice 204 was paid in full</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-notification-banner";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const N1 = $(".n1"), N2 = $(".n2");
+        /* the second banner reuses the app name */
+        $(".app2").textContent = $("[data-slot=app]").textContent;
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set([N1, N2], { autoAlpha: 0 }, 0);
+
+        /* drop in: slide down from above the frame edge, blur resolve, whisper overshoot */
+        const drop = (el, t) => {
+          tl.fromTo(el,
+            { autoAlpha: 0, y: -150, scale: 0.96, filter: "blur(14px)" },
+            { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "back.out(1.2)" }, t)
+            .set(el, { filter: "none" }, t + 0.56);            /* keep the backdrop blur live in the hold */
+          /* contents: icon tile + meta row as blocks, title and body pour in (house preset) */
+          TXT.block(tl, [el.querySelector(".tile"), el.querySelector(".meta")], t + 0.14);
+          const tt = TXT.reveal(tl, el.querySelector(".ttl"), t + 0.24);
+          TXT.reveal(tl, el.querySelector(".bd"), tt - 0.55, { stagger: 0.03 });
+        };
+        drop(N1, 0.2);
+
+        /* second banner arrives on top, the first compresses behind it */
+        const T2 = 2.0;
+        drop(N2, T2);
+        tl.to(N1, { y: 44, scale: 0.92, duration: 0.5, ease: "power3.out" }, T2 + 0.04)
+          .to(N1.querySelectorAll(".col, .tile"), { opacity: 0.0, duration: 0.3, ease: "power2.out" }, T2 + 0.04)
+          .to(N1, { opacity: 0.8, duration: 0.4, ease: "power2.out" }, T2 + 0.04);
+
+        /* tiny breath during the hold */
+        tl.to($(".stack"), { y: 4, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 1 }, T2 + 0.7);
+
+        /* exit: the stack lifts back out of frame with blur, top card leads */
+        const OUT = T2 + 3.1;
+        TXT.exit(tl, [N2.querySelector(".ttl"), N2.querySelector(".bd")], OUT - 0.1);
+        tl.to(N2, { autoAlpha: 0, y: -90, filter: "blur(10px)", duration: 0.36, ease: "power2.in" }, OUT)
+          .to(N1, { autoAlpha: 0, y: -60, filter: "blur(10px)", duration: 0.36, ease: "power2.in" }, OUT + 0.06)
+          .set({}, {}, OUT + 0.5);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

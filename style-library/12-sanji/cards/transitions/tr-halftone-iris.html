@@ -1,0 +1,168 @@
+<!doctype html>
+<!--
+  SANJI · transition · HALFTONE IRIS
+  Scene A (dark code plate) to scene B (footage). A small glowing amber dot
+  wakes up at a fixed point (center-right), then an amber dot-matrix halftone
+  disc grows out of it over ~0.64s (power3.in, slow then fast). The disc's edge
+  is a ring of large bright dots on an amber glow; toward the middle the dots
+  shrink to nothing, so scene B shows through the clear center. Once B fills
+  the frame the leftover halftone fringe fades out from the corners.
+  The halftone is drawn on canvas from the timeline (seeded per-dot jitter,
+  pure function of time via a proxy onUpdate, never rAF).
+  Both plates are STAND-INS: replace .plate-a / .plate-b with real footage.
+  No slots.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-halftone-iris {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-mono);
+      }
+      #sanji-tr-halftone-iris .plate { position: absolute; inset: 0; overflow: hidden; }
+      /* scene A stand-in: dark code plate */
+      #sanji-tr-halftone-iris .plate-a { background: var(--void); transform-origin: 64% 52%; }
+      #sanji-tr-halftone-iris .plate-a .warm { position: absolute; inset: 0; background: radial-gradient(50% 55% at 0% 100%, rgba(var(--ember-rgb),0.22), rgba(3,1,0,0) 70%); }
+      #sanji-tr-halftone-iris .plate-a .code { position: absolute; left: 170px; top: 120px; font-size: 80px; line-height: 124px; white-space: pre; font-weight: 500; color: var(--code-text); }
+      #sanji-tr-halftone-iris .plate-a .t { color: var(--code-tag); }
+      #sanji-tr-halftone-iris .plate-a .a { color: var(--code-attr); }
+      #sanji-tr-halftone-iris .plate-a .s { color: var(--code-str); }
+      #sanji-tr-halftone-iris .plate-a .e { color: var(--ember); }
+      /* scene B stand-in: warm footage plate (gradient + soft shapes, NOT real footage) */
+      #sanji-tr-halftone-iris .plate-b {
+        background:
+          radial-gradient(38% 52% at 54% 62%, rgba(236,214,186,0.95), rgba(236,214,186,0) 70%),
+          radial-gradient(22% 26% at 52% 30%, rgba(92,62,44,0.9), rgba(92,62,44,0) 70%),
+          radial-gradient(30% 40% at 18% 30%, rgba(214,170,120,0.8), rgba(214,170,120,0) 70%),
+          radial-gradient(28% 36% at 86% 34%, rgba(200,90,70,0.55), rgba(200,90,70,0) 70%),
+          linear-gradient(180deg, #CDB79C 0%, #B99B7C 55%, #8F735A 100%);
+      }
+      #sanji-tr-halftone-iris .plate-b .desk { position: absolute; left: 0; right: 0; bottom: 0; height: 240px; background: linear-gradient(180deg, rgba(70,52,40,0.0), rgba(60,44,34,0.85)); }
+      #sanji-tr-halftone-iris canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #sanji-tr-halftone-iris canvas.glow { filter: blur(10px); opacity: 0.85; mix-blend-mode: screen; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-halftone-iris" data-composition-id="sanji-tr-halftone-iris" data-start="0" data-width="1920" data-height="1080">
+      <div class="plate plate-a">
+        <div class="warm"></div>
+        <div class="code"><span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"hud-console"</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"console-row"</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"row ok"</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="e">Written in one pass.</span></div>
+      </div>
+      <div class="plate plate-b"><div class="desk"></div></div>
+      <canvas class="dots" width="1920" height="1080"></canvas>
+      <canvas class="glow" width="1920" height="1080"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+        const ID = "sanji-tr-halftone-iris";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const css = getComputedStyle(document.documentElement);
+        const HT = css.getPropertyValue("--halftone").trim();
+        const h = HT.replace("#", ""); const HR = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(",");
+
+        const CX = 1240, CY = 560;              /* iris origin: fixed point, center-right */
+        const SP = 18;                          /* dot pitch */
+        const RMAX = 2700;                      /* ring radius once B fully covers */
+        const T_DOT = 0.28, T_IRIS = 0.48, IRIS = 0.64, T_FADE = T_IRIS + IRIS - 0.06, FADE = 0.4;
+        const END = 1.6;
+
+        /* seeded per-dot jitter */
+        let seed = 9011;
+        const rnd = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+        const cells = [];
+        for (let y = SP / 2; y < 1080; y += SP) for (let x = SP / 2; x < 1920; x += SP) {
+          cells.push({ x, y, d: Math.hypot(x - CX, y - CY), j: 0.82 + rnd() * 0.36, cd: Math.hypot(x - 960, y - 540) });
+        }
+
+        const cv = $("canvas.dots"), ctx = cv.getContext("2d");
+        const gv = $("canvas.glow"), gctx = gv.getContext("2d");
+        const plateB = $(".plate-b");
+        const eIris = gsap.parseEase("power3.in"), eDot = gsap.parseEase("expo.out"), eFade = gsap.parseEase("power2.inOut");
+        const c01 = (x) => Math.max(0, Math.min(1, x));
+        const ss = (a, b, x) => { const t = c01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+        function draw(t) {
+          ctx.clearRect(0, 0, 1920, 1080);
+          const pDot = eDot(c01((t - T_DOT) / 0.3));
+          const pI = eIris(c01((t - T_IRIS) / IRIS));
+          const R = 26 + pI * RMAX;               /* ring radius */
+          const fade = 1 - eFade(c01((t - T_FADE) / FADE));
+          /* corners fade first: per-dot fade threshold rises with distance from frame centre */
+          const fadeP = 1 - fade;
+
+          /* scene B: visible through the clear centre of the disc */
+          const inner = Math.max(0, R * 0.55), outer = Math.max(1, R * 0.92);
+          const m = t < T_IRIS ? "radial-gradient(circle at 0 0, transparent 0, transparent 100%)"
+            : `radial-gradient(circle at ${CX}px ${CY}px, #000 ${inner}px, rgba(0,0,0,0.75) ${(inner + outer) / 2}px, transparent ${outer}px)`;
+          plateB.style.webkitMaskImage = m; plateB.style.maskImage = m;
+
+          if (t >= T_DOT && fade > 0) {
+            /* amber glow body of the disc (soft ring) */
+            if (t >= T_IRIS) {
+              const g = ctx.createRadialGradient(CX, CY, R * 0.35, CX, CY, R * 1.08);
+              g.addColorStop(0, `rgba(${HR},0)`);
+              g.addColorStop(0.55, `rgba(${HR},0.22)`);
+              g.addColorStop(0.82, `rgba(${HR},0.55)`);
+              g.addColorStop(1, `rgba(${HR},0)`);
+              ctx.globalAlpha = fade; ctx.fillStyle = g; ctx.fillRect(0, 0, 1920, 1080); ctx.globalAlpha = 1;
+            }
+            /* the seed dot */
+            if (pI < 0.35) {
+              const r0 = 10 + pDot * 14 + pI * 40;
+              const k0 = pDot * Math.max(0, 1 - pI / 0.18);
+              const g0 = ctx.createRadialGradient(CX, CY, 0, CX, CY, r0 * 3.2);
+              g0.addColorStop(0, `rgba(255,236,170,${0.95 * k0})`);
+              g0.addColorStop(0.3, `rgba(${HR},${0.85 * k0})`);
+              g0.addColorStop(1, `rgba(${HR},0)`);
+              ctx.fillStyle = g0; ctx.beginPath(); ctx.arc(CX, CY, r0 * 3.2, 0, 6.2832); ctx.fill();
+            }
+            /* halftone dots */
+            if (t >= T_IRIS) {
+              ctx.fillStyle = HT;
+              const maxR = SP * 0.42;
+              for (let i = 0; i < cells.length; i++) {
+                const c = cells[i];
+                const u = c.d / R;
+                if (u > 1.12) continue;
+                /* ring of big dots near the edge, shrinking to nothing in the clear centre */
+                const size = ss(0.18, 0.78, u) * (1 - ss(0.98, 1.12, u));
+                if (size <= 0.02) continue;
+                const cornerFade = c01(fade * 1.6 - (c.cd / 1100) * fadeP * 1.6);
+                const ringBoost = 0.55 + 0.45 * (1 - Math.abs(u - 0.88) / 0.3);
+                const r = maxR * size * c.j * Math.max(0.55, ringBoost) * (0.6 + 0.4 * cornerFade);
+                if (r < 0.4) continue;
+                ctx.globalAlpha = Math.min(1, 0.35 + 0.65 * ringBoost) * cornerFade;
+                ctx.beginPath(); ctx.arc(c.x, c.y, r, 0, 6.2832); ctx.fill();
+              }
+              ctx.globalAlpha = 1;
+            }
+          }
+          gctx.clearRect(0, 0, 1920, 1080); gctx.drawImage(cv, 0, 0);
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        /* scene A leans in toward the iris point as it opens */
+        tl.fromTo($(".plate-a"), { scale: 1, filter: "blur(0px)" }, { scale: 1.08, filter: "blur(3px)", duration: T_IRIS + IRIS, ease: "power2.in" }, 0)
+          /* scene B settles from a slight push */
+          .fromTo(plateB, { scale: 1.06 }, { scale: 1, duration: 0.9, ease: "power2.out" }, T_IRIS + 0.2);
+
+        const P = { t: 0 };
+        tl.fromTo(P, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(P.t) }, 0);
+        tl.set({}, {}, END);
+        draw(0);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

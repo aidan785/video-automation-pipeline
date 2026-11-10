@@ -1,0 +1,291 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · GANTT BUILD  (PAPER canvas)
+  White page. The title resolves out of blur word by word, ten day columns
+  draw down as hairlines, then four task rows build: the label resolves and
+  its cobalt glass bar grows left to right; milestone diamonds pop at the ends
+  of rows 2 and 4. A cobalt "today" hairline drops in and sweeps across:
+  finished rows tick a check and go quiet, the row it lands in lights ACTIVE,
+  the upcoming row stays dormant. Use for plans, schedules, "where we are".
+  Slots: title (<=18), task1..task4 (<=14).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-gantt-build {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--paper); font-family: var(--font-body); color: var(--ink);
+      }
+      #sanji-t1-gantt-build .title {
+        position: absolute; left: 180px; top: 112px; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 84px; line-height: 1; letter-spacing: var(--track-caps); text-transform: uppercase;
+      }
+      #sanji-t1-gantt-build .title .w { display: inline-block; margin-right: 0.24em; }
+      #sanji-t1-gantt-build .wk { position: absolute; right: 180px; top: 140px; font-family: var(--font-mono); font-size: 26px; color: var(--ink-mid); }
+      #sanji-t1-gantt-build .panel { position: absolute; left: 180px; top: 260px; width: 1560px; height: 680px; border-radius: var(--r-plate); background: var(--paper-2); }
+      #sanji-t1-gantt-build .col { position: absolute; top: 300px; height: 600px; width: 2px; margin-left: -1px; background: var(--ink-pre); opacity: 0.45; transform-origin: 50% 0%; }
+      #sanji-t1-gantt-build .day { position: absolute; top: 300px; width: 118px; text-align: center; font-family: var(--font-mono); font-size: 20px; color: var(--ink-mid); }
+      #sanji-t1-gantt-build .lab { position: absolute; left: 236px; height: 72px; display: flex; align-items: center; gap: 18px; font-weight: var(--wt-ui); font-size: 40px; letter-spacing: var(--track-ui); white-space: nowrap; }
+      #sanji-t1-gantt-build .ck { width: 40px; height: 40px; border-radius: 50%; background: var(--cobalt); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+      #sanji-t1-gantt-build .ckw { width: 0; overflow: visible; display: inline-flex; }
+      #sanji-t1-gantt-build .bar { position: absolute; height: 72px; border-radius: 36px; box-sizing: border-box; }
+      #sanji-t1-gantt-build .bar > .fill, #sanji-t1-gantt-build .bar > .lit { position: absolute; inset: 0; border-radius: inherit; }
+      #sanji-t1-gantt-build .bar > .fill {
+        background: linear-gradient(150deg, var(--cobalt-lift) 0%, var(--cobalt) 50%, var(--cobalt-deep) 100%);
+        box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -14px 30px rgba(26,34,184,0.45), 0 14px 34px rgba(var(--cobalt-rgb),0.22);
+      }
+      #sanji-t1-gantt-build .bar > .lit { box-shadow: 0 0 0 4px rgba(var(--cobalt-rgb),0.14), 0 18px 50px rgba(var(--cobalt-rgb),0.45), 0 0 40px rgba(var(--cobalt-rgb),0.35); opacity: 0; }
+      #sanji-t1-gantt-build .bar .dur { position: absolute; left: 28px; top: 0; height: 72px; display: flex; align-items: center; font-family: var(--font-mono); font-size: 20px; color: var(--white-soft); }
+      #sanji-t1-gantt-build .ms { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+      #sanji-t1-gantt-build .ms i { position: absolute; inset: 0; background: var(--ink); transform: rotate(45deg); border-radius: 5px; box-shadow: 0 0 0 5px var(--paper-2); }
+      #sanji-t1-gantt-build .ms b { position: absolute; inset: -14px; border-radius: 50%; border: 2px solid var(--ink); opacity: 0; }
+      #sanji-t1-gantt-build .today { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 4; }
+      #sanji-t1-gantt-build .today .ln { position: absolute; left: -1.5px; top: 336px; width: 3px; height: 556px; background: var(--cobalt); border-radius: 2px; transform-origin: 50% 0%; box-shadow: 0 0 14px rgba(var(--cobalt-rgb),0.35); }
+      #sanji-t1-gantt-build .today .tag { position: absolute; left: -66px; top: 880px; width: 132px; height: 46px; border-radius: 24px; background: var(--cobalt); color: var(--white);
+        display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-weight: 700; font-size: 20px; letter-spacing: 0.06em; box-shadow: 0 10px 26px rgba(var(--cobalt-rgb),0.3); }
+      #sanji-t1-gantt-build .today .dot { position: absolute; left: -9px; top: 328px; width: 18px; height: 18px; border-radius: 50%; background: var(--cobalt); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-gantt-build" data-composition-id="sanji-t1-gantt-build" data-start="0" data-width="1920" data-height="1080">
+      <div class="title" data-slot="title">Launch plan</div>
+      <div class="wk">WEEKS 1 TO 2</div>
+      <div class="panel"></div>
+      <div class="cols"></div>
+      <div class="rows">
+        <div class="lab"><span class="ckw"><span class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></span><span class="tx" data-slot="task1">Script</span></div>
+        <div class="lab"><span class="ckw"><span class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></span><span class="tx" data-slot="task2">Storyboard</span></div>
+        <div class="lab"><span class="ckw"><span class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></span><span class="tx" data-slot="task3">Animation</span></div>
+        <div class="lab"><span class="ckw"><span class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></span><span class="tx" data-slot="task4">Final edit</span></div>
+      </div>
+      <div class="bars"></div>
+      <div class="today"><div class="ln"></div><div class="dot"></div><div class="tag">TODAY</div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-gantt-build";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const INK = tok("--ink"), PRE = tok("--ink-pre"), MID = tok("--ink-mid");
+
+        /* grid geometry */
+        const GX = 620, CW = 110, NC = 10, ROW0 = 400, RH = 128;
+        const dx = (d) => GX + d * CW;
+        const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "MON", "TUE", "WED", "THU", "FRI"];
+        const cols = $(".cols");
+        for (let i = 0; i <= NC; i++) { const c = document.createElement("div"); c.className = "col"; c.style.left = dx(i) + "px"; cols.appendChild(c); }
+        for (let i = 0; i < NC; i++) { const d = document.createElement("div"); d.className = "day"; d.style.left = dx(i) + (CW - 118) / 2 + "px"; d.textContent = DAYS[i]; cols.appendChild(d); }
+        ROOT.querySelectorAll(".col").forEach((c) => { c.style.top = "340px"; c.style.height = "560px"; });
+
+        /* tasks: [startDay, endDay, milestone?] */
+        const TASKS = [[0, 2.5, false], [1.5, 5, true], [4, 8, false], [7.5, 10, true]];
+        const TODAY = 5.6;
+        const labs = $$(".lab"), barsEl = $(".bars"), bars = [], mss = [];
+        TASKS.forEach(([a, b, m], i) => {
+          const y = ROW0 + i * RH;
+          labs[i].style.top = y + "px";
+          const bar = document.createElement("div"); bar.className = "bar";
+          bar.style.left = dx(a) + "px"; bar.style.top = y + "px"; bar.style.width = (b - a) * CW + "px";
+          bar.innerHTML = '<div class="fill"></div><div class="lit"></div><div class="dur">' + (Math.round((b - a) * 2) / 2) + "D</div>";
+          barsEl.appendChild(bar); bars.push(bar);
+          if (m) { const ms = document.createElement("div"); ms.className = "ms"; ms.style.left = dx(b) + "px"; ms.style.top = y + 36 + "px"; ms.innerHTML = "<i></i><b></b>"; barsEl.appendChild(ms); mss.push({ el: ms, row: i }); }
+        });
+
+
+        const tl = gsap.timeline({ paused: true });
+        const R0 = 1.05, RSTEP = 0.55, T_TODAY = R0 + 4 * RSTEP + 0.55, SWEEP = 1.5, END = T_TODAY + SWEEP + 2.2;
+
+        const resolve = (els, t, st = 0.24) => tl.fromTo(els, { autoAlpha: 0, filter: "blur(12px)", color: PRE, y: 10 }, { autoAlpha: 1, filter: "blur(0px)", color: INK, y: 0, duration: 0.22, ease: "expo.out", stagger: st }, t);
+        const blurIn = (els, t, st = 0.06) => tl.fromTo(els, { autoAlpha: 0, y: 8, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", stagger: st }, t);
+
+        TXT.reveal(tl, $(".title"), 0.15);
+        TXT.reveal(tl, $(".wk"), 0.45, { stagger: 0.03 });
+        tl.fromTo($(".panel"), { autoAlpha: 0, scale: 0.97, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 0.3);
+        tl.fromTo($$(".col"), { scaleY: 0 }, { scaleY: 1, duration: 0.7, ease: "power3.inOut", stagger: 0.035 }, 0.5);
+        TXT.block(tl, $$(".day"), 0.6, { stagger: 0.035 });
+        tl.set($$(".ck"), { autoAlpha: 0, scale: 0.4 }, 0);
+
+        /* rows build: label resolves, bar grows, previous row eases back */
+        bars.forEach((bar, i) => {
+          const t = R0 + i * RSTEP;
+          TXT.reveal(tl, labs[i].querySelector(".tx"), t);
+          tl.fromTo(bar, { clipPath: "inset(0% 100% 0% 0% round 36px)", autoAlpha: 1 }, { clipPath: "inset(0% 0% 0% 0% round 36px)", duration: 0.75, ease: "power3.out" }, t + 0.05);
+          tl.fromTo(bar.querySelector(".lit"), { opacity: 0 }, { keyframes: [{ opacity: 1, duration: 0.25 }, { opacity: 0, duration: 0.5, ease: "power2.inOut" }] }, t + 0.1);
+          TXT.block(tl, bar.querySelector(".dur"), t + 0.5);
+          const ms = mss.find((m) => m.row === i);
+          if (ms) {
+            tl.fromTo(ms.el, { autoAlpha: 0, scale: 0.3 }, { autoAlpha: 1, scale: 1, duration: 0.34, ease: "back.out(1.35)" }, t + 0.7);
+            tl.fromTo(ms.el.querySelector("b"), { opacity: 0.6, scale: 0.6 }, { opacity: 0, scale: 1.6, duration: 0.7, ease: "power2.out" }, t + 0.72);
+          }
+        });
+        tl.set(bars, { clipPath: "inset(0% 100% 0% 0% round 36px)" }, 0);
+
+        /* today line: drops in, sweeps; rows tick off as it passes their end */
+        const td = $(".today");
+        tl.set(td, { x: dx(0) }, 0);
+        tl.fromTo(td.querySelector(".ln"), { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "power3.out" }, T_TODAY - 0.45);
+        TXT.block(tl, [td.querySelector(".dot"), td.querySelector(".tag")], T_TODAY - 0.4, { stagger: 0.05 });
+        tl.to(td, { x: dx(TODAY), duration: SWEEP, ease: "power2.inOut" }, T_TODAY);
+        const tAt = (f) => T_TODAY + SWEEP * (f < 0.5 ? Math.sqrt(f / 2) : 1 - Math.sqrt((1 - f) / 2));
+        TASKS.forEach(([a, b], i) => {
+          if (b > TODAY) return;
+          const t = tAt(b / TODAY);
+          tl.to(labs[i].querySelector(".ckw"), { width: 58, duration: 0.35, ease: "expo.out" }, t)
+            .to(labs[i].querySelector(".ck"), { autoAlpha: 1, scale: 1, duration: 0.34, ease: "back.out(1.3)" }, t)
+            .to(labs[i].querySelector(".tx"), { color: MID, duration: 0.35 }, t)
+            .to(bars[i], { opacity: 0.4, duration: 0.4, ease: "power2.inOut" }, t);
+          mss.filter((m) => m.row === i).forEach((m) => tl.to(m.el, { opacity: 0.4, duration: 0.4 }, t));
+        });
+        /* landing: the current row lights, the upcoming row stays dormant */
+        const TE = T_TODAY + SWEEP;
+        TASKS.forEach(([a, b], i) => {
+          if (a <= TODAY && b > TODAY) {
+            tl.to(bars[i].querySelector(".lit"), { opacity: 1, duration: 0.45, ease: "power2.out" }, TE - 0.1)
+              .to(bars[i], { scale: 1.03, transformOrigin: "0% 50%", duration: 0.5, ease: "expo.out" }, TE - 0.1);
+          } else if (a > TODAY) {
+            tl.to(labs[i].querySelector(".tx"), { color: PRE, duration: 0.35 }, TE - 0.1)
+              .to(bars[i], { opacity: 0.3, duration: 0.4 }, TE - 0.1);
+            mss.filter((m) => m.row === i).forEach((m) => tl.to(m.el, { opacity: 0.35, duration: 0.4 }, TE - 0.1));
+          }
+        });
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

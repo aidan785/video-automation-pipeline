@@ -1,0 +1,281 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · instructional · MISTAKE WARNING ("common mistake" -> fix)
+  EMBER canvas: black, orange corner light, grain. An ember warning badge pops
+  in white-hot and cools, a "Common mistake" caps kicker resolves beside it,
+  then the mistake statement resolves word by word. An ember strike line is
+  drawn across it left to right (glow cooling) and the statement greys back.
+  The warmth recedes from the corners as a COBALT liquid-glass "fix" card
+  slides up from below with a vertical smear, a white check draws inside its
+  glass badge and the correct practice resolves word by word. The card keeps
+  drifting up a few pixels during the hold.
+  Slots: kicker (<=18), mistake (<=36, single line), fixKicker (<=18),
+  fix (<=40, single line).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-mistake-warning {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-mistake-warning .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-mistake-warning .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.5; }
+      #sanji-t1-mistake-warning .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+
+      #sanji-t1-mistake-warning .head { position: absolute; left: 0; right: 0; top: 258px; display: flex; justify-content: center; align-items: center; gap: 24px; }
+      #sanji-t1-mistake-warning .warn {
+        position: relative; width: 84px; height: 84px; border-radius: 50%;
+        background: radial-gradient(circle at 38% 32%, var(--ember-hot), var(--ember) 55%, var(--ember-glow));
+        box-shadow: 0 0 0 1.5px rgba(255,190,120,0.7), 0 10px 30px rgba(255,122,26,0.35);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-mistake-warning .kick { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 36px; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap; color: var(--white); }
+
+      #sanji-t1-mistake-warning .mrow { position: absolute; left: 0; right: 0; top: 398px; text-align: center; }
+      #sanji-t1-mistake-warning .mline {
+        position: relative; display: inline-block; white-space: nowrap;
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 76px; line-height: 1.15; letter-spacing: var(--track-tight);
+      }
+      #sanji-t1-mistake-warning .mline .w { display: inline-block; white-space: pre; }
+      #sanji-t1-mistake-warning .strike {
+        position: absolute; left: -18px; right: -18px; top: 54%; height: 7px; margin-top: -3.5px; border-radius: 4px;
+        background: linear-gradient(90deg, var(--ember-glow), var(--ember) 40%, var(--ember-hot));
+        transform-origin: 0% 50%;
+      }
+
+      #sanji-t1-mistake-warning .fix {
+        position: absolute; left: 300px; top: 612px; width: 1320px; height: 216px; box-sizing: border-box; border-radius: var(--r-card);
+      }
+      #sanji-t1-mistake-warning .fix > .fill {
+        position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box;
+        background: var(--glass-fill-active), var(--cobalt);
+        border: var(--rim) solid var(--glass-rim-active);
+        box-shadow: 0 40px 110px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.06), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -30px 70px rgba(28,22,200,0.45);
+      }
+      #sanji-t1-mistake-warning .fix .badge {
+        position: absolute; left: 44px; top: 44px; width: 128px; height: 128px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-mistake-warning .fix .fk { position: absolute; left: 206px; top: 52px; font-family: var(--font-mono); font-size: 24px; color: var(--white-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+      #sanji-t1-mistake-warning .fix .ft {
+        position: absolute; left: 206px; top: 92px; white-space: nowrap;
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 50px; line-height: 1.1; letter-spacing: var(--track-ui);
+      }
+      #sanji-t1-mistake-warning .fix .ft .w { display: inline-block; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-mistake-warning" data-composition-id="sanji-t1-mistake-warning" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="vig"></div>
+
+      <div class="head">
+        <div class="warn"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"><path d="M12 5.5v8.5"/><circle cx="12" cy="18.6" r="0.6" fill="#FFFFFF"/></svg></div>
+        <div class="kick" data-slot="kicker">Common mistake</div>
+      </div>
+
+      <div class="mrow"><div class="mline"><span class="mt" data-slot="mistake">Animating every element at once</span><div class="strike"></div></div></div>
+
+      <div class="fix"><div class="fill"></div>
+        <div class="badge"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <div class="fk" data-slot="fixKicker">Do this instead</div>
+        <div class="ft" data-slot="fix">Stagger them so the eye has a path</div>
+      </div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-mistake-warning";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre");
+        const WARM = "#F4ECE6", GREY = "rgba(244,236,230,0.42)";   /* transitional tints */
+
+        const split = (el) => {
+          const ws = (el.textContent || "").trim().split(/\s+/).filter(Boolean);
+          el.textContent = "";
+          return ws.map((w, i) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : ""); el.appendChild(s); return s; });
+        };
+        const mWords = split($(".mt")), fWords = split($(".ft"));
+        const ck = $(".ck"); const CL = ck.getTotalLength(); ck.style.strokeDasharray = CL; ck.style.strokeDashoffset = CL;
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set([...mWords, ...fWords, $(".warn"), $(".kick"), $(".fix"), $(".fk")], { autoAlpha: 0 }, 0).set($(".strike"), { scaleX: 0 }, 0);
+        /* fix card hugs its text and stays centered (measured lazily, after fonts) */
+        const fixW = () => Math.max(860, Math.min(1640, Math.ceil($(".ft").offsetLeft + $(".ft").offsetWidth + 72)));
+        tl.set($(".fix"), { width: fixW, left: () => Math.round((1920 - fixW()) / 2) }, 0);
+        tl.fromTo($(".warm"), { opacity: 0.6 }, { opacity: 1, duration: 2.2, ease: "sine.inOut" }, 0);
+
+        /* 1. warning badge pops white-hot and cools; kicker resolves */
+        tl.fromTo($(".warn"), { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, 0.15)
+          .fromTo($(".warn"), { boxShadow: "0 0 0 1.5px rgba(255,220,170,1), 0 0 40px rgba(255,140,40,0.95), 0 0 110px rgba(255,122,26,0.6)" },
+                              { boxShadow: "0 0 0 1.5px rgba(255,190,120,0.7), 0 0 0px rgba(255,140,40,0), 0 10px 30px rgba(255,122,26,0.35)", duration: 0.7, ease: "power2.out" }, 0.3)
+          .set($(".kick"), { autoAlpha: 1 }, 0.3)
+          .fromTo($(".kick"), { color: tok("--ember-hot") }, { color: WHITE, duration: 0.7, ease: "power2.out" }, 0.3);
+        TXT.reveal(tl, $(".kick"), 0.3);
+
+        /* 2. the mistake resolves word by word */
+        const TM = 0.7;
+        tl.set(mWords, { autoAlpha: 1, color: WARM }, 0);
+        const TS = TXT.reveal(tl, mWords, TM) + 0.05;
+
+        /* 3. strike drawn across in ember light, glow cools, text greys back */
+        tl.to($(".strike"), { scaleX: 1, duration: 0.55, ease: "power3.inOut" }, TS)
+          .fromTo($(".strike"), { boxShadow: "0 0 18px rgba(255,140,40,0.95), 0 0 46px rgba(255,122,26,0.6)" }, { boxShadow: "0 0 6px rgba(255,140,40,0.45), 0 0 0px rgba(255,122,26,0)", duration: 0.8, ease: "power2.out" }, TS + 0.4)
+          .to(mWords, { color: GREY, duration: 0.45, ease: "power2.inOut", stagger: 0.03 }, TS + 0.25);
+
+        /* 4. warmth recedes, the cobalt fix card slides up with a vertical smear */
+        const TF = TS + 0.95;
+        tl.to($(".warm"), { opacity: 0.4, duration: 0.9, ease: "power2.inOut" }, TF - 0.1)
+          .to([$(".head"), $(".mrow")], { y: -26, duration: 0.6, ease: "power3.inOut" }, TF - 0.05)
+          .fromTo($(".fix"), { autoAlpha: 0, y: 160, scaleY: 1.08, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, scaleY: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, TF)
+          .to($(".fix"), { y: -16, duration: 3.0, ease: "sine.out" }, TF + 0.5)
+          .to(ck, { strokeDashoffset: 0, duration: 0.42, ease: "power2.out" }, TF + 0.3)
+          .fromTo($(".fix .badge"), { boxShadow: "0 0 0 rgba(255,255,255,0)" }, { boxShadow: "0 0 40px rgba(255,255,255,0.5)", duration: 0.25, ease: "power2.out", immediateRender: false }, TF + 0.45)
+          .to($(".fix .badge"), { boxShadow: "0 0 14px rgba(255,255,255,0.15)", duration: 0.7, ease: "power2.out" }, TF + 0.7)
+          .set([$(".fk"), ...fWords], { autoAlpha: 1 }, TF);
+        TXT.reveal(tl, $(".fk"), TF + 0.25);
+        const TE = TXT.reveal(tl, fWords, TF + 0.35);
+        const END = Math.max(TE + 1.6, TF + 3.0);
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

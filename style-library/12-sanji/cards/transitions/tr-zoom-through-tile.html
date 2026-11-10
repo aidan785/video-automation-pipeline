@@ -1,0 +1,299 @@
+<!doctype html>
+<!--
+  SANJI · transition · ZOOM THROUGH TILE
+  COBALT to EMBER through a single glass tile. Scene A is a row of three glass
+  squircle tiles; the center one lights ACTIVE while its neighbours focus-shift
+  dormant. The camera then pushes INTO that tile (power3.inOut): neighbours fly
+  outward and smear into blur, the tile's glass grows to full frame (squircle
+  radius relaxing to 0), its rim flares white-hot at mid-push, and the tile's
+  interior becomes scene B: a dark ember chat box under orange corner light,
+  which resolves out of blur (scale 1.12 + blur 22px to sharp) as the glass
+  dissolves away. One proxy drives the rect, rim and camera so they never drift.
+  ~1.7s. Slots: tileA1..tileA3 (<= 14), prompt (<= 30), model (<= 12).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-zoom-through-tile {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-tr-zoom-through-tile .camA {
+        position: absolute; inset: 0; transform-origin: 960px 540px;
+        background: radial-gradient(55% 60% at 50% 50%, rgba(255,255,255,0.09), rgba(255,255,255,0) 70%), var(--cobalt);
+      }
+      #sanji-tr-zoom-through-tile .g { position: absolute; top: 370px; width: 340px; height: 340px; box-sizing: border-box; border-radius: var(--r-tile); }
+      #sanji-tr-zoom-through-tile .g > .fill, #sanji-tr-zoom-through-tile .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-tr-zoom-through-tile .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-tr-zoom-through-tile .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-tr-zoom-through-tile .g > .in { position: absolute; inset: 0; }
+      #sanji-tr-zoom-through-tile .badge {
+        position: absolute; left: 30px; top: 30px; width: 124px; height: 124px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-tr-zoom-through-tile .lab {
+        position: absolute; left: 32px; bottom: 34px; width: 250px;
+        font-weight: var(--wt-bold); font-size: 40px; line-height: 1.08; letter-spacing: var(--track-ui);
+      }
+
+      /* scene B layer: full frame, clipped to the growing tile rect */
+      #sanji-tr-zoom-through-tile .sceneB { position: absolute; inset: 0; overflow: hidden; background: var(--void); }
+      #sanji-tr-zoom-through-tile .sceneB .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-tr-zoom-through-tile .sceneB .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.5; }
+      #sanji-tr-zoom-through-tile .camB { position: absolute; inset: 0; transform-origin: 960px 540px; }
+      #sanji-tr-zoom-through-tile .box {
+        position: absolute; left: 260px; top: 400px; width: 1400px; height: 280px; box-sizing: border-box;
+        border-radius: var(--r-chat); background: var(--chat-fill);
+        border: var(--rim) solid var(--chat-rim); box-shadow: var(--chat-shadow);
+      }
+      #sanji-tr-zoom-through-tile .prompt { position: absolute; left: 54px; top: 44px; font-weight: 500; font-size: 44px; letter-spacing: var(--track-ui); color: #EFE7E1; white-space: pre; }
+      #sanji-tr-zoom-through-tile .plus { position: absolute; left: 50px; bottom: 40px; width: 38px; height: 38px; }
+      #sanji-tr-zoom-through-tile .tools { position: absolute; right: 36px; bottom: 30px; display: flex; align-items: center; gap: 28px; color: #E9E2DC; font-size: 32px; font-weight: 500; letter-spacing: var(--track-ui); }
+      #sanji-tr-zoom-through-tile .tools svg { display: block; }
+      #sanji-tr-zoom-through-tile .send { width: 72px; height: 72px; border-radius: 20px; background: var(--ember); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(255,122,26,0.35); }
+      #sanji-tr-zoom-through-tile .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+      /* the tile's own glass, painted on top of B while it grows, dissolving away */
+      #sanji-tr-zoom-through-tile .veil { position: absolute; inset: 0; background: var(--glass-fill-active), var(--cobalt); }
+      #sanji-tr-zoom-through-tile .ghost { position: absolute; left: 790px; top: 370px; width: 340px; height: 340px; transform-origin: 50% 50%; }
+
+      /* rim of the growing tile */
+      #sanji-tr-zoom-through-tile .rim {
+        position: absolute; box-sizing: border-box; pointer-events: none;
+        border: 2px solid rgba(255,255,255,0.7);
+        box-shadow: 0 0 0 0 rgba(255,255,255,0), inset 0 0 0 0 rgba(255,255,255,0);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-zoom-through-tile" data-composition-id="sanji-tr-zoom-through-tile" data-start="0" data-width="1920" data-height="1080">
+      <div class="camA">
+        <div class="g" style="left:370px"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="60" height="60" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 8h10M7 12h7" stroke="#3A46E8" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="lab" data-slot="tileA1">The pitch</div></div></div>
+        <div class="g hero" style="left:790px"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="60" height="60" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path fill="#3A46E8" d="M14 2v6h6z" opacity="0.55"/><path fill="#3A46E8" d="M12 11.2l1.05 2.6 2.6 1.05-2.6 1.05L12 18.5l-1.05-2.6-2.6-1.05 2.6-1.05z"/></svg></div>
+          <div class="lab" data-slot="tileA2">Write the prompt</div></div></div>
+        <div class="g" style="left:1210px"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="60" height="60" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" fill="#FFFFFF"/><path d="M10 7.2v5.6l4.6-2.8z" fill="#3A46E8"/><path d="M8 21h8M12 17v4" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+          <div class="lab" data-slot="tileA3">Render it</div></div></div>
+      </div>
+
+      <div class="sceneB">
+        <div class="warm"></div>
+        <div class="vig"></div>
+        <div class="camB">
+          <div class="box">
+            <div class="prompt" data-slot="prompt">Make SaaS launch video</div>
+            <svg class="plus" viewBox="0 0 24 24" fill="none" stroke="#F2ECE6" stroke-width="2" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg>
+            <div class="tools">
+              <span data-slot="model">Opus 5.5</span>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#E9E2DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5"/></svg>
+              <div class="send"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></div>
+            </div>
+          </div>
+        </div>
+        <div class="grain"></div>
+        <div class="veil"></div>
+      </div>
+      <div class="rim"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-zoom-through-tile";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const DORM = css.getPropertyValue("--dormant").trim();
+
+        const tiles = $$(".g"), hero = $(".g.hero"), side = tiles.filter((t) => t !== hero);
+        const sceneB = $(".sceneB"), rim = $(".rim"), camA = $(".camA");
+        /* ghost: a copy of the hero tile's content riding inside the growing glass */
+        const ghost = document.createElement("div"); ghost.className = "ghost";
+        [...hero.querySelector(".in").children].forEach((n) => { const c = n.cloneNode(true); c.removeAttribute("data-slot"); ghost.appendChild(c); });
+        $(".veil").appendChild(ghost);
+        const R0 = 47.8, HW0 = 176.8, HH0 = 176.8;       /* hero tile half size, centred on frame */
+
+        /* one proxy drives the tile rect: clip of scene B, rim box, camera A */
+        const P = { e: 0 };
+        const apply = () => {
+          const e = P.e;
+          const hw = HW0 + (960 - HW0) * e, hh = HH0 + (540 - HH0) * e;
+          const r = R0 * (1 - e) * (1 - e) + 0.0;
+          const L = 960 - hw, T = 540 - hh;
+          sceneB.style.clipPath = `inset(${T}px ${L}px ${T}px ${L}px round ${r}px)`;
+          rim.style.left = L + "px"; rim.style.top = T + "px";
+          rim.style.width = hw * 2 + "px"; rim.style.height = hh * 2 + "px"; rim.style.borderRadius = r + "px";
+          camA.style.transform = `scale(${1 + (hw / HW0 - 1) * 0.9})`;
+          ghost.style.transform = `scale(${hw / 170})`;
+        };
+        apply();
+
+        const tl = gsap.timeline({ paused: true });
+        const PUSH = 0.42, DUR = 0.82, END = PUSH + DUR + 0.45;
+
+        tl.set(sceneB, { autoAlpha: 0 }, 0).set(rim, { autoAlpha: 0 }, 0);
+
+        /* scene A: hero tile lights, neighbours go dormant */
+        tl.to(hero.querySelector(".lit"), { opacity: 1, duration: 0.35, ease: "power2.out" }, 0.04)
+          .fromTo(hero, { scale: 1 }, { scale: 1.04, duration: 0.4, ease: "expo.out" }, 0.04)
+          .to(side.map((t) => t.querySelector(".lab")), { color: DORM, duration: 0.35, ease: "power2.inOut" }, 0.08)
+          .to(side.map((t) => t.querySelector(".badge")), { opacity: 0.6, duration: 0.35 }, 0.08);
+
+        /* push into the tile: hero glass hands over to the growing B rect */
+        tl.set(sceneB, { autoAlpha: 1 }, PUSH).set(rim, { autoAlpha: 1 }, PUSH)
+          .set(hero, { autoAlpha: 0 }, PUSH + 0.02)
+          .fromTo(P, { e: 0 }, { e: 1, duration: DUR, ease: "power3.inOut", onUpdate: apply }, PUSH)
+          .to(side, { filter: "blur(18px)", autoAlpha: 0, duration: DUR * 0.6, ease: "power2.in" }, PUSH + 0.05);
+
+        /* rim flares white-hot mid-push, then dissolves as it hits the frame edge */
+        tl.to(rim, { borderColor: "rgba(255,255,255,1)", boxShadow: "0 0 70px 10px rgba(190,205,255,0.75), inset 0 0 60px 6px rgba(255,255,255,0.45)", duration: DUR * 0.45, ease: "power2.in" }, PUSH)
+          .to(rim, { borderColor: "rgba(255,200,150,0)", boxShadow: "0 0 0 0 rgba(255,170,90,0), inset 0 0 120px 30px rgba(255,150,70,0)", duration: DUR * 0.5, ease: "power2.out" }, PUSH + DUR * 0.48);
+
+        /* glass veil dissolves: the tile's interior turns into scene B */
+        tl.fromTo(ghost, { opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(12px)", duration: 0.3, ease: "power2.in" }, PUSH + 0.02);
+        tl.fromTo($(".veil"), { opacity: 1 }, { opacity: 0, duration: DUR * 0.62, ease: "power2.inOut" }, PUSH + DUR * 0.18);
+        tl.fromTo($(".camB"), { scale: 1.14, filter: "blur(22px)" }, { scale: 1, filter: "blur(0px)", duration: DUR + 0.25, ease: "expo.out" }, PUSH + DUR * 0.3)
+          .fromTo($(".warm"), { opacity: 1 }, { opacity: 0.82, duration: 0.8, ease: "sine.inOut" }, PUSH + DUR * 0.5);
+        /* house text preset: the chat prompt pours in as the box comes sharp, model label rises as a block */
+        TXT.reveal(tl, $(".prompt"), PUSH + DUR * 0.38);
+        TXT.block(tl, $('.tools [data-slot="model"]'), PUSH + DUR * 0.5);
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

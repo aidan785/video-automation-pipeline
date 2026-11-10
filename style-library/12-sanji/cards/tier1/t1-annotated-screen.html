@@ -1,0 +1,319 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · ANNOTATED SCREEN
+  COBALT canvas with slow sonar rings. A STAND-IN app screenshot (white rounded
+  plate with generic UI: sidebar, search bar, chart, tiles, export button;
+  replace with a real screenshot at assembly) slides up. Three numbered
+  callouts land on regions of the screen one at a time: a cobalt circle pops
+  with two finite pulsing rings, a leader line draws out to a liquid-glass
+  label pill at the side of the frame. Each callout FOCUSES in turn: a soft
+  spotlight frames its region while the rest of the screen dims, the previous
+  callout and pill go dormant. Ends with all three visible, the last in focus.
+  Slots: a1-a3 (label pills, <= 16).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-annotated-screen {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-annotated-screen .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      /* stand-in screenshot plate */
+      #sanji-t1-annotated-screen .plate {
+        position: absolute; left: 430px; top: 190px; width: 1060px; height: 700px; border-radius: var(--r-plate); overflow: hidden;
+        background: var(--paper); box-shadow: 0 40px 100px rgba(14,18,150,0.45), 0 0 0 1.5px rgba(255,255,255,0.5);
+      }
+      #sanji-t1-annotated-screen .plate i { position: absolute; display: block; }
+      #sanji-t1-annotated-screen .plate .side { left: 0; top: 0; width: 230px; height: 700px; background: var(--paper-2); }
+      #sanji-t1-annotated-screen .plate .bar { height: 16px; border-radius: 8px; background: var(--ink-pre); }
+      #sanji-t1-annotated-screen .plate .ico { width: 26px; height: 26px; border-radius: 8px; background: var(--ink-pre); }
+      #sanji-t1-annotated-screen .plate .sel { left: 18px; top: 206px; width: 194px; height: 52px; border-radius: 14px; background: rgba(var(--cobalt-rgb),0.12); }
+      #sanji-t1-annotated-screen .plate .search { left: 270px; top: 34px; width: 440px; height: 56px; border-radius: 28px; background: var(--paper-2); border: 1.5px solid rgba(28,28,30,0.08); box-sizing: border-box; }
+      #sanji-t1-annotated-screen .plate .card { border-radius: 24px; background: var(--paper); border: 1.5px solid rgba(28,28,30,0.08); box-sizing: border-box; box-shadow: 0 8px 24px rgba(28,28,30,0.06); }
+      #sanji-t1-annotated-screen .plate .btn { left: 860px; top: 618px; width: 160px; height: 56px; border-radius: 16px; background: var(--cobalt); }
+      #sanji-t1-annotated-screen .plate .btnt { left: 860px; top: 618px; width: 160px; height: 56px; display: flex; align-items: center; justify-content: center; font-weight: var(--wt-bold); font-size: 22px; color: var(--white); }
+      #sanji-t1-annotated-screen .plate .dim { left: 0; top: 0; width: 1060px; height: 700px; background: rgba(14,18,80,0.0); }
+      #sanji-t1-annotated-screen .spot {
+        position: absolute; border-radius: 22px; box-sizing: border-box;
+        border: 3px solid var(--cobalt); box-shadow: 0 0 0 3000px rgba(18,30,150,0.24), 0 0 30px rgba(var(--cobalt-rgb),0.35);
+      }
+      /* leaders + callouts (frame coordinates) */
+      #sanji-t1-annotated-screen svg.wires { position: absolute; inset: 0; overflow: visible; }
+      #sanji-t1-annotated-screen .co { position: absolute; width: 0; height: 0; }
+      #sanji-t1-annotated-screen .co .dot {
+        position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; border-radius: 50%; box-sizing: border-box;
+        background: var(--cobalt); border: 3px solid var(--white);
+        box-shadow: 0 8px 24px rgba(14,18,150,0.45), 0 0 0 6px rgba(var(--cobalt-rgb),0.25);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 28px; color: var(--white);
+      }
+      #sanji-t1-annotated-screen .co .pr {
+        position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; border-radius: 50%; box-sizing: border-box;
+        border: 3px solid var(--cobalt); opacity: 0;
+      }
+      #sanji-t1-annotated-screen .g { position: absolute; box-sizing: border-box; border-radius: var(--r-pill); height: 96px; }
+      #sanji-t1-annotated-screen .g > .fill, #sanji-t1-annotated-screen .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-annotated-screen .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-annotated-screen .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-annotated-screen .g .in { position: relative; height: 96px; box-sizing: border-box; display: flex; align-items: center; gap: 18px; padding: 0 34px 0 18px; }
+      #sanji-t1-annotated-screen .g .n {
+        flex: none; width: 60px; height: 60px; border-radius: 50%; box-sizing: border-box; background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 26px;
+      }
+      #sanji-t1-annotated-screen .g .lab { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 36px; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-annotated-screen" data-composition-id="sanji-t1-annotated-screen" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <!-- STAND-IN screenshot: generic dashboard. Replace with a real screenshot at assembly. -->
+      <div class="plate">
+        <i class="side"></i>
+        <i style="left:30px;top:36px;width:44px;height:44px;border-radius:14px;background:var(--cobalt)"></i>
+        <i class="bar" style="left:88px;top:50px;width:100px"></i>
+        <i class="ico" style="left:36px;top:140px"></i><i class="bar" style="left:76px;top:145px;width:110px"></i>
+        <i class="sel"></i>
+        <i class="ico" style="left:36px;top:219px;background:var(--cobalt)"></i><i class="bar" style="left:76px;top:224px;width:96px;background:var(--cobalt);opacity:0.75"></i>
+        <i class="ico" style="left:36px;top:298px"></i><i class="bar" style="left:76px;top:303px;width:120px"></i>
+        <i class="ico" style="left:36px;top:377px"></i><i class="bar" style="left:76px;top:382px;width:86px"></i>
+        <i class="ico" style="left:36px;top:456px"></i><i class="bar" style="left:76px;top:461px;width:104px"></i>
+        <i class="search"></i>
+        <i style="left:292px;top:52px;width:20px;height:20px;border-radius:50%;border:3px solid var(--ink-pre);box-sizing:border-box"></i>
+        <i class="bar" style="left:330px;top:54px;width:170px;opacity:0.6"></i>
+        <i style="left:960px;top:36px;width:52px;height:52px;border-radius:50%;background:var(--ink-pre)"></i>
+        <i style="left:890px;top:48px;width:30px;height:30px;border-radius:9px;background:var(--paper-2)"></i>
+        <i class="card" style="left:270px;top:124px;width:750px;height:300px"></i>
+        <i class="bar" style="left:300px;top:154px;width:160px;background:var(--ink-mid);opacity:0.55"></i>
+        <svg style="position:absolute;left:300px;top:200px" width="690" height="200" viewBox="0 0 690 200" fill="none"><path d="M0 170 C 80 160, 120 120, 200 130 S 330 70, 420 90 S 560 30, 690 24" style="stroke:var(--cobalt)" stroke-width="5" stroke-linecap="round"/><path d="M0 170 C 80 160, 120 120, 200 130 S 330 70, 420 90 S 560 30, 690 24 V200 H0Z" fill="rgba(32,66,238,0.08)"/></svg>
+        <i class="card" style="left:270px;top:450px;width:235px;height:140px"></i>
+        <i class="card" style="left:527px;top:450px;width:235px;height:140px"></i>
+        <i class="card" style="left:784px;top:450px;width:236px;height:140px"></i>
+        <i class="bar" style="left:296px;top:478px;width:90px"></i><i style="left:296px;top:516px;width:130px;height:36px;border-radius:10px;background:var(--ink);opacity:0.8"></i>
+        <i class="bar" style="left:553px;top:478px;width:110px"></i><i style="left:553px;top:516px;width:100px;height:36px;border-radius:10px;background:var(--ink);opacity:0.8"></i>
+        <i class="bar" style="left:810px;top:478px;width:80px"></i><i style="left:810px;top:516px;width:120px;height:36px;border-radius:10px;background:var(--ink);opacity:0.8"></i>
+        <i class="btn"></i><div class="btnt" style="position:absolute">Export</div>
+        <div class="spot"></div>
+      </div>
+
+      <svg class="wires" viewBox="0 0 1920 1080" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g class="ld"><path class="u" d="M530 422 H 400" style="stroke:var(--cobalt-ink)" stroke-width="8"/><path class="v" d="M530 422 H 400" stroke="#FFFFFF" stroke-width="3"/><circle cx="400" cy="422" r="7" fill="#FFFFFF"/></g>
+        <g class="ld"><path class="u" d="M1140 252 H 1520" style="stroke:var(--cobalt-ink)" stroke-width="8"/><path class="v" d="M1140 252 H 1520" stroke="#FFFFFF" stroke-width="3"/><circle cx="1520" cy="252" r="7" fill="#FFFFFF"/></g>
+        <g class="ld"><path class="u" d="M1450 808 H 1520" style="stroke:var(--cobalt-ink)" stroke-width="8"/><path class="v" d="M1450 808 H 1520" stroke="#FFFFFF" stroke-width="3"/><circle cx="1520" cy="808" r="7" fill="#FFFFFF"/></g>
+      </svg>
+
+      <div class="co" style="left:530px;top:422px"><div class="pr"></div><div class="pr"></div><div class="dot">1</div></div>
+      <div class="co" style="left:1140px;top:252px"><div class="pr"></div><div class="pr"></div><div class="dot">2</div></div>
+      <div class="co" style="left:1450px;top:808px"><div class="pr"></div><div class="pr"></div><div class="dot">3</div></div>
+
+      <div class="g pill p1" style="right:1520px;top:374px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="n">1</div><div class="lab" data-slot="a1">Projects</div></div></div>
+      <div class="g pill p2" style="left:1520px;top:204px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="n">2</div><div class="lab" data-slot="a2">Search</div></div></div>
+      <div class="g pill p3" style="left:1520px;top:760px"><div class="fill"></div><div class="lit"></div><div class="in"><div class="n">3</div><div class="lab" data-slot="a3">Export</div></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-annotated-screen";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const DORM = css.getPropertyValue("--dormant").trim(), WHITE = css.getPropertyValue("--white").trim();
+
+        const cos = $$(".co"), lds = $$(".ld"), pills = $$(".pill");
+        /* spotlight rects in plate coords for each region */
+        const SPOT = [
+          { x: 12, y: 200, w: 206, h: 64 },     /* sidebar item */
+          { x: 262, y: 26, w: 456, h: 72 },     /* search bar */
+          { x: 850, y: 608, w: 180, h: 76 },    /* export button */
+        ];
+        lds.forEach((g) => g.querySelectorAll("path").forEach((p) => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; }));
+
+        const tl = gsap.timeline({ paused: true });
+        const T1 = 1.15, STEP = 1.55, END = T1 + 2 * STEP + 2.2;
+
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        const pop = (el, t, s0 = 0.9) => tl.fromTo(el, { autoAlpha: 0, scale: s0, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, t);
+
+        tl.set([...cos, ...pills, ...lds.map((g) => g.querySelector("circle"))], { autoAlpha: 0 }, 0)
+          .set($(".spot"), { autoAlpha: 0, x: SPOT[0].x, y: SPOT[0].y, width: SPOT[0].w, height: SPOT[0].h }, 0);
+
+        /* plate slide-up with vertical smear, then drift */
+        tl.fromTo($(".plate"), { autoAlpha: 0, y: 220, scaleY: 1.08, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, scaleY: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.12);
+
+        for (let i = 0; i < 3; i++) {
+          const t = T1 + i * STEP, c = cos[i], g = lds[i], p = pills[i];
+          /* spotlight moves / appears */
+          if (i === 0) tl.fromTo($(".spot"), { autoAlpha: 0, scale: 1.08 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "expo.out" }, t);
+          else tl.to($(".spot"), { x: SPOT[i].x, y: SPOT[i].y, width: SPOT[i].w, height: SPOT[i].h, duration: 0.55, ease: "power3.inOut" }, t - 0.1);
+          /* previous callout dormant */
+          if (i > 0) {
+            const pc = cos[i - 1], pp = pills[i - 1];
+            tl.to(pc, { opacity: 0.5, scale: 0.85, duration: 0.35, ease: "power2.inOut" }, t)
+              .to(pp.querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, t)
+              .to(pp, { scale: 1, duration: 0.35, ease: "power2.inOut" }, t)
+              .to(pp.querySelector(".lab"), { color: DORM, duration: 0.35 }, t)
+              .to(pp.querySelector(".n"), { opacity: 0.6, duration: 0.35 }, t)
+              .to(lds[i - 1], { opacity: 0.4, duration: 0.35 }, t);
+          }
+          /* callout pops + two finite sonar pulses */
+          pop(c, t + 0.1, 0.6);
+          c.querySelectorAll(".pr").forEach((r, k) => tl.fromTo(r, { scale: 1, opacity: 0.85 }, { scale: 2.3, opacity: 0, duration: 0.95, ease: "power2.out", repeat: 1, repeatDelay: 0.25 }, t + 0.25 + k * 0.35));
+          /* leader draws out to the pill */
+          tl.to(g.querySelectorAll("path"), { strokeDashoffset: 0, duration: 0.42, ease: "power2.inOut" }, t + 0.3)
+            .to(g.querySelector("circle"), { autoAlpha: 1, duration: 0.15 }, t + 0.66);
+          pop(p, t + 0.62);
+          tl.to(p.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, t + 0.68)
+            .to(p, { scale: 1.04, duration: 0.5, ease: "expo.out" }, t + 0.68);
+          TXT.block(tl, p.querySelector(".n"), t + 0.7);
+          TXT.reveal(tl, p.querySelector(".lab"), t + 0.76);
+        }
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

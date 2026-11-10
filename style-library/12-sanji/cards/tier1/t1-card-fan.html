@@ -1,0 +1,258 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · overview · CARD FAN
+  Cobalt wash + faint blueprint grid. A stack of five glass cards rises out of
+  blur from below, then fans out like a hand of cards (each rotates around a
+  shared pivot far below the frame, staggered from the centre out). The middle
+  card lifts, scales a touch and lights ACTIVE with a halo; the other four
+  focus-shift to dormant. Use for "five options, this is the one".
+  Slots: c1..c5 (richtext <=16, <br> ok). c3 is the hero (middle) card.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-card-fan {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt-wash); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-card-fan .grid { position: absolute; inset: 0; background: var(--cell-grid); opacity: 0.8;
+        -webkit-mask-image: radial-gradient(ellipse at 50% 45%, #000 30%, transparent 78%); mask-image: radial-gradient(ellipse at 50% 45%, #000 30%, transparent 78%); }
+      #sanji-t1-card-fan .floor {
+        position: absolute; left: 460px; top: 870px; width: 1000px; height: 160px; border-radius: 50%;
+        background: radial-gradient(ellipse, rgba(14,18,150,0.45) 0%, rgba(14,18,150,0) 70%); filter: blur(10px);
+      }
+      #sanji-t1-card-fan .halo {
+        position: absolute; left: 960px; top: 470px; width: 900px; height: 900px; margin: -450px 0 0 -450px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(150,170,255,0.40) 0%, rgba(90,110,255,0.14) 40%, rgba(32,66,238,0) 68%); opacity: 0;
+      }
+      #sanji-t1-card-fan .slotc { position: absolute; left: 805px; top: 330px; width: 310px; height: 440px; }
+      #sanji-t1-card-fan .g { position: absolute; inset: 0; box-sizing: border-box; border-radius: 44px; }
+      #sanji-t1-card-fan .g > .fill, #sanji-t1-card-fan .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-card-fan .g > .fill { background: var(--glass-fill), rgba(32,66,238,0.55); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-card-fan .g > .lit  { background: var(--glass-fill-active), rgba(32,66,238,0.6); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-card-fan .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-card-fan .badge {
+        position: absolute; left: 32px; top: 32px; width: 108px; height: 108px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-card-fan .num { position: absolute; right: 34px; top: 40px; font-family: var(--font-mono); font-size: 24px; color: var(--white-soft); }
+      #sanji-t1-card-fan .ttl {
+        position: absolute; left: 32px; right: 24px; bottom: 34px;
+        font-weight: var(--wt-heavy); font-size: 50px; line-height: 0.92; letter-spacing: var(--track-caps); text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-card-fan" data-composition-id="sanji-t1-card-fan" data-start="0" data-width="1920" data-height="1080">
+      <div class="grid"></div>
+      <div class="floor"></div>
+      <div class="halo"></div>
+
+      <div class="slotc" style="z-index:1"><div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="50" height="50" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFFFFF"/><path d="M12 6.5V12h4" fill="none" stroke="#3A46E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="num">01</div><div class="ttl" data-slot="c1">Timing</div></div></div></div>
+      <div class="slotc" style="z-index:2"><div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="50" height="50" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="7" cy="7" r="4"/><circle cx="17" cy="7" r="4" opacity="0.7"/><circle cx="7" cy="17" r="4" opacity="0.7"/><circle cx="17" cy="17" r="4" opacity="0.45"/></svg></div>
+        <div class="num">02</div><div class="ttl" data-slot="c2">Color</div></div></div></div>
+      <div class="slotc" style="z-index:3"><div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="50" height="50" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M2 4.5c2.8-.9 6-.6 9 1.2V20c-3-1.6-6.2-1.9-9-1z"/><path d="M22 4.5c-2.8-.9-6-.6-9 1.2V20c3-1.6 6.2-1.9 9-1z"/></svg></div>
+        <div class="num">03</div><div class="ttl" data-slot="c3">The<br>story</div></div></div></div>
+      <div class="slotc" style="z-index:4"><div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="50" height="50" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M5 4h14v3h-5.5v13h-3V7H5z"/></svg></div>
+        <div class="num">04</div><div class="ttl" data-slot="c4">Type</div></div></div></div>
+      <div class="slotc" style="z-index:5"><div class="g"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"><path d="M4 19c4 0 4-14 9-14 3 0 4 2 7 2"/><circle cx="4" cy="19" r="1.6" fill="#FFFFFF"/><circle cx="20" cy="7" r="1.6" fill="#FFFFFF"/></svg></div>
+        <div class="num">05</div><div class="ttl" data-slot="c5">Easing</div></div></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-card-fan";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const DORM = css.getPropertyValue("--dormant").trim();
+
+        const slots = $$(".slotc"), cards = slots.map((s) => s.querySelector(".g"));
+        const ANG = [-28, -14, 0, 14, 28];
+        const STACK = [{ r: -3, x: -8, y: 10 }, { r: 2, x: 6, y: 6 }, { r: 0, x: 0, y: 0 }, { r: -1.5, x: -4, y: 4 }, { r: 3, x: 9, y: 12 }];
+        /* pivot 1150px below the card centre: a hand of cards */
+        gsap.set(slots, { transformOrigin: "50% 1370px" });
+
+        const tl = gsap.timeline({ paused: true });
+        const T_FAN = 1.25, T_LIFT = 2.45, END = 6.2;
+
+        /* tile text: badge + number rise as blocks, the title pours in word by word */
+        const tileIn = (c, t) => { TXT.block(tl, [c.querySelector(".badge"), c.querySelector(".num")], t, { stagger: 0.06 }); TXT.reveal(tl, c.querySelector(".ttl"), t + 0.12); };
+
+        /* 1. the stack rises out of blur, middle card on top */
+        const order = [2, 1, 3, 0, 4];
+        slots.forEach((s, i) => {
+          const k = order.indexOf(i);
+          tl.fromTo(s, { autoAlpha: 0, x: STACK[i].x, y: 520, rotation: STACK[i].r * 3, filter: "blur(14px)" },
+            { autoAlpha: 1, y: STACK[i].y, rotation: STACK[i].r, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, 0.1 + k * 0.07);
+        });
+        tl.set(slots[2], { zIndex: 6 }, 0);
+        tl.fromTo($(".floor"), { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 0.2);
+        tl.set(cards.filter((c, i) => i !== 2).flatMap((c) => [...c.querySelectorAll(".badge,.num")]), { autoAlpha: 0 }, 0);
+        tileIn(cards[2], 0.55);
+
+        /* 2. the fan: centre out, staggered */
+        slots.forEach((s, i) => {
+          const k = Math.abs(i - 2);
+          tl.to(s, { rotation: ANG[i], x: 0, y: 0, duration: 0.85, ease: "power3.inOut" }, T_FAN + k * 0.07);
+          if (i !== 2) tileIn(cards[i], T_FAN + 0.35 + k * 0.08);
+        });
+
+        /* 3. the middle card lifts and lights; the rest go dormant */
+        tl.set(slots[2], { zIndex: 10 }, T_LIFT);
+        tl.to(slots[2], { y: -84, scale: 1.08, duration: 0.6, ease: "expo.out" }, T_LIFT)
+          .to(cards[2].querySelector(".lit"), { opacity: 1, duration: 0.45, ease: "power2.out" }, T_LIFT + 0.05)
+          .fromTo($(".halo"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, T_LIFT + 0.05);
+        cards.forEach((c, i) => {
+          if (i === 2) return;
+          tl.to(c.querySelector(".ttl"), { color: DORM, duration: 0.35, ease: "power2.inOut" }, T_LIFT + 0.1)
+            .to([c.querySelector(".badge"), c.querySelector(".num")], { opacity: 0.6, duration: 0.35 }, T_LIFT + 0.1)
+            .to(slots[i], { y: 14, duration: 0.6, ease: "power2.inOut" }, T_LIFT + 0.1);
+        });
+        /* hold: the hero card breathes upward a hair (text layer stays still relative to it) */
+        tl.to(slots[2], { y: -96, duration: END - T_LIFT - 0.6, ease: "sine.inOut" }, T_LIFT + 0.6);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

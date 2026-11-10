@@ -1,0 +1,270 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · KEYBOARD SHORTCUT
+  EMBER canvas: true black, breathing orange corner light, grain. Three dark
+  glass keycaps (with a physical key depth) rise in out of blur with faint
+  "+" signs between them. The keys are pressed one by one and HELD: each dips,
+  loses its depth, gets an inner shadow, and its rim + glyph flash ember hot
+  then cool to warm white. On the final key the whole chord fires: a light
+  pool blooms under the keys, then all three release together. The action
+  label resolves word by word below. Hot to cool is the whole story.
+  Slots: k1, k2, k3 (key glyphs, <= 6 each; long names get a wide key),
+  action (<= 28).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-keyboard-shortcut {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-keyboard-shortcut .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-keyboard-shortcut .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.55; }
+      #sanji-t1-keyboard-shortcut .pool {
+        position: absolute; left: 50%; top: 520px; width: 1300px; height: 520px; margin-left: -650px; border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(255,150,60,0.55), rgba(230,131,42,0.25) 45%, rgba(103,39,13,0) 100%);
+        filter: blur(30px); opacity: 0;
+      }
+      #sanji-t1-keyboard-shortcut .row {
+        position: absolute; left: 0; right: 0; top: 330px; height: 260px; display: flex; align-items: center; justify-content: center; gap: 40px;
+      }
+      #sanji-t1-keyboard-shortcut .key { position: relative; width: 230px; height: 230px; flex: none; }
+      #sanji-t1-keyboard-shortcut .key.wide { width: 340px; }
+      #sanji-t1-keyboard-shortcut .key .base {
+        position: absolute; left: 0; right: 0; top: 18px; bottom: -18px; border-radius: 48px;
+        background: linear-gradient(180deg, rgba(40,22,12,1), rgba(10,5,3,1));
+        box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,140,60,0.12);
+      }
+      #sanji-t1-keyboard-shortcut .key .cap {
+        position: absolute; inset: 0; border-radius: 48px; box-sizing: border-box;
+        background: linear-gradient(160deg, rgba(48,30,20,0.98) 0%, rgba(18,10,6,0.98) 55%, rgba(8,4,2,1) 100%);
+        border: var(--rim) solid var(--chip-rim);
+        box-shadow: inset 0 2px 0 rgba(255,255,255,0.14), inset 0 -18px 40px rgba(0,0,0,0.5);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-keyboard-shortcut .key .hot {
+        position: absolute; inset: 0; border-radius: 48px; box-sizing: border-box; opacity: 0;
+        box-shadow: var(--chip-glow), inset 0 10px 30px rgba(0,0,0,0.75), inset 0 -2px 18px rgba(255,122,26,0.35);
+      }
+      #sanji-t1-keyboard-shortcut .key .gl {
+        position: relative; font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 104px; letter-spacing: var(--track-tight);
+        color: #EFE7E1; line-height: 1;
+      }
+      #sanji-t1-keyboard-shortcut .key.wide .gl, #sanji-t1-keyboard-shortcut .key.word .gl { font-size: 62px; font-weight: var(--wt-ui); }
+      #sanji-t1-keyboard-shortcut .plus {
+        flex: none; font-family: var(--font-display); font-weight: 500; font-size: 72px; color: rgba(255,240,228,0.45); margin-top: 18px;
+      }
+      #sanji-t1-keyboard-shortcut .act {
+        position: absolute; left: 0; right: 0; top: 690px; text-align: center; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 76px; letter-spacing: var(--track-tight); color: #EFE7E1;
+      }
+      #sanji-t1-keyboard-shortcut .act .w { display: inline-block; white-space: pre; }
+      #sanji-t1-keyboard-shortcut .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-keyboard-shortcut" data-composition-id="sanji-t1-keyboard-shortcut" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="vig"></div>
+      <div class="pool"></div>
+      <div class="row">
+        <div class="key"><div class="base"></div><div class="cap"><span class="gl" data-slot="k1">⌘</span></div><div class="hot"></div></div>
+        <div class="plus">+</div>
+        <div class="key"><div class="base"></div><div class="cap"><span class="gl" data-slot="k2">Shift</span></div><div class="hot"></div></div>
+        <div class="plus">+</div>
+        <div class="key"><div class="base"></div><div class="cap"><span class="gl" data-slot="k3">K</span></div><div class="hot"></div></div>
+      </div>
+      <div class="act" data-slot="action">Open the command bar</div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-keyboard-shortcut";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+
+        const keys = $$(".key"), pluses = $$(".plus");
+        /* long key names get a wide cap */
+        keys.forEach((k) => { const n = [...k.querySelector(".gl").textContent.trim()].length; if (n > 3) k.classList.add("wide"); else if (n > 1) k.classList.add("word"); });
+
+        const act = $(".act");
+        const ws = act.textContent.trim().split(/\s+/); act.textContent = "";
+        const words = ws.map((w, i) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : ""); act.appendChild(s); return s; });
+
+        const tl = gsap.timeline({ paused: true });
+        const P0 = 1.35, PG = 0.5, FIRE = P0 + 2 * PG, REL = FIRE + 0.75, END = REL + 2.6;
+
+        tl.fromTo($(".warm"), { opacity: 0.5 }, { opacity: 1, duration: FIRE, ease: "sine.inOut" }, 0)
+          .to($(".warm"), { opacity: 0.6, duration: END - FIRE, ease: "sine.inOut" }, FIRE);
+
+        /* keys rise in out of blur */
+        tl.fromTo(keys, { autoAlpha: 0, y: 70, filter: "blur(14px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out", stagger: 0.12 }, 0.2)
+          .fromTo(pluses, { autoAlpha: 0, scale: 0.6, filter: "blur(8px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out", stagger: 0.12 }, 0.55);
+
+        /* press + hold each key: dip, lose depth, ember flash, cool */
+        keys.forEach((k, i) => {
+          const t = P0 + i * PG, cap = k.querySelector(".cap"), hot = k.querySelector(".hot"), gl = k.querySelector(".gl"), base = k.querySelector(".base");
+          tl.to([cap, hot], { y: 14, duration: 0.1, ease: "power2.in" }, t)
+            .to(base, { top: 6, bottom: -6, duration: 0.1, ease: "power2.in" }, t)
+            .to(hot, { opacity: 1, duration: 0.1, ease: "power2.out" }, t + 0.04)
+            .fromTo(gl, { color: "#EFE7E1", textShadow: "0 0 0px rgba(255,122,26,0)" }, { color: "#FFB347", textShadow: "0 0 18px rgba(255,140,40,0.95), 0 0 50px rgba(255,122,26,0.6)", duration: 0.1, ease: "power2.out" }, t + 0.04)
+            .to(gl, { color: "#F6EDE6", textShadow: "0 0 14px rgba(255,140,40,0.35)", duration: 0.5, ease: "power2.out" }, t + 0.16)
+            .to(hot, { opacity: 0.55, duration: 0.5, ease: "power2.out" }, t + 0.16);
+          if (i > 0) tl.to(pluses[i - 1], { color: "rgba(255,200,150,0.85)", duration: 0.3 }, t);
+        });
+
+        /* chord fires on the last key */
+        tl.fromTo($(".pool"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.7, ease: "expo.out" }, FIRE + 0.04)
+          .to($$(".hot"), { opacity: 1, duration: 0.12, ease: "power2.out" }, FIRE + 0.04)
+          .to($$(".gl"), { color: "#FFFFFF", duration: 0.12 }, FIRE + 0.04)
+          .to($$(".hot"), { opacity: 0.6, duration: 0.5, ease: "power2.out" }, FIRE + 0.2);
+
+        /* release together: spring back up, glow cools out */
+        tl.to($$(".key .cap, .key .hot"), { y: 0, duration: 0.4, ease: "back.out(1.3)" }, REL)
+          .to($$(".key .base"), { top: 18, bottom: -18, duration: 0.4, ease: "back.out(1.3)" }, REL)
+          .to($$(".hot"), { opacity: 0, duration: 0.55, ease: "power2.out" }, REL)
+          .to($$(".gl"), { color: "#EFE7E1", textShadow: "0 0 0px rgba(255,122,26,0)", duration: 0.55, ease: "power2.out" }, REL)
+          .to(pluses, { color: "rgba(255,240,228,0.45)", duration: 0.5 }, REL)
+          .to($(".pool"), { opacity: 0.45, duration: 1.2, ease: "sine.inOut" }, REL);
+
+        /* action resolves, warm white out of glowing blur */
+        TXT.reveal(tl, words, FIRE + 0.25);                /* house preset pour-in */
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

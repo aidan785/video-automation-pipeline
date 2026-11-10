@@ -1,0 +1,389 @@
+<!doctype html>
+<!--
+  HP V3 · tier1 · text · SCALE EMPHASIS  (Field Glass, FIELD, window type)
+  DEFAULT (pass 2): photo, light ON (one of group A's two light cards: the sun rising behind
+  the reeds sets up the window moment), grain off. On flat grounds the frost is solid glass and
+  the window still opens onto the photo; on none the frost is dropped and only the word moves.
+  One word carries the point. Reeds against a low sun rise out of the dark
+  (SUNRISE) and a short cream sentence pours in, the line re-centering as it
+  grows. Then the camera leans in: the <em> word glides to frame center and
+  grows toward full width while the other words blur and fall back to dormant,
+  and the whole frame fogs over from the burn corner (full-bleed CONDENSE).
+  At full size the word becomes a WINDOW: a hand-speed wipe clears the glyphs
+  and the sharp, gold-warmed reeds and sun show through them (the frame's one
+  gold), it takes the heartbeat and a glint passes through it. Then it
+  settles back into the sentence as solid gold while the frost clears and the
+  neighbours re-sharpen. Ground stays still (the window is pinned to it). No orange.
+  Slots: headline (richtext <= 28, one line, one <em> = the key word <= 9 chars),
+  photo (nature stem, default sun-reeds; good: field-sunset, fern-backlit, meadow-sunrise).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #hp3-t1-scale-emphasis { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--hp-deep); font-family: var(--font-body); color: var(--hp-cream); }
+      #hp3-t1-scale-emphasis .slot-photo { display: none; }
+      #hp3-t1-scale-emphasis .frost { inset: 0; border-radius: 0; }
+      #hp3-t1-scale-emphasis[data-ground="none"] .frost { display: none; }
+      #hp3-t1-scale-emphasis .frost > .fg-tint { background: linear-gradient(160deg, rgba(var(--cream-rgb),0.05) 0%, rgba(var(--brick-rgb),0.18) 40%, rgba(var(--deep-rgb),0.52) 100%); box-shadow: none; }
+      #hp3-t1-scale-emphasis .stage { position: absolute; inset: 0; box-sizing: border-box; padding-bottom: 236px; display: flex; align-items: flex-end; justify-content: center; }
+      #hp3-t1-scale-emphasis .line { position: relative; display: inline-block; white-space: nowrap; font-size: 118px; line-height: 1; }
+      #hp3-t1-scale-emphasis .w { display: inline-block; transform-origin: 50% 50%; }
+      #hp3-t1-scale-emphasis .giant { position: absolute; left: 0; top: 0; white-space: nowrap; line-height: 1; pointer-events: none;
+        font-family: var(--font-display); font-variation-settings: var(--display-opsz); font-weight: 800; letter-spacing: -0.045em; transform-origin: 50% 55%; }
+      #hp3-t1-scale-emphasis .win { --w: -30; color: transparent; -webkit-background-clip: text; background-clip: text; background-repeat: no-repeat; visibility: hidden;
+        -webkit-mask-image: linear-gradient(100deg, #000 calc(var(--w) * 1%), transparent calc(var(--w) * 1% + 22%));
+                mask-image: linear-gradient(100deg, #000 calc(var(--w) * 1%), transparent calc(var(--w) * 1% + 22%)); }
+      #hp3-t1-scale-emphasis .glint { --g: -40; color: transparent; -webkit-background-clip: text; background-clip: text; mix-blend-mode: screen; visibility: hidden;
+        background-image: linear-gradient(110deg, rgba(255,240,230,0) calc(var(--g) * 1%), rgba(255,240,230,0.5) calc(var(--g) * 1% + 8%), rgba(255,240,230,0) calc(var(--g) * 1% + 16%)); }
+    </style>
+  </head>
+  <body>
+    <div id="hp3-t1-scale-emphasis" data-composition-id="hp3-t1-scale-emphasis" data-start="0" data-width="1920" data-height="1080">
+      <span class="fg-slot" data-slot="ground">photo</span><span class="fg-slot" data-slot="grain">off</span><span class="fg-slot" data-slot="light">on</span>
+      <span class="slot-photo" data-slot="photo">sun-reeds</span>
+      <div class="fg-ground">
+        <img class="fg-photo" alt="" />
+        <div class="fg-shade"></div>
+        <div class="fg-flare"></div>
+        <div class="fg-night"></div>
+      </div>
+      <div class="fg-glass frost"><div class="fg-tint"></div></div>
+      <div class="stage">
+        <div class="line fg-display" data-slot="headline">Every call gets <em>answered</em></div>
+      </div>
+      <div class="giant win" aria-hidden="true"></div>
+      <div class="giant glint" aria-hidden="true"></div>
+      <div class="fg-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* HP V3 copy of the Sanji TEXT PRESET "uppit-reveal" (source of truth for 15-humanly-possible-v3).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+/* @field-glass:start v3 */
+/* HP V3 · FIELD GLASS motion helpers (single source of truth).
+   Cards carry an inlined copy between the @field-glass markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs`
+   (restamps both the @text-preset and @field-glass blocks).
+
+   Markup it expects (CSS lives in tokens.css, "FIELD GLASS utilities"):
+     .fg-photo > img          the graded nature photo (drifts, sways)
+     .fg-night                pre-sunrise veil, masked by --sr (radius %)
+     .fg-flare                sun bloom at the burn origin (bottom-left)
+     .fg-glass                glass pane; --fb blur px, --fm condense radius %,
+                              --fx/--fy condense origin; child .fg-tint, .fg-dapple
+   GROUND SWITCHES (v3, Aidan 11/3: not every card needs nature / the corner glow;
+   some flat, some with grain, some with no background at all). Every card carries
+   three hidden slots and calls FG.ground(ROOT, defaults) before building its timeline:
+     <span class="fg-slot" data-slot="ground">oxblood</span>  photo | oxblood | deep | brick | cream | burn | wash | none
+     <span class="fg-slot" data-slot="grain">off</span>       on | off
+     <span class="fg-slot" data-slot="light">off</span>       on | off  (the bottom-left sunrise + flare)
+   FG.ground sets data-ground / data-grain / data-light on the root; tokens.css does
+   the rest (hides the photo / flare / night / grain, paints flat grounds, switches
+   glass to the solid Sanji-style fill on flat grounds, makes "none" transparent).
+     FG.ground(ROOT, {ground, grain, light}) -> {ground, photo, flat, none, grain, light}
+   API (timeline-driven, deterministic):
+     FG.sunrise(tl, root, at, {dur})        light burns up from bottom-left, flare peaks then settles
+     FG.condense(tl, el, at, {dur, x, y})   glass fogs in from a point: clear -> frosted, tint rises
+     FG.clear(tl, el, at, {dur})            glass evaporates (exit), edges first
+     FG.beat(tl, el, at, {amp})             the logo's lub-dub: 1.07, back, 1.045, back
+     FG.sway(tl, root, at, dur)             wind on the photo: slow drift + a breath of rotation
+     FG.dapple(tl, el, at, dur)             leaf-shadow plate drifts across a pane
+     FG.POP / FG.SETTLE                     HP pop ease (no overshoot) / uppit settle */
+const FG = (function () {
+  function bz(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x; for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; } return sy(t); };
+  }
+  const POP = bz(0.2, 0.9, 0.25, 1), SETTLE = bz(0.23, 1, 0.32, 1), GLIDE = bz(0.65, 0, 0.35, 1);
+  const q = (root, s) => (root.matches && root.matches(s) ? root : root.querySelector(s));
+
+  const comp = (el) => (el && el.closest ? el.closest("[data-composition-id]") : null);
+  const FLAT = ["oxblood", "deep", "brick", "cream"];
+  function ground(ROOT, d = {}) {
+    const slot = (n) => { const e = ROOT.querySelector(`[data-slot="${n}"]`); return e ? e.textContent.trim().toLowerCase() : ""; };
+    const g = slot("ground") || d.ground || "photo", grain = slot("grain") || d.grain || "off", light = slot("light") || d.light || "off";
+    Object.assign(ROOT.dataset, { ground: g, grain, light: g === "none" ? "off" : light });
+    const base = ROOT.querySelector(".fg-ground");
+    if (base && g === "wash" && !base.querySelector(".fg-blob")) {
+      [["gold", -260, 520], ["orange", 1180, -320], ["brick", 520, 340], ["deep", 1400, 560]].forEach(([c, x, y]) => {
+        const b = document.createElement("div"); b.className = "fg-blob " + c; b.style.left = x + "px"; b.style.top = y + "px"; base.appendChild(b); });
+    }
+    return { ground: g, photo: g === "photo", flat: FLAT.includes(g), none: g === "none", grain: grain === "on", light: ROOT.dataset.light === "on" };
+  }
+  const lightOff = (root) => { const c = comp(root); return c && c.dataset.light === "off"; };
+  function sunrise(tl, root, at = 0, o = {}) {
+    if (lightOff(root)) return at;
+    const dur = o.dur ?? 1.4, night = q(root, ".fg-night"), flare = q(root, ".fg-flare");
+    if (night) tl.fromTo(night, { "--sr": 0 }, { "--sr": 150, duration: dur, ease: GLIDE }, at);
+    if (flare) tl.fromTo(flare, { opacity: 0, scale: 0.4 }, { keyframes: [{ opacity: 1, scale: 1.1, duration: dur * 0.45, ease: "power2.out" }, { opacity: o.flareRest ?? 0.38, scale: 1, duration: dur * 0.9, ease: "sine.inOut" }] }, at);
+    return at + dur;
+  }
+  function condense(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.9, tint = el.querySelector(":scope > .fg-tint");
+    tl.set(el, { "--fx": o.x ?? "0%", "--fy": o.y ?? "100%", autoAlpha: 1 }, at);
+    tl.fromTo(el, { "--fm": 0, "--fb": 0 }, { "--fm": 170, duration: dur, ease: SETTLE }, at)
+      .to(el, { "--fb": o.blur ?? 28, duration: dur * 1.1, ease: "power2.out" }, at);
+    if (tint) tl.fromTo(tint, { opacity: 0 }, { opacity: 1, duration: dur, ease: "power2.out" }, at + 0.05);
+    return at + dur;
+  }
+  function clear(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.55;
+    tl.to(el, { "--fb": 0, duration: dur, ease: "power2.in" }, at).to(el, { autoAlpha: 0, duration: dur * 0.7, ease: "power2.in" }, at + dur * 0.3);
+    return at + dur;
+  }
+  function beat(tl, el, at = 0, o = {}) {
+    const a = o.amp ?? 1;
+    tl.to(el, { keyframes: [
+      { scale: 1 + 0.07 * a, duration: 0.11, ease: "sine.inOut" }, { scale: 1, duration: 0.14, ease: "sine.inOut" },
+      { scale: 1 + 0.045 * a, duration: 0.1, ease: "sine.inOut" }, { scale: 1, duration: 0.27, ease: "sine.inOut" }] }, at);
+    return at + 0.62;
+  }
+  /* ambient motion for whatever the ground is: wind on a photo, drifting wash blobs, a slow sun on the burn */
+  function sway(tl, root, at, dur) {
+    const c = comp(root) || root, g = c.dataset.ground || "photo";
+    if (g === "photo") { const img = q(root, ".fg-photo"); if (img) tl.fromTo(img, { scale: 1.1, x: -18, rotation: -0.25 }, { scale: 1.03, x: 14, rotation: 0.2, duration: dur, ease: "sine.inOut" }, at); }
+    else if (g === "wash") root.querySelectorAll(".fg-blob").forEach((b, i) => tl.fromTo(b, { x: 0, y: 0 }, { x: (i % 2 ? -1 : 1) * 140, y: (i < 2 ? -1 : 1) * 70, duration: dur, ease: "sine.inOut" }, at));
+    else if (g === "burn") { const gr = q(root, ".fg-ground"); if (gr) tl.fromTo(gr, { "--bx": "4%", "--by": "104%" }, { "--bx": "14%", "--by": "96%", duration: dur, ease: "sine.inOut" }, at); }
+  }
+  function dapple(tl, el, at, dur) {
+    const d = el.matches(".fg-dapple") ? el : el.querySelector(".fg-dapple");
+    if (d) tl.fromTo(d, { x: -60, y: 10 }, { x: 60, y: -14, duration: dur, ease: "sine.inOut" }, at);
+  }
+  return { ground, sunrise, condense, clear, beat, sway, dapple, POP, SETTLE, GLIDE, bz };
+})();
+/* @field-glass:end */
+        const ID = "hp3-t1-scale-emphasis";
+        const ROOT = document.getElementById(ID);
+        const GR = FG.ground(ROOT, { ground: "photo", grain: "off", light: "on" });
+        const $ = (s) => ROOT.querySelector(s);
+        const CREAM = "rgb(255,240,230)", PRE = "rgba(255,240,230,0.3)", DORM = "rgba(255,240,230,0.46)", GOLD = "rgb(255,193,69)";
+
+        const stem = ($(".slot-photo").textContent || "sun-reeds").trim();
+        const src = "../../assets/nature/" + stem + ".jpg";
+        $(".fg-photo").src = src;
+
+        const line = $(".line");
+        const parts = [];
+        line.childNodes.forEach((n) => {
+          const key = n.nodeType === 1 && n.tagName === "EM";
+          (n.textContent || "").split(/\s+/).filter(Boolean).forEach((w) => parts.push({ w, key }));
+        });
+        line.textContent = "";
+        const words = parts.map(({ w, key }, i) => {
+          const s = document.createElement("span"); s.className = "w" + (key ? " key" : ""); s.textContent = w;
+          if (i > 0) line.appendChild(document.createTextNode(" "));
+          line.appendChild(s); return s;
+        });
+        let ki = words.findIndex((w) => w.classList.contains("key")); if (ki < 0) ki = words.length - 1;
+        const key = words[ki], others = words.filter((w) => w !== key);
+        const win = $(".win"), glint = $(".glint");
+        win.textContent = glint.textContent = key.textContent;
+        win.style.backgroundImage = `linear-gradient(rgba(255,193,69,0.30), rgba(255,138,76,0.12)), url("${src}")`;
+        win.style.backgroundSize = "100% 100%, 2112px 1188px";
+        win.style.filter = "brightness(1.5) saturate(1.2)";
+
+        /* geometry: fit the line, size the giant window word, pin the photo inside it */
+        const BASE = 118, MAXW = 1640;
+        const G = { dx: 0, dy: 0, s: 1 };
+        const place = () => {
+          line.style.fontSize = BASE + "px";
+          const lw = line.offsetWidth; if (lw > MAXW) line.style.fontSize = (BASE * MAXW / lw) + "px";
+          const fs = parseFloat(line.style.fontSize);
+          /* giant: as big as fits 1640 wide / 620 tall */
+          [win, glint].forEach((g) => { g.style.fontSize = "100px"; });
+          const k = Math.min(1640 / win.offsetWidth, 620 / win.offsetHeight) * 100;
+          [win, glint].forEach((g) => { g.style.fontSize = k + "px"; });
+          const W = win.offsetWidth, H = win.offsetHeight, L = 960 - W / 2, T = 540 - H / 2;
+          [win, glint].forEach((g) => { g.style.left = L + "px"; g.style.top = T + "px"; });
+          win.style.backgroundPosition = `0 0, ${-96 - L}px ${-54 - T}px`;
+          /* where the key word sits in the centered line (layout only, ignores transforms) */
+          const lineL = line.offsetLeft, lineT = line.offsetTop;
+          const cx = lineL + key.offsetLeft + key.offsetWidth / 2, cy = lineT + key.offsetTop + key.offsetHeight / 2;
+          G.dx = 960 - cx; G.dy = (T + H * 0.5) - cy; G.s = W / key.offsetWidth;
+        };
+        place();
+        const shiftFor = (k) => () => (line.offsetWidth - (words[k].offsetLeft + words[k].offsetWidth)) / 2;
+
+        const tl = gsap.timeline({ paused: true });
+        tl.set(words, { autoAlpha: 0 }, 0).set(line, { x: shiftFor(0) }, 0);
+
+        /* ground: still (window is pinned to it); the light does the moving */
+        FG.sunrise(tl, ROOT, 0, { dur: 1.4, flareRest: 0.32 });
+
+        let t = 0.45;
+        words.forEach((w, k) => {
+          if (k > 0) tl.to(line, { x: shiftFor(k), duration: 0.34, ease: FG.SETTLE }, t);
+          tl.set(w, { autoAlpha: 1 }, t).fromTo(w, { color: PRE }, { color: CREAM, duration: 0.5, ease: TXT.EASE }, t);
+          TXT.reveal(tl, w, t);
+          t += 0.26;
+        });
+
+        /* lean in: frost condenses, the key word glides to center and grows, neighbours fall back */
+        const Z = t + 0.6, ZD = 0.85;
+        tl.to(line, { x: 0, duration: 0.3, ease: FG.SETTLE }, Z - 0.3);
+        FG.condense(tl, $(".frost"), Z, { dur: 1.0, x: "0%", y: "100%", blur: 34 });
+        tl.to(key, { x: () => G.dx, y: () => G.dy, scale: () => G.s * 0.94, duration: ZD, ease: FG.GLIDE }, Z);
+        others.forEach((w) => {
+          const dir = words.indexOf(w) < ki ? -1 : 1;
+          tl.to(w, { x: dir * 120, scale: 0.8, color: DORM, opacity: 0.25, filter: "blur(10px)", duration: ZD, ease: FG.GLIDE }, Z);
+        });
+
+        /* the window: the solid word fades as the wipe clears the photo through the glyphs */
+        const W0 = Z + ZD - 0.15;
+        tl.set([win, glint], { visibility: "visible" }, W0);
+        tl.fromTo(win, { "--w": -30 }, { "--w": 110, duration: 0.95, ease: "power2.inOut" }, W0);
+        tl.to(key, { opacity: 0, scale: () => G.s, duration: 0.6, ease: "power2.inOut" }, W0 + 0.05);
+        FG.beat(tl, [win, glint], W0 + 0.95, { amp: 0.5 });
+        tl.fromTo(glint, { "--g": -40 }, { "--g": 120, duration: 1.3, ease: FG.GLIDE }, W0 + 1.35);
+
+        /* settle back: window and frost clear, the word returns home as solid gold */
+        const B = W0 + 2.55, BD = 0.8;
+        tl.to([win, glint], { opacity: 0, duration: 0.4, ease: "power2.in" }, B);
+        tl.set(key, { color: GOLD }, B);
+        tl.to(key, { opacity: 1, duration: 0.3, ease: "power2.out" }, B)
+          .to(key, { x: 0, y: 0, scale: 1, duration: BD, ease: FG.GLIDE }, B);
+        FG.clear(tl, $(".frost"), B + 0.1, { dur: 0.7 });
+        tl.to(others, { x: 0, scale: 1, color: CREAM, opacity: 1, filter: "blur(0px)", duration: BD, ease: FG.GLIDE }, B + 0.08);
+
+        const END = B + BD + 1.5;
+        tl.set({}, {}, END);
+        if (document.fonts) document.fonts.ready.then(() => { place(); const now = tl.time(); tl.invalidate(); tl.seek(now, false); });
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

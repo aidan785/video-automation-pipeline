@@ -1,0 +1,121 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · chapter · REDACTION
+  Redaction-bar chapter title. Three lines of heavy caps sit justified into one block on oxblood.
+  Per line, a cream bar appears as a sliver at one end (seeded, alternating ends line to line),
+  grows across the whole line, then retracts into its end, revealing the type and leaving a solid
+  stub that fills the leftover width so the block reads justified. One stub is orange (the frame's
+  one orange), the key word is gold. About 1 s to build, holds still while a deep vignette drifts.
+  Exit: mirrored 0.3 s (bars re-cover the type, then shrink back to slivers), or cut away.
+  Source: Patriot Act move 2 + its Fit section (references/analysis/patriot-act.md).
+  Slots: line-1, line-2, line-3 (richtext, caps, about 13 characters each; one <em> across the
+  card = the gold key word). data-orange="1" on the line whose stub is orange.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-chapter-redaction{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);
+        --cap-y:13px;--cap-h:104px;--gap:24px;}
+      #hp-t1-chapter-redaction .bg{position:absolute;inset:-4%;transform-origin:50% 50%;
+        background:radial-gradient(75% 80% at 50% 48%, rgba(44,11,22,0) 55%, rgba(44,11,22,.7) 100%);}
+      #hp-t1-chapter-redaction .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      #hp-t1-chapter-redaction .block{position:absolute;left:300px;width:1320px;top:304px;}
+      #hp-t1-chapter-redaction .line{position:relative;display:flex;align-items:stretch;height:130px;margin-bottom:34px;}
+      #hp-t1-chapter-redaction .line:last-child{margin-bottom:0;}
+      #hp-t1-chapter-redaction .line.l{flex-direction:row-reverse;}
+      #hp-t1-chapter-redaction .txt{position:relative;flex:0 0 auto;white-space:nowrap;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:146px;line-height:130px;letter-spacing:-.01em;text-transform:uppercase;color:var(--hp-cream);}
+      #hp-t1-chapter-redaction .txt em{font-style:normal;color:var(--hp-gold);}
+      /* square bars on the cap band only */
+      #hp-t1-chapter-redaction .stub{position:relative;flex:1 1 auto;min-width:40px;}
+      #hp-t1-chapter-redaction .stub::before{content:"";position:absolute;left:0;right:0;top:var(--cap-y);height:var(--cap-h);background:var(--hp-cream);}
+      #hp-t1-chapter-redaction .line.r .stub{margin-left:var(--gap);}
+      #hp-t1-chapter-redaction .line.l .stub{margin-right:var(--gap);}
+      #hp-t1-chapter-redaction .line[data-orange="1"] .stub::before{background:var(--hp-orange);}
+      #hp-t1-chapter-redaction .cover{position:absolute;top:var(--cap-y);height:var(--cap-h);left:-6px;right:-6px;background:var(--hp-cream);}
+      #hp-t1-chapter-redaction .line.r .cover{left:0;right:calc(-1 * var(--gap));}
+      #hp-t1-chapter-redaction .line.l .cover{right:0;left:calc(-1 * var(--gap));}
+      #hp-t1-chapter-redaction .line[data-orange="1"] .cover{background:var(--hp-orange);}
+      #hp-t1-chapter-redaction .stub,#hp-t1-chapter-redaction .cover{will-change:transform;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-chapter-redaction" data-composition-id="hp-t1-chapter-redaction" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="block">
+        <div class="line"><span class="txt"><span class="tt" data-slot="line-1">The one thing</span><i class="cover"></i></span><i class="stub"></i></div>
+        <div class="line" data-orange="1"><span class="txt"><span class="tt" data-slot="line-2">she stopped</span><i class="cover"></i></span><i class="stub"></i></div>
+        <div class="line"><span class="txt"><span class="tt" data-slot="line-3">doing by <em>hand</em></span><i class="cover"></i></span><i class="stub"></i></div>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-chapter-redaction-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-chapter-redaction-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-chapter-redaction";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 4;
+      const OUT = DUR - 0.36;
+      const tl = gsap.timeline({ paused: true });
+
+      // seeded ends: the first line's stub side comes from the seed, then lines alternate
+      let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+      const first = rnd() < .5 ? "r" : "l";
+      const lines = Array.from($(".line"));
+      lines.forEach((ln, i) => ln.classList.add(i % 2 === 0 ? first : (first === "r" ? "l" : "r")));
+
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.05, duration: DUR, ease: "none" }, 0);
+
+      const BURST = .125; // one Patriot Act burst frame (3 source frames)
+      lines.forEach((ln, i) => {
+        const r = ln.classList.contains("r");
+        const outer = r ? "100% 50%" : "0% 50%";   // the stub's free end
+        const inner = r ? "100% 50%" : "0% 50%";   // cover anchors on the stub side
+        const stub = ln.querySelector(".stub"), cover = ln.querySelector(".cover"), txt = ln.querySelector(".tt");
+        const t0 = .15 + i * BURST;
+        tl.set(txt, { autoAlpha: 0 }, 0);
+        // sliver at the end, then the bar grows across the line: stub first, then the cover over the type
+        tl.fromTo(stub, { scaleX: 0, transformOrigin: outer, autoAlpha: 0 }, { scaleX: .02, autoAlpha: 1, duration: .04, ease: "none" }, t0);
+        tl.to(stub, { scaleX: 1, duration: .1, ease: "power2.in" }, t0 + .06);
+        tl.fromTo(cover, { scaleX: 0, transformOrigin: inner }, { scaleX: 1, duration: .16, ease: "power2.out" }, t0 + .16);
+        tl.set(txt, { autoAlpha: 1 }, t0 + .32);
+        // retract into the stub, revealing the type
+        tl.to(cover, { scaleX: 0, duration: .26, ease: POP }, t0 + .42);
+        // exit: re-cover, then shrink back to a sliver at the free end
+        tl.to(cover, { scaleX: 1, duration: .13, ease: "power2.in" }, OUT + i * .04);
+        tl.set(txt, { autoAlpha: 0 }, OUT + i * .04 + .13);
+        tl.to(cover, { scaleX: 0, transformOrigin: inner, duration: .1, ease: "power2.in" }, OUT + i * .04 + .14);
+        tl.to(stub, { scaleX: 0, duration: .1, ease: "power2.in" }, OUT + i * .04 + .2);
+      });
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

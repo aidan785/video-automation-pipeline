@@ -1,0 +1,305 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · stat · NUMBER MORPH (slot machine)
+  EMBER. Black canvas lit by breathing orange corner light, halftone dots at
+  the edges, grain. The starting value ("1,000") sits settled in warm white.
+  Then every digit column rolls vertically like a slot machine, hot ember with
+  motion blur, and the columns land staggered LEFT TO RIGHT on the final value
+  ("10,000"). Columns that the new number needs (extra leading digits) grow in
+  from zero width while they roll. Each column cools from ember-hot to white
+  as it lands; when the last one lands a soft ember bloom swells behind the
+  number and the unit label resolves underneath.
+  Slots: from (text, digits + separators, <=11), to (text, digits +
+  separators, <=11), label (text caps, <=28).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-number-morph {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); color: var(--white); font-family: var(--font-display);
+      }
+      #sanji-t1-number-morph .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-number-morph .dots {
+        position: absolute; inset: 0; background: var(--dot-grid-blue); opacity: 0.0;
+        -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 48%, rgba(0,0,0,0.9) 100%);
+        mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 48%, rgba(0,0,0,0.9) 100%);
+      }
+      #sanji-t1-number-morph .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.55; }
+      #sanji-t1-number-morph .bloom {
+        position: absolute; left: 50%; top: 46%; width: 1300px; height: 640px; margin: -320px 0 0 -650px; border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(255,150,60,0.55), rgba(230,131,42,0.25) 45%, rgba(103,39,13,0) 100%);
+        filter: blur(30px); opacity: 0;
+      }
+      #sanji-t1-number-morph .stage {
+        position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      }
+      #sanji-t1-number-morph .num {
+        display: flex; align-items: flex-start; padding: 0 60px;
+        font-weight: var(--wt-heavy); font-size: 270px; letter-spacing: 0; line-height: 340px;
+        font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+        -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+        mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+      }
+      #sanji-t1-number-morph .col { position: relative; height: 340px; clip-path: inset(0 -60px); }
+      #sanji-t1-number-morph .strip { position: absolute; left: 0; top: 0; width: 100%; text-align: center; }
+      #sanji-t1-number-morph .strip div { height: 340px; }
+      #sanji-t1-number-morph .sep { display: inline-block; height: 340px; text-align: center; overflow: visible; }
+      #sanji-t1-number-morph .probe { position: absolute; visibility: hidden; white-space: pre; }
+      #sanji-t1-number-morph .label {
+        margin-top: -18px; font-weight: var(--wt-heavy); font-size: 46px; letter-spacing: var(--track-caps);
+        text-transform: uppercase; word-spacing: 0.14em; color: var(--white-soft);
+      }
+      #sanji-t1-number-morph .src { display: none; }
+      #sanji-t1-number-morph .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-number-morph" data-composition-id="sanji-t1-number-morph" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="dots"></div>
+      <div class="vig"></div>
+      <div class="bloom"></div>
+      <span class="src" data-slot="from">1,000</span>
+      <div class="stage">
+        <div class="num" data-slot="to">10,000</div>
+        <div class="label" data-slot="label">Views per day</div>
+      </div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-number-morph";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), HOT = tok("--ember-hot"), EMB = tok("--ember");
+
+        const fromS = ($(".src").textContent || "").trim();
+        const num = $(".num");
+        const toS = (num.textContent || "").trim();
+        num.textContent = "";
+        const fromD = fromS.replace(/\D/g, "").split("").map(Number);
+        const toChars = [...toS];
+        const nDigits = toChars.filter((c) => /\d/.test(c)).length;
+
+        /* probes for lazy width measurement (after fonts) */
+        const probe = (ch) => { const p = document.createElement("span"); p.className = "probe"; p.textContent = ch; num.appendChild(p); return p; };
+        const p0 = probe("0");
+        const H = 340;
+
+        let di = 0; const cols = []; const seps = [];
+        toChars.forEach((ch) => {
+          if (/\d/.test(ch)) {
+            const r = nDigits - 1 - di;                          /* index from the right */
+            const fIdx = fromD.length - 1 - r;
+            const isNew = fIdx < 0;
+            const start = isNew ? 0 : fromD[fIdx];
+            const d = Number(ch);
+            const col = document.createElement("div"); col.className = "col";
+            const strip = document.createElement("div"); strip.className = "strip";
+            const spins = 1 + cols.length;
+            const steps = spins * 10 + ((d - start + 10) % 10);
+            for (let k = 0; k <= steps; k++) { const c = document.createElement("div"); c.textContent = String((start + k) % 10); strip.appendChild(c); }
+            col.appendChild(strip); num.appendChild(col);
+            cols.push({ col, strip, steps, isNew, di });
+            di++;
+          } else {
+            const s = document.createElement("span"); s.className = "sep"; s.textContent = ch;
+            num.appendChild(s);
+            seps.push({ s, p: probe(ch), leftDigits: di });
+          }
+        });
+        /* a separator is new if every digit to its left is new */
+        seps.forEach((sp) => { sp.isNew = sp.leftDigits > 0 && cols.slice(0, sp.leftDigits).every((c) => c.isNew); });
+
+        const tl = gsap.timeline({ paused: true });
+        const cw = () => p0.offsetWidth;
+        const ROLL = 1.05;                     /* roll begins */
+        const LAND0 = 1.1, STAG = 0.24;        /* column 0 roll length, landing stagger */
+        const lastLand = ROLL + LAND0 + (cols.length - 1) * STAG;
+        const OUT = lastLand + 2.1, END = OUT + 0.45;
+
+        tl.set(cols.map((c) => c.col), { width: cw }, 0)
+          .set(seps.map((s) => s.s), { width: (i) => seps[i].p.offsetWidth }, 0)
+          .set(cols.filter((c) => c.isNew).map((c) => c.col), { width: 0, autoAlpha: 0 }, 0)
+          .set(seps.filter((s) => s.isNew).map((s) => s.s), { width: 0, autoAlpha: 0 }, 0)
+          .set($(".label"), { autoAlpha: 0 }, 0);
+
+        /* ambient: corner light breathes, dots creep in */
+        tl.fromTo($(".warm"), { opacity: 0.55 }, { opacity: 1, duration: lastLand, ease: "sine.inOut" }, 0)
+          .to($(".warm"), { opacity: 0.7, duration: END - lastLand, ease: "sine.inOut" }, lastLand)
+          .to($(".dots"), { opacity: 0.5, duration: 1.4, ease: "sine.inOut" }, 0.4);
+
+        /* the starting value resolves in, settled */
+        tl.fromTo(num, { autoAlpha: 0, filter: "blur(14px)", scale: 1.04 }, { autoAlpha: 1, filter: "blur(0px)", scale: 1, duration: 0.5, ease: "expo.out" }, 0.15);
+
+        /* new leading columns + separators open up as the roll starts */
+        tl.to(cols.filter((c) => c.isNew).map((c) => c.col), { width: cw, autoAlpha: 1, duration: 0.55, ease: "power3.inOut" }, ROLL)
+          .to(seps.filter((s) => s.isNew).map((s) => s.s), { width: (i, el) => seps.find((x) => x.s === el).p.offsetWidth, autoAlpha: 1, duration: 0.55, ease: "power3.inOut" }, ROLL);
+        /* separators heat with the roll and cool at the end */
+        tl.to(seps.map((s) => s.s), { color: HOT, textShadow: "0 0 30px rgba(255,122,26,0.8)", duration: 0.25, ease: "power2.out" }, ROLL)
+          .to(seps.map((s) => s.s), { color: WHITE, textShadow: "0 0 0px rgba(255,122,26,0)", duration: 0.5, ease: "power2.out" }, lastLand);
+
+        cols.forEach((c, i) => {
+          const D = LAND0 + i * STAG;
+          const land = ROLL + D;
+          tl.fromTo(c.strip, { y: 0 }, { y: -c.steps * H, duration: D, ease: "power3.inOut" }, ROLL)
+            .fromTo(c.strip, { filter: "blur(0px)", scaleY: 1 }, { filter: "blur(9px)", scaleY: 1.06, duration: D * 0.3, ease: "power2.in" }, ROLL)
+            .to(c.strip, { filter: "blur(0px)", scaleY: 1, duration: D * 0.45, ease: "power2.out" }, ROLL + D * 0.55)
+            .to(c.col, { color: HOT, textShadow: "0 0 40px rgba(255,122,26,0.85), 0 0 90px rgba(255,122,26,0.45)", duration: 0.25, ease: "power2.out" }, ROLL)
+            /* glow cool-down on landing */
+            .to(c.col, { color: WHITE, textShadow: "0 0 0px rgba(255,122,26,0), 0 0 0px rgba(255,122,26,0)", duration: 0.55, ease: "power2.out" }, land - 0.05);
+        });
+
+        /* bloom on the final landing + label resolve */
+        tl.fromTo($(".bloom"), { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, lastLand - 0.05)
+          .to($(".bloom"), { opacity: 0.45, scale: 1.05, duration: 1.4, ease: "sine.inOut" }, lastLand + 0.5)
+          .to(num, { textShadow: "0 0 60px rgba(255,170,90,0.35)", duration: 0.5, ease: "power2.out" }, lastLand)
+          .set($(".label"), { autoAlpha: 1 }, lastLand + 0.15);
+        TXT.reveal(tl, $(".label"), lastLand + 0.15);      /* house preset for the unit label */
+
+        /* exit */
+        TXT.exit(tl, $(".label"), OUT - 0.02);
+        tl.to(num, { autoAlpha: 0, filter: "blur(10px)", duration: 0.36, ease: "power2.in" }, OUT)
+          .to($(".bloom"), { opacity: 0, duration: 0.36, ease: "power2.in" }, OUT)
+          .set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

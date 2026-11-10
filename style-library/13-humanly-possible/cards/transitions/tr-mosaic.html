@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+  Humanly Possible · transition · plate · MOSAIC (opaque full frame, 0.6 s)
+  Patriot Act's block shuffle, in our flat surfaces. At a camera cut, plate A breaks into plate B
+  through 5 rows of seeded rectangles (2 to 4 per row, seeded widths). Each block shows a crop of
+  B pushed sideways 40 to 120 px and scaled 1.05; a few blocks are flat brick or oxblood. Blocks
+  pop on at full opacity in a seeded order over ~8 frames (no fades, no blur), then everything
+  snaps to B's true offset in one frame and the clean plate holds.
+  From references/analysis/patriot-act.md (signature move 1 + Fit). Use at chapter boundaries,
+  hidden behind a camera cut, never mid-sentence.
+  Exit: the card ends on clean plate B; cut to the real B shot on the last frame.
+  Slots: plate-a, plate-b (media, full frame 1920x1080; the blocks read plate-b's src, so a still
+         or a poster frame of the B shot). Root attr data-seed changes the block pattern.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+      #hp-tr-mosaic{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+
+      #hp-tr-mosaic .plate{position:absolute;inset:0;overflow:hidden;}
+      #hp-tr-mosaic .plate .drift{position:absolute;inset:0;transform-origin:50% 50%;}
+      #hp-tr-mosaic .plate img,#hp-tr-mosaic .plate video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;display:block;}
+
+      #hp-tr-mosaic .blocks{position:absolute;inset:0;}
+      #hp-tr-mosaic .blk{position:absolute;overflow:hidden;}
+      #hp-tr-mosaic .blk .crop{position:absolute;width:1920px;height:1080px;background-size:1920px 1080px;background-repeat:no-repeat;transform-origin:960px 540px;}
+      #hp-tr-mosaic .blk.brick{background:var(--hp-brick);}
+      #hp-tr-mosaic .blk.ox{background:var(--hp-oxblood);}
+
+      #hp-tr-mosaic .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.3;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-tr-mosaic" data-composition-id="hp-tr-mosaic" data-start="0" data-width="1920" data-height="1080" data-seed="11">
+      <div class="plate b"><div class="drift"><img data-slot="plate-b" src="../../assets/demo/place-baker.jpg" alt="" /></div></div>
+      <div class="plate a"><div class="drift"><img data-slot="plate-a" src="../../assets/demo/place-dana.jpg" alt="" /></div></div>
+      <div class="blocks"></div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-tr-mosaic-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-tr-mosaic-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-tr-mosaic";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      const DUR = .6;
+      const FPS = 24, F = 1 / FPS;          // Patriot Act's cadence: frame-stepped pops
+      const tl = gsap.timeline({ paused: true });
+
+      // seeded LCG
+      let s = (parseInt(ROOT.dataset.seed, 10) || 11) % 2147483647; if (s <= 0) s += 2147483646;
+      const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+
+      // build 5 rows of 2 to 4 blocks with seeded widths (no measuring; pure arithmetic)
+      const srcB = $1('[data-slot="plate-b"]').getAttribute("src");
+      const wrap = $1(".blocks");
+      const blocks = [];
+      const ROWS = 5, RH = 1080 / ROWS;
+      for (let r = 0; r < ROWS; r++) {
+        const n = 2 + Math.floor(rnd() * 3);
+        const w = Array.from({ length: n }, () => .55 + rnd());
+        const sum = w.reduce((a, b) => a + b, 0);
+        let x = 0;
+        w.forEach((wi, i) => {
+          const bw = i === n - 1 ? 1920 - x : Math.round(1920 * wi / sum);
+          const el = document.createElement("div");
+          el.className = "blk";
+          el.style.cssText = `left:${x}px;top:${r * RH}px;width:${bw}px;height:${RH}px;`;
+          const flat = rnd() < .16;
+          let crop = null, off = 0;
+          if (flat) el.classList.add(rnd() < .5 ? "brick" : "ox");
+          else {
+            // shift sideways 40 to 120 px; edge blocks shift inward so no empty edge shows
+            const mag = 40 + Math.round(rnd() * 80);
+            const dir = x === 0 ? -1 : (x + bw >= 1920 ? 1 : (rnd() < .5 ? -1 : 1));
+            off = dir * mag;
+            crop = document.createElement("div");
+            crop.className = "crop";
+            crop.style.cssText = `left:${-x}px;top:${-r * RH}px;background-image:url("${srcB}");`;
+            el.appendChild(crop);
+          }
+          wrap.appendChild(el);
+          blocks.push({ el, crop, off });
+          x += bw;
+        });
+      }
+      // seeded pop order
+      const order = blocks.map((b, i) => ({ b, k: rnd() })).sort((p, q) => p.k - q.k).map((p) => p.b);
+
+      // plate A drifts until it is covered
+      tl.fromTo($1(".plate.a .drift"), { scale: 1.03 }, { scale: 1, duration: .4, ease: "none" }, 0);
+      tl.fromTo($1(".plate.b .drift"), { scale: 1 }, { scale: 1.015, duration: .2, ease: "none" }, .4);
+      tl.set($1(".plate.b"), { autoAlpha: 0 }, 0);
+
+      // 1. pops: full opacity, frame-stepped, over 8 frames (2 to 9)
+      blocks.forEach(({ el, crop, off }) => { tl.set(el, { autoAlpha: 0 }, 0); if (crop) tl.set(crop, { x: off, scale: 1.05 }, 0); });
+      const POPF = 8;
+      order.forEach(({ el }, i) => tl.set(el, { autoAlpha: 1 }, (1 + Math.floor(i * POPF / order.length)) * F));
+      // 2. snap: in one frame every crop lands on its true offset, flat blocks drop, B is clean
+      const SNAP = 10 * F;
+      blocks.forEach(({ el, crop }) => { if (crop) tl.set(crop, { x: 0, scale: 1 }, SNAP); else tl.set(el, { autoAlpha: 0 }, SNAP); });
+      tl.set($1(".plate.b"), { autoAlpha: 1 }, SNAP);
+      tl.set($1(".plate.a"), { autoAlpha: 0 }, SNAP);
+      tl.set(wrap, { autoAlpha: 0 }, SNAP + F);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

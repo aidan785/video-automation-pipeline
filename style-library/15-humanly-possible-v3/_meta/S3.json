@@ -1,0 +1,908 @@
+[
+ {
+  "id": "humanly-possible-v3.transition.signal-macroblock",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-macroblock",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-macroblock.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "photoA",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "photoB",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "a_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "word",
+    "type": "text",
+    "maxChars": 10
+   }
+  ],
+  "duration": {
+   "min": 1.8,
+   "max": 1.8
+  },
+  "notes": "Fast hard cut between two flat SIGNAL statements (Sanji layout, x~1000): 5 frames of macroblocks (cream inverse word cells, dotted patches, glyph-noise windows, scaled statement chunks). Blocks occlude in the ground color (deep on none). Light on = burn-ramp glyphs.",
+  "poster": "preview/tr-signal-macroblock.jpg",
+  "ground": "deep",
+  "grounds": [
+   "deep",
+   "oxblood",
+   "brick",
+   "none"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-tag-wall",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-tag-wall",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-tag-wall.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "a_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "tags",
+    "type": "text",
+    "maxChars": 90
+   }
+  ],
+  "duration": {
+   "min": 2.4,
+   "max": 2.4
+  },
+  "notes": "Overlay wipe: cream one-word chips settle row by row, re-roll, then part like grass along a wavy seam onto statement B. Works over footage or blank; tags = comma list, 3-10 words, <=8 chars.",
+  "poster": "preview/tr-signal-tag-wall.jpg",
+  "ground": "none",
+  "grounds": [
+   "none",
+   "deep",
+   "oxblood",
+   "brick"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-noise-flash",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-noise-flash",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-noise-flash.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "a_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 1.6,
+   "max": 1.6
+  },
+  "notes": "Hard hit on a flat SIGNAL screen: 3 frames of slice echo on statement A, exactly 2 frames of cream glyph noise (filled with the ground color, deep on none), statement B with dust glyphs settling and the chip scrambling.",
+  "poster": "preview/tr-signal-noise-flash.jpg",
+  "ground": "oxblood",
+  "grounds": [
+   "oxblood",
+   "deep",
+   "brick",
+   "none"
+  ],
+  "grain": "on",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-dissolve",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-dissolve",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-dissolve.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "photoA",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "photoB",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "a_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.8,
+   "max": 2.8
+  },
+  "notes": "Light-on hero: the dandelion photo turns to burn-ramp glyphs that drift away on a flow field and settle onto B's line; meadow photo fades up. On flat/none the photo is present only as glyphs (light forced off on none).",
+  "poster": "preview/tr-signal-dissolve.jpg",
+  "ground": "photo",
+  "grounds": [
+   "photo",
+   "deep",
+   "oxblood",
+   "none"
+  ],
+  "grain": "on",
+  "light": "on"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-takeover",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-takeover",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-takeover.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "plate",
+    "type": "asset",
+    "maxChars": 80
+   },
+   {
+    "name": "b_label",
+    "type": "text",
+    "maxChars": 24
+   },
+   {
+    "name": "b_line",
+    "type": "text",
+    "maxChars": 60
+   }
+  ],
+  "duration": {
+   "min": 2.8,
+   "max": 2.8
+  },
+  "notes": "Footage into SIGNAL as a rising tide: the flat ground floods up over the plate (phone_8142388 stand-in) with a foam line of garbled cream glyphs, then a terminal line types with a blinking cursor (orange prompt). On none the tide wipes the plate to transparent.",
+  "poster": "preview/tr-signal-takeover.jpg",
+  "ground": "deep",
+  "grounds": [
+   "deep",
+   "oxblood",
+   "brick",
+   "none"
+  ],
+  "grain": "on",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-zoom-glyph",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-zoom-glyph",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-zoom-glyph.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 30
+   },
+   {
+    "name": "zoom_char",
+    "type": "text",
+    "maxChars": 1
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.8,
+   "max": 2.8
+  },
+  "notes": "Flat SIGNAL: push into the period of statement A until the dot is a field of dense cream glyphs, then the field thins while pulling out of B's chip, which scrambles in.",
+  "poster": "preview/tr-signal-zoom-glyph.jpg",
+  "ground": "oxblood",
+  "grounds": [
+   "oxblood",
+   "deep",
+   "brick",
+   "none"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-dot-dissolve",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-dot-dissolve",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-dot-dissolve.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_log",
+    "type": "text",
+    "maxChars": 170
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.8,
+   "max": 2.8
+  },
+  "notes": "Sanji halftone dot dissolve as an overlay wipe: A's log glyphs swell to dots, a hex halftone of cream dots merges into a flat cream field (merge 100%), holds 6 frames, then shrinks away from the same center onto statement B. No wind, no seeds (the seed dissolve concept was cut).",
+  "poster": "preview/tr-signal-dot-dissolve.jpg",
+  "ground": "none",
+  "grounds": [
+   "none",
+   "deep",
+   "oxblood",
+   "brick"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-grid-flip",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-grid-flip",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-grid-flip.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "photoA",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "photoB",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "a_log",
+    "type": "text",
+    "maxChars": 110
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.8,
+   "max": 2.8
+  },
+  "notes": "12x7 Mark B tiles lift and flip in a seeded wave, glyph noise on edge-on faces, ids land as cream chips, B's chip flickers on. Photo to photo by default; on flat grounds the tiles carry the log/statement in the brand color; on none the tiles are deep 92% and fade away at the end.",
+  "poster": "preview/tr-signal-grid-flip.jpg",
+  "ground": "photo",
+  "grounds": [
+   "photo",
+   "deep",
+   "oxblood",
+   "brick",
+   "none"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-dither-wipe",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-dither-wipe",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-dither-wipe.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "photoA",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "photoB",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "b_log",
+    "type": "text",
+    "maxChars": 120
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.6,
+   "max": 2.6
+  },
+  "notes": "Light-on hero: a band of low sun sweeps from bottom-left across the dunes photo (stand-in for the outgoing shot): two-tone 4x4 dither ahead, burn-ramp ASCII core, flat SIGNAL screen (faint glyphs, log, statement) behind.",
+  "poster": "preview/tr-signal-dither-wipe.jpg",
+  "ground": "deep",
+  "grounds": [
+   "deep",
+   "oxblood",
+   "brick",
+   "none"
+  ],
+  "grain": "off",
+  "light": "on"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-glyph-iris",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-glyph-iris",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-glyph-iris.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_eyebrow",
+    "type": "text",
+    "maxChars": 20
+   },
+   {
+    "name": "a_title",
+    "type": "text",
+    "maxChars": 14
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.6,
+   "max": 2.6
+  },
+  "notes": "Flat brick chapter card (Bricolage title, stand-in for the outgoing scene) opens like a stone in water: one glyph wakes, an iris of dense cream glyphs with two ripples reveals B (blank/footage with sparse glyphs) and its statement; r: chip on the rim.",
+  "poster": "preview/tr-signal-glyph-iris.jpg",
+  "ground": "none",
+  "grounds": [
+   "none",
+   "deep",
+   "oxblood"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-cell-cascade",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-cell-cascade",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-cell-cascade.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 28
+   },
+   {
+    "name": "a_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 28
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.7,
+   "max": 2.7
+  },
+  "notes": "Flat oxblood statement screen cut into 16x9 cells; a wobbly cascade folds cells into tiny typing chips over a dim cream glyph field, holds, then grows back and clears onto B (default the autumn-leaves photo).",
+  "poster": "preview/tr-signal-cell-cascade.jpg",
+  "ground": "photo",
+  "grounds": [
+   "photo",
+   "oxblood",
+   "deep",
+   "brick",
+   "none"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-scan-repaint",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-scan-repaint",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-scan-repaint.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "photoB",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "a_text",
+    "type": "text",
+    "maxChars": 28
+   },
+   {
+    "name": "a_chip",
+    "type": "text",
+    "maxChars": 12
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 28
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.9,
+   "max": 2.9
+  },
+  "notes": "Slow top-to-bottom repaint: 45 rows pass a dither of A (flat oxblood statement), cream glyphs blending A to B, then B (default mesa photo). Row counter chip, [ OK ] ticks, hex addresses, pass/% line. Light on adds a warm glow to the scan line.",
+  "poster": "preview/tr-signal-scan-repaint.jpg",
+  "ground": "photo",
+  "grounds": [
+   "photo",
+   "oxblood",
+   "deep",
+   "brick",
+   "none"
+  ],
+  "grain": "off",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-mosaic",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-mosaic",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-mosaic.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "a_eyebrow",
+    "type": "text",
+    "maxChars": 20
+   },
+   {
+    "name": "a_headline",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.9,
+   "max": 2.9
+  },
+  "notes": "Cream chapter headline (stays cream on every ground) collapses 12>24>48>96px with luminance glyphs + labels, blocks turn from the bottom-left with a 1-frame oxblood flash, then de-mosaic into the flat SIGNAL statement with a sparse cream glyph field.",
+  "poster": "preview/tr-signal-mosaic.jpg",
+  "ground": "deep",
+  "grounds": [
+   "deep",
+   "oxblood",
+   "brick",
+   "none"
+  ],
+  "grain": "on",
+  "light": "off"
+ },
+ {
+  "id": "humanly-possible-v3.transition.signal-glass-shatter",
+  "tier": "transition",
+  "purpose": "transition",
+  "treatment": "signal-glass-shatter",
+  "category": "transition",
+  "canvas": "signal",
+  "file": "cards/transition/tr-signal-glass-shatter.html",
+  "slots": [
+   {
+    "name": "ground",
+    "type": "enum",
+    "maxChars": 8
+   },
+   {
+    "name": "grain",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "light",
+    "type": "enum",
+    "maxChars": 3
+   },
+   {
+    "name": "photoA",
+    "type": "asset",
+    "maxChars": 24
+   },
+   {
+    "name": "tile1",
+    "type": "text",
+    "maxChars": 10
+   },
+   {
+    "name": "tile2",
+    "type": "text",
+    "maxChars": 10
+   },
+   {
+    "name": "tile3",
+    "type": "text",
+    "maxChars": 10
+   },
+   {
+    "name": "tile4",
+    "type": "text",
+    "maxChars": 10
+   },
+   {
+    "name": "b_text",
+    "type": "text",
+    "maxChars": 22
+   },
+   {
+    "name": "b_chip",
+    "type": "text",
+    "maxChars": 12
+   }
+  ],
+  "duration": {
+   "min": 2.9,
+   "max": 2.9
+  },
+  "notes": "Four glass tiles (solid-bodied on none/flat, frosted over the grass photo on photo) clear into halftone dots that read icon and name, drift, turn to glyphs and fly to type B's [ OK ] log + statement.",
+  "poster": "preview/tr-signal-glass-shatter.jpg",
+  "ground": "none",
+  "grounds": [
+   "none",
+   "photo",
+   "deep",
+   "oxblood"
+  ],
+  "grain": "off",
+  "light": "off"
+ }
+]

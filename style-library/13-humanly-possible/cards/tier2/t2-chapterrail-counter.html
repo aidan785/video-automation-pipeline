@@ -1,0 +1,107 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · chapter-rail · COUNTER
+  DOAC's persistent chapter counter: "01" top-right inside the safe margin, Bricolage 800 cream, with
+  the chapter label under it in Inter Tight caps behind a small orange dot. It pops on with the
+  chapter-start line and holds across every cut in the chapter. At the swap time the number and label
+  hard-swap to the next chapter with a quick vertical roll (0.2 s). While a big quote or tier-1 card
+  is on, it drops to 50% and comes back. Orange: the dot. Gold: none.
+  From DOAC move 4 + Fit (references/analysis/doac.md).
+  Timing: data-at on .rail = the swap to chapter B (default 8); data-dim-at / data-dim-end on .wrap =
+  the dim window (default 12 to 15). Remove the B slots (or leave them empty) for a counter that never swaps.
+  Exit: animated pop-out 0.35 s before DUR, or cut away at the chapter end.
+  Slots: num-a (text, 2 chars), label-a (text, ~20 chars, caps), num-b (text, 2 chars), label-b (text, ~20 chars, caps).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-chapter-rail-counter{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t2-chapter-rail-counter .scrim{position:absolute;right:0;top:0;width:760px;height:440px;pointer-events:none;
+        background:radial-gradient(70% 78% at 100% 0%, rgba(44,11,22,.76) 0%, rgba(44,11,22,.42) 48%, rgba(44,11,22,0) 100%);}
+
+      #hp-t2-chapter-rail-counter .rail{position:absolute;top:var(--margin-y);right:var(--margin);display:flex;flex-direction:column;align-items:flex-start;}
+      #hp-t2-chapter-rail-counter .num-mask{display:block;height:76px;overflow:hidden;}
+      #hp-t2-chapter-rail-counter .num-roll,#hp-t2-chapter-rail-counter .lab-roll{display:block;}
+      #hp-t2-chapter-rail-counter .num{display:block;height:76px;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:72px;line-height:76px;letter-spacing:var(--track-display);color:var(--hp-cream);white-space:nowrap;font-variant-numeric:tabular-nums;}
+      #hp-t2-chapter-rail-counter .lab-row{display:flex;align-items:center;gap:11px;margin-top:8px;}
+      #hp-t2-chapter-rail-counter .dot{display:block;width:10px;height:10px;border-radius:50%;background:var(--hp-orange);flex:none;}
+      #hp-t2-chapter-rail-counter .lab-mask{display:block;height:24px;overflow:hidden;}
+      #hp-t2-chapter-rail-counter .lab{display:block;height:24px;font-family:var(--font-body);font-weight:600;font-size:18px;line-height:24px;
+        letter-spacing:.16em;text-transform:uppercase;color:var(--hp-cream);white-space:nowrap;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-chapter-rail-counter" data-composition-id="hp-t2-chapter-rail-counter" data-start="0" data-width="1920" data-height="1080">
+      <div class="wrap" data-dim-at="12" data-dim-end="15">
+        <div class="scrim"></div>
+        <div class="rail" data-at="8">
+          <span class="num-mask"><span class="num-roll">
+            <span class="num" data-slot="num-a">01</span>
+            <span class="num" data-slot="num-b">02</span>
+          </span></span>
+          <span class="lab-row">
+            <i class="dot"></i>
+            <span class="lab-mask"><span class="lab-roll">
+              <span class="lab" data-slot="label-a">The busy season</span>
+              <span class="lab" data-slot="label-b">The first prompt</span>
+            </span></span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-chapter-rail-counter";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 20;
+      const OUT = DUR - .35;
+      const num = (el, k, d) => { const v = parseFloat(el.getAttribute(k)); return isFinite(v) ? v : d; };
+      const wrap = $1(".wrap"), rail = $1(".rail");
+      const SWAP = num(rail, "data-at", 8);
+      const DIM_AT = num(wrap, "data-dim-at", -1), DIM_END = num(wrap, "data-dim-end", -1);
+      const nb = $1('[data-slot="num-b"]'), lb = $1('[data-slot="label-b"]');
+      const hasB = nb && nb.textContent.trim();
+      if (!hasB) { if (nb) nb.remove(); if (lb) lb.remove(); }
+      const tl = gsap.timeline({ paused: true });
+
+      // pop on: scrim, number, dot, label
+      tl.fromTo($1(".scrim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: .3, ease: "power1.out" }, 0);
+      tl.fromTo($1(".num-mask"), { autoAlpha: 0, scale: .92, y: 10 }, { autoAlpha: 1, scale: 1, y: 0, duration: .32, ease: POP, transformOrigin: "0% 100%" }, .1);
+      tl.fromTo($1(".dot"), { scale: .4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .22, ease: POP }, .26);
+      tl.fromTo($1(".lab-mask"), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: .26, ease: POP }, .3);
+
+      // hard swap to the next chapter: a quick vertical roll in the masks
+      if (hasB && SWAP > .6 && SWAP < OUT) {
+        tl.fromTo($1(".num-roll"), { y: 0 }, { y: -76, duration: .2, ease: POP }, SWAP);
+        tl.fromTo($1(".lab-roll"), { y: 0 }, { y: -24, duration: .2, ease: POP }, SWAP + .05);
+      }
+      // the rail yields to a big quote: down to 50%, then back
+      if (DIM_AT > .6 && DIM_AT < OUT) {
+        tl.to(wrap, { opacity: .5, duration: .2, ease: "power1.out" }, DIM_AT);
+        if (DIM_END > DIM_AT && DIM_END < OUT) tl.to(wrap, { opacity: 1, duration: .2, ease: "power1.out" }, DIM_END);
+      }
+
+      // exit: pop out (or the edit cuts it at the chapter end)
+      tl.to([$1(".lab-mask"), $1(".dot"), $1(".num-mask")], { autoAlpha: 0, y: 6, duration: .18, ease: "power2.in", stagger: .03 }, OUT);
+      tl.to($1(".scrim"), { autoAlpha: 0, duration: .25, ease: "power1.in" }, OUT + .08);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+    </script>
+  </body>
+</html>

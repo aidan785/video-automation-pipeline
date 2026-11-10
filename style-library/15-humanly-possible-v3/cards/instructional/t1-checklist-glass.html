@@ -1,0 +1,350 @@
+<!doctype html>
+<!--
+  HP V3 · tier1 · instructional · CHECKLIST GLASS  (Field Glass, FIELD)
+  A pre-flight list over misty hills (photo default, light off: no sunrise,
+  just the valley in wind; grain off). A tall glass card fogs in from the bottom-left corner
+  with leaf shadow drifting over it. Title, counter and five rows pour in.
+  A soft focus wash walks down the list: each box fills cream and draws an
+  oxblood check, the label strikes through and goes quiet, the counter ticks
+  "1 / 5" ... "5 / 5" and a progress bar fills orange (the frame's one
+  accent). On the last item the counter turns gold (the one gold) and takes
+  the lub-dub, then a sun glint crosses the card.
+  Slots: title (<=24), i1..i5 (<=28), photo (nature stem, default misty-sunrise).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #hp3-t1-checklist-glass { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--hp-deep); font-family: var(--font-body); color: var(--hp-cream); }
+      #hp3-t1-checklist-glass .slot-photo { display: none; }
+      #hp3-t1-checklist-glass .card { left: 116px; top: 124px; width: 980px; height: 832px; }
+      #hp3-t1-checklist-glass .depth { left: 150px; top: 170px; width: 920px; height: 760px; }
+      #hp3-t1-checklist-glass .ttl { position: absolute; left: 60px; top: 58px; font-size: 64px; white-space: nowrap; }
+      #hp3-t1-checklist-glass .cnt { position: absolute; right: 60px; top: 58px; font-size: 64px; white-space: nowrap; transform-origin: 70% 60%; }
+      #hp3-t1-checklist-glass .bar { position: absolute; left: 60px; top: 156px; width: 860px; height: 12px; border-radius: 6px; background: rgba(var(--cream-rgb), 0.14); }
+      #hp3-t1-checklist-glass .bar i { position: absolute; inset: 0; border-radius: inherit; background: var(--hp-orange); transform-origin: 0 50%; transform: scaleX(0); }
+      #hp3-t1-checklist-glass .focus { position: absolute; left: 30px; top: 212px; width: 920px; height: 108px; border-radius: var(--r-card); background: var(--row-lit); opacity: 0; }
+      #hp3-t1-checklist-glass .row { position: absolute; left: 30px; width: 920px; height: 108px; }
+      #hp3-t1-checklist-glass .row .bx { position: absolute; left: 30px; top: 24px; width: 60px; height: 60px; border-radius: var(--r-chip); background: rgba(var(--cream-rgb), 0.12); }
+      #hp3-t1-checklist-glass .row .bx .fill { position: absolute; inset: 0; border-radius: inherit; background: var(--hp-cream); opacity: 0; }
+      #hp3-t1-checklist-glass .row .bx svg { position: absolute; left: 12px; top: 12px; }
+      #hp3-t1-checklist-glass .row .bx svg path { fill: none; stroke: var(--hp-oxblood); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      #hp3-t1-checklist-glass .row .lb { position: absolute; left: 124px; top: 0; height: 108px; line-height: 108px; white-space: nowrap; font-weight: 600; font-size: 42px; letter-spacing: var(--track-ui); }
+      #hp3-t1-checklist-glass .row .sk { position: absolute; left: 124px; top: 53px; height: 3px; border-radius: 2px; background: rgba(var(--cream-rgb), 0.6); transform-origin: 0 50%; transform: scaleX(0); }
+    </style>
+  </head>
+  <body>
+    <div id="hp3-t1-checklist-glass" data-composition-id="hp3-t1-checklist-glass" data-start="0" data-width="1920" data-height="1080">
+      <span class="fg-slot" data-slot="ground">photo</span><span class="fg-slot" data-slot="grain">off</span><span class="fg-slot" data-slot="light">off</span>
+      <span class="slot-photo" data-slot="photo">misty-sunrise</span>
+      <div class="fg-ground">
+        <img class="fg-photo" alt="" />
+        <div class="fg-shade"></div>
+        <div class="fg-flare"></div>
+        <div class="fg-night"></div>
+      </div>
+      <div class="fg-depth depth"></div>
+      <div class="fg-glass card">
+        <div class="fg-tint"></div>
+        <div class="fg-dapple"></div>
+        <div class="fg-sheen"></div>
+        <div class="ttl fg-display" data-slot="title">Before the trucks leave</div>
+        <div class="cnt fg-display">0 / 5</div>
+        <div class="bar"><i></i></div>
+        <div class="focus"></div>
+        <div class="row"><div class="bx"><div class="fill"></div><svg width="36" height="36" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg></div><div class="lb" data-slot="i1">Yesterday's quotes sent</div><div class="sk"></div></div>
+        <div class="row"><div class="bx"><div class="fill"></div><svg width="36" height="36" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg></div><div class="lb" data-slot="i2">Crew texted the address</div><div class="sk"></div></div>
+        <div class="row"><div class="bx"><div class="fill"></div><svg width="36" height="36" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg></div><div class="lb" data-slot="i3">Permits checked</div><div class="sk"></div></div>
+        <div class="row"><div class="bx"><div class="fill"></div><svg width="36" height="36" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg></div><div class="lb" data-slot="i4">Materials on the truck</div><div class="sk"></div></div>
+        <div class="row"><div class="bx"><div class="fill"></div><svg width="36" height="36" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></svg></div><div class="lb" data-slot="i5">Client told the arrival time</div><div class="sk"></div></div>
+      </div>
+      <div class="fg-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* HP V3 copy of the Sanji TEXT PRESET "uppit-reveal" (source of truth for 15-humanly-possible-v3).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+/* @field-glass:start v3 */
+/* HP V3 · FIELD GLASS motion helpers (single source of truth).
+   Cards carry an inlined copy between the @field-glass markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs`
+   (restamps both the @text-preset and @field-glass blocks).
+
+   Markup it expects (CSS lives in tokens.css, "FIELD GLASS utilities"):
+     .fg-photo > img          the graded nature photo (drifts, sways)
+     .fg-night                pre-sunrise veil, masked by --sr (radius %)
+     .fg-flare                sun bloom at the burn origin (bottom-left)
+     .fg-glass                glass pane; --fb blur px, --fm condense radius %,
+                              --fx/--fy condense origin; child .fg-tint, .fg-dapple
+   GROUND SWITCHES (v3, Aidan 11/3: not every card needs nature / the corner glow;
+   some flat, some with grain, some with no background at all). Every card carries
+   three hidden slots and calls FG.ground(ROOT, defaults) before building its timeline:
+     <span class="fg-slot" data-slot="ground">oxblood</span>  photo | oxblood | deep | brick | cream | burn | wash | none
+     <span class="fg-slot" data-slot="grain">off</span>       on | off
+     <span class="fg-slot" data-slot="light">off</span>       on | off  (the bottom-left sunrise + flare)
+   FG.ground sets data-ground / data-grain / data-light on the root; tokens.css does
+   the rest (hides the photo / flare / night / grain, paints flat grounds, switches
+   glass to the solid Sanji-style fill on flat grounds, makes "none" transparent).
+     FG.ground(ROOT, {ground, grain, light}) -> {ground, photo, flat, none, grain, light}
+   API (timeline-driven, deterministic):
+     FG.sunrise(tl, root, at, {dur})        light burns up from bottom-left, flare peaks then settles
+     FG.condense(tl, el, at, {dur, x, y})   glass fogs in from a point: clear -> frosted, tint rises
+     FG.clear(tl, el, at, {dur})            glass evaporates (exit), edges first
+     FG.beat(tl, el, at, {amp})             the logo's lub-dub: 1.07, back, 1.045, back
+     FG.sway(tl, root, at, dur)             wind on the photo: slow drift + a breath of rotation
+     FG.dapple(tl, el, at, dur)             leaf-shadow plate drifts across a pane
+     FG.POP / FG.SETTLE                     HP pop ease (no overshoot) / uppit settle */
+const FG = (function () {
+  function bz(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x; for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; } return sy(t); };
+  }
+  const POP = bz(0.2, 0.9, 0.25, 1), SETTLE = bz(0.23, 1, 0.32, 1), GLIDE = bz(0.65, 0, 0.35, 1);
+  const q = (root, s) => (root.matches && root.matches(s) ? root : root.querySelector(s));
+
+  const comp = (el) => (el && el.closest ? el.closest("[data-composition-id]") : null);
+  const FLAT = ["oxblood", "deep", "brick", "cream"];
+  function ground(ROOT, d = {}) {
+    const slot = (n) => { const e = ROOT.querySelector(`[data-slot="${n}"]`); return e ? e.textContent.trim().toLowerCase() : ""; };
+    const g = slot("ground") || d.ground || "photo", grain = slot("grain") || d.grain || "off", light = slot("light") || d.light || "off";
+    Object.assign(ROOT.dataset, { ground: g, grain, light: g === "none" ? "off" : light });
+    const base = ROOT.querySelector(".fg-ground");
+    if (base && g === "wash" && !base.querySelector(".fg-blob")) {
+      [["gold", -260, 520], ["orange", 1180, -320], ["brick", 520, 340], ["deep", 1400, 560]].forEach(([c, x, y]) => {
+        const b = document.createElement("div"); b.className = "fg-blob " + c; b.style.left = x + "px"; b.style.top = y + "px"; base.appendChild(b); });
+    }
+    return { ground: g, photo: g === "photo", flat: FLAT.includes(g), none: g === "none", grain: grain === "on", light: ROOT.dataset.light === "on" };
+  }
+  const lightOff = (root) => { const c = comp(root); return c && c.dataset.light === "off"; };
+  function sunrise(tl, root, at = 0, o = {}) {
+    if (lightOff(root)) return at;
+    const dur = o.dur ?? 1.4, night = q(root, ".fg-night"), flare = q(root, ".fg-flare");
+    if (night) tl.fromTo(night, { "--sr": 0 }, { "--sr": 150, duration: dur, ease: GLIDE }, at);
+    if (flare) tl.fromTo(flare, { opacity: 0, scale: 0.4 }, { keyframes: [{ opacity: 1, scale: 1.1, duration: dur * 0.45, ease: "power2.out" }, { opacity: o.flareRest ?? 0.38, scale: 1, duration: dur * 0.9, ease: "sine.inOut" }] }, at);
+    return at + dur;
+  }
+  function condense(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.9, tint = el.querySelector(":scope > .fg-tint");
+    tl.set(el, { "--fx": o.x ?? "0%", "--fy": o.y ?? "100%", autoAlpha: 1 }, at);
+    tl.fromTo(el, { "--fm": 0, "--fb": 0 }, { "--fm": 170, duration: dur, ease: SETTLE }, at)
+      .to(el, { "--fb": o.blur ?? 28, duration: dur * 1.1, ease: "power2.out" }, at);
+    if (tint) tl.fromTo(tint, { opacity: 0 }, { opacity: 1, duration: dur, ease: "power2.out" }, at + 0.05);
+    return at + dur;
+  }
+  function clear(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.55;
+    tl.to(el, { "--fb": 0, duration: dur, ease: "power2.in" }, at).to(el, { autoAlpha: 0, duration: dur * 0.7, ease: "power2.in" }, at + dur * 0.3);
+    return at + dur;
+  }
+  function beat(tl, el, at = 0, o = {}) {
+    const a = o.amp ?? 1;
+    tl.to(el, { keyframes: [
+      { scale: 1 + 0.07 * a, duration: 0.11, ease: "sine.inOut" }, { scale: 1, duration: 0.14, ease: "sine.inOut" },
+      { scale: 1 + 0.045 * a, duration: 0.1, ease: "sine.inOut" }, { scale: 1, duration: 0.27, ease: "sine.inOut" }] }, at);
+    return at + 0.62;
+  }
+  /* ambient motion for whatever the ground is: wind on a photo, drifting wash blobs, a slow sun on the burn */
+  function sway(tl, root, at, dur) {
+    const c = comp(root) || root, g = c.dataset.ground || "photo";
+    if (g === "photo") { const img = q(root, ".fg-photo"); if (img) tl.fromTo(img, { scale: 1.1, x: -18, rotation: -0.25 }, { scale: 1.03, x: 14, rotation: 0.2, duration: dur, ease: "sine.inOut" }, at); }
+    else if (g === "wash") root.querySelectorAll(".fg-blob").forEach((b, i) => tl.fromTo(b, { x: 0, y: 0 }, { x: (i % 2 ? -1 : 1) * 140, y: (i < 2 ? -1 : 1) * 70, duration: dur, ease: "sine.inOut" }, at));
+    else if (g === "burn") { const gr = q(root, ".fg-ground"); if (gr) tl.fromTo(gr, { "--bx": "4%", "--by": "104%" }, { "--bx": "14%", "--by": "96%", duration: dur, ease: "sine.inOut" }, at); }
+  }
+  function dapple(tl, el, at, dur) {
+    const d = el.matches(".fg-dapple") ? el : el.querySelector(".fg-dapple");
+    if (d) tl.fromTo(d, { x: -60, y: 10 }, { x: 60, y: -14, duration: dur, ease: "sine.inOut" }, at);
+  }
+  return { ground, sunrise, condense, clear, beat, sway, dapple, POP, SETTLE, GLIDE, bz };
+})();
+/* @field-glass:end */
+        const ID = "hp3-t1-checklist-glass";
+        const ROOT = document.getElementById(ID);
+        const G = FG.ground(ROOT, { ground: "photo", grain: "off", light: "off" });
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const DIM = css.getPropertyValue("--hp-cream-dim").trim(), GOLD = css.getPropertyValue("--hp-gold").trim();
+
+        const stem = ($(".slot-photo").textContent || "misty-sunrise").trim();
+        $(".fg-photo").src = "../../assets/nature/" + stem + ".jpg";
+
+        const card = $(".card"), rows = $$(".row"), N = rows.length, cnt = $(".cnt");
+        const Y0 = 212, RH = 120;
+        rows.forEach((r, i) => { r.style.top = (Y0 + i * RH) + "px"; const p = r.querySelector("path"), L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+        const place = () => rows.forEach((r) => { r.querySelector(".sk").style.width = (r.querySelector(".lb").offsetWidth + 8) + "px"; });
+        place(); if (document.fonts) document.fonts.ready.then(place);
+
+        const T1 = 2.05, STEP = 0.76, LAST = T1 + (N - 1) * STEP, END = LAST + 2.05;
+        const tl = gsap.timeline({ paused: true });
+
+        FG.sway(tl, ROOT, 0, END);
+        FG.sunrise(tl, ROOT, 0, { dur: 1.5 });
+        tl.fromTo($(".depth"), { opacity: 0 }, { opacity: 1, duration: 1.0, ease: "power2.out" }, 0.5);
+        FG.condense(tl, card, 0.45, { dur: 1.0, x: "0%", y: "100%" });
+        FG.dapple(tl, card, 0, END);
+
+        TXT.reveal(tl, $(".ttl"), 0.85);
+        TXT.block(tl, cnt, 0.95);
+        TXT.block(tl, $(".bar"), 1.0);
+        rows.forEach((r, i) => { TXT.block(tl, r.querySelector(".bx"), 1.1 + i * 0.07); TXT.reveal(tl, r.querySelector(".lb"), 1.14 + i * 0.07); });
+
+        /* the focus wash walks down; each row gets checked off */
+        /* the counter reads straight off the clock, so any seek shows the right count */
+        const CLK = { t: 0 }, show = () => { const t = CLK.t; let n = 0; for (let i = 0; i < N; i++) if (t >= T1 + i * STEP + 0.16) n++; cnt.textContent = n + " / " + N; };
+        tl.fromTo($(".focus"), { opacity: 0, y: 0 }, { opacity: 1, duration: 0.3, ease: FG.POP }, T1 - 0.2);
+        rows.forEach((r, i) => {
+          const at = T1 + i * STEP;
+          if (i > 0) tl.to($(".focus"), { y: i * RH, duration: 0.35, ease: FG.SETTLE }, at - 0.22);
+          tl.to(r.querySelector(".fill"), { opacity: 1, duration: 0.24, ease: FG.POP }, at)
+            .fromTo(r.querySelector(".bx"), { scale: 1 }, { keyframes: [{ scale: 0.9, duration: 0.09, ease: "power2.out" }, { scale: 1, duration: 0.25, ease: FG.SETTLE }] }, at)
+            .to(r.querySelector("path"), { strokeDashoffset: 0, duration: 0.34, ease: FG.SETTLE }, at + 0.08)
+            .to(r.querySelector(".sk"), { scaleX: 1, duration: 0.38, ease: FG.GLIDE }, at + 0.14)
+            .to(r.querySelector(".lb"), { color: DIM, duration: 0.35, ease: "power2.inOut" }, at + 0.2)
+            .to($(".bar i"), { scaleX: (i + 1) / N, duration: 0.42, ease: FG.POP }, at + 0.1);
+        });
+        tl.fromTo(CLK, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: show }, 0); show();
+
+        /* payoff: the counter goes gold and takes the heartbeat; one glint across the card */
+        tl.to($(".focus"), { opacity: 0, duration: 0.4, ease: "power2.inOut" }, LAST + 0.5)
+          .to(cnt, { color: GOLD, duration: 0.35, ease: FG.POP }, LAST + 0.3);
+        FG.beat(tl, cnt, LAST + 0.42, { amp: 1.3 });
+        tl.fromTo($(".card .fg-sheen"), { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.4, ease: FG.GLIDE }, LAST + 0.6);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

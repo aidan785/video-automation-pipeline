@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · NETFLIX DOC · ai-screen (tier1, 132 f @ 24 fps)
+  Chef's Table ink-in card (raw-media/hp-sampler-refs/netflix-doc/ANALYSIS.md, signature moves 2 + 3;
+  picks chefs-table_card_midfade, _card_farthest_full, _card_jiro_full, _namecard_bottura).
+  F1-3 empty cream card. F4-47 the prompt inks in on the measured Chef's Table curve (darkest-pixel luma per
+  frame, accelerating: ~30% at the halfway frame, the last 8 f do the final 40%); letters never move.
+  Hold. F77-88 a 12-f phone insert (the reference's 12-f food-shot slot). F89 hard cut to the oxblood reply
+  card, fully drawn; F91-94 a 3 px orange underline draws center-out under the key line. Dead hold.
+  2.0:1 letterbox throughout; soft corner darkening on the cards (the white-card lens vignette).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;600&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#000;}
+      #hp2-netflix-doc-ai-screen{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:#FFF0E6;
+        --cream:#FFF0E6;--orange:#FF8A4C;--deep:#2C0B16;--oxblood:#4B1526;font-family:"Inter Tight",sans-serif;}
+      #hp2-netflix-doc-ai-screen .layer{position:absolute;inset:0;opacity:0;}
+      #hp2-netflix-doc-ai-screen .cardbg{position:absolute;inset:0;}
+      #hp2-netflix-doc-ai-screen .vig{position:absolute;inset:0;background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(44,11,22,0) 55%, rgba(44,11,22,.065) 100%);}
+      #hp2-netflix-doc-ai-screen .vig.dk{background:radial-gradient(ellipse 62% 70% at 50% 50%, rgba(0,0,0,0) 55%, rgba(20,4,9,.22) 100%);}
+      #hp2-netflix-doc-ai-screen .ln{position:absolute;left:0;width:1920px;text-align:center;white-space:nowrap;text-transform:uppercase;}
+      #hp2-netflix-doc-ai-screen .ink{opacity:0;}
+      #hp2-netflix-doc-ai-screen .kick{top:418px;height:70px;line-height:70px;font-weight:300;font-size:52px;letter-spacing:.22em;text-indent:.22em;color:var(--deep);}
+      #hp2-netflix-doc-ai-screen .ask{top:500px;font-weight:600;font-size:54px;line-height:80px;letter-spacing:.2em;text-indent:.2em;}
+      #hp2-netflix-doc-ai-screen .ask span{display:inline-block;line-height:1;padding:6px 0;
+        background:linear-gradient(180deg,#2C0B16 0%,#2C0B16 28%,#7d5a63 50%,#2C0B16 74%,#2C0B16 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+      #hp2-netflix-doc-ai-screen .phone video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+      #hp2-netflix-doc-ai-screen .reply{background:var(--oxblood);}
+      #hp2-netflix-doc-ai-screen .rk{top:412px;height:36px;line-height:36px;font-weight:300;font-size:28px;letter-spacing:.3em;text-indent:.3em;color:rgba(255,240,230,.7);}
+      #hp2-netflix-doc-ai-screen .rl{top:480px;font-weight:600;font-size:54px;line-height:84px;letter-spacing:.14em;text-indent:.14em;color:var(--cream);}
+      #hp2-netflix-doc-ai-screen .rl .u{position:relative;display:inline-block;line-height:1;}
+      #hp2-netflix-doc-ai-screen .rl .u i{position:absolute;left:0;right:0;bottom:-14px;height:3px;background:var(--orange);transform:scaleX(0);transform-origin:50% 50%;}
+      #hp2-netflix-doc-ai-screen .lb{position:absolute;left:0;width:1920px;height:60px;background:#000;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-netflix-doc-ai-screen" data-composition-id="hp2-netflix-doc-ai-screen" data-start="0" data-width="1920" data-height="1080">
+      <div class="layer prompt">
+        <div class="cardbg" style="background:#FFF0E6"></div>
+        <div class="vig"></div>
+        <div class="ln kick ink" data-slot="kicker">She asked</div>
+        <div class="ln ask ink" data-slot="prompt"><span>Write a friendly reminder text</span><br /><span>for tomorrow's grooms</span></div>
+      </div>
+      <div class="layer phone" data-slot="media">
+        <video src="../../assets/footage/phone_8142388.mp4" poster="../../assets/footage/phone_8142388.jpg" muted playsinline preload="auto" data-start="3.1667" data-duration="0.5" data-track-index="0"></video>
+      </div>
+      <div class="layer reply">
+        <div class="vig dk"></div>
+        <div class="ln rk" data-slot="reply-kicker">The reply</div>
+        <div class="ln rl" data-slot="reply"><span class="u"><span>Reply C to confirm, or R</span><i></i></span><br /><span class="u"><span>and we'll find a new time.</span><i></i></span></div>
+      </div>
+      <div class="lb" style="top:0"></div><div class="lb" style="top:1020px"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-netflix-doc-ai-screen", FPS = 24, N = 132;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const show = (F, sel) => at(F, $1(sel), { opacity: 1 }), hide = (F, sel) => at(F, $1(sel), { opacity: 0 });
+      function sample(F0, n, ease, fn) { const e = gsap.parseEase(ease); for (let i = 0; i <= n; i++) fn(F0 + i, e(i / n)); }
+      // Chef's Table ink-in: darkest-pixel luma per frame on the white card (measured, 44 f), as opacity
+      const INK_L = [235,234,229,226,220,222,216,216,210,210,206,202,198,199,191,190,182,181,177,174,170,170,158,154,153,146,145,140,136,129,120,112,109,97,93,82,67,73,72,45,41,26,1,0];
+      let lo = 255; const INK = INK_L.map((L) => { lo = Math.min(lo, L); return (255 - lo) / 255; });
+
+      tl.set($(".layer"), { opacity: 0 }, 0); tl.set($(".ink"), { opacity: 0 }, 0); tl.set($(".rl .u i"), { scaleX: 0 }, 0);
+
+      // F1-3 empty card, F4-47 ink-in (both lines together, letters never move)
+      show(1, ".prompt");
+      INK.forEach((o, i) => $(".prompt .ink").forEach((el) => at(4 + i, el, { opacity: o })));
+      // F48-76 hold. F77-88 12-f phone insert, hard cuts in and out
+      hide(77, ".prompt"); show(77, ".phone");
+      // F89 hard cut to the oxblood reply card, fully drawn
+      hide(89, ".phone"); show(89, ".reply");
+      // F91-94 underline draws center-out (power4.out), both lines of the key reply together
+      sample(90, 4, "power4.out", (F, k) => { if (F >= 91) $(".rl .u i").forEach((el) => at(F, el, { scaleX: k })); });
+      // F95-132 dead hold
+
+      tl.set({}, {}, N / FPS);
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

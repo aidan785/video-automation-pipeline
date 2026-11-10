@@ -1,0 +1,285 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · thesis · EMBER SERIF CHIPS
+  The editorial wordmark moment, then the capability row. EMBER corners
+  canvas (true black, orange light pooling top-right + bottom-left, breathing).
+  A generic 8-ray asterisk spark (NOT any real brand mark) pops with a small
+  twist, then a serif word types letter by letter beside it, each letter
+  arriving ember-hot with a glow that cools to white (the cool sweeps left to
+  right, so mid-type the word reads white -> orange). Then the lockup splits
+  (spark whips off left, word off right, both with a horizontal smear) and a row
+  of five dark glowing chips expands out of the gap; each chip arrives with the
+  ember chip-glow and cools to the plain rim after ~0.6s. Holds on the calm row.
+  Slots: word (text, <= 10 chars), chip1..chip5 (text, <= 7 chars each).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-ember-serif-chips {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-ember-serif-chips .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-ember-serif-chips .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.45; }
+      #sanji-t1-ember-serif-chips .center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+      #sanji-t1-ember-serif-chips .lockup { display: flex; align-items: center; gap: 58px; }
+      #sanji-t1-ember-serif-chips .spark { width: 190px; height: 190px; display: block; overflow: visible; filter: drop-shadow(0 0 14px rgba(var(--ember-rgb),0.55)); }
+      #sanji-t1-ember-serif-chips .word {
+        font-family: var(--font-serif); font-weight: 600; font-size: 150px; line-height: 1;
+        letter-spacing: -0.015em; white-space: pre; color: var(--white); padding-bottom: 12px;
+      }
+      #sanji-t1-ember-serif-chips .word .c { display: inline-block; white-space: pre; }
+      #sanji-t1-ember-serif-chips .row { display: flex; align-items: center; gap: 12px; }
+      #sanji-t1-ember-serif-chips .chip {
+        position: relative; height: 124px; box-sizing: border-box; padding: 0 38px 0 32px;
+        display: flex; align-items: center; gap: 24px; border-radius: 30px;
+        background: var(--chip-fill); border: var(--rim) solid var(--chip-rim);
+        font-family: var(--font-body); font-weight: 500; font-size: 52px; letter-spacing: var(--track-ui); white-space: nowrap;
+      }
+      #sanji-t1-ember-serif-chips .chip .tint {
+        position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+        background: radial-gradient(120% 140% at 30% 50%, rgba(var(--ember-rgb),0.32), rgba(var(--ember-rgb),0.12) 60%, rgba(var(--ember-rgb),0.04));
+      }
+      #sanji-t1-ember-serif-chips .chip svg { position: relative; width: 50px; height: 50px; flex: none; }
+      #sanji-t1-ember-serif-chips .chip span { position: relative; }
+      #sanji-t1-ember-serif-chips .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-ember-serif-chips" data-composition-id="sanji-t1-ember-serif-chips" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="vig"></div>
+
+      <div class="center"><div class="lockup">
+        <!-- generic 8-ray asterisk spark (placeholder glyph, not a brand mark) -->
+        <svg class="spark" viewBox="-100 -100 200 200">
+          <g stroke="#FF7A1A" stroke-linecap="round" fill="none">
+            <path d="M0 -14 L0 -92" stroke-width="15"/><path d="M0 14 L0 86" stroke-width="15"/>
+            <path d="M14 0 L94 0" stroke-width="15"/><path d="M-14 0 L-88 0" stroke-width="15"/>
+            <path d="M10 -10 L62 -62" stroke-width="14"/><path d="M-10 10 L-66 66" stroke-width="14"/>
+            <path d="M10 10 L60 60" stroke-width="14"/><path d="M-10 -10 L-64 -64" stroke-width="14"/>
+          </g>
+          <circle r="20" fill="#FF7A1A"/>
+        </svg>
+        <div class="word" data-slot="word">Studio</div>
+      </div></div>
+
+      <div class="center"><div class="row">
+        <div class="chip"><div class="tint"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></svg>
+          <span data-slot="chip1">Create</span></div>
+        <div class="chip"><div class="tint"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4.2L15.6 5.2a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8.2 19z"/><path d="M13.8 7l3.2 3.2"/></svg>
+          <span data-slot="chip2">Write</span></div>
+        <div class="chip"><div class="tint"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6M14 4l-4 16"/></svg>
+          <span data-slot="chip3">Code</span></div>
+        <div class="chip"><div class="tint"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8.5 3v4M15.5 3v4M8 14.5l2.2 2 4-4"/></svg>
+          <span data-slot="chip4">Plan</span></div>
+        <div class="chip"><div class="tint"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5L12 5l10 4.5L12 14z"/><path d="M6 11.5v4.5c0 1.6 2.7 3 6 3s6-1.4 6-3v-4.5M22 9.5v5"/></svg>
+          <span data-slot="chip5">Learn</span></div>
+      </div></div>
+
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-ember-serif-chips";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), ER = tok("--ember-rgb");
+        const CHIP_GLOW = tok("--chip-glow");
+        const CHIP_OFF = CHIP_GLOW.replace(/rgba\(([^)]+),\s*[\d.]+\)/g, "rgba($1, 0)");   /* same shadow list, zero alpha (tweenable) */
+        const HOTC = "#FFB066";   /* per-letter transitional tint (ember, lifted) */
+        const HOT = `0 0 8px rgba(${ER},0.85), 0 0 26px rgba(${ER},0.6), 0 0 60px rgba(${ER},0.35)`;
+        const COOL = `0 0 8px rgba(${ER},0), 0 0 26px rgba(${ER},0), 0 0 60px rgba(${ER},0)`;
+
+        const word = $(".word"), spark = $(".spark"), lockup = $(".lockup");
+        const str = word.textContent; word.textContent = "";
+        const chars = [...str].map((ch) => { const c = document.createElement("span"); c.className = "c"; c.textContent = ch; word.appendChild(c); return c; });
+        const chips = $$(".chip"), row = $(".row");
+
+        const tl = gsap.timeline({ paused: true });
+        const T_SPARK = 0.2, T_TYPE = 0.62, CPS = 0.085;
+        const T_DONE = T_TYPE + chars.length * CPS;
+        const T_SPLIT = T_DONE + 0.75;
+        const T_CHIPS = T_SPLIT + 0.16;
+        const END = T_CHIPS + 2.9;
+
+        tl.set(chars, { autoAlpha: 0 }, 0).set(spark, { autoAlpha: 0 }, 0).set(chips, { autoAlpha: 0 }, 0)
+          .fromTo($(".warm"), { opacity: 0.55 }, { opacity: 1, duration: END * 0.55, ease: "sine.inOut" }, 0)
+          .to($(".warm"), { opacity: 0.75, duration: END * 0.45, ease: "sine.inOut" }, END * 0.55);
+
+        /* 1. spark pops with a quarter twist out of blur */
+        tl.fromTo(spark, { autoAlpha: 0, scale: 0.55, rotation: -40, filter: "blur(10px)" },
+          { autoAlpha: 1, scale: 1, rotation: 0, filter: "blur(0px)", duration: 0.42, ease: "back.out(1.3)" }, T_SPARK);
+
+        /* 2. serif word types: ember-hot + glow, each letter cools 0.3s later */
+        chars.forEach((c, i) => {
+          const t = T_TYPE + i * CPS;
+          tl.fromTo(c, { autoAlpha: 0, filter: "blur(7px)", color: HOTC, textShadow: HOT, y: 4 },
+              { autoAlpha: 1, filter: "blur(0px)", color: HOTC, textShadow: HOT, y: 0, duration: 0.2, ease: "power2.out" }, t)
+            .to(c, { color: WHITE, textShadow: COOL, duration: 0.5, ease: "power2.inOut" }, t + 0.34);
+        });
+
+        /* 3. split: spark whips off left, word off right, with smear */
+        tl.to(spark, { x: -1200, scaleX: 1.25, filter: "blur(10px)", duration: 0.5, ease: "power3.in" }, T_SPLIT)
+          .to(word, { x: 1250, scaleX: 1.12, filter: "blur(10px)", duration: 0.5, ease: "power3.in" }, T_SPLIT);
+
+        /* 4. chip row expands out of the gap: inner chips first, outer ones later */
+        const cx = (el) => () => (row.offsetWidth / 2) - (el.offsetLeft - row.offsetLeft + el.offsetWidth / 2);
+        const order = [2, 1, 3, 0, 4];
+        order.forEach((ci, k) => {
+          const el = chips[ci], t = T_CHIPS + k * 0.07;
+          tl.fromTo(el, { autoAlpha: 0, x: cx(el), scale: 0.82, filter: "blur(12px)", boxShadow: CHIP_GLOW, color: HOTC },
+              { autoAlpha: 1, x: 0, scale: 1, filter: "blur(0px)", boxShadow: CHIP_GLOW, color: HOTC, duration: 0.55, ease: "expo.out" }, t)
+            .fromTo(el.querySelector(".tint"), { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power2.inOut" }, t + 0.6)
+            .to(el, { boxShadow: CHIP_OFF, color: WHITE, duration: 0.5, ease: "power2.inOut" }, t + 0.6);
+          TXT.reveal(tl, el.querySelector("span"), t + 0.12);   /* chip label pours in as the chip slides out of the gap */
+        });
+
+        /* 5. calm hold: the row drifts a hair (container only, text never scales) */
+        tl.fromTo(row, { y: 0 }, { y: -6, duration: END - T_CHIPS, ease: "sine.inOut" }, T_CHIPS)
+          .set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

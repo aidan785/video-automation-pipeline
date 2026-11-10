@@ -1,0 +1,5007 @@
+{
+ "$schema": "../registry.schema.json",
+ "id": "sanji",
+ "name": "Sanji Style",
+ "number": "12",
+ "status": "draft",
+ "inspiration": "Sanji Nai-Chien, 'How I Make $880/Day with AI Motion Design (Claude Motion)' (YouTube D5qpBbEWTxo). Analyzed at its native 25fps: per-frame scene scoring over all 29,872 frames, every frame of the 16s cold open, and full-rate passes on every major graphic. Curated stills + 25fps frame strips in references/.",
+ "summary": "Premium SaaS-launch motion design. Three canvases (white PAPER, black EMBER chatbot UI lit by orange corner light, electric COBALT liquid glass) plus nature photos under tinted glass. Everything resolves out of blur, glass tiles focus-shift, type cools from glowing to settled. Use for product launches, AI-tool walkthroughs, explainer diagrams and premium course content.",
+ "palette": {
+  "bg": "#2042EE",
+  "fg": "#FFFFFF",
+  "accent": "#FF7A1A",
+  "cobalt": "#2042EE",
+  "cobaltDeep": "#2630E4",
+  "sky": "#1B7DF0",
+  "void": "#030100",
+  "ember": "#FF7A1A",
+  "emberGlow": "#E6832A",
+  "volt": "#2F8CFF",
+  "paper": "#FFFFFF",
+  "ink": "#1C1C1E",
+  "dormant": "#A6A3B4",
+  "notes": "Cobalt cards are white + glass light only (no second hue). Ember is the single accent on dark. Volt blue is glow-type only. Red alert dot only on VS tags."
+ },
+ "fonts": {
+  "display": "Inter Tight",
+  "body": "Inter",
+  "mono": "JetBrains Mono",
+  "serif": "Source Serif 4",
+  "notes": "Inter Tight 800 ALL CAPS tracking -0.035em for titles/pills/captions; Inter 600 sentence case inside glass; JetBrains Mono for file names + code; Source Serif 4 600 only for the EMBER serif wordmark moment."
+ },
+ "motion": "Resolve out of blur: words 12px blur to sharp + light grey to ink + rise 10px in 0.2s (expo.out), speech-paced 0.24s cadence, single lines re-center as they grow. Hero word dollies in from 3x. Letters type with blur and arrive glowing (volt blue / ember) then cool to settled color in 0.5s. Glass pops scale .9 + blur 10 to sharp with back.out(1.25). Focus shift: previous item fades to dormant grey as the next lights. Ambient on background only (sonar rings, breathing corner light, slow plate drift). Exits 0.6x entry, dissolve to blur.",
+ "transitions": "Halftone iris (amber dot-matrix disc grows from a glowing point), chapter-strip whip (5 numbered hairline columns slide left with smear), plate slide-up with vertical motion blur onto a squircle-grid ground, pixel-dither band wipe, hard camera pull-back with motion blur. Almost no crossfades; 111 hard cuts in 20 min, everything else is a designed move.",
+ "cards": [
+  {
+   "id": "sanji.tier1.thesis.paper-resolve",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "paper-resolve",
+   "canvas": "paper",
+   "file": "cards/tier1/t1-paper-resolve.html",
+   "slots": [
+    {
+     "name": "headline",
+     "type": "richtext",
+     "maxChars": 42
+    }
+   ],
+   "duration": {
+    "min": 3.5,
+    "max": 6
+   },
+   "notes": "Cold-open sentence on white: first word dollies in from 3x, every word resolves out of blur, line re-centers as it grows, <em> word types letter by letter.",
+   "category": "text",
+   "poster": "preview/t1-paper-resolve.jpg"
+  },
+  {
+   "id": "sanji.tier1.thesis.ember-chatbox",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "ember-chatbox",
+   "canvas": "ember",
+   "file": "cards/tier1/t1-ember-chatbox.html",
+   "slots": [
+    {
+     "name": "prompt",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "model",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 7
+   },
+   "notes": "Dark chatbot box in orange light: close-up while the prompt types (chars arrive ember and cool), camera pulls back, toolbar resolves, comet streak, send press.",
+   "category": "motion",
+   "poster": "preview/t1-ember-chatbox.jpg"
+  },
+  {
+   "id": "sanji.tier1.diagram.glass-tree",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "glass-tree",
+   "canvas": "cobalt",
+   "file": "cards/tier1/t1-glass-tree.html",
+   "slots": [
+    {
+     "name": "file",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "root",
+     "type": "richtext",
+     "maxChars": 26
+    },
+    {
+     "name": "step1",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "step2",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "step3",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "item1",
+     "type": "richtext",
+     "maxChars": 14
+    },
+    {
+     "name": "item2",
+     "type": "richtext",
+     "maxChars": 14
+    },
+    {
+     "name": "item3",
+     "type": "richtext",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 9
+   },
+   "notes": "Root glass tile branches into 3 numbered pills and glass cards; bezier connectors draw, each card lights ACTIVE and the previous one focus-shifts dormant. Sonar rings behind.",
+   "category": "instructional",
+   "posterAt": 0.97,
+   "poster": "preview/t1-glass-tree.jpg"
+  },
+  {
+   "id": "sanji.tier2.caption.kinetic-caps",
+   "tier": "tier2",
+   "purpose": "caption",
+   "treatment": "kinetic-caps",
+   "file": "cards/tier2/t2-kinetic-caption.html",
+   "slots": [
+    {
+     "name": "p1",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "p2",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "p3",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 2.5,
+    "max": 6.5
+   },
+   "notes": "Up to 3 heavy white caps phrases parked upper-left / upper-right / lower-left around the speaker, words resolve dim+blur to white one by one per group, all dissolve together; empty slots skipped. Use for punchy spoken phrases.",
+   "canvas": "overlay",
+   "category": "text"
+  },
+  {
+   "id": "sanji.tier2.stat.icon-countup",
+   "tier": "tier2",
+   "purpose": "stat",
+   "treatment": "icon-countup",
+   "file": "cards/tier2/t2-stat-icon.html",
+   "slots": [
+    {
+     "name": "badge",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "sub",
+     "type": "text",
+     "maxChars": 4
+    },
+    {
+     "name": "prefix",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "value",
+     "type": "text",
+     "maxChars": 6
+    }
+   ],
+   "duration": {
+    "min": 3.5,
+    "max": 3.6
+   },
+   "notes": "Indigo file-style app icon (monogram + sub label) pops at left while a 210px white number ticks up at right and blooms; exits with blur while the number keeps ticking. Use when a dollar/number is tied to a tool or file type.",
+   "canvas": "overlay",
+   "category": "popup"
+  },
+  {
+   "id": "sanji.tier2.callout.icon-compare-pop",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "icon-compare-pop",
+   "file": "cards/tier2/t2-icon-stat-pop.html",
+   "slots": [
+    {
+     "name": "aTop",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "aBottom",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "bTop",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "bBottom",
+     "type": "text",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 4.3,
+    "max": 4.3
+   },
+   "notes": "Two-sided comparison: white person glyph + label pops in the right third, then an ember 8-ray spark + label on the left; losing side dims (root data-dim a|b|none). Use for X vs Y time/cost contrasts.",
+   "canvas": "overlay",
+   "category": "popup"
+  },
+  {
+   "id": "sanji.tier2.lower-third.cobalt-glass-subtitle",
+   "tier": "tier2",
+   "purpose": "lower-third",
+   "treatment": "cobalt-glass-subtitle",
+   "file": "cards/tier2/t2-glass-subtitle.html",
+   "slots": [
+    {
+     "name": "text",
+     "type": "text",
+     "maxChars": 64
+    }
+   ],
+   "duration": {
+    "min": 2.8,
+    "max": 4.6
+   },
+   "notes": "Translucent cobalt glass bar (white rim, backdrop blur) lower-left that grows word by word to hug a single-line sentence; fades + blurs out. Use for a key rule or takeaway sentence.",
+   "canvas": "overlay",
+   "category": "text"
+  },
+  {
+   "id": "sanji.tier2.list.numbered-focus",
+   "tier": "tier2",
+   "purpose": "list",
+   "treatment": "numbered-focus",
+   "file": "cards/tier2/t2-numbered-list.html",
+   "slots": [
+    {
+     "name": "item1",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "item2",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "item3",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "item4",
+     "type": "text",
+     "maxChars": 18
+    }
+   ],
+   "duration": {
+    "min": 5.87,
+    "max": 5.87
+   },
+   "notes": "Up to 4 ringed-number caps items stacked upper-left, ~1.1s apart; each new item lands white while earlier ones focus-shift to dim. Use when the speaker walks through a short enumerated list.",
+   "canvas": "overlay",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier2.label.dark-glass-side-pills",
+   "tier": "tier2",
+   "purpose": "label",
+   "treatment": "dark-glass-side-pills",
+   "file": "cards/tier2/t2-glass-side-pills.html",
+   "slots": [
+    {
+     "name": "left",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "right",
+     "type": "text",
+     "maxChars": 24
+    }
+   ],
+   "duration": {
+    "min": 4.85,
+    "max": 4.85
+   },
+   "notes": "Two small dark-glass pills (clock icon left, plus icon right) slide in from the frame edges at mid height with blur, float gently, dissolve out. Use for two short qualities or benefits named in one breath.",
+   "canvas": "overlay",
+   "category": "popup"
+  },
+  {
+   "id": "sanji.tier1.stat.particle-numeral",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "particle-numeral",
+   "file": "cards/tier1/t1-particle-numeral.html",
+   "slots": [
+    {
+     "name": "figure",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 3.5,
+    "max": 4.5
+   },
+   "notes": "EMBER black: sentence resolves, then a huge figure of thousands of seeded glowing blue particles slams in overfilling the frame and dollies back while shimmering, edge dot-grid wakes late; use for a headline money/number stat.",
+   "canvas": "ember",
+   "category": "text"
+  },
+  {
+   "id": "sanji.tier1.thesis.glow-type",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "glow-type",
+   "file": "cards/tier1/t1-glow-type.html",
+   "slots": [
+    {
+     "name": "lead",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "glow",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 3.6,
+    "max": 4.5
+   },
+   "notes": "Black with edge halftone grid: white lead word resolves, emphasis phrase types in glowing volt blue while the line re-centers, then cools left to right to white; use for a short 2-4 word thesis with one emphasized phrase.",
+   "canvas": "ember",
+   "category": "text"
+  },
+  {
+   "id": "sanji.tier1.thesis.ember-serif-chips",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "ember-serif-chips",
+   "file": "cards/tier1/t1-ember-serif-chips.html",
+   "slots": [
+    {
+     "name": "word",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "chip1",
+     "type": "text",
+     "maxChars": 7
+    },
+    {
+     "name": "chip2",
+     "type": "text",
+     "maxChars": 7
+    },
+    {
+     "name": "chip3",
+     "type": "text",
+     "maxChars": 7
+    },
+    {
+     "name": "chip4",
+     "type": "text",
+     "maxChars": 7
+    },
+    {
+     "name": "chip5",
+     "type": "text",
+     "maxChars": 7
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 5.5
+   },
+   "notes": "EMBER corners: generic spark pops, serif word types ember-hot and cools to white, then the lockup whips apart and a row of 5 glowing icon chips expands from the gap and cools; use to introduce a tool/product and what it does.",
+   "canvas": "ember",
+   "category": "text"
+  },
+  {
+   "id": "sanji.tier1.thesis.code-stream",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "code-stream",
+   "file": "cards/tier1/t1-code-stream.html",
+   "slots": [
+    {
+     "name": "code",
+     "type": "text",
+     "maxChars": 900
+    },
+    {
+     "name": "sign",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 5.2,
+    "max": 6.2
+   },
+   "notes": "Black + ember pool: HTML/SVG lines type hot orange and cool to syntax colors (tokenized), block auto-scrolls, camera punches in 2.4x and a sign line types in ember; use when the speaker says AI/code built something. code = one line per row, 10-16 rows, <= 64 chars each.",
+   "canvas": "ember",
+   "category": "text"
+  },
+  {
+   "id": "sanji.transition.transition.halftone-iris",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "halftone-iris",
+   "file": "cards/transitions/tr-halftone-iris.html",
+   "slots": [],
+   "duration": {
+    "min": 1.6,
+    "max": 1.6
+   },
+   "notes": "Amber seed dot at center-right grows into a canvas dot-matrix halftone disc (bright dot ring at the edge, clear center) revealing scene B, fringe fades from the corners; use to exit a dark EMBER/code card back to footage. Plates are stand-ins.",
+   "canvas": "ember",
+   "category": "transition"
+  },
+  {
+   "id": "sanji.tier1.diagram.glass-step-stat",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "glass-step-stat",
+   "file": "cards/tier1/t1-glass-step-stat.html",
+   "slots": [
+    {
+     "name": "num",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 38
+    },
+    {
+     "name": "value",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "unit",
+     "type": "text",
+     "maxChars": 3
+    },
+    {
+     "name": "chip1",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "chip2",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "chip3",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 4.7,
+    "max": 5.94
+   },
+   "notes": "Numbered glass pill header drops a connector into a wide panel: line resolves, big value ticks up while a slider knob glides to it, then up to 3 chips take focus in turn; use to zoom into one step/rule of a system with a single number (slider scale = data-max on .track, default 0.5).",
+   "canvas": "cobalt",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.diagram.glass-curve",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "glass-curve",
+   "file": "cards/tier1/t1-glass-curve.html",
+   "slots": [
+    {
+     "name": "num",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "title",
+     "type": "richtext",
+     "maxChars": 14
+    },
+    {
+     "name": "headline",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "inLabel",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "outLabel",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "chip1",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "chip2",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "chip3",
+     "type": "text",
+     "maxChars": 20
+    }
+   ],
+   "duration": {
+    "min": 6.95,
+    "max": 6.95
+   },
+   "notes": "Easing explainer: pill header + glass chart card where a dashed linear guide draws, then an eased curve draws with a glowing head dot and an overshoot bloom at the peak, IN/OUT windows, then 3 focus-shift chips; use for timing/easing/curve or any rise-hold-fall concept.",
+   "canvas": "cobalt",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.stat.glass-math",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "glass-math",
+   "file": "cards/tier1/t1-glass-math.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "row1Label",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "row1Value",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "row2Label",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "row2Value",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "row3Label",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "row3Value",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "totalLabel",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "total",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "time",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "seg1",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "seg2",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 7.16,
+    "max": 7.16
+   },
+   "notes": "Glass receipt that grows row by row (line items resolve, dividers draw), hero total counts up with a bloom, then a time bar with a two-segment progress sweep pops below; use for earnings/cost breakdowns ending on one take-home number.",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.overview.tile-row",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "tile-row",
+   "file": "cards/tier1/t1-tile-row.html",
+   "slots": [
+    {
+     "name": "tile1",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "tile2",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "tile3",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "tile4",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "tile5",
+     "type": "text",
+     "maxChars": 18
+    }
+   ],
+   "duration": {
+    "min": 2.72,
+    "max": 4.88
+   },
+   "notes": "Roadmap row: glass squircle tiles arrive one at a time from the right out of blur, row re-centers each time, newest active, older dormant; with a 5th tile the row scrolls and the first exits left; use for a 3 to 5 step overview or agenda (empty tile slots are skipped).",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.stat.week-strip",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "week-strip",
+   "file": "cards/tier1/t1-week-strip.html",
+   "slots": [
+    {
+     "name": "headline",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "days",
+     "type": "text",
+     "maxChars": 2
+    }
+   ],
+   "duration": {
+    "min": 3.98,
+    "max": 4.82
+   },
+   "notes": "Calendar badge over a row of N glass day chips that fill white one by one on a tick, then a caps headline resolves word by word as the row slides down; use for elapsed time (days later, a week of work, N-day streak); days = 3 to 10.",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.section.chapter-strip",
+   "tier": "tier1",
+   "purpose": "section",
+   "treatment": "chapter-strip",
+   "file": "cards/tier1/t1-chapter-strip.html",
+   "slots": [
+    {
+     "name": "num",
+     "type": "text",
+     "maxChars": 1
+    },
+    {
+     "name": "title",
+     "type": "richtext",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 4,
+    "max": 5.2
+   },
+   "notes": "Cobalt-wash chapter card: 5-column numbered film strip whips until column N fills the frame, dashed baseline draws, ALL CAPS title resolves word by word (<br> splits 2 lines); use at every chapter/section break.",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.compare.vs-cards",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "vs-cards",
+   "file": "cards/tier1/t1-vs-cards.html",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "leftTag",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "rightTag",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "leftName",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "rightName",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "left1",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "left2",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "right1",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "right2",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "timer",
+     "type": "text",
+     "maxChars": 5
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 6
+   },
+   "notes": "Two white profile cards rise over a blurred dark footage stand-in, cobalt VS badge pops between, THE CHALLENGE pill drops in, timers count up to mm:ss; use for A-vs-B / AI-vs-human challenges.",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.compare.two-options",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "two-options",
+   "file": "cards/tier1/t1-two-options.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "nameA",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "nameB",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "a1k",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "a1v",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "a2k",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "a2v",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "a3k",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "a3v",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "b1v",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "b2v",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "b3v",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 7
+   },
+   "notes": "Giant white-to-transparent gradient title on cobalt-to-sky, profile card A rises with key/value rows, glides left as card B rises with cobalt-highlighted better values; use for option A vs option B / them vs me pitches.",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.stat.split-panel",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "split-panel",
+   "file": "cards/tier1/t1-split-panel.html",
+   "slots": [
+    {
+     "name": "stat",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "stat2",
+     "type": "text",
+     "maxChars": 8
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 6.5
+   },
+   "notes": "Footage (stand-in plate) shrinks into a rounded left panel while a ringed cobalt panel slides in; clock draws, caps stat resolves, ember spark pops, second stat resolves out of heavy blur; use for two-number punchlines (time + price) while keeping the speaker on screen.",
+   "canvas": "cobalt",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.transition.transition.slide-up-plate",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "slide-up-plate",
+   "file": "cards/transitions/tr-slide-up-plate.html",
+   "slots": [
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 18
+    }
+   ],
+   "duration": {
+    "min": 3,
+    "max": 4
+   },
+   "notes": "Talking-head stand-in -> cobalt squircle-cell ground rises with vertical smear carrying a white rounded screenshot plate (stand-in web page) that lands expo.out then drifts up 20px + scale 1.02; use to cut from speaker to a website/app screenshot.",
+   "canvas": "cobalt",
+   "category": "transition"
+  },
+  {
+   "id": "sanji.tier1.thesis.nature-glass-pill",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "nature-glass-pill",
+   "file": "cards/tier1/t1-nature-glass-pill.html",
+   "slots": [
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 4.4,
+    "max": 5.2
+   },
+   "notes": "Landscape photo revealed from a blue pixel-dither state by a diagonal band sweep, liquid-glass pill slides in and the line resolves word by word inside it, sheen, dims to dark; use for a calm single-line thesis or rhetorical question. photo = green-hills|hills-sunset|countryside-mist|wheat-field",
+   "canvas": "nature",
+   "category": "text"
+  },
+  {
+   "id": "sanji.tier1.thesis.nature-glass-plate",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "nature-glass-plate",
+   "file": "cards/tier1/t1-nature-glass-plate.html",
+   "slots": [
+    {
+     "name": "chip",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "to",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "subject",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "body",
+     "type": "text",
+     "maxChars": 80
+    },
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 4.6,
+    "max": 5.4
+   },
+   "notes": "Wheat-field photo with a glass review chip, a white message-composer plate tilts in flat, body types, cursor presses Send (dip + ripple) and the plate whooshes off upper right; use for client messages, outreach, inbound leads, 'they emailed me' moments. Empty chip hides it.",
+   "canvas": "nature",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.transition.transition.dither-wipe",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "dither-wipe",
+   "file": "cards/transitions/tr-dither-wipe.html",
+   "slots": [
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 1.2,
+    "max": 1.2
+   },
+   "notes": "Diagonal blue ordered-dither band sweeps across: scene A breaks into cobalt cells, cells resolve into scene B behind the band; use from a cobalt/glass card into a photo or footage, deterministic canvas.",
+   "canvas": "nature",
+   "category": "transition"
+  },
+  {
+   "id": "sanji.transition.transition.blur-pullback",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "blur-pullback",
+   "file": "cards/transitions/tr-blur-pullback.html",
+   "slots": [
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 1.4,
+    "max": 1.4
+   },
+   "notes": "Close-up on a dark ember chat plate with the typed line huge, hard camera pullback (2.1 to 1, power3.inOut) with a motion-blur breath to the wide framing with comet rim light; use for close-up to wide reveals on EMBER.",
+   "canvas": "ember",
+   "category": "transition"
+  },
+  {
+   "id": "sanji.tier1.section.ember-gradient-brand",
+   "tier": "tier1",
+   "purpose": "section",
+   "treatment": "ember-gradient-brand",
+   "file": "cards/tier1/t1-ember-gradient-brand.html",
+   "slots": [
+    {
+     "name": "brand",
+     "type": "text",
+     "maxChars": 11
+    },
+    {
+     "name": "caption",
+     "type": "text",
+     "maxChars": 24
+    }
+   ],
+   "duration": {
+    "min": 4,
+    "max": 4.6
+   },
+   "notes": "Ember gradient canvas, 4-dot glyph + huge wordmark resolve letter by letter, then lift away as a white app-icon tile (calendar-check) pops center over a white bloom with a caption; use for a product/brand reveal or launch-day section opener.",
+   "canvas": "ember",
+   "category": "motion"
+  },
+  {
+   "id": "sanji.tier1.thesis.word-swap",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "word-swap",
+   "file": "cards/tier1/t1-word-swap.html",
+   "canvas": "paper",
+   "category": "text",
+   "slots": [
+    {
+     "name": "lead",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "word1",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "word2",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "word3",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "word4",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 6.7
+   },
+   "notes": "Lead phrase resolves word by word, then the last word cycles through 3-4 options (blur up out, resolve in from below) with a cobalt underline that stretches to each width; final option lands in cobalt. Use for 'X that feels A / B / C' promises."
+  },
+  {
+   "id": "sanji.tier1.thesis.strike-replace",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "strike-replace",
+   "file": "cards/tier1/t1-strike-replace.html",
+   "canvas": "paper",
+   "category": "text",
+   "slots": [
+    {
+     "name": "before",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "wrong",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "right",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "after",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5.8
+   },
+   "notes": "Sentence resolves, a hairline strike crosses the wrong word, it goes dormant and slides under the line as a ghost while the right word resolves in cobalt. Use for before/after corrections (days to hours, myth vs fact)."
+  },
+  {
+   "id": "sanji.tier1.thesis.highlight-sweep",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "highlight-sweep",
+   "file": "cards/tier1/t1-highlight-sweep.html",
+   "canvas": "paper",
+   "category": "text",
+   "slots": [
+    {
+     "name": "headline",
+     "type": "richtext",
+     "maxChars": 46
+    }
+   ],
+   "duration": {
+    "min": 4.4,
+    "max": 4.4
+   },
+   "notes": "Two-line sentence resolves, then a cobalt liquid-glass bar sweeps behind the <em> phrase, which flips white while the rest dims to ink-mid; a glint crosses the bar. <br> splits lines; keep <em> on one line. Use to land the key phrase of a thesis."
+  },
+  {
+   "id": "sanji.tier1.thesis.typo-correct",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "typo-correct",
+   "file": "cards/tier1/t1-typo-correct.html",
+   "canvas": "ember",
+   "category": "text",
+   "slots": [
+    {
+     "name": "typed",
+     "type": "text",
+     "maxChars": 32
+    },
+    {
+     "name": "typo",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "fixed",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "model",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 6.4,
+    "max": 7
+   },
+   "notes": "Ember chat box prompt types, fumbles a typo, caret hesitates and backspaces it (chars flare ember and blur out), retypes it right, pulls back to the full box and presses send. Human moment for prompting/AI-tool beats; typed keeps its trailing space."
+  },
+  {
+   "id": "sanji.tier1.thesis.scale-emphasis",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "scale-emphasis",
+   "file": "cards/tier1/t1-scale-emphasis.html",
+   "canvas": "cobalt",
+   "category": "text",
+   "slots": [
+    {
+     "name": "headline",
+     "type": "richtext",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 6
+   },
+   "notes": "Cobalt + sonar rings: short sentence resolves, then the <em> word glides to center and scales to fill the frame with a bloom while the other words blur and recede, then everything settles back. Use when one word carries the whole point."
+  },
+  {
+   "id": "sanji.tier1.list.word-stack",
+   "tier": "tier1",
+   "purpose": "list",
+   "treatment": "word-stack",
+   "file": "cards/tier1/t1-word-stack.html",
+   "canvas": "ember",
+   "category": "text",
+   "slots": [
+    {
+     "name": "w1",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "w2",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "w3",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "w4",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "w5",
+     "type": "text",
+     "maxChars": 9
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 6.3
+   },
+   "notes": "Big caps words cascade into a centered vertical stack: each arrives hot (ember glow, blur, rising) at the bottom and cools, older words dim step by step, a glow pool rides the newest, finale re-lights the whole stack. Use for 4-5 step processes or rhythm lists."
+  },
+  {
+   "id": "sanji.tier1.section.mask-reveal-caps",
+   "tier": "tier1",
+   "purpose": "section",
+   "treatment": "mask-reveal-caps",
+   "file": "cards/tier1/t1-mask-reveal-caps.html",
+   "canvas": "nature",
+   "category": "text",
+   "slots": [
+    {
+     "name": "title",
+     "type": "richtext",
+     "maxChars": 22
+    },
+    {
+     "name": "sub",
+     "type": "text",
+     "maxChars": 48
+    },
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 5.6,
+    "max": 5.6
+   },
+   "notes": "Darkened drifting landscape photo; giant two-line caps title revealed by mask bands opening from center while each line rises out of its baseline with blur, then a hairline draws and a sentence-case sub resolves. Use as a section opener or chapter title."
+  },
+  {
+   "id": "sanji.tier1.quote.t1-quote-resolve",
+   "tier": "tier1",
+   "purpose": "quote",
+   "treatment": "t1-quote-resolve",
+   "file": "cards/tier1/t1-quote-resolve.html",
+   "canvas": "cobalt",
+   "category": "text",
+   "slots": [
+    {
+     "name": "quote",
+     "type": "text",
+     "maxChars": 140
+    },
+    {
+     "name": "name",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "role",
+     "type": "text",
+     "maxChars": 32
+    }
+   ],
+   "duration": {
+    "min": 4.8,
+    "max": 6.5
+   },
+   "notes": "Cobalt pull quote: glass quotation-mark tile pops, quote resolves word by word, attribution glass pill (auto initials avatar, name, role) resolves below; use for a client/expert quote or a line worth framing."
+  },
+  {
+   "id": "sanji.tier1.stat.t1-number-morph",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "t1-number-morph",
+   "file": "cards/tier1/t1-number-morph.html",
+   "canvas": "ember",
+   "category": "text",
+   "slots": [
+    {
+     "name": "from",
+     "type": "text",
+     "maxChars": 11
+    },
+    {
+     "name": "to",
+     "type": "text",
+     "maxChars": 11
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 6.5
+   },
+   "notes": "Ember slot-machine number: from-value settles, every digit column rolls hot with motion blur and lands staggered left to right on the to-value (new leading digits grow in), cools to white, bloom + unit label; use for before/after growth stats."
+  },
+  {
+   "id": "sanji.tier1.thesis.t1-kinetic-sequence",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-kinetic-sequence",
+   "file": "cards/tier1/t1-kinetic-sequence.html",
+   "canvas": "paper",
+   "category": "text",
+   "slots": [
+    {
+     "name": "beat1",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "beat2a",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "beat2b",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 44
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7
+   },
+   "notes": "Paper three-beat kinetic sentence: one huge word, then it shrinks to a kicker while two words land split to the margins, then all fly (FLIP, blur) into the small centered full line; beat words should appear in the line. Use for a punchy thesis delivered in pieces."
+  },
+  {
+   "id": "sanji.tier1.section.t1-letter-cascade",
+   "tier": "tier1",
+   "purpose": "section",
+   "treatment": "t1-letter-cascade",
+   "file": "cards/tier1/t1-letter-cascade.html",
+   "canvas": "cobalt",
+   "category": "text",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 6.5
+   },
+   "notes": "Cobalt-wash caps title whose letters drop in from above with blur in a seeded shuffle order and settle, then a diagonal light beam crosses and each letter haloes; use as a section opener or chapter title."
+  },
+  {
+   "id": "sanji.tier1.section.t1-gradient-sweep-title",
+   "tier": "tier1",
+   "purpose": "section",
+   "treatment": "t1-gradient-sweep-title",
+   "file": "cards/tier1/t1-gradient-sweep-title.html",
+   "canvas": "cobalt",
+   "category": "text",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 5.2,
+    "max": 6.2
+   },
+   "notes": "Deep cobalt giant embossed caps title under a glass kicker pill; a masked specular highlight band sweeps the letters twice; use for a one-word chapter or product name reveal."
+  },
+  {
+   "id": "sanji.tier2.caption.t2-word-highlight-caption",
+   "tier": "tier2",
+   "purpose": "caption",
+   "treatment": "t2-word-highlight-caption",
+   "file": "cards/tier2/t2-word-highlight-caption.html",
+   "canvas": "overlay",
+   "category": "text",
+   "slots": [
+    {
+     "name": "text",
+     "type": "text",
+     "maxChars": 72
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 7
+   },
+   "notes": "Lower-left karaoke caption: words resolve at speech pace and a cobalt glass pill glides to sit under the current word, wrapping to a second line; use to emphasise a spoken sentence word by word (retime GAP to the transcript)."
+  },
+  {
+   "id": "sanji.tier2.lower-third.t2-lower-third-name",
+   "tier": "tier2",
+   "purpose": "lower-third",
+   "treatment": "t2-lower-third-name",
+   "file": "cards/tier2/t2-lower-third-name.html",
+   "canvas": "overlay",
+   "category": "text",
+   "slots": [
+    {
+     "name": "name",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "role",
+     "type": "text",
+     "maxChars": 36
+    }
+   ],
+   "duration": {
+    "min": 4,
+    "max": 6
+   },
+   "notes": "Frosted glass name card slides up bottom-left with motion blur; initials avatar ring draws on, name (Inter Tight 800) and dim role resolve, thin cobalt accent line draws under; use to introduce a speaker or guest."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-notification-banner",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-notification-banner",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-notification-banner.html",
+   "slots": [
+    {
+     "name": "app",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "body",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "title2",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "body2",
+     "type": "text",
+     "maxChars": 40
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 6
+   },
+   "notes": "Top-right dark-glass phone notification drops in out of blur (cobalt app tile, app + now, bold title, 1-line body); a second lands on top and the first compresses behind as a stack sliver; use for ping / new message / sale-landed moments."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-chat-thread",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-chat-thread",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-chat-thread.html",
+   "slots": [
+    {
+     "name": "who",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "m1",
+     "type": "text",
+     "maxChars": 60
+    },
+    {
+     "name": "m2",
+     "type": "text",
+     "maxChars": 60
+    },
+    {
+     "name": "m3",
+     "type": "text",
+     "maxChars": 60
+    },
+    {
+     "name": "m4",
+     "type": "text",
+     "maxChars": 60
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7
+   },
+   "notes": "Right-third DM thread: header pill, then incoming dark-glass bubbles (typing dots pulse, then morph to the measured message size) alternate with cobalt outgoing bubbles; m1/m3 incoming, m2/m4 outgoing; use when retelling a client conversation."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-toast-progress",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-toast-progress",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-toast-progress.html",
+   "slots": [
+    {
+     "name": "working",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "done",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 4.8,
+    "max": 5.6
+   },
+   "notes": "Lower-left glass toast: spinner + label + cobalt progress bar and mono % counting to 100, then spinner resolves to a cobalt check, label swaps, pill shrinks to hug it with a white sheen + rim ring; use for render / export / upload done beats."
+  },
+  {
+   "id": "sanji.tier2.stat.t2-badge-counter",
+   "tier": "tier2",
+   "purpose": "stat",
+   "treatment": "t2-badge-counter",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-badge-counter.html",
+   "slots": [
+    {
+     "name": "count",
+     "type": "text",
+     "maxChars": 4
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 4.6,
+    "max": 5.4
+   },
+   "notes": "Upper-left white app tile (cobalt envelope) pops in, ember corner badge ticks from 3 up to the count in 16 nudged steps, lands with an ember bloom + ring; caption beside it; use for inbound volume / leads / unread stats (count = integer)."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-cursor-callout",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-cursor-callout",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-cursor-callout.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "body",
+     "type": "text",
+     "maxChars": 34
+    }
+   ],
+   "duration": {
+    "min": 4.4,
+    "max": 5.2
+   },
+   "notes": "White pointer arcs in from the lower right, clicks a point in the right third (dip, two ripples, node dot stays), a dark-glass tooltip with arrow nub pops from the click with 2 lines, cursor drifts off; use for one-click / tip / feature-hint moments."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-comment-bubbles",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-comment-bubbles",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-comment-bubbles.html",
+   "slots": [
+    {
+     "name": "n1",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "c1",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "n2",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "c2",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "n3",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "c3",
+     "type": "text",
+     "maxChars": 40
+    }
+   ],
+   "duration": {
+    "min": 5.2,
+    "max": 6
+   },
+   "notes": "Design-review look: three teardrop avatar pins (cobalt / ember / ink, initials from the names) pop staggered down the right third, each drawing a soft line to a frosted white comment bubble; they float then dissolve; use for feedback / review / client notes."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-subscribe-pill",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-subscribe-pill",
+   "canvas": "overlay",
+   "category": "popup",
+   "file": "cards/tier2/t2-subscribe-pill.html",
+   "slots": [
+    {
+     "name": "name",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "followers",
+     "type": "text",
+     "maxChars": 18
+    }
+   ],
+   "duration": {
+    "min": 4.6,
+    "max": 5.4
+   },
+   "notes": "Lower-left glass creator pill (avatar initial, name, follower count, cobalt Subscribe, bell); a cursor clicks the button, it flips to white + cobalt check Subscribed, then the bell fills and rings in two eased swings; use for subscribe / follow CTAs."
+  },
+  {
+   "id": "sanji.transition.transition.tr-split-doors",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-split-doors",
+   "file": "cards/transitions/tr-split-doors.html",
+   "canvas": "nature",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "pillA",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "sub",
+     "type": "text",
+     "maxChars": 34
+    }
+   ],
+   "duration": {
+    "min": 1.6,
+    "max": 2
+   },
+   "notes": "Two tall cobalt liquid-glass doors slide in with smear, rims flare white at the centre seam, then part to reveal a cobalt glass card; use to close one topic and open the next (nature or footage into an explainer)."
+  },
+  {
+   "id": "sanji.transition.transition.tr-dot-dissolve",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-dot-dissolve",
+   "file": "cards/transitions/tr-dot-dissolve.html",
+   "canvas": "ember",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "lineA",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "stat",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 1.6,
+    "max": 2
+   },
+   "notes": "Seeded canvas halftone: blue dots grow radially from centre (hot volt to cobalt) until they merge into a solid field, then shrink away revealing a cobalt stat card; use from a dark/ember beat into a cobalt number reveal."
+  },
+  {
+   "id": "sanji.transition.transition.tr-paper-to-ember",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-paper-to-ember",
+   "file": "cards/transitions/tr-paper-to-ember.html",
+   "canvas": "paper",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "before",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "word",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "after",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "lineB",
+     "type": "text",
+     "maxChars": 24
+    }
+   ],
+   "duration": {
+    "min": 1.8,
+    "max": 2.2
+   },
+   "notes": "Camera dollies exponentially into the stem of a heavy caps word on white paper until its dark glyph is the frame, which becomes the black ember scene; corner light blooms and a line resolves hot then cools. Hero word must start with a straight-stem letter (B D E F H K L M N P R)."
+  },
+  {
+   "id": "sanji.transition.transition.tr-button-iris",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-button-iris",
+   "file": "cards/transitions/tr-button-iris.html",
+   "canvas": "ember",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "prompt",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "tile1",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "tile2",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "tile3",
+     "type": "text",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 1.8,
+    "max": 2.2
+   },
+   "notes": "Cursor clicks the orange send button of an ember chat box; an ember disc with a white-hot rim expands from the button to fill frame, then a glowing hole opens from the same point onto a cobalt tile row; use for 'hit send, here is the result' moments."
+  },
+  {
+   "id": "sanji.transition.transition.tr-grid-flip",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-grid-flip",
+   "file": "cards/transitions/tr-grid-flip.html",
+   "canvas": "paper",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "headA",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "sub",
+     "type": "text",
+     "maxChars": 32
+    }
+   ],
+   "duration": {
+    "min": 1.7,
+    "max": 2.2
+   },
+   "notes": "12x7 grid of cells lifts into squircles and flips (rotateY, perspective per cell) in a seeded diagonal wave from top-left, back faces carrying scene B's slice; paper headline into a cobalt glass rule card. Good chapter or rule-to-rule change."
+  },
+  {
+   "id": "sanji.transition.transition.tr-number-through",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-number-through",
+   "file": "cards/transitions/tr-number-through.html",
+   "canvas": "cobalt",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "num",
+     "type": "text",
+     "maxChars": 3
+    },
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "pill",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 1.8,
+    "max": 2.2
+   },
+   "notes": "Giant white chapter numeral on cobalt wash flies at camera, aimed at the measured counter of its first glyph; the camera passes through the hole of the 0 into a nature photo with a glass pill. First glyph must have a closed counter (0 4 6 8 9)."
+  },
+  {
+   "id": "sanji.transition.transition.tr-feed-scroll",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-feed-scroll",
+   "file": "cards/transitions/tr-feed-scroll.html",
+   "canvas": "cobalt",
+   "category": "transition",
+   "slots": [
+    {
+     "name": "stat",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "chip1",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "chip2",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "chip3",
+     "type": "text",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 1.7,
+    "max": 2.1
+   },
+   "notes": "Feed flick: frame pulls back into a rounded post, short drag, then fast throw with long expo settle; scene A (cobalt stat) leaves upward with velocity-driven vertical smear, scene B (ember chips) rises and returns full-bleed, glass scrollbar notch at right edge. Use for social/feed or 'next one' beats."
+  },
+  {
+   "id": "sanji.transition.transition.tr-whip-pan",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-whip-pan",
+   "file": "cards/transitions/tr-whip-pan.html",
+   "slots": [
+    {
+     "name": "titleA",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "titleB",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "tileB1",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "tileB2",
+     "type": "text",
+     "maxChars": 18
+    }
+   ],
+   "duration": {
+    "min": 1.5,
+    "max": 1.5
+   },
+   "canvas": "cobalt",
+   "category": "transition",
+   "notes": "Camera whip between two cobalt glass scenes: strip accelerates out under an x-only SVG smear + scaleX stretch, white-hot light streaks cross at the peak, scene B lands sharp on expo.out; use between two cobalt explainer beats or any fast topic hop."
+  },
+  {
+   "id": "sanji.transition.transition.tr-zoom-through-tile",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-zoom-through-tile",
+   "file": "cards/transitions/tr-zoom-through-tile.html",
+   "slots": [
+    {
+     "name": "tileA1",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "tileA2",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "tileA3",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "prompt",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "model",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 1.74,
+    "max": 1.74
+   },
+   "canvas": "cobalt",
+   "category": "transition",
+   "notes": "Center glass tile of a cobalt row lights, camera pushes into it, its glass grows to full frame with a white-hot rim flare and the interior becomes an ember chat box resolving out of blur; use to dive from an overview tile into that step's detail."
+  },
+  {
+   "id": "sanji.transition.transition.tr-ring-ripple",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-ring-ripple",
+   "file": "cards/transitions/tr-ring-ripple.html",
+   "slots": [
+    {
+     "name": "pillA",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 1.56,
+    "max": 1.56
+   },
+   "canvas": "paper",
+   "category": "transition",
+   "notes": "Seed dot blooms at center and a sonar wave expands: paper scene B inside, cobalt scene A outside, edge carries a glass refraction band (magnified blurred copy of B in an annulus) + bright rim and leading echo rings; use cobalt to paper, a calm reveal of a key sentence."
+  },
+  {
+   "id": "sanji.transition.transition.tr-focus-pull",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-focus-pull",
+   "file": "cards/transitions/tr-focus-pull.html",
+   "slots": [
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "file",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "title",
+     "type": "richtext",
+     "maxChars": 24
+    }
+   ],
+   "duration": {
+    "min": 1.7,
+    "max": 1.7
+   },
+   "canvas": "nature",
+   "category": "transition",
+   "notes": "Rack focus: nature photo + glass pill blurs to 30px and recedes to 0.94 while a cobalt glass tile comes forward from blur 24px, ~0.5s overlap with a screen-blended exposure bloom at the crossover; use from a landscape/footage beat into an explainer."
+  },
+  {
+   "id": "sanji.transition.transition.tr-pill-morph",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-pill-morph",
+   "file": "cards/transitions/tr-pill-morph.html",
+   "slots": [
+    {
+     "name": "pill1",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "pill2",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "pill3",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "sub",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "s1v",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "s1l",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "s2v",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "s2l",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "s3v",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "s3l",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 2.06,
+    "max": 2.06
+   },
+   "canvas": "cobalt",
+   "category": "transition",
+   "notes": "Active numbered glass pill (02 of 3) morphs wide then tall, radius pill to card to 0, into a full-frame glass panel that becomes scene B (caps title + three stat tiles pop); use to open a chapter from an agenda/step list."
+  },
+  {
+   "id": "sanji.transition.transition.tr-ember-sweep",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-ember-sweep",
+   "file": "cards/transitions/tr-ember-sweep.html",
+   "slots": [
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "prompt",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "model",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 1.85,
+    "max": 1.85
+   },
+   "canvas": "ember",
+   "category": "transition",
+   "notes": "Orange light leak pours in from the top-right corner, warms the paper page and tints the ink, washes to warm white-hot, then recedes into the corner as scene B's ember light, revealing a chat box whose rim, text and send button arrive hot and cool; use paper to ember."
+  },
+  {
+   "id": "sanji.transition.transition.tr-card-stack",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-card-stack",
+   "file": "cards/transitions/tr-card-stack.html",
+   "slots": [
+    {
+     "name": "line",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "lineC",
+     "type": "text",
+     "maxChars": 20
+    }
+   ],
+   "duration": {
+    "min": 1.78,
+    "max": 1.78
+   },
+   "canvas": "nature",
+   "category": "transition",
+   "notes": "Full-frame nature plate pulls back into the top card of a stack (cobalt + paper cards peek below on dark), winds up, flicks off frame-left with rotation + motion blur, and the cobalt card underneath rises and scales to fill the frame; use for next-item / next-example beats."
+  },
+  {
+   "id": "sanji.tier1.diagram.orbit-tiles",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "orbit-tiles",
+   "canvas": "cobalt",
+   "category": "motion",
+   "file": "cards/tier1/t1-orbit-tiles.html",
+   "slots": [
+    {
+     "name": "center",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "pick",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "t1",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "t2",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "t3",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "t4",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "t5",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 8
+   },
+   "notes": "Glass '?' pill surrounded by six orbiting glass tiles on dashed ellipses; the guess gets an ember x and shrinks away, one tile is pulled to centre and lights while the rest settle into a dormant ring. Use for 'stop guessing, the answer is X'."
+  },
+  {
+   "id": "sanji.tier1.overview.card-fan",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "card-fan",
+   "canvas": "cobalt",
+   "category": "motion",
+   "file": "cards/tier1/t1-card-fan.html",
+   "slots": [
+    {
+     "name": "c1",
+     "type": "richtext",
+     "maxChars": 16
+    },
+    {
+     "name": "c2",
+     "type": "richtext",
+     "maxChars": 16
+    },
+    {
+     "name": "c3",
+     "type": "richtext",
+     "maxChars": 16
+    },
+    {
+     "name": "c4",
+     "type": "richtext",
+     "maxChars": 16
+    },
+    {
+     "name": "c5",
+     "type": "richtext",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 7
+   },
+   "notes": "Stack of five glass cards rises out of blur and fans like a hand of cards; the middle card (c3) lifts and lights, the others go dormant. Use for 'five options, this one matters'."
+  },
+  {
+   "id": "sanji.tier1.overview.dashboard-assemble",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "dashboard-assemble",
+   "canvas": "cobalt",
+   "category": "motion",
+   "file": "cards/tier1/t1-dashboard-assemble.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "stat1",
+     "type": "text",
+     "maxChars": 7
+    },
+    {
+     "name": "stat1Label",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "stat2",
+     "type": "text",
+     "maxChars": 7
+    },
+    {
+     "name": "stat2Label",
+     "type": "text",
+     "maxChars": 22
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7.5
+   },
+   "notes": "Sidebar, header, two stat tiles and a chart panel fly in from different directions and snap into a glass dashboard; stats count up, line chart draws with a glowing head, one glow sweep. Use for product reveals and 'everything in one place'."
+  },
+  {
+   "id": "sanji.tier1.diagram.gantt-build",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "gantt-build",
+   "canvas": "paper",
+   "category": "motion",
+   "file": "cards/tier1/t1-gantt-build.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "task1",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "task2",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "task3",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "task4",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 7,
+    "max": 8.5
+   },
+   "notes": "Paper page: title resolves, day columns draw, four cobalt glass task bars grow with milestone diamonds; a TODAY hairline sweeps, finished rows tick and quiet, the current row lights. Use for plans, timelines, 'where we are now'."
+  },
+  {
+   "id": "sanji.tier1.list.toggle-settings",
+   "tier": "tier1",
+   "purpose": "list",
+   "treatment": "toggle-settings",
+   "canvas": "nature",
+   "category": "motion",
+   "file": "cards/tier1/t1-toggle-settings.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "r1",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "r2",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "r3",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "r4",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 20
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7.5
+   },
+   "notes": "Backdrop-blurred liquid-glass settings panel over a landscape photo; four toggles flip on one by one (knob overshoot, cobalt fill, bloom) with a focus shift down the rows. Use for 'turn on these four things', checklists of habits or features."
+  },
+  {
+   "id": "sanji.tier1.stat.bar-chart-glass",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "bar-chart-glass",
+   "canvas": "cobalt",
+   "category": "motion",
+   "file": "cards/tier1/t1-bar-chart-glass.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "l1",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "l2",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "l3",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "l4",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "l5",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "v1",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "v2",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "v3",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "v4",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "v5",
+     "type": "text",
+     "maxChars": 5
+    },
+    {
+     "name": "callout",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 6.5
+   },
+   "notes": "Glass chart card with five glass bars growing from the baseline (heights from the values) and counting up; the tallest bar lights with a halo and a callout pill pops above it. Use for monthly growth, best-performer comparisons."
+  },
+  {
+   "id": "sanji.tier1.stat.donut-ring",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "donut-ring",
+   "canvas": "ember",
+   "category": "motion",
+   "file": "cards/tier1/t1-donut-ring.html",
+   "slots": [
+    {
+     "name": "value",
+     "type": "text",
+     "maxChars": 4
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "chip1",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "chip2",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "chip3",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7.5
+   },
+   "notes": "Ember canvas: progress ring fills to the percent with a white-hot head while the centre number counts up hot and cools to white; ring blooms, three glow chips pop and cool. Use for a single percentage stat with three supporting reasons."
+  },
+  {
+   "id": "sanji.tier1.diagram.t1-quiz-reveal",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "t1-quiz-reveal",
+   "file": "cards/tier1/t1-quiz-reveal.html",
+   "canvas": "cobalt",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "question",
+     "type": "text",
+     "maxChars": 64
+    },
+    {
+     "name": "a",
+     "type": "text",
+     "maxChars": 36
+    },
+    {
+     "name": "b",
+     "type": "text",
+     "maxChars": 36
+    },
+    {
+     "name": "c",
+     "type": "text",
+     "maxChars": 36
+    },
+    {
+     "name": "correct",
+     "type": "text",
+     "maxChars": 1
+    },
+    {
+     "name": "why",
+     "type": "text",
+     "maxChars": 80
+    }
+   ],
+   "duration": {
+    "min": 7.2,
+    "max": 9
+   },
+   "notes": "Knowledge check: question resolves, 3 glass A/B/C answer pills, cursor hovers a decoy then clicks the correct one (lights, check swap, sonar ping), others go dormant, explanation resolves. correct = a|b|c."
+  },
+  {
+   "id": "sanji.tier1.list.t1-key-takeaway",
+   "tier": "tier1",
+   "purpose": "list",
+   "treatment": "t1-key-takeaway",
+   "file": "cards/tier1/t1-key-takeaway.html",
+   "canvas": "paper",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "t1",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "t2",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "t3",
+     "type": "text",
+     "maxChars": 40
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 7.5
+   },
+   "notes": "Summary card on white paper: cobalt spark kicker pill, 3 numbered cobalt glass rows with icon badges rise and resolve in sequence, all stay white, closing light sweep. Use at the end of a lesson or section."
+  },
+  {
+   "id": "sanji.tier1.thesis.t1-definition-card",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-definition-card",
+   "file": "cards/tier1/t1-definition-card.html",
+   "canvas": "ember",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "kind",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "term",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "say",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "definition",
+     "type": "text",
+     "maxChars": 120
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7.5
+   },
+   "notes": "Dictionary entry on ember: part-of-speech chip cools, big term types in hot and cools, mono pronunciation line, ember hairline draws, definition resolves word by word. Use when the speaker introduces a term."
+  },
+  {
+   "id": "sanji.tier1.diagram.t1-matrix-2x2",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "t1-matrix-2x2",
+   "file": "cards/tier1/t1-matrix-2x2.html",
+   "canvas": "cobalt",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "yLabel",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "xLabel",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "q1",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "q2",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "q3",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "q4",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "chip1",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "chip2",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "chip3",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "chip4",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "hi",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 7.9,
+    "max": 8.5
+   },
+   "notes": "2x2 framework: axes draw from center, 4 glass quadrants rise (q1 TL, q2 TR, q3 BL, q4 BR), one chip drops into each with focus following, quadrant hi (1-4) ends lit and lifted, rest dormant."
+  },
+  {
+   "id": "sanji.tier1.diagram.t1-flow-decision",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "t1-flow-decision",
+   "file": "cards/tier1/t1-flow-decision.html",
+   "canvas": "cobalt",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "start",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "question",
+     "type": "text",
+     "maxChars": 34
+    },
+    {
+     "name": "yes",
+     "type": "richtext",
+     "maxChars": 22
+    },
+    {
+     "name": "no",
+     "type": "richtext",
+     "maxChars": 22
+    },
+    {
+     "name": "pick",
+     "type": "text",
+     "maxChars": 3
+    }
+   ],
+   "duration": {
+    "min": 6.2,
+    "max": 7.5
+   },
+   "notes": "Flowchart on cobalt wash + blueprint grid: start pill, light dot travels into a glass diamond question, YES/NO branches draw to result cards, dot runs the chosen branch (pick = yes|no) tracing it bright, other side dormant."
+  },
+  {
+   "id": "sanji.tier1.compare.t1-mistake-warning",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "t1-mistake-warning",
+   "file": "cards/tier1/t1-mistake-warning.html",
+   "canvas": "ember",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "mistake",
+     "type": "text",
+     "maxChars": 36
+    },
+    {
+     "name": "fixKicker",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "fix",
+     "type": "text",
+     "maxChars": 40
+    }
+   ],
+   "duration": {
+    "min": 6.06,
+    "max": 6.06
+   },
+   "notes": "Common mistake: ember warning badge cools, mistake resolves then gets an ember strike-through and greys, corner warmth recedes as a cobalt glass fix card slides up with a drawn check and the correct practice. Do / don't moments."
+  },
+  {
+   "id": "sanji.tier2.callout.t2-tip-callout",
+   "tier": "tier2",
+   "purpose": "callout",
+   "treatment": "t2-tip-callout",
+   "file": "cards/tier2/t2-tip-callout.html",
+   "canvas": "overlay",
+   "category": "instructional",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "tip",
+     "type": "text",
+     "maxChars": 90
+    }
+   ],
+   "duration": {
+    "min": 5.4,
+    "max": 7
+   },
+   "notes": "Upper-right cobalt glass Pro tip card over footage: pops from blur, lightbulb badge flashes and cools, tip resolves word by word, bottom hairline reading timer shrinks over the hold, then dissolves. Hold scales with word count."
+  },
+  {
+   "id": "sanji.tier1.diagram.step-process",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "step-process",
+   "file": "cards/tier1/t1-step-process.html",
+   "slots": [
+    {
+     "name": "s1",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "s2",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "s3",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "s4",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "d1",
+     "type": "text",
+     "maxChars": 34
+    },
+    {
+     "name": "d2",
+     "type": "text",
+     "maxChars": 34
+    },
+    {
+     "name": "d3",
+     "type": "text",
+     "maxChars": 34
+    },
+    {
+     "name": "d4",
+     "type": "text",
+     "maxChars": 34
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 8.5
+   },
+   "notes": "4-step horizontal process on cobalt: glowing progress line fills node to node, each glass node lights with a sonar pulse as its title + description resolve, finished nodes draw a check and go dormant; use for any 4-stage workflow or method walkthrough",
+   "canvas": "cobalt",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.compare.do-dont",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "do-dont",
+   "file": "cards/tier1/t1-do-dont.html",
+   "slots": [
+    {
+     "name": "doTitle",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "dontTitle",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "do1",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "do2",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "do3",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "dont1",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "dont2",
+     "type": "text",
+     "maxChars": 26
+    },
+    {
+     "name": "dont3",
+     "type": "text",
+     "maxChars": 26
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 8.5
+   },
+   "notes": "two liquid-glass columns, DO (drawn check badge) vs DON'T (ember x badge), items resolve alternately with focus ping-pong, then DON'T cools to dormant; use for best practices vs common mistakes",
+   "canvas": "cobalt",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.list.checklist-glass",
+   "tier": "tier1",
+   "purpose": "list",
+   "treatment": "checklist-glass",
+   "file": "cards/tier1/t1-checklist-glass.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "i1",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "i2",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "i3",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "i4",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "i5",
+     "type": "text",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 8
+   },
+   "notes": "glass checklist over a misty landscape photo: focus highlight walks the rows, each box fills and draws a check, label strikes through and dims, header counter ticks to 5 / 5 with a progress bar; use for pre-flight or ship checklists",
+   "canvas": "nature",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.compare.before-after",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "before-after",
+   "file": "cards/tier1/t1-before-after.html",
+   "slots": [
+    {
+     "name": "beforeLabel",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "afterLabel",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "caption",
+     "type": "text",
+     "maxChars": 44
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 7.5
+   },
+   "notes": "plate slides up holding the same layout twice: grey dashed wireframe BEFORE vs polished cobalt glass AFTER, a divider with glass handle and riding labels wipes left to right, pausing at midpoint; use for redesigns, edits, any transformation result",
+   "canvas": "paper",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.diagram.annotated-screen",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "annotated-screen",
+   "file": "cards/tier1/t1-annotated-screen.html",
+   "slots": [
+    {
+     "name": "a1",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "a2",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "a3",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 8.5
+   },
+   "notes": "stand-in app screenshot plate on cobalt: three numbered callouts pop with pulsing rings, leader lines draw to glass label pills, a spotlight frames each region in turn while the rest dims; swap the plate for a real screenshot for UI tours",
+   "canvas": "cobalt",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.diagram.keyboard-shortcut",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "keyboard-shortcut",
+   "file": "cards/tier1/t1-keyboard-shortcut.html",
+   "slots": [
+    {
+     "name": "k1",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "k2",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "k3",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "action",
+     "type": "text",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 7
+   },
+   "notes": "dark glass keycaps rise in on ember, each is pressed and held (dip, inner shadow, ember flash cooling to warm white), the chord fires a light pool, keys release and the action label resolves; use for any shortcut or hotkey tip",
+   "canvas": "ember",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.diagram.prompt-anatomy",
+   "tier": "tier1",
+   "purpose": "diagram",
+   "treatment": "prompt-anatomy",
+   "file": "cards/tier1/t1-prompt-anatomy.html",
+   "slots": [
+    {
+     "name": "p1",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "p2",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "p3",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "p4",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "l1",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "l2",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "l3",
+     "type": "text",
+     "maxChars": 9
+    },
+    {
+     "name": "l4",
+     "type": "text",
+     "maxChars": 9
+    }
+   ],
+   "duration": {
+    "min": 7,
+    "max": 9
+   },
+   "notes": "ember chat box with a structured 4-line prompt; each segment gets an ember or cool-white tinted underlay while the rest dims, a connector draws out to a glowing label chip that cools (Role / Task / Context / Format); use to teach prompt structure",
+   "canvas": "ember",
+   "category": "instructional"
+  },
+  {
+   "id": "sanji.tier1.hook.system-boot",
+   "tier": "tier1",
+   "purpose": "hook",
+   "treatment": "t1-system-boot",
+   "file": "cards/tier1/t1-system-boot.html",
+   "slots": [
+    {
+     "name": "headline",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "log",
+     "type": "text",
+     "maxChars": 700
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "text",
+   "posterAt": 0.5,
+   "notes": "GOLD SYSTEM card. Blue-screen cold open: 4 empty frames, headline scramble-resolves under a /* line, long fake-crash hold, log floods 2 lines a frame with an [ OK ] column, then every glyph lets go along a flow field into drifting glyph clouds. log slot = newline-separated lines (<= 60 chars each, 6-14 lines). Use as a hook or to 'reboot' into a new section."
+  },
+  {
+   "id": "sanji.tier1.stat.system-activate",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "t1-system-activate",
+   "file": "cards/tier1/t1-system-activate.html",
+   "slots": [
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "value",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "glyph",
+     "type": "text",
+     "maxChars": 1
+    },
+    {
+     "name": "items",
+     "type": "list",
+     "maxChars": 240
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 4.5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "posterAt": 0.72,
+   "notes": "GOLD SYSTEM card. ASCII coin spins and collapses into a dot ring, 2-frame noise flash, an inverse chip scrambles in ('Activating'), then the value scrambles into its own chip while >ITEM ticker columns type down the sides and small glyph coins tumble in. items = comma list of short names (<= 7 chars each). Use for a big count or 'we now support N things' beat."
+  },
+  {
+   "id": "sanji.tier1.outro.system-updated",
+   "tier": "tier1",
+   "purpose": "outro",
+   "treatment": "t1-system-updated",
+   "file": "cards/tier1/t1-system-updated.html",
+   "slots": [
+    {
+     "name": "key",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "value",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "items",
+     "type": "list",
+     "maxChars": 70
+    },
+    {
+     "name": "tagline",
+     "type": "text",
+     "maxChars": 34
+    },
+    {
+     "name": "brand",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 9,
+    "max": 9.5
+   },
+   "canvas": "system",
+   "category": "text",
+   "posterAt": 0.3,
+   "notes": "GOLD SYSTEM card. 'KEY > VALUE' with the value chip flickering, ASCII doodles stepping around it, a label + list typed one item per half beat, cut on the bar to a tagline, then a wordmark with a blinking _ cursor (3s outro hold). items = 2-5 comma items. Use as the closing statement / CTA."
+  },
+  {
+   "id": "sanji.tier1.thesis.system-scramble-title",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-system-scramble-title",
+   "file": "cards/tier1/t1-system-scramble-title.html",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "headline",
+     "type": "richtext",
+     "maxChars": 54
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5.8
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Big terminal-mono statement scrambles in left to right with a noise tail, the <em> word lands in a flickering inverse chip, then every letter lets go as its own ASCII rendition and erodes; use for a thesis or bold claim. Headline <= 54 chars (auto-wraps to <= 3 lines, size steps down), wrap exactly one word in <em>; kicker <= 24 shows as a /* comment.",
+   "posterAt": 0.47
+  },
+  {
+   "id": "sanji.tier1.definition.system-ascii-word",
+   "tier": "tier1",
+   "purpose": "definition",
+   "treatment": "t1-system-ascii-word",
+   "file": "cards/tier1/t1-system-ascii-word.html",
+   "slots": [
+    {
+     "name": "word",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "tag",
+     "type": "text",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 4.25,
+    "max": 4.25
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "A giant word built from its own repeating letters converges from glyph particles scattered across the frame, with radiating slash rays behind, an inverse chip label inside and floating echo tags; use to name a concept or section. Word <= 8 chars (forced upper case), label <= 14, tag <= 10.",
+   "posterAt": 0.55
+  },
+  {
+   "id": "sanji.tier1.stat.system-stat-count",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "t1-system-stat-count",
+   "file": "cards/tier1/t1-system-stat-count.html",
+   "slots": [
+    {
+     "name": "kicker",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "prefix",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "value",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "suffix",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "unit",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 5.18,
+    "max": 5.18
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "Huge ASCII number counts up on 24fps frames, lands with a 2-frame noise punch, then holds with a bright rim and crawling sheen bands while the unit chip and label scramble in below; use for any single stat. Value is a number (commas and one decimal allowed, <= 6 digits reads best), prefix/suffix <= 2 chars like $ % x +.",
+   "posterAt": 0.6
+  },
+  {
+   "id": "sanji.tier1.takeaway.system-quote-type",
+   "tier": "tier1",
+   "purpose": "takeaway",
+   "treatment": "t1-system-quote-type",
+   "file": "cards/tier1/t1-system-quote-type.html",
+   "slots": [
+    {
+     "name": "quote",
+     "type": "text",
+     "maxChars": 140
+    },
+    {
+     "name": "key",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "name",
+     "type": "text",
+     "maxChars": 36
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 9.5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "A quote types character by character at 44px behind a block cursor, the key phrase grows an inverse chip, then a // name comment types and the cursor blinks before a noise-flash exit; use for quotes or a spoken takeaway. Quote <= 140 chars (wraps to <= 3 lines), key must be an exact substring of the quote, duration grows with quote length.",
+   "posterAt": 0.8
+  },
+  {
+   "id": "sanji.tier2.caption.system-caption",
+   "tier": "tier2",
+   "purpose": "caption",
+   "treatment": "t2-system-caption",
+   "file": "cards/tier2/t2-system-caption.html",
+   "slots": [
+    {
+     "name": "text",
+     "type": "text",
+     "maxChars": 48
+    },
+    {
+     "name": "key",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "group",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 4.17,
+    "max": 4.67
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Transparent overlay: a flat blue-screen bar with a /* tab opens at lower center from one white cell, the phrase scrambles in word group by word group with one word in a flickering inverse chip, then letters decay down the ramp and the bar folds; use as a punchy on-the-word caption over footage. Text <= 48 chars on one line, key = one word of the text, group = 1-3 words per step.",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.tier2.label.system-lower-third",
+   "tier": "tier2",
+   "purpose": "label",
+   "treatment": "t2-system-lower-third",
+   "file": "cards/tier2/t2-system-lower-third.html",
+   "slots": [
+    {
+     "name": "tag",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "name",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "role",
+     "type": "text",
+     "maxChars": 34
+    }
+   ],
+   "duration": {
+    "min": 5.25,
+    "max": 5.75
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Transparent name lower third: a blue-screen panel steps open at lower left, a /* tag */ comment, the name scrambling in at 56px, the role typing with a blinking underscore cursor and a small ASCII doodle cluster, then letters decay and the panel folds; use to introduce a speaker. Name <= 22, role <= 34, tag <= 12.",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.transition.transition.system-macroblock",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-system-macroblock",
+   "file": "cards/transitions/tr-system-macroblock.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "word",
+     "type": "text",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 1,
+    "max": 1.2
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "Five frames of macroblock glitch (inverse cells of one repeated word at mixed glyph sizes, dotted patches, scaled scene chunks) punch across the frame and swap statement A for statement B; use as a fast hard cut between two SYSTEM beats. word is a single 3-10 char word, chips <= 12 chars.",
+   "posterAt": 0.49
+  },
+  {
+   "id": "sanji.transition.transition.system-tag-wall",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-system-tag-wall",
+   "file": "cards/transitions/tr-system-tag-wall.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "tags",
+     "type": "list",
+     "maxChars": 8
+    }
+   ],
+   "duration": {
+    "min": 2,
+    "max": 2.2
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "A wall of one-word inverse chips fills the frame row by row from the top, jitters and re-rolls, then parts from the center like doors to reveal statement B; use for a list-flavored section change. tags is a comma list of 3-10 single words, <= 8 chars each.",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.transition.transition.system-noise-flash",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-system-noise-flash",
+   "file": "cards/transitions/tr-system-noise-flash.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 0.8,
+    "max": 1
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "Hard hit: scene A tears into sideways-repeating horizontal slices for 3 frames (frame echo), then exactly 2 frames of full-screen glyph noise, then scene B with its chip scrambling in; use on a punchy beat or a contradiction. Chips <= 12 chars.",
+   "posterAt": 0.47
+  },
+  {
+   "id": "sanji.transition.transition.system-dissolve",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-system-dissolve",
+   "file": "cards/transitions/tr-system-dissolve.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 2,
+    "max": 2.2
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "Statement A lets go into a drifting glyph fluid, then the fluid condenses into a band and glyph particles converge on statement B's cells, resolving dot to colon to noise to letter; use for a soft before/after or transformation beat. Chips <= 12 chars.",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.transition.transition.system-takeover",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-system-takeover",
+   "file": "cards/transitions/tr-system-takeover.html",
+   "slots": [
+    {
+     "name": "a_title",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "b_line",
+     "type": "text",
+     "maxChars": 60
+    }
+   ],
+   "duration": {
+    "min": 1.4,
+    "max": 1.5
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "The TV-hijack move from footage into the SYSTEM canvas: the blue screen floods in band by band from the top over a charcoal stand-in plate (replace with the footage frame), garbled rows flicker and clear, and the second row resolves into B's terminal line with a blinking cursor; use to cut from talking head into a SYSTEM sequence. b_line <= 60 chars.",
+   "posterAt": 0.48
+  },
+  {
+   "id": "sanji.transition.transition.system-zoom-glyph",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-system-zoom-glyph",
+   "file": "cards/transitions/tr-system-zoom-glyph.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 32
+    },
+    {
+     "name": "zoom_char",
+     "type": "text",
+     "maxChars": 1
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 1.6,
+    "max": 2
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "Camera pushes into one character of statement A (default its final period) until the glyph, revealed as a field of smaller glyphs, fills the frame, then pulls out of statement B's inverse chip, which scrambles in; use to go deeper on a point. a_text should contain zoom_char (falls back to its last character), b_chip <= 12 chars (empty = pull out of b_text's last character).",
+   "posterAt": 0.44
+  },
+  {
+   "id": "sanji.tier1.process.system-flow-tunnel",
+   "tier": "tier1",
+   "purpose": "process",
+   "treatment": "t1-system-flow-tunnel",
+   "file": "cards/tier1/t1-system-flow-tunnel.html",
+   "slots": [
+    {
+     "name": "send",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "receive",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "stream",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "glyph",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 6
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "Glyph streamlines flow left to right around an empty tunnel while an ASCII coin flies in, parks at the tunnel nose flipping and shoots out, with 'send: ____ // receive' labels riding the streams and glyph swarms bubbling up; use for an input-to-output or pipeline beat (send/receive <= 10 chars each, stream <= 16, glyph 1 char).",
+   "posterAt": 0.42
+  },
+  {
+   "id": "sanji.tier1.overview.system-ascii-map",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "t1-system-ascii-map",
+   "file": "cards/tier1/t1-system-ascii-map.html",
+   "slots": [
+    {
+     "name": "from",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "to",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "send",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "receive",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "glyph",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "A world map drawn in glyphs scrambles in, a glyph coin arcs from the FROM chip (North America) to the TO chip (Asia) and '+' clusters spread over the land; use for reach, distribution or 'goes everywhere' beats (from/to <= 12 chars, send/receive <= 10).",
+   "posterAt": 0.7
+  },
+  {
+   "id": "sanji.tier1.thesis.system-glyph-galaxy",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-system-glyph-galaxy",
+   "file": "cards/tier1/t1-system-glyph-galaxy.html",
+   "slots": [
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "glyph",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "Slow glyph spiral arms rotate while ASCII coins fly out of the depth past the camera at mixed scale around one inverse chip at center; use for a single-idea thesis or a section opener (label <= 16 chars, glyph 1 char).",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.tier1.process.system-chevron",
+   "tier": "tier1",
+   "purpose": "process",
+   "treatment": "t1-system-chevron",
+   "file": "cards/tier1/t1-system-chevron.html",
+   "slots": [
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "tags",
+     "type": "list",
+     "maxChars": 6
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "Particles gather into a small dotted triangle around a chip, snap into a big glyph chevron with inverse chips at its vertices, collapse, slide right and grow again; use for 'next step' / send / move-forward beats (label <= 8 chars, tags = comma list of exactly 3, <= 6 chars each).",
+   "posterAt": 0.8
+  },
+  {
+   "id": "sanji.tier1.overview.system-text-globe",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "t1-system-text-globe",
+   "file": "cards/tier1/t1-system-text-globe.html",
+   "slots": [
+    {
+     "name": "ring",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "words",
+     "type": "list",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "A rotating sphere of mixed-scale digits and symbols with a tilted orbit ring of glyph text and inverse word chips that pass behind it, bursting outward at the end; use for global, scale or 'all of these at once' beats (ring <= 24 chars repeated, words = comma list of 2-4, <= 10 chars each).",
+   "posterAt": 0.56
+  },
+  {
+   "id": "sanji.tier1.stat.system-number-burst",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "t1-system-number-burst",
+   "file": "cards/tier1/t1-system-number-burst.html",
+   "slots": [
+    {
+     "name": "word",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "rail",
+     "type": "text",
+     "maxChars": 10
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "A ball of mixed-scale digits explodes toward the camera after a 2-frame noise flash, an inverse chip lands at center between '>>>>' rails and the rest settles into a sparse drift; use for a headline stat or a punchy one-word payoff (word <= 12 chars, rail <= 10).",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.tier1.list.system-icon-grid",
+   "tier": "tier1",
+   "purpose": "list",
+   "treatment": "t1-system-icon-grid",
+   "file": "cards/tier1/t1-system-icon-grid.html",
+   "slots": [
+    {
+     "name": "icons",
+     "type": "list",
+     "maxChars": 6
+    },
+    {
+     "name": "labels",
+     "type": "list",
+     "maxChars": 12
+    },
+    {
+     "name": "focus",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "instructional",
+   "notes": "Wall of << - / glyphs floods in around three big hatched ASCII icons that pop in, **Label tags scramble under each, then one icon goes denser and brighter while its tag flickers into the inverse chip; use for three pillars or features (security, privacy, keys). icons = comma list of 3 from lock,shield,key,zap,cloud,file; labels = comma list of 3, <= 12 chars (** added automatically); focus = 1-3.",
+   "posterAt": 0.7
+  },
+  {
+   "id": "sanji.tier1.overview.system-coin-grid",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "t1-system-coin-grid",
+   "file": "cards/tier1/t1-system-coin-grid.html",
+   "slots": [
+    {
+     "name": "faces",
+     "type": "list",
+     "maxChars": 1
+    },
+    {
+     "name": "hero",
+     "type": "text",
+     "maxChars": 2
+    },
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 6
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "5x3 grid of ASCII coins spinning in a phase-offset wave over scrolling dashed stream rows, then one coin flies to center big and settles face-on while the rest orbit dimmed and a label chip scrambles in; use for 'many tools/options, one that matters'. faces = comma list of single characters (up to 15, repeats); hero = 1-15; label <= 16 chars.",
+   "posterAt": 0.85
+  },
+  {
+   "id": "sanji.tier1.hook.system-tunnel",
+   "tier": "tier1",
+   "purpose": "hook",
+   "treatment": "t1-system-tunnel",
+   "file": "cards/tier1/t1-system-tunnel.html",
+   "slots": [
+    {
+     "name": "message",
+     "type": "richtext",
+     "maxChars": 26
+    },
+    {
+     "name": "chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 4.5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "Perspective tunnel of glyph chevrons (v top, > left, c right, / bottom) rushing toward camera, a SYSTEM MESSAGE block types top-left, then the tunnel surges and an inverse chip flies out of the vanishing point and holds big; use as a high-energy hook or 'entering the system' moment. message = multiline, 4-9 lines, <= 26 chars a line; chip <= 12 chars (e.g. **Secure).",
+   "posterAt": 0.8
+  },
+  {
+   "id": "sanji.tier1.process.system-progress",
+   "tier": "tier1",
+   "purpose": "process",
+   "treatment": "t1-system-progress",
+   "file": "cards/tier1/t1-system-progress.html",
+   "slots": [
+    {
+     "name": "name",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "steps",
+     "type": "list",
+     "maxChars": 20
+    },
+    {
+     "name": "done",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "instructional",
+   "notes": "Terminal install: command scrambles in, an ASCII [####....] bar fills in stepped jumps with a spinner, each step logs [ RUN ] then [ OK ], a huge hatched ASCII percentage counts up on the right and turns into an ASCII check, ending 'Complete.' with the done label in the inverse chip; use for setup steps or 'here is what the tool does'. steps = comma list of 3-5, <= 20 chars each (duration = 3s + 0.5s per step); name <= 18; done <= 16.",
+   "posterAt": 0.9
+  },
+  {
+   "id": "sanji.tier1.hook.system-ascii-photo",
+   "tier": "tier1",
+   "purpose": "hook",
+   "treatment": "t1-system-ascii-photo",
+   "file": "cards/tier1/t1-system-ascii-photo.html",
+   "slots": [
+    {
+     "name": "image",
+     "type": "text",
+     "maxChars": 0
+    },
+    {
+     "name": "command",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "caption",
+     "type": "text",
+     "maxChars": 40
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "A local nature photo rendered as luminance-mapped ASCII on the blue ground, resolving coarse to fine in 4 steps with a glyph scanline sweep and slow push-in, while a terminal command + live grid readout types bottom-left (final grid in the chip) and a caption follows; bridges the NATURE look into SYSTEM, good for 'AI sees the world' or section opens. image = local path (img src, prefer a high-contrast landscape from assets/nature/); command and caption <= 40 chars.",
+   "posterAt": 0.95
+  },
+  {
+   "id": "sanji.tier1.compare.system-diff",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "t1-system-diff",
+   "file": "cards/tier1/t1-system-diff.html",
+   "slots": [
+    {
+     "name": "header",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "old",
+     "type": "list",
+     "maxChars": 30
+    },
+    {
+     "name": "new",
+     "type": "list",
+     "maxChars": 30
+    },
+    {
+     "name": "summary",
+     "type": "text",
+     "maxChars": 34
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7.5
+   },
+   "canvas": "system",
+   "category": "instructional",
+   "notes": "Terminal git diff as before/after: '- old way' lines list in, get struck through one by one and fall to dim, '+ new way' lines type in with *keywords* flickering into inverse chips, while a huge hatched ASCII minus grows into a plus on the right; use for old-workflow vs new-workflow. old/new = lists split on '|', 2-4 lines, <= 30 chars each; wrap one keyword per new line in *asterisks*; header <= 30, summary <= 34.",
+   "posterAt": 0.95
+  },
+  {
+   "id": "sanji.tier1.process.system-chat-terminal",
+   "tier": "tier1",
+   "purpose": "process",
+   "treatment": "t1-system-chat-terminal",
+   "file": "cards/tier1/t1-system-chat-terminal.html",
+   "slots": [
+    {
+     "name": "header",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "prompt",
+     "type": "text",
+     "maxChars": 52
+    },
+    {
+     "name": "reply",
+     "type": "text",
+     "maxChars": 150
+    },
+    {
+     "name": "key",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "status",
+     "type": "text",
+     "maxChars": 48
+    }
+   ],
+   "duration": {
+    "min": 6,
+    "max": 7.5
+   },
+   "canvas": "system",
+   "category": "popup",
+   "notes": "AI chat as a terminal: user prompt types with a block cursor, ASCII spinner thinks for 0.6s, the agent reply streams in token chunks with a scramble edge and the key phrase lands in an inverse chip; use when the speaker describes asking an AI to do a task. reply wraps to 3 lines of 54, key must appear verbatim in reply starting on a word boundary.",
+   "posterAt": 0.9
+  },
+  {
+   "id": "sanji.tier1.hook.system-error-dialog",
+   "tier": "tier1",
+   "purpose": "hook",
+   "treatment": "t1-system-error-dialog",
+   "file": "cards/tier1/t1-system-error-dialog.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "message",
+     "type": "text",
+     "maxChars": 36
+    },
+    {
+     "name": "detail",
+     "type": "text",
+     "maxChars": 36
+    },
+    {
+     "name": "ignore",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "update",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "log",
+     "type": "list",
+     "maxChars": 60
+    },
+    {
+     "name": "done-key",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "done-value",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 6.5,
+    "max": 6.5
+   },
+   "canvas": "system",
+   "category": "popup",
+   "notes": "Box-drawing system dialog draws its frame, types an error, an ASCII arrow cursor clicks Update, then a log flood swallows the dialog and lands on KEY > chip; use for a problem/fix hook (old workflow out of date). log is newline separated, 3-8 lines of <= 60 chars, seeded filler follows.",
+   "posterAt": 0.43
+  },
+  {
+   "id": "sanji.tier2.label.system-notification",
+   "tier": "tier2",
+   "purpose": "label",
+   "treatment": "t2-system-notification",
+   "file": "cards/tier2/t2-system-notification.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 16
+    },
+    {
+     "name": "time",
+     "type": "text",
+     "maxChars": 6
+    },
+    {
+     "name": "message",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "done",
+     "type": "text",
+     "maxChars": 6
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 4.5
+   },
+   "canvas": "system",
+   "category": "popup",
+   "notes": "Transparent top-right toast in box-drawing characters: unrolls from a lone cell, inverse title row, one message line types, ASCII progress bar fills to an [ OK ] chip, then decays to drifting glyphs; use over footage when something finishes or an agent reports back. message <= 30 chars, one line.",
+   "posterAt": 0.6
+  },
+  {
+   "id": "sanji.tier1.stat.system-bar-chart",
+   "tier": "tier1",
+   "purpose": "stat",
+   "treatment": "t1-system-bar-chart",
+   "file": "cards/tier1/t1-system-bar-chart.html",
+   "slots": [
+    {
+     "name": "comment",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "items",
+     "type": "list",
+     "maxChars": 10
+    },
+    {
+     "name": "unit",
+     "type": "text",
+     "maxChars": 3
+    }
+   ],
+   "duration": {
+    "min": 4.5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "motion",
+   "notes": "Bars made of luminance-mapped ramp glyphs grow on a stagger over a _ baseline, labels scramble in below and values count up in inverse chips on the bar tops, the tallest chip flickers; use to compare 3-6 numbers. items is a comma list of label:value (label <= 10 chars, numeric value, decimals preserved), unit is appended to every value.",
+   "posterAt": 0.9
+  },
+  {
+   "id": "sanji.tier1.takeaway.system-takeaway",
+   "tier": "tier1",
+   "purpose": "takeaway",
+   "treatment": "t1-system-takeaway",
+   "file": "cards/tier1/t1-system-takeaway.html",
+   "slots": [
+    {
+     "name": "comment",
+     "type": "text",
+     "maxChars": 30
+    },
+    {
+     "name": "sentence",
+     "type": "text",
+     "maxChars": 60
+    },
+    {
+     "name": "key",
+     "type": "text",
+     "maxChars": 16
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "instructional",
+   "notes": "A /* remember */ comment, a box-drawing frame draws itself, the takeaway sentence scramble-types inside at 40px with the key word in a flickering inverse chip, doodles step around; use for the one line viewers should keep. sentence <= 60 chars (balanced 2-line wrap past 32), key must appear verbatim in sentence and should be a single word.",
+   "posterAt": 0.9
+  },
+  {
+   "id": "sanji.tier1.overview.system-timeline",
+   "tier": "tier1",
+   "purpose": "overview",
+   "treatment": "t1-system-timeline",
+   "file": "cards/tier1/t1-system-timeline.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 40
+    },
+    {
+     "name": "items",
+     "type": "list",
+     "maxChars": 14
+    },
+    {
+     "name": "current",
+     "type": "text",
+     "maxChars": 1
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "instructional",
+   "notes": "Terminal timeline o-----o types across the frame, nodes pop to (@) with labels above and years below, the current node and label become inverse chips, later nodes stay dim, a glyph packet loops along the line; use for history, roadmaps or step sequences. items is a comma list of year:label, 3-5 items, year <= 6, label <= 14 chars; current is the 1-based node index (default last).",
+   "posterAt": 0.72
+  },
+  {
+   "id": "sanji.tier1.thesis.text-preset",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-text-preset",
+   "file": "cards/tier1/t1-text-preset.html",
+   "slots": [
+    {
+     "name": "label",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "headline",
+     "type": "richtext",
+     "maxChars": 90
+    },
+    {
+     "name": "sub",
+     "type": "text",
+     "maxChars": 80
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 5.5
+   },
+   "canvas": "paper",
+   "category": "text",
+   "posterAt": 0.45,
+   "notes": "REFERENCE for the house text preset (uppit-reveal): pill rises as a block, 3-line headline pours in word by word (blur 6px + 0.3em rise, 0.7s cubic-bezier(.23,1,.32,1), 40ms stagger), support line overlaps the tail, words lift out. Headline accepts <br> and <em> (accent color). Use for any clean statement beat."
+  },
+  {
+   "id": "sanji.transition.transition.sys-dot-dissolve",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-dot-dissolve",
+   "file": "cards/transitions/tr-sys-dot-dissolve.html",
+   "slots": [
+    {
+     "name": "a_log",
+     "type": "list",
+     "maxChars": 40
+    },
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 3,
+    "max": 3
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "SYSTEM terminal A dissolves from a seeded center: every glyph swells letter > . > o > round dot, halftone dots grow white and merge into a pale-blue field, 6-frame hold, then shrink away revealing B whose statement scrambles in, with radius/merge%/cell-id micro labels riding the front; use between two SYSTEM beats; a_log is a | separated list of 2-6 lines (<= 40 chars each), statements <= 22 + chip <= 12.",
+   "posterAt": 0.32
+  },
+  {
+   "id": "sanji.transition.transition.sys-grid-flip",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-grid-flip",
+   "file": "cards/transitions/tr-sys-grid-flip.html",
+   "slots": [
+    {
+     "name": "a_log",
+     "type": "list",
+     "maxChars": 34
+    },
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "b_note",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 2.79,
+    "max": 2.79
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "12x7 grid of square cells lifts (seams open onto a dim glyph field) and flips in a seeded diagonal wave with DOM 3D, edge-on faces fill with inverse glyph noise and each cell's 0x id scrambles then inverts as it lands on scene B, after which B's chip flickers; use for a before/after or state change between two SYSTEM statements; a_log is a | separated list of 2-5 lines (<= 34 chars each).",
+   "posterAt": 0.45
+  },
+  {
+   "id": "sanji.transition.transition.sys-dither-wipe",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-dither-wipe",
+   "file": "cards/transitions/tr-sys-dither-wipe.html",
+   "slots": [
+    {
+     "name": "photo",
+     "type": "text",
+     "maxChars": 24
+    },
+    {
+     "name": "b_log",
+     "type": "list",
+     "maxChars": 36
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 2.6,
+    "max": 2.6
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "Diagonal Bayer 4x4 band sweeps bottom-left to top-right: the NATURE photo ahead breaks into two-tone blue dither cells, the band core turns them into ASCII ramp glyphs, and behind it the SYSTEM terminal lands its log and scrambles in its statement, with dither 4x4 / pass n/3 / % labels riding the band; use to bridge a NATURE section into SYSTEM; photo is a stem in assets/nature (countryside-mist, green-hills, hills-sunset, wheat-field), b_log is a | separated list of 2-4 lines (<= 36 chars).",
+   "posterAt": 0.42
+  },
+  {
+   "id": "sanji.transition.transition.sys-glyph-iris",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-glyph-iris",
+   "file": "cards/transitions/tr-sys-glyph-iris.html",
+   "slots": [
+    {
+     "name": "a_kick",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "a_title",
+     "type": "text",
+     "maxChars": 14
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_note",
+     "type": "text",
+     "maxChars": 28
+    }
+   ],
+   "duration": {
+    "min": 2.6,
+    "max": 2.6
+   },
+   "canvas": "system",
+   "category": "transition",
+   "notes": "A glyph wakes at a point on a flat COBALT chapter card and an iris opens from it, its edge a ring of dense $#%C glyphs fading inward, clear center revealing the SYSTEM terminal whose statement scrambles in, with a coordinate readout and inverse r: chip tracking the rim and the leftover fringe fading from the corners; use to bridge a COBALT chapter into SYSTEM; a_title renders in caps (<= 14 chars).",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.transition.transition.sys-cell-cascade",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-cell-cascade",
+   "file": "cards/transitions/tr-sys-cell-cascade.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 2.6,
+    "max": 2.6
+   },
+   "canvas": "system",
+   "category": "transition",
+   "posterAt": 0.5,
+   "notes": "SYSTEM x grid flip: a 16x9 grid of square cells cascades top-left to bottom-right, each cell flashing inverse then collapsing to a tiny chip with micro text (OK, 0x2A, 07% counting) plus its cell id, the full frame holds as a typing chip grid, then a second cascade grows each chip back to a full inverse cell and wipes down to scene B; a front label rides the cascade with x/y and progress. Use between two blue-screen statements; text <= 28 chars, chip <= 12."
+  },
+  {
+   "id": "sanji.transition.transition.sys-scan-repaint",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-scan-repaint",
+   "file": "cards/transitions/tr-sys-scan-repaint.html",
+   "slots": [
+    {
+     "name": "a_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "a_chip",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 2.8,
+    "max": 2.8
+   },
+   "canvas": "system",
+   "category": "transition",
+   "posterAt": 0.46,
+   "notes": "SYSTEM x dither wipe as a slow top-to-bottom repaint: 45 rows step down behind a scan hairline through three bands (ordered-dither dots of A, ASCII ramp glyphs blending A to B, then B), with a 'row 024/045' inverse counter on the right edge, '[ OK ]' ticks per finished row, hex row addresses on the left and a pass/percent line top-left. Use for a before/after or 'system update' beat; text <= 28 chars, chip <= 12."
+  },
+  {
+   "id": "sanji.transition.transition.sys-mosaic",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-mosaic",
+   "file": "cards/transitions/tr-sys-mosaic.html",
+   "slots": [
+    {
+     "name": "a_kick",
+     "type": "text",
+     "maxChars": 20
+    },
+    {
+     "name": "a_head",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 2.6,
+    "max": 2.6
+   },
+   "canvas": "system",
+   "category": "transition",
+   "posterAt": 0.4,
+   "notes": "Bridges PAPER to SYSTEM with a resolution collapse: the white-paper headline mosaics in held 4-frame steps 12>24>48>96px, every block showing its luminance as one ASCII glyph plus micro labels (L.92, cell id), the 96px blocks flip one by one from paper tones to blue (1-frame inverse flash, labels scramble), then de-mosaic 48>24>12 into the blue-screen statement; a res chip row and frame/luma counter ride the bottom edge. Use when a clean paper chapter hands over to a SYSTEM section; headline <= 22 chars."
+  },
+  {
+   "id": "sanji.transition.transition.sys-glass-shatter",
+   "tier": "transition",
+   "purpose": "transition",
+   "treatment": "tr-sys-glass-shatter",
+   "file": "cards/transitions/tr-sys-glass-shatter.html",
+   "slots": [
+    {
+     "name": "tile1",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "tile2",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "tile3",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "tile4",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "b_text",
+     "type": "text",
+     "maxChars": 28
+    },
+    {
+     "name": "b_chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 3,
+    "max": 3
+   },
+   "canvas": "system",
+   "category": "transition",
+   "posterAt": 0.4,
+   "notes": "Bridges COBALT glass to SYSTEM: four liquid-glass squircle tiles (labels 'tile 0N :: idle') are eaten left to right by a radial front into halftone dots that read the rim, badge icon and title, the dots bloom and drift, turn into glyphs while labels scramble ('breaking', glyph counts), the ground cross-fades cobalt to system blue, and the glyphs fly to type scene B: one '> name ..... [ OK ]' log line per tile plus the statement with its chip. Use after a cobalt process/diagram beat when the edit goes technical; tile names are caps <= 8 chars and reappear lowercased in the log."
+  },
+  {
+   "id": "sanji.tier1.thesis.sys-dot-type",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-sys-dot-type",
+   "file": "cards/tier1/t1-sys-dot-type.html",
+   "slots": [
+    {
+     "name": "headline",
+     "type": "text",
+     "maxChars": 18
+    },
+    {
+     "name": "comment",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Headline built from round halftone dots on a dot-matrix lattice (radius = letter coverage) that pop in on a seeded diagonal wave with a hot white flash, coordinate and percent micro labels riding the front, a scramble label plus inverse dot-count chip under each word, then a dot-dissolve exit; use for a short bold claim or mode name. headline <= 18 chars, uppercased, one line up to 11 chars then a balanced 2-line wrap.",
+   "posterAt": 0.6
+  },
+  {
+   "id": "sanji.tier1.thesis.sys-flip-board",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-sys-flip-board",
+   "file": "cards/tier1/t1-sys-flip-board.html",
+   "slots": [
+    {
+     "name": "line1",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "line2",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "key",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "comment",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Split-flap board of square cells (1 or 2 rows) that flip on X through 4-8 seeded noise glyphs in a slow left-to-right cascade before landing each letter, the key word lands as flickering inverse chips, index 01..N labels and flip counters (3/7 then OK) tick around the cells, then the board flips back to blank; use for a punchy two-line statement or status announcement. line1/line2 <= 12 chars each (line2 may be empty, lines are centered), key must be a whole word inside line1 or line2.",
+   "posterAt": 0.72
+  },
+  {
+   "id": "sanji.tier1.hook.sys-dither-title",
+   "tier": "tier1",
+   "purpose": "hook",
+   "treatment": "t1-sys-dither-title",
+   "file": "cards/tier1/t1-sys-dither-title.html",
+   "slots": [
+    {
+     "name": "title",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "tag",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "subtitle",
+     "type": "text",
+     "maxChars": 44
+    },
+    {
+     "name": "comment",
+     "type": "text",
+     "maxChars": 30
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Big Inter Tight caps title develops through a diagonal Bayer 8x8 ordered-dither band (dither haze across the frame, micro labels riding the band), then a second sweep turns the solid cells into shimmering ASCII ramp glyphs with an inverse flash at the front, an inverse tag chip and micro subtitle scramble in under it, and a reverse dither band erases it; use for a feature or topic title reveal. title <= 12 chars (one line, uppercased, auto-fit), tag <= 12, subtitle <= 44 on one line.",
+   "posterAt": 0.64
+  },
+  {
+   "id": "sanji.tier2.label.sys-micro-hud",
+   "tier": "tier2",
+   "purpose": "label",
+   "treatment": "t2-sys-micro-hud",
+   "file": "cards/tier2/t2-sys-micro-hud.html",
+   "slots": [
+    {
+     "name": "tag",
+     "type": "text",
+     "maxChars": 12
+    },
+    {
+     "name": "chip",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "id",
+     "type": "text",
+     "maxChars": 8
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Transparent tracking HUD over the speaker: four square corner brackets draw in around a centered head-and-shoulders region and drift like a tracker, 16px micro labels scramble in around it (/* tag */, ticking x/y coords, conf counting to 0.97, frame counter, lock percent, a dotted leader to an inverse chip, a left id stack), then everything decays down the ramp to dots; use over footage when the speaker is introduced, analyzed or 'scanned' by AI. tag <= 12, chip <= 10 (one word), id <= 8; the region is fixed and slot-free.",
+   "posterAt": 0.5
+  },
+  {
+   "id": "sanji.tier1.compare.sys-word-morph",
+   "tier": "tier1",
+   "purpose": "compare",
+   "treatment": "t1-sys-word-morph",
+   "file": "cards/tier1/t1-sys-word-morph.html",
+   "slots": [
+    {
+     "name": "wordA",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "wordB",
+     "type": "text",
+     "maxChars": 10
+    },
+    {
+     "name": "labelA",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "labelB",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "chip",
+     "type": "text",
+     "maxChars": 12
+    }
+   ],
+   "duration": {
+    "min": 5,
+    "max": 5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "Word A as a white halftone of dots on the blue screen; the dots migrate with a slight swirl, passing through ASCII glyph states mid-trip with coordinate tags riding a few of them, and reform word B while the /* label */ caption scrambles from A to B and an inverse chip scrambles in under B; use for before/after or old-vs-new reframes (manual > automated). Words <= 10 chars, uppercase reads best, each word is fit to 1500px independently; labels <= 22 chars.",
+   "posterAt": 0.92
+  },
+  {
+   "id": "sanji.tier1.thesis.sys-micro-carve",
+   "tier": "tier1",
+   "purpose": "thesis",
+   "treatment": "t1-sys-micro-carve",
+   "file": "cards/tier1/t1-sys-micro-carve.html",
+   "slots": [
+    {
+     "name": "statement",
+     "type": "text",
+     "maxChars": 24
+    }
+   ],
+   "duration": {
+    "min": 5.5,
+    "max": 5.5
+   },
+   "canvas": "system",
+   "category": "text",
+   "notes": "The full frame floods with seeded 13px log lines typing fast with block cursors, then the statement is carved out of the log: cells inside the letter mask brighten and invert into white chips on a ragged left-to-right front while the rest dims to 15%, holds, then the whole log scrolls up and away in stepped rows; use for a thesis line or big claim that should feel built from the work itself. statement <= 12 chars on one line, up to 24 wraps to two balanced lines, uppercase reads best.",
+   "posterAt": 0.64
+  },
+  {
+   "id": "sanji.tier1.process.camera-screen",
+   "tier": "tier1",
+   "purpose": "process",
+   "treatment": "t1-camera-screen",
+   "file": "cards/tier1/t1-camera-screen.html",
+   "slots": [
+    {
+     "name": "stat",
+     "type": "text",
+     "maxChars": 8
+    },
+    {
+     "name": "statLabel",
+     "type": "text",
+     "maxChars": 22
+    },
+    {
+     "name": "reply",
+     "type": "text",
+     "maxChars": 60
+    },
+    {
+     "name": "button",
+     "type": "text",
+     "maxChars": 14
+    }
+   ],
+   "duration": {
+    "min": 7.0,
+    "max": 7.0
+   },
+   "canvas": "cobalt",
+   "category": "motion",
+   "posterAt": 0.27,
+   "notes": "REFERENCE for the screen-cam camera (CAMERA.md): wide hold, punch to the stat, creep, pan to the chat reply, pull back wide, crash into the export button. Put a real screenshot or screen recording inside .stage and retarget the rects; every move points at one thing."
+  }
+ ],
+ "textPreset": {
+  "name": "uppit-reveal",
+  "source": "https://www.uppitai.com/ (RevealText .rt-word / .reveal)",
+  "lib": "lib/text-preset.js",
+  "sync": "scripts/style-library/sync-text-preset.mjs",
+  "referenceCard": "cards/tier1/t1-text-preset.html",
+  "word": {
+   "opacity": [
+    0,
+    1
+   ],
+   "blurPx": [
+    6,
+    0
+   ],
+   "translateYEm": [
+    0.3,
+    0
+   ],
+   "durationS": 0.7,
+   "staggerS": 0.04,
+   "ease": "cubic-bezier(0.23,1,0.32,1)"
+  },
+  "block": {
+   "opacity": [
+    0,
+    1
+   ],
+   "translateYPx": [
+    18,
+    0
+   ],
+   "durationS": 0.7,
+   "ease": "cubic-bezier(0.23,1,0.32,1)"
+  },
+  "exit": {
+   "durationS": 0.42,
+   "staggerS": 0.02,
+   "blurPx": 6,
+   "liftEm": 0.18,
+   "ease": "power2.in"
+  },
+  "appliesTo": "all DOM text entrances in every Sanji card unless the card's signature move is the text itself (typing, scramble, count-up, dolly)"
+ },
+ "camera": {
+  "name": "screen-cam",
+  "bible": "CAMERA.md",
+  "lib": "lib/camera.js",
+  "sync": "scripts/style-library/sync-camera.mjs",
+  "referenceCard": "cards/tier1/t1-camera-screen.html",
+  "source": "YouTube _fIoJ_ywGfY (30fps, all 22,359 frames tracked)",
+  "ease": "cubic-bezier(0.42,0.16,0.2,0.96)",
+  "push": {
+   "durationS": 0.52,
+   "zoomMedian": 1.36
+  },
+  "pull": {
+   "durationS": 0.47,
+   "zoomMedian": 0.76
+  },
+  "pan": {
+   "durationS": 0.3
+  },
+  "crash": {
+   "durationS": 0.3,
+   "ease": "cubic-bezier(0.55,0.05,0.15,1)"
+  },
+  "holdS": {
+   "median": 0.77,
+   "p75": 1.5
+  },
+  "creepZoomPerS": 0.011,
+  "maxZoom": 3.2,
+  "motionBlur": "velocity-driven, ~1/3 sharpness at peak, none on holds"
+ }
+}

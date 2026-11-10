@@ -1,0 +1,341 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · stat · SYSTEM STAT COUNT
+  references/system s08-s12, s28. A huge number painted as a glyph mask and
+  rendered on the ASCII grid. It counts up from zero on a proxy value (digits
+  re-roll on 24fps frames, dense flickering ramp inside the strokes), lands
+  with a 2-frame noise punch on the digits, then holds with a bright edge rim
+  and slow lighter sheen bands across a mid-density face (the reference's
+  coin-face recipe). A faint glyph field sits outside. Under it a terminal
+  line scrambles in: the unit inside an inverse chip, then the label.
+  Slots: prefix (text, <= 2, e.g. "$" or "+"), value (number, <= 6 digits,
+  commas and one decimal point allowed), suffix (text, <= 2, e.g. "%" "x" "+"),
+  unit (text, <= 14, chip), label (text, <= 30), kicker (text, <= 20).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-system-stat-count {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--sys-blue); font-family: var(--font-term);
+      }
+      #sanji-t1-system-stat-count canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; filter: drop-shadow(0 0 4px rgba(225,232,255,0.45)); }
+      #sanji-t1-system-stat-count .scan { position: absolute; inset: 0; background: var(--sys-scan); }
+      #sanji-t1-system-stat-count .src { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-system-stat-count" data-composition-id="sanji-t1-system-stat-count" data-start="0" data-width="1920" data-height="1080">
+      <canvas class="field"></canvas>
+      <canvas class="type"></canvas>
+      <div class="scan"></div>
+      <div class="src">
+        <span data-slot="kicker">time saved</span>
+        <span data-slot="prefix"></span>
+        <span data-slot="value">120</span>
+        <span data-slot="suffix">+</span>
+        <span data-slot="unit">hours</span>
+        <span data-slot="label">back every month</span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @ascii-engine:start v1 */
+/* SANJI · SYSTEM canvas · ASCII engine (single source of truth).
+   Cards carry an INLINED copy between the @ascii-engine markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-ascii-engine.mjs` to restamp every card.
+
+   Model (measured from the BUCK blue-screen spots): every image is a
+   grayscale paint mapped to a density ramp of glyphs on a fixed grid.
+     const F = SYS.field(canvasEl, { cw: 15, ch: 22 });
+     F.paint((g) => { ...draw grayscale in 1920x1080 coords... });  // white = dense glyph
+     F.clearText(); F.text(col, row, "Send:", { alpha: 1, inv: false });
+     F.render(t, { flicker: 0.25 });
+   Everything is a pure function of t (seeded hashes, no Math.random). */
+const SYS = (function () {
+  const RAMP = " .,:-~>*+cC%#$";
+  const NOISE = "#$%&*+-/<=>?@[]^_{|}~0123456789ABCDEFxz";
+  const c01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const hash = (x, y, s) => {
+    let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  };
+  const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296); };
+  const sm = (t) => t * t * (3 - 2 * t);
+  const vnoise = (x, y, s) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = sm(x - xi), yf = sm(y - yi);
+    const a = hash(xi, yi, s), b = hash(xi + 1, yi, s), c = hash(xi, yi + 1, s), d = hash(xi + 1, yi + 1, s);
+    return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf;
+  };
+  const fbm = (x, y, s, oct = 4) => { let v = 0, amp = 0.5, f = 1; for (let i = 0; i < oct; i++) { v += amp * vnoise(x * f, y * f, s + i * 17); f *= 2; amp *= 0.5; } return v; };
+  /* frame index at 24fps: glyph noise ticks on frames, like the reference */
+  const frame = (t) => Math.floor(t * 24 + 1e-6);
+
+  /* scramble: resolved prefix + a short tail of noise glyphs that rides the edge.
+     p 0..1 = progress; tail = noise chars ahead of the resolved edge. */
+  function scramble(final, p, t, seed = 7, tail = 3) {
+    const n = final.length, k = Math.floor(c01(p) * n + 1e-6);
+    if (k >= n) return final;
+    let out = final.slice(0, k);
+    const f = frame(t);
+    for (let i = k; i < Math.min(n, k + tail); i++) out += final[i] === " " ? " " : NOISE[Math.floor(hash(i, f, seed) * NOISE.length)];
+    return out;
+  }
+  /* noise-only string of length n (for chip glitch frames) */
+  function noiseStr(n, t, seed = 3) { let s = ""; const f = frame(t); for (let i = 0; i < n; i++) s += NOISE[Math.floor(hash(i, f, seed) * NOISE.length)]; return s; }
+
+  function field(canvas, opts = {}) {
+    const W = opts.width || 1920, H = opts.height || 1080;
+    const cw = opts.cw || 15, ch = opts.ch || 22;
+    const cols = Math.ceil(W / cw), rows = Math.ceil(H / ch);
+    const font = opts.font || `600 ${Math.round(ch * 0.98)}px "IBM Plex Mono", "JetBrains Mono", monospace`;
+    const ink = opts.ink || "243,245,255", bg = opts.bg || "#0F18FB";
+    const ramp = opts.ramp || RAMP;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    const src = document.createElement("canvas"); src.width = cols; src.height = rows;
+    const sctx = src.getContext("2d", { willReadFrequently: true });
+    let lum = new Float32Array(cols * rows);
+    const ovC = new Array(cols * rows).fill(null), ovA = new Float32Array(cols * rows), ovI = new Uint8Array(cols * rows);
+
+    const F = {
+      cols, rows, cw, ch, W, H, ctx, src: sctx,
+      /* grayscale paint in 1920x1080 coordinates; white = bright/dense */
+      paint(fn) {
+        sctx.setTransform(1, 0, 0, 1, 0, 0);
+        sctx.globalAlpha = 1; sctx.globalCompositeOperation = "source-over";
+        sctx.fillStyle = "#000"; sctx.fillRect(0, 0, cols, rows);
+        sctx.setTransform(cols / W, 0, 0, rows / H, 0, 0);
+        sctx.fillStyle = "#fff"; sctx.strokeStyle = "#fff";
+        fn(sctx);
+        const d = sctx.getImageData(0, 0, cols, rows).data;
+        for (let i = 0; i < cols * rows; i++) lum[i] = d[i * 4] / 255;
+      },
+      /* direct luminance function per cell: fn(col,row,x,y) -> 0..1 (added to paint) */
+      fn(fn, mode = "max") {
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const i = r * cols + c, v = fn(c, r, (c + 0.5) * cw, (r + 0.5) * ch);
+          lum[i] = mode === "add" ? c01(lum[i] + v) : mode === "set" ? c01(v) : Math.max(lum[i], v);
+        }
+      },
+      clearLum() { lum.fill(0); },
+      clearText() { ovC.fill(null); ovA.fill(0); ovI.fill(0); },
+      /* write a string into the grid. col/row in cells; inv = inverse-video chip */
+      text(col, row, str, o = {}) {
+        if (row < 0 || row >= rows) return;
+        for (let i = 0; i < str.length; i++) {
+          const c = col + i; if (c < 0 || c >= cols) continue;
+          const k = row * cols + c;
+          if (str[i] === " " && !o.inv && !o.keepSpace) continue;
+          ovC[k] = str[i]; ovA[k] = o.alpha == null ? 1 : o.alpha; ovI[k] = o.inv ? 1 : 0;
+        }
+      },
+      /* text placed by pixel position (snapped to the grid) */
+      textAt(x, y, str, o = {}) { F.text(Math.round(x / cw), Math.round(y / ch), str, o); },
+      lumAt(c, r) { return c < 0 || r < 0 || c >= cols || r >= rows ? 0 : lum[r * cols + c]; },
+      render(t, o = {}) {
+        const flick = o.flicker == null ? 0.18 : o.flicker;   /* prob a cell hops one ramp level per frame */
+        const gain = o.gain == null ? 1 : o.gain, floor = o.floor == null ? 0.06 : o.floor;
+        const aMin = o.alphaMin == null ? 0.38 : o.alphaMin, aMax = o.alphaMax == null ? 1 : o.alphaMax;
+        const seed = o.seed || 11, f = frame(t), R = o.ramp || ramp, N = R.length - 1;
+        ctx.clearRect(0, 0, W, H);
+        if (o.fillBg) { ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); }
+        ctx.font = font; ctx.textBaseline = "top"; ctx.textAlign = "left";
+        /* bucket by alpha so fillStyle changes stay cheap */
+        const B = 8, buckets = Array.from({ length: B }, () => []);
+        const inv = [];
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const k = r * cols + c;
+          if (ovC[k] !== null) { if (ovI[k]) inv.push(k); else buckets[Math.min(B - 1, Math.floor(ovA[k] * (B - 1) + 0.5))].push([k, ovC[k]]); continue; }
+          let v = lum[k] * gain;
+          if (v < floor) continue;
+          v = c01(v);
+          let idx = Math.round(v * N);
+          if (flick > 0 && hash(c, r, f * 31 + seed) < flick) idx += hash(r, c, f + seed) < 0.5 ? -1 : 1;
+          idx = Math.max(1, Math.min(N, idx));
+          const a = aMin + (aMax - aMin) * v;
+          buckets[Math.min(B - 1, Math.floor(a * (B - 1) + 0.5))].push([k, R[idx]]);
+        }
+        for (let b = 0; b < B; b++) {
+          if (!buckets[b].length) continue;
+          ctx.fillStyle = `rgba(${ink},${(b / (B - 1)).toFixed(3)})`;
+          for (const [k, chr] of buckets[b]) ctx.fillText(chr, (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+        if (inv.length) {
+          ctx.fillStyle = `rgb(${ink})`;
+          for (const k of inv) ctx.fillRect((k % cols) * cw, Math.floor(k / cols) * ch, cw, ch);
+          ctx.fillStyle = bg;
+          for (const k of inv) ctx.fillText(ovC[k], (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+      },
+    };
+    return F;
+  }
+
+  /* ---- grayscale paint helpers (draw onto F.src inside F.paint) ---------- */
+  /* spinning coin: angle in radians around the vertical axis. Generic face
+     (rim + inner ring + diagonal sheen bands); pass a glyph string for the face. */
+  function coin(g, x, y, R, angle, o = {}) {
+    const sx = Math.cos(angle), w = Math.max(R * 0.07, Math.abs(sx) * R);
+    const thick = R * (o.thick || 0.16) * Math.abs(Math.sin(angle));
+    const face = o.face == null ? 0.3 : o.face;
+    g.save(); g.translate(x, y);
+    /* edge band (visible as the coin turns): bright, reads as the sliver when edge-on */
+    if (thick > 0.5) { g.fillStyle = `rgba(255,255,255,${o.edge || 0.8})`; g.beginPath(); g.ellipse(Math.sign(Math.sin(angle)) * thick * 0.5, 0, w, R, 0, 0, 6.2832); g.fill(); }
+    g.fillStyle = `rgb(${Math.round(face * 255)},${Math.round(face * 255)},${Math.round(face * 255)})`; g.beginPath(); g.ellipse(0, 0, w, R, 0, 0, 6.2832); g.fill();
+    /* lighter diagonal sheen bands (the reference's striped face) */
+    g.save(); g.beginPath(); g.ellipse(0, 0, w * 0.92, R * 0.92, 0, 0, 6.2832); g.clip();
+    g.rotate(-0.75); const ph = ((o.sheen || 0) * R * 1.4) % (R * 0.6);
+    g.fillStyle = "rgba(255,255,255,0.32)";
+    for (let b = -4; b <= 4; b++) g.fillRect(-R * 2, b * R * 0.6 + ph, R * 4, R * 0.2);
+    g.restore();
+    g.lineWidth = R * 0.11; g.strokeStyle = "#fff"; g.beginPath(); g.ellipse(0, 0, w * 0.95, R * 0.95, 0, 0, 6.2832); g.stroke();
+    g.lineWidth = R * 0.04; g.strokeStyle = "rgba(255,255,255,0.85)"; g.beginPath(); g.ellipse(0, 0, w * 0.76, R * 0.76, 0, 0, 6.2832); g.stroke();
+    if (o.glyph && Math.abs(sx) > 0.18) {
+      g.save(); g.scale(sx, 1); g.fillStyle = "#fff";
+      g.font = `800 ${R * 1.0}px "Inter Tight", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
+      g.fillText(o.glyph, 0, R * 0.05); g.restore();
+    }
+    g.restore();
+  }
+  /* soft dot (particle) */
+  function dot(g, x, y, r, a = 1) { g.fillStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+  /* big glyph-mask text, e.g. a word rendered as ASCII */
+  function word(g, str, x, y, size, o = {}) {
+    g.save(); g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`;
+    g.font = `${o.weight || 800} ${size}px ${o.family || '"Inter Tight", sans-serif'}`;
+    g.textAlign = o.align || "center"; g.textBaseline = "middle"; g.fillText(str, x, y); g.restore();
+  }
+  /* SVG path (24-unit icon, e.g. Lucide) stroked into the paint */
+  function icon(g, d, x, y, size, o = {}) {
+    g.save(); g.translate(x - size / 2, y - size / 2); g.scale(size / 24, size / 24);
+    const p = new Path2D(d);
+    if (o.fill) { g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.fill(p); }
+    g.lineWidth = o.width || 2; g.lineCap = "round"; g.lineJoin = "round";
+    g.strokeStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.stroke(p); g.restore();
+  }
+
+  return { RAMP, NOISE, c01, hash, lcg, vnoise, fbm, frame, scramble, noiseStr, field, coin, dot, word, icon };
+})();
+/* @ascii-engine:end */
+        const ID = "sanji-t1-system-stat-count";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const { c01, hash, fbm, frame, scramble, NOISE } = SYS;
+        const f = (n) => n / 24;
+        const slot = (n) => { const e = $(`[data-slot="${n}"]`); return e ? e.textContent.trim() : ""; };
+        const PRE = slot("prefix"), SUF = slot("suffix"), UNIT = slot("unit"), LABEL = slot("label");
+        const KICK = slot("kicker") ? "/* " + slot("kicker") + " */" : "";
+        const RAW = slot("value") || "100";
+        const COMMAS = RAW.includes(","), DEC = (RAW.split(".")[1] || "").length;
+        const TARGET = parseFloat(RAW.replace(/,/g, "")) || 0;
+        const fmt = (v) => { let s = v.toFixed(DEC); if (COMMAS) { const [a, b] = s.split("."); s = a.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (b ? "." + b : ""); } return s; };
+        const FINAL = PRE + fmt(TARGET) + SUF;
+        const INK = "243,245,255", BLUE = getComputedStyle(ROOT).getPropertyValue("--sys-blue").trim() || "#0F18FB";
+        const eCount = gsap.parseEase("expo.out");
+
+        /* ---- geometry: mono digits so the width stays put while counting ---- */
+        const NLEN = Math.max(2, FINAL.length);
+        const SIZE = Math.min(600, Math.floor(1720 / (NLEN * 0.6)));
+        const ADV = SIZE * 0.6;
+        const NCY = 470;                                  /* number centre line */
+        const GCW = SIZE >= 450 ? 12 : SIZE >= 330 ? 10 : 8;   /* finer grid for long values */
+        const F = SYS.field($("canvas.field"), { cw: GCW, ch: Math.round(GCW * 1.5) });
+        const NFONT = `700 ${SIZE}px "IBM Plex Mono", "JetBrains Mono", monospace`;
+
+        /* ---- beats ---- */
+        const T_COUNT = f(6), COUNT_D = 1.6;
+        const T_LAND = T_COUNT + COUNT_D;                 /* final value + noise punch */
+        const T_UNIT = 2.0, UNIT_D = f(11), T_LABEL = T_UNIT + UNIT_D + f(2);
+        const T_OUT = 4.5, OUT_D = 0.6, END = T_OUT + OUT_D + f(2);
+
+        const tc = $("canvas.type"); tc.width = 1920; tc.height = 1080;
+        const tx = tc.getContext("2d");
+        tc.style.filter = "drop-shadow(0 0 4px rgba(225,232,255,0.5))";
+
+        function value(t) {
+          if (t >= T_LAND) return FINAL;
+          const fr = frame(t - T_COUNT), p = c01(fr / (COUNT_D * 24));
+          let v = TARGET * eCount(p);
+          /* digits change on frames; snap to the target's precision */
+          v = Math.floor(v * Math.pow(10, DEC)) / Math.pow(10, DEC);
+          return PRE + fmt(Math.min(v, TARGET)) + SUF;
+        }
+
+        function draw(t) {
+          F.clearText();
+          const s = value(t);
+          const land = c01((t - T_LAND) / 0.5);           /* 0 counting -> 1 settled */
+          const x0 = 960 - (s.length * ADV) / 2;
+          const out = c01((t - T_OUT) / OUT_D);
+          F.paint((g) => {
+            if (t < T_COUNT) return;
+            g.font = NFONT; g.textBaseline = "middle"; g.textAlign = "left";
+            /* face: dense while counting, settles to mid density so the rim can read */
+            const face = 1 - 0.45 * land;
+            g.fillStyle = `rgba(255,255,255,${face})`;
+            for (let i = 0; i < s.length; i++) g.fillText(s[i], x0 + i * ADV, NCY);
+            if (land > 0) {
+              /* bright edge rim */
+              g.lineWidth = SIZE * 0.035 * land; g.strokeStyle = "#fff"; g.lineJoin = "round";
+              for (let i = 0; i < s.length; i++) g.strokeText(s[i], x0 + i * ADV, NCY);
+            }
+          });
+          /* lighter diagonal sheen bands crawling across the settled face (inside the digits only) */
+          if (land > 0) {
+            const ph = (t - T_LAND) * 90;
+            F.fn((c, r, x, y) => { const v = F.lumAt(c, r); if (v < 0.25) return v; const u = (((x - y * 0.95 + ph) % 170) + 170) % 170; return c01(v + (u < 50 ? 0.32 * land : 0)); }, "set");
+          }
+          /* erosion on exit */
+          if (out > 0) F.fn((c, r) => F.lumAt(c, r) * c01((fbm(c * 0.07, r * 0.1 - t, 3, 3) - out * 0.8 + 0.1) * 4), "set");
+          /* landing punch: two frames of noise over the digit cells */
+          const fl = frame(t) - frame(T_LAND);
+          if (fl >= 0 && fl < 2) F.fn((c, r) => (F.lumAt(c, r) > 0.1 || hash(c, r, frame(t)) < 0.05 ? 0.5 + hash(r, c, frame(t)) * 0.5 : 0), "set");
+          /* faint field outside */
+          const amb = c01(t / 0.3) * (1 - out);
+          F.fn((c, r) => (hash(c, r, 9) < 0.055 ? 0.15 * amb : 0), "max");
+          F.render(t, { flicker: land < 1 ? 0.32 : 0.14, floor: 0.08, alphaMin: 0.42 });
+
+          /* ---- terminal type: kicker above, chip + label below ---- */
+          tx.clearRect(0, 0, 1920, 1080);
+          if (out >= 1) return;
+          tx.font = '600 30px "IBM Plex Mono", "JetBrains Mono", monospace'; tx.textBaseline = "top";
+          const AD = 19.6, a = 1 - out;
+          const put = (str, x, y, col) => { tx.fillStyle = col; for (let i = 0; i < str.length; i++) if (str[i] !== " ") tx.fillText(str[i], x + i * AD, y); };
+          if (KICK && t >= f(3)) put(scramble(KICK, (t - f(3)) / f(4), t, 4, 3), 960 - KICK.length * AD / 2, NCY - SIZE * 0.5 - 40, `rgba(${INK},${0.9 * a})`);
+          if (t >= T_UNIT) {
+            const total = (UNIT ? UNIT.length + 2 : 0) + (LABEL ? LABEL.length + 1 : 0);
+            const lx = 960 - total * AD / 2, ly = NCY + SIZE * 0.5 + 40;
+            if (UNIT) {
+              const pc = (t - T_UNIT) / UNIT_D;
+              const us = pc < 0.12 ? "" : scramble(UNIT, (pc - 0.12) / 0.88, t, 5, 2);
+              const w = (Math.max(1, Math.ceil(us.length)) + 2) * AD;
+              tx.fillStyle = `rgba(${INK},${a})`; tx.fillRect(Math.round(lx), ly - 5, Math.round(pc < 0.12 ? AD : w), 42);
+              put(" " + us, lx, ly, BLUE);
+            }
+            if (LABEL && t >= T_LABEL) put(scramble(LABEL, (t - T_LABEL) / f(5), t, 8, 3), lx + (UNIT ? UNIT.length + 3 : 0) * AD, ly, `rgba(${INK},${a})`);
+          }
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        const P = { t: 0 };
+        tl.fromTo(P, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(P.t) }, 0);
+        tl.set({}, {}, END);
+        draw(0);
+        if (document.fonts) {
+          Promise.all([document.fonts.load(`700 ${SIZE}px "IBM Plex Mono"`), document.fonts.load('600 30px "IBM Plex Mono"')]).then(() => draw(P.t), () => {});
+          document.fonts.ready.then(() => draw(P.t));
+        }
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

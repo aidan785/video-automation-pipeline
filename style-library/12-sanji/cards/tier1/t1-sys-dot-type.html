@@ -1,0 +1,427 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · thesis · SYSTEM DOT TYPE
+  SYSTEM canvas x Sanji dot dissolve. A headline is painted as a mask, sampled
+  on a coarse dot-matrix lattice and drawn as round halftone dots whose radius
+  is the cell coverage. Dots pop in on a seeded diagonal wave (grow from 0 with
+  a hot white flash and bloom), micro labels ride the wave front (x:/y:, >> %),
+  each word gets a tiny scramble label with an inverse dot-count chip, the board
+  holds and shimmers on 24fps frames, then the dots dissolve away on the same
+  wave with a second flash. Corner micro labels tick and clear out first.
+  Slots: headline (text, <= 18 chars, caps, 1 line or balanced 2-line wrap past
+  11 chars), comment (text, <= 30 chars, top-left micro label).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-sys-dot-type {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--sys-blue); font-family: var(--font-term);
+      }
+      #sanji-t1-sys-dot-type canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+      #sanji-t1-sys-dot-type canvas.dots { filter: drop-shadow(0 0 4px rgba(225,232,255,0.45)); }
+      #sanji-t1-sys-dot-type canvas.bloom { filter: blur(9px); mix-blend-mode: screen; opacity: 0.85; }
+      #sanji-t1-sys-dot-type .scan { position: absolute; inset: 0; background: var(--sys-scan); }
+      #sanji-t1-sys-dot-type .src { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-sys-dot-type" data-composition-id="sanji-t1-sys-dot-type" data-start="0" data-width="1920" data-height="1080">
+      <canvas class="dots"></canvas>
+      <canvas class="bloom"></canvas>
+      <div class="scan"></div>
+      <div class="src">
+        <span data-slot="headline">EDIT ON AUTOPILOT</span>
+        <span data-slot="comment">/* render --mode halftone */</span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @ascii-engine:start v1 */
+/* SANJI · SYSTEM canvas · ASCII engine (single source of truth).
+   Cards carry an INLINED copy between the @ascii-engine markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-ascii-engine.mjs` to restamp every card.
+
+   Model (measured from the BUCK blue-screen spots): every image is a
+   grayscale paint mapped to a density ramp of glyphs on a fixed grid.
+     const F = SYS.field(canvasEl, { cw: 15, ch: 22 });
+     F.paint((g) => { ...draw grayscale in 1920x1080 coords... });  // white = dense glyph
+     F.clearText(); F.text(col, row, "Send:", { alpha: 1, inv: false });
+     F.render(t, { flicker: 0.25 });
+   Everything is a pure function of t (seeded hashes, no Math.random). */
+const SYS = (function () {
+  const RAMP = " .,:-~>*+cC%#$";
+  const NOISE = "#$%&*+-/<=>?@[]^_{|}~0123456789ABCDEFxz";
+  const c01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const hash = (x, y, s) => {
+    let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(s | 0, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  };
+  const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296); };
+  const sm = (t) => t * t * (3 - 2 * t);
+  const vnoise = (x, y, s) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = sm(x - xi), yf = sm(y - yi);
+    const a = hash(xi, yi, s), b = hash(xi + 1, yi, s), c = hash(xi, yi + 1, s), d = hash(xi + 1, yi + 1, s);
+    return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf;
+  };
+  const fbm = (x, y, s, oct = 4) => { let v = 0, amp = 0.5, f = 1; for (let i = 0; i < oct; i++) { v += amp * vnoise(x * f, y * f, s + i * 17); f *= 2; amp *= 0.5; } return v; };
+  /* frame index at 24fps: glyph noise ticks on frames, like the reference */
+  const frame = (t) => Math.floor(t * 24 + 1e-6);
+
+  /* scramble: resolved prefix + a short tail of noise glyphs that rides the edge.
+     p 0..1 = progress; tail = noise chars ahead of the resolved edge. */
+  function scramble(final, p, t, seed = 7, tail = 3) {
+    const n = final.length, k = Math.floor(c01(p) * n + 1e-6);
+    if (k >= n) return final;
+    let out = final.slice(0, k);
+    const f = frame(t);
+    for (let i = k; i < Math.min(n, k + tail); i++) out += final[i] === " " ? " " : NOISE[Math.floor(hash(i, f, seed) * NOISE.length)];
+    return out;
+  }
+  /* noise-only string of length n (for chip glitch frames) */
+  function noiseStr(n, t, seed = 3) { let s = ""; const f = frame(t); for (let i = 0; i < n; i++) s += NOISE[Math.floor(hash(i, f, seed) * NOISE.length)]; return s; }
+
+  function field(canvas, opts = {}) {
+    const W = opts.width || 1920, H = opts.height || 1080;
+    const cw = opts.cw || 15, ch = opts.ch || 22;
+    const cols = Math.ceil(W / cw), rows = Math.ceil(H / ch);
+    const font = opts.font || `600 ${Math.round(ch * 0.98)}px "IBM Plex Mono", "JetBrains Mono", monospace`;
+    const ink = opts.ink || "243,245,255", bg = opts.bg || "#0F18FB";
+    const ramp = opts.ramp || RAMP;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    const src = document.createElement("canvas"); src.width = cols; src.height = rows;
+    const sctx = src.getContext("2d", { willReadFrequently: true });
+    let lum = new Float32Array(cols * rows);
+    const ovC = new Array(cols * rows).fill(null), ovA = new Float32Array(cols * rows), ovI = new Uint8Array(cols * rows);
+
+    const F = {
+      cols, rows, cw, ch, W, H, ctx, src: sctx,
+      /* grayscale paint in 1920x1080 coordinates; white = bright/dense */
+      paint(fn) {
+        sctx.setTransform(1, 0, 0, 1, 0, 0);
+        sctx.globalAlpha = 1; sctx.globalCompositeOperation = "source-over";
+        sctx.fillStyle = "#000"; sctx.fillRect(0, 0, cols, rows);
+        sctx.setTransform(cols / W, 0, 0, rows / H, 0, 0);
+        sctx.fillStyle = "#fff"; sctx.strokeStyle = "#fff";
+        fn(sctx);
+        const d = sctx.getImageData(0, 0, cols, rows).data;
+        for (let i = 0; i < cols * rows; i++) lum[i] = d[i * 4] / 255;
+      },
+      /* direct luminance function per cell: fn(col,row,x,y) -> 0..1 (added to paint) */
+      fn(fn, mode = "max") {
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const i = r * cols + c, v = fn(c, r, (c + 0.5) * cw, (r + 0.5) * ch);
+          lum[i] = mode === "add" ? c01(lum[i] + v) : mode === "set" ? c01(v) : Math.max(lum[i], v);
+        }
+      },
+      clearLum() { lum.fill(0); },
+      clearText() { ovC.fill(null); ovA.fill(0); ovI.fill(0); },
+      /* write a string into the grid. col/row in cells; inv = inverse-video chip */
+      text(col, row, str, o = {}) {
+        if (row < 0 || row >= rows) return;
+        for (let i = 0; i < str.length; i++) {
+          const c = col + i; if (c < 0 || c >= cols) continue;
+          const k = row * cols + c;
+          if (str[i] === " " && !o.inv && !o.keepSpace) continue;
+          ovC[k] = str[i]; ovA[k] = o.alpha == null ? 1 : o.alpha; ovI[k] = o.inv ? 1 : 0;
+        }
+      },
+      /* text placed by pixel position (snapped to the grid) */
+      textAt(x, y, str, o = {}) { F.text(Math.round(x / cw), Math.round(y / ch), str, o); },
+      lumAt(c, r) { return c < 0 || r < 0 || c >= cols || r >= rows ? 0 : lum[r * cols + c]; },
+      render(t, o = {}) {
+        const flick = o.flicker == null ? 0.18 : o.flicker;   /* prob a cell hops one ramp level per frame */
+        const gain = o.gain == null ? 1 : o.gain, floor = o.floor == null ? 0.06 : o.floor;
+        const aMin = o.alphaMin == null ? 0.38 : o.alphaMin, aMax = o.alphaMax == null ? 1 : o.alphaMax;
+        const seed = o.seed || 11, f = frame(t), R = o.ramp || ramp, N = R.length - 1;
+        ctx.clearRect(0, 0, W, H);
+        if (o.fillBg) { ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); }
+        ctx.font = font; ctx.textBaseline = "top"; ctx.textAlign = "left";
+        /* bucket by alpha so fillStyle changes stay cheap */
+        const B = 8, buckets = Array.from({ length: B }, () => []);
+        const inv = [];
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const k = r * cols + c;
+          if (ovC[k] !== null) { if (ovI[k]) inv.push(k); else buckets[Math.min(B - 1, Math.floor(ovA[k] * (B - 1) + 0.5))].push([k, ovC[k]]); continue; }
+          let v = lum[k] * gain;
+          if (v < floor) continue;
+          v = c01(v);
+          let idx = Math.round(v * N);
+          if (flick > 0 && hash(c, r, f * 31 + seed) < flick) idx += hash(r, c, f + seed) < 0.5 ? -1 : 1;
+          idx = Math.max(1, Math.min(N, idx));
+          const a = aMin + (aMax - aMin) * v;
+          buckets[Math.min(B - 1, Math.floor(a * (B - 1) + 0.5))].push([k, R[idx]]);
+        }
+        for (let b = 0; b < B; b++) {
+          if (!buckets[b].length) continue;
+          ctx.fillStyle = `rgba(${ink},${(b / (B - 1)).toFixed(3)})`;
+          for (const [k, chr] of buckets[b]) ctx.fillText(chr, (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+        if (inv.length) {
+          ctx.fillStyle = `rgb(${ink})`;
+          for (const k of inv) ctx.fillRect((k % cols) * cw, Math.floor(k / cols) * ch, cw, ch);
+          ctx.fillStyle = bg;
+          for (const k of inv) ctx.fillText(ovC[k], (k % cols) * cw, Math.floor(k / cols) * ch);
+        }
+      },
+    };
+    return F;
+  }
+
+  /* ---- grayscale paint helpers (draw onto F.src inside F.paint) ---------- */
+  /* spinning coin: angle in radians around the vertical axis. Generic face
+     (rim + inner ring + diagonal sheen bands); pass a glyph string for the face. */
+  function coin(g, x, y, R, angle, o = {}) {
+    const sx = Math.cos(angle), w = Math.max(R * 0.07, Math.abs(sx) * R);
+    const thick = R * (o.thick || 0.16) * Math.abs(Math.sin(angle));
+    const face = o.face == null ? 0.3 : o.face;
+    g.save(); g.translate(x, y);
+    /* edge band (visible as the coin turns): bright, reads as the sliver when edge-on */
+    if (thick > 0.5) { g.fillStyle = `rgba(255,255,255,${o.edge || 0.8})`; g.beginPath(); g.ellipse(Math.sign(Math.sin(angle)) * thick * 0.5, 0, w, R, 0, 0, 6.2832); g.fill(); }
+    g.fillStyle = `rgb(${Math.round(face * 255)},${Math.round(face * 255)},${Math.round(face * 255)})`; g.beginPath(); g.ellipse(0, 0, w, R, 0, 0, 6.2832); g.fill();
+    /* lighter diagonal sheen bands (the reference's striped face) */
+    g.save(); g.beginPath(); g.ellipse(0, 0, w * 0.92, R * 0.92, 0, 0, 6.2832); g.clip();
+    g.rotate(-0.75); const ph = ((o.sheen || 0) * R * 1.4) % (R * 0.6);
+    g.fillStyle = "rgba(255,255,255,0.32)";
+    for (let b = -4; b <= 4; b++) g.fillRect(-R * 2, b * R * 0.6 + ph, R * 4, R * 0.2);
+    g.restore();
+    g.lineWidth = R * 0.11; g.strokeStyle = "#fff"; g.beginPath(); g.ellipse(0, 0, w * 0.95, R * 0.95, 0, 0, 6.2832); g.stroke();
+    g.lineWidth = R * 0.04; g.strokeStyle = "rgba(255,255,255,0.85)"; g.beginPath(); g.ellipse(0, 0, w * 0.76, R * 0.76, 0, 0, 6.2832); g.stroke();
+    if (o.glyph && Math.abs(sx) > 0.18) {
+      g.save(); g.scale(sx, 1); g.fillStyle = "#fff";
+      g.font = `800 ${R * 1.0}px "Inter Tight", sans-serif`; g.textAlign = "center"; g.textBaseline = "middle";
+      g.fillText(o.glyph, 0, R * 0.05); g.restore();
+    }
+    g.restore();
+  }
+  /* soft dot (particle) */
+  function dot(g, x, y, r, a = 1) { g.fillStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+  /* big glyph-mask text, e.g. a word rendered as ASCII */
+  function word(g, str, x, y, size, o = {}) {
+    g.save(); g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`;
+    g.font = `${o.weight || 800} ${size}px ${o.family || '"Inter Tight", sans-serif'}`;
+    g.textAlign = o.align || "center"; g.textBaseline = "middle"; g.fillText(str, x, y); g.restore();
+  }
+  /* SVG path (24-unit icon, e.g. Lucide) stroked into the paint */
+  function icon(g, d, x, y, size, o = {}) {
+    g.save(); g.translate(x - size / 2, y - size / 2); g.scale(size / 24, size / 24);
+    const p = new Path2D(d);
+    if (o.fill) { g.fillStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.fill(p); }
+    g.lineWidth = o.width || 2; g.lineCap = "round"; g.lineJoin = "round";
+    g.strokeStyle = `rgba(255,255,255,${o.alpha == null ? 1 : o.alpha})`; g.stroke(p); g.restore();
+  }
+
+  return { RAMP, NOISE, c01, hash, lcg, vnoise, fbm, frame, scramble, noiseStr, field, coin, dot, word, icon };
+})();
+/* @ascii-engine:end */
+        const ID = "sanji-t1-sys-dot-type";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const { c01, hash, lcg, scramble, frame } = SYS;
+        const slot = (n) => $(`[data-slot="${n}"]`).textContent.trim();
+        const HEAD = slot("headline").toUpperCase().replace(/\s+/g, " ");
+        const COMMENT = slot("comment");
+        const css = getComputedStyle(document.documentElement);
+        const BLUE = css.getPropertyValue("--sys-blue").trim() || "#0F18FB";
+        const INK = "243,245,255";
+        const W = 1920, H = 1080;
+
+        const cv = $("canvas.dots"), ctx = cv.getContext("2d"); cv.width = W; cv.height = H;
+        const bv = $("canvas.bloom"), bctx = bv.getContext("2d"); bv.width = W; bv.height = H;
+        const ghost = document.createElement("canvas"); ghost.width = W; ghost.height = H;
+
+        /* ---- beats (seconds; scene changes on the 0.5s grid, labels on 24fps frames) ---- */
+        const T_CMT = 4 / 24;                 /* 4 dead frames, then the comment */
+        const T_IN = 0.5, SPAN_IN = 1.25, LIFE_IN = 0.45;     /* dots fully landed by 2.2 */
+        const T_LBL = 2.0;
+        const T_CLEAR = 3.5;                  /* micro labels scramble out first */
+        const T_OUT = 3.75, SPAN_OUT = 0.85, LIFE_OUT = 0.4;  /* gone by 5.0 */
+        const END = 5.0;
+        const eBack = gsap.parseEase("back.out(2.2)"), eIn = gsap.parseEase("power2.in"), eIO = gsap.parseEase("power2.inOut");
+
+        /* reverse scramble: the resolved prefix shrinks with noise riding the tail */
+        const unscr = (s, p, t, seed) => (p <= 0 ? s : p >= 1 ? "" : scramble(s, 1 - p, t, seed, 2));
+        const MF = '500 16px "IBM Plex Mono", monospace';
+        function lbl(x, y, s, o = {}) {
+          if (!s) return 0;
+          ctx.font = o.font || MF; ctx.textBaseline = "top";
+          const w = ctx.measureText(s).width;
+          const xx = o.right ? x - w : x;
+          if (o.inv) { ctx.fillStyle = `rgb(${INK})`; ctx.fillRect(xx - 4, y - 3, w + 8, 23); ctx.fillStyle = BLUE; }
+          else ctx.fillStyle = `rgba(${INK},${o.a == null ? 0.9 : o.a})`;
+          ctx.fillText(s, xx, y);
+          return w;
+        }
+        const pad4 = (n) => String(Math.max(0, Math.round(n))).padStart(4, "0");
+
+        /* ---- layout + mask -> dot lattice ---- */
+        let SP, DOTS = [], WORDS = [], BOX, COLS, ROWS;
+        function build() {
+          const m = document.createElement("canvas"); m.width = W; m.height = H;
+          const g = m.getContext("2d");
+          const fnt = (s) => `900 ${s}px "Inter Tight", "Inter", sans-serif`;
+          g.font = fnt(100);
+          const wd = (s) => g.measureText(s).width;
+          const words = HEAD.split(" ").filter(Boolean);
+          let lines = [words];
+          if (HEAD.length > 11 && words.length > 1) {
+            let best = null;
+            for (let k = 1; k < words.length; k++) {
+              const a = words.slice(0, k), b = words.slice(k);
+              const mw = Math.max(wd(a.join(" ")), wd(b.join(" ")));
+              if (!best || mw < best.mw) best = { mw, l: [a, b] };
+            }
+            lines = best.l;
+          }
+          const maxW = Math.max(...lines.map((l) => wd(l.join(" "))));
+          const size = Math.min(lines.length > 1 ? 230 : 270, (1600 / maxW) * 100);
+          SP = Math.max(11, Math.min(16, Math.round(size / 17)));
+          g.font = fnt(size);
+          const capH = size * 0.72, lh = capH + 96;
+          const y0 = 510 - ((lines.length - 1) * lh) / 2 + capH / 2;   /* baseline of line 0 */
+          WORDS = [];
+          g.fillStyle = "#fff"; g.textBaseline = "alphabetic";
+          const space = g.measureText(" ").width;
+          lines.forEach((l, li) => {
+            const lw = g.measureText(l.join(" ")).width;
+            let x = 960 - lw / 2;
+            const by = y0 + li * lh;
+            l.forEach((w) => {
+              const ww = g.measureText(w).width;
+              g.fillText(w, x, by);
+              WORDS.push({ text: w, x0: x, x1: x + ww, top: by - capH, base: by, n: 0 });
+              x += ww + space;
+            });
+          });
+          const d = g.getImageData(0, 0, W, H).data;
+          COLS = Math.ceil(W / SP); ROWS = Math.ceil(H / SP);
+          DOTS = [];
+          let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+          for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+            const x0 = c * SP, y0c = r * SP;
+            let s = 0, n = 0;
+            for (let yy = y0c + 1; yy < y0c + SP && yy < H; yy += 2) for (let xx = x0 + 1; xx < x0 + SP && xx < W; xx += 2) { s += d[(yy * W + xx) * 4 + 3]; n++; }
+            const cov = n ? s / (n * 255) : 0;
+            if (cov < 0.05) continue;
+            const x = x0 + SP / 2, y = y0c + SP / 2;
+            let wi = 0; WORDS.forEach((w, i) => { if (x >= w.x0 - SP && x <= w.x1 + SP && y >= w.top - SP * 2 && y <= w.base + SP * 2) wi = i; });
+            WORDS[wi].n++;
+            DOTS.push({ x, y, cov, c, r, wi });
+            minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+          }
+          BOX = { minX, maxX, minY, maxY };
+          /* seeded diagonal wave order (top-left first, ragged front) */
+          for (const p of DOTS) {
+            const u = (p.x - minX) / Math.max(1, maxX - minX), v = (p.y - minY) / Math.max(1, maxY - minY);
+            p.o = c01((u * 0.78 + v * 0.22) * 0.9 + hash(p.c, p.r, 41) * 0.1);
+            p.o2 = c01((u * 0.78 + v * 0.22) * 0.88 + hash(p.r, p.c, 57) * 0.12);
+          }
+          /* faint dot-matrix lattice everywhere (pre-rendered once) */
+          const gg = ghost.getContext("2d"); gg.clearRect(0, 0, W, H);
+          gg.fillStyle = `rgba(${INK},1)`;
+          for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { gg.beginPath(); gg.arc(c * SP + SP / 2, r * SP + SP / 2, 1.15, 0, 6.2832); gg.fill(); }
+        }
+        build();
+
+        /* wave front x at a given y for progress p (inverse of the order formula) */
+        const frontX = (p, y) => {
+          const v = c01((y - BOX.minY) / Math.max(1, BOX.maxY - BOX.minY));
+          return BOX.minX + (BOX.maxX - BOX.minX) * c01((p / 0.9 - v * 0.22) / 0.78);
+        };
+
+        function draw(t) {
+          ctx.clearRect(0, 0, W, H); bctx.clearRect(0, 0, W, H);
+          const f = frame(t);
+          /* lattice: fades up with the comment, leaves with the dissolve */
+          const ga = 0.15 * c01((t - 0.25) / 0.4) * (1 - c01((t - (T_OUT + 0.4)) / 0.7));
+          if (ga > 0.002) { ctx.globalAlpha = ga; ctx.drawImage(ghost, 0, 0); ctx.globalAlpha = 1; }
+
+          const R = SP * 0.52;      /* full coverage: a hair of gap stays between dots */
+          let landed = 0;
+          for (const p of DOTS) {
+            const gIn = c01((t - (T_IN + p.o * (SPAN_IN))) / LIFE_IN);
+            if (gIn <= 0) continue;
+            const gOut = c01((t - (T_OUT + p.o2 * SPAN_OUT)) / LIFE_OUT);
+            if (gOut >= 1) continue;
+            if (gIn >= 1) landed++;
+            let k = eBack(gIn) * (1 - eIn(gOut));
+            if (gOut > 0 && gOut < 0.3) k *= 1 + (0.3 - gOut) * 0.6;    /* leaving dots swell before they go */
+            /* hold shimmer: a few dots dip one step per frame */
+            if (gIn >= 1 && gOut <= 0 && hash(p.c, p.r, f * 13 + 5) < 0.035) k *= 0.78;
+            const r = R * Math.sqrt(p.cov) * k;
+            if (r < 0.3) continue;
+            const hot = Math.max(Math.pow(1 - gIn, 1.6), gOut > 0 ? Math.sin(Math.PI * Math.min(1, gOut * 1.6)) : 0);
+            ctx.fillStyle = `rgba(${INK},${(0.86 + 0.14 * hot).toFixed(3)})`;
+            ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 6.2832); ctx.fill();
+            if (hot > 0.08) {
+              bctx.fillStyle = `rgba(255,255,255,${Math.min(1, hot * 1.1).toFixed(3)})`;
+              bctx.beginPath(); bctx.arc(p.x, p.y, r * 1.5 + 2, 0, 6.2832); bctx.fill();
+              if (hot > 0.45) { ctx.strokeStyle = `rgba(${INK},${((hot - 0.45) * 1.4).toFixed(3)})`; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(p.x, p.y, r + 4 + (1 - hot) * 6, 0, 6.2832); ctx.stroke(); }
+            }
+          }
+
+          /* ---- micro labels ---- */
+          const clr = c01((t - T_CLEAR) / (6 / 24));
+          /* corner: comment + lattice spec (top), counter + frame (bottom) */
+          if (t >= T_CMT) {
+            const pc = c01((t - T_CMT) / (5 / 24));
+            lbl(64, 56, unscr(scramble(COMMENT, pc, t, 3, 3), clr, t, 4));
+            lbl(W - 64, 56, unscr(scramble(`lattice ${COLS}x${ROWS} . sp ${SP}px`, c01((t - T_CMT - 0.12) / (5 / 24)), t, 6, 3), clr, t, 7), { right: true, a: 0.7 });
+          }
+          if (t >= T_IN - 0.1) {
+            const pct = Math.round((landed / Math.max(1, DOTS.length)) * 100);
+            const pb = c01((t - T_IN + 0.1) / (4 / 24));
+            lbl(64, H - 78, unscr(scramble(`>> ${String(pct).padStart(3, " ")}% landed . ${DOTS.length} dots`, pb, t, 8, 2), clr, t, 9), { a: 0.8 });
+            lbl(W - 64, H - 78, unscr(scramble(`/* frame ${String(f).padStart(3, "0")} */`, pb, t, 10, 2), clr, t, 11), { right: true, a: 0.7 });
+          }
+          /* front riders: ticks + coordinates on the moving edge (in and out waves) */
+          const ride = (p, seedB, txt) => {
+            if (p <= 0.01 || p >= 0.99) return;
+            const ys = [BOX.minY - 46, (BOX.minY + BOX.maxY) / 2 - 8, BOX.maxY + 30];
+            ys.forEach((y, i) => {
+              const x = Math.round(frontX(p, y) / 24) * 24 + 10;
+              ctx.fillStyle = `rgba(${INK},0.9)`; ctx.fillRect(x - 10, y - 4, 1.5, 26);
+              const s = i === 0 ? `x:${pad4(x)} y:${pad4(y)}` : i === 1 ? txt : `0x${(Math.floor(hash(f, i, seedB) * 255)).toString(16).toUpperCase().padStart(2, "0")}`;
+              lbl(x, y, scramble(s, c01(p * 6), t, seedB + i, 2), { inv: i === 1, a: 0.95 });
+            });
+          };
+          const pIn = c01((t - T_IN) / (SPAN_IN + LIFE_IN * 0.5));
+          ride(eIO(pIn) * 0.999 + 0.0, 20, `>> ${String(Math.round(pIn * 100)).padStart(2, "0")}%`);
+          const pOut = c01((t - T_OUT) / (SPAN_OUT + LIFE_OUT * 0.5));
+          ride(pOut, 30, `-- ${String(Math.round(pOut * 100)).padStart(2, "0")}%`);
+
+          /* per-word scramble labels with an inverse count chip */
+          WORDS.forEach((w, i) => {
+            const st = T_LBL + i * 0.12;
+            if (t < st) return;
+            const p = c01((t - st) / (3 / 24)), q = c01((t - st - 4 / 24) / (3 / 24));
+            const x = Math.round(w.x0 / SP) * SP, y = w.base + 26;
+            const id = `w${String(i + 1).padStart(2, "0")} / 0x${Math.floor(hash(i, 3, 77) * 255).toString(16).toUpperCase().padStart(2, "0")} /`;
+            const ww = lbl(x, y, unscr(scramble(id, p, t, 50 + i, 3), clr, t, 60 + i), { a: 0.85 });
+            if (q > 0 && clr < 1) lbl(x + ww + 14, y, unscr(scramble(`${w.n} dots`, q, t, 70 + i, 2), clr, t, 80 + i), { inv: true });
+          });
+        }
+
+        const tl = gsap.timeline({ paused: true });
+        const P = { t: 0 };
+        tl.fromTo(P, { t: 0 }, { t: END, duration: END, ease: "none", onUpdate: () => draw(P.t) }, 0);
+        tl.set({}, {}, END);
+        draw(0);
+        if (document.fonts) {
+          document.fonts.load('900 200px "Inter Tight"').then(() => { build(); draw(P.t); }).catch(() => {});
+          document.fonts.ready.then(() => { build(); draw(P.t); });
+        }
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

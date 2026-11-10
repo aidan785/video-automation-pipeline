@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · KINETIC · name (tier1, 72 frames = 3.0 s at 24 fps)
+  Moment 1 of the verified sampler (style-library/13-humanly-possible/sampler/kinetic-blocks.html),
+  rebased to F1. Research: raw-media/hp-sampler-refs/kinetic-blocks/ANALYSIS.md.
+    F1-F8    "Dana" placed on oxblood, word per cut            (BK f21-28)
+    F9-F11   cream field, "RUIZ" small, held                   (bk_rebrand_f116_real-small-hold)
+    F12-F21  slam to full bleed on ones, sharp ease-out        (bk_rebrand_f126_real-settled)
+    F25,F28  one-frame inverts                                 (bk_rebrand_f83_era-invert-flicker)
+    F29-F31  empty orange breath                               (BK f656-658)
+    F32-F51  role types one character per frame; cutout slides in F32-F44, no shadow
+                                                               (BK f659-692, Wrapped 10yrs f857-872, bk_rebrand_f1625_person-seamless)
+    F52-F72  dead hold. Clean ending: hard cut after F72 (no exit move; BK words exit on the cut).
+  F numbers are 1-based; time = (F-1)/24. Every change is a tl.set on an exact frame.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-kinetic-name{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --oxblood:#4B1526;--cream:#FFF0E6;--brick:#7A1E1E;--orange:#FF8A4C;--gold:#FFC145;--deep:#2C0B16;
+        font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:"opsz" 96;}
+      #hp2-kinetic-name .field{position:absolute;inset:0;background:var(--oxblood);}
+      #hp2-kinetic-name .layer{position:absolute;inset:0;opacity:0;}
+      #hp2-kinetic-name .disp{font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap;}
+      #hp2-kinetic-name .first{position:absolute;left:0;right:0;top:600px;transform:translateY(-78%);text-align:center;font-size:220px;color:var(--cream);}
+      #hp2-kinetic-name .last{position:absolute;left:50%;top:50%;font-size:1000px;letter-spacing:-.045em;transform-origin:50% 50%;color:var(--brick);}
+      #hp2-kinetic-name .typed{position:absolute;left:140px;top:0;font-size:120px;color:var(--deep);letter-spacing:-.03em;}
+      #hp2-kinetic-name .typed .l1{position:absolute;left:0;top:375px;}
+      #hp2-kinetic-name .typed .l2{position:absolute;left:0;top:505px;}
+      #hp2-kinetic-name .cut{position:absolute;top:90px;height:1500px;width:auto;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-kinetic-name" data-composition-id="hp2-kinetic-name" data-start="0" data-width="1920" data-height="1080">
+      <div class="field"></div>
+      <div class="layer m1a"><div class="first disp" data-slot="first-name">Dana</div></div>
+      <div class="layer m1b"><div class="last disp" data-slot="last-name">RUIZ</div></div>
+      <div class="layer m1c">
+        <div class="typed disp"><span class="l1" data-slot="role-1">Dog groomer</span><span class="l2" data-slot="role-2">in Tulsa</span></div>
+        <img class="cut" data-slot="media" src="../../assets/dana-cutout.png" alt="" />
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-kinetic-name", FPS = 24;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const C = { oxblood:"#4B1526", cream:"#FFF0E6", brick:"#7A1E1E", orange:"#FF8A4C", gold:"#FFC145", deep:"#2C0B16" };
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;                       // frame -> seconds
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const show = (F, sel) => at(F, $1(sel), { opacity: 1 });
+      const hide = (F, sel) => at(F, $1(sel), { opacity: 0 });
+      const field = (F, c) => at(F, $1(".field"), { backgroundColor: c });
+      function sample(F0, n, ease, fn) { const e = gsap.parseEase(ease); for (let i = 0; i <= n; i++) fn(F0 + i, e(i / n)); }
+
+      tl.set($(".layer"), { opacity: 0 }, 0);
+
+      field(1, C.oxblood); show(1, ".m1a");                                 // F1-8 first name, arrives placed
+      hide(9, ".m1a"); field(9, C.cream); show(9, ".m1b");                  // F9-11 last name small, held
+      const last = $1(".last");
+      const S0 = .222, S1 = 1.32;                                            // ~530 px wide -> ~2190 px (bleeds both sides)
+      at(9, last, { xPercent: -50, yPercent: -50, scale: S0, color: C.brick });
+      sample(11, 10, "expo.out", (F, k) => at(F, last, { scale: S0 + (S1 - S0) * k }));   // F12-21 slam
+      at(25, $1(".field"), { backgroundColor: C.oxblood }); at(25, last, { color: C.cream });   // F25 invert
+      at(26, $1(".field"), { backgroundColor: C.cream });   at(26, last, { color: C.brick });
+      at(28, $1(".field"), { backgroundColor: C.oxblood }); at(28, last, { color: C.cream });   // F28 invert
+      hide(29, ".m1b"); field(29, C.orange);                                // F29-31 breath
+      show(32, ".m1c");                                                     // F32-51 type role, one char per frame
+      const L1 = $1(".l1"), L2 = $1(".l2"), l1 = L1.textContent, l2 = L2.textContent;
+      for (let i = 0; i <= l1.length + l2.length; i++) {
+        const F = 32 + i;
+        at(F, L1, { textContent: l1.slice(0, Math.min(i, l1.length)) });
+        at(F, L2, { textContent: i > l1.length ? l2.slice(0, i - l1.length) : "" });
+      }
+      const cut = $1(".cut");
+      sample(32, 12, "power3.out", (F, k) => at(F, cut, { x: 2300 + (980 - 2300) * k }));   // F32-44 cutout slides in
+      // F52-72 dead hold (at least 20 f after the last character), hard cut out
+      const N = Math.max(72, 32 + l1.length + l2.length + 20);
+      tl.set({}, {}, N / FPS);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

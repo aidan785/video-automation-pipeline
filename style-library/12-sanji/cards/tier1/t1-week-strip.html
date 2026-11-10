@@ -1,0 +1,254 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · stat · WEEK STRIP
+  Time passing, counted in days. Cobalt with slow sonar rings. A small glass
+  calendar badge pops on top, a row of small glass day chips numbered 1..N
+  pops in, then the chips FILL one by one (white fill, cobalt number) on a
+  ~0.12s tick, each with a tiny lift. Then the caps headline resolves word by
+  word between badge and row while the badge eases up and the row slides down
+  to make room.
+  Slots: headline (caps, <=16), days (integer 3-10, number of chips).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-week-strip {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-week-strip .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-week-strip .cal {
+        position: absolute; left: 905px; top: 410px; width: 110px; height: 110px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        box-shadow: var(--glass-shadow);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-week-strip .head {
+        position: absolute; left: 0; right: 0; top: 488px; height: 130px; display: flex; align-items: center; justify-content: center;
+        font-weight: var(--wt-heavy); font-size: 120px; line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap;
+      }
+      #sanji-t1-week-strip .head .line { position: relative; display: inline-block; }
+      #sanji-t1-week-strip .head .w { display: inline-block; white-space: pre; }
+      #sanji-t1-week-strip .days { display: none; }
+      #sanji-t1-week-strip .row { position: absolute; left: 0; right: 0; top: 556px; height: 92px; display: flex; justify-content: center; gap: 22px; }
+      #sanji-t1-week-strip .g { position: relative; width: 92px; height: 92px; border-radius: 26px; box-sizing: border-box; flex: none; }
+      #sanji-t1-week-strip .g > .fill, #sanji-t1-week-strip .g > .wf { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-week-strip .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-week-strip .g > .wf { background: var(--white); box-shadow: 0 0 0 1.5px rgba(255,255,255,0.9), 0 0 26px rgba(255,255,255,0.45), 0 10px 30px rgba(14,18,150,0.35); opacity: 0; }
+      #sanji-t1-week-strip .g > .n { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: var(--wt-heavy); font-size: 42px; letter-spacing: -0.02em; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-week-strip" data-composition-id="sanji-t1-week-strip" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="cal"><svg width="50" height="50" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3" fill="#FFFFFF"/><path d="M3 9.5h18" stroke="#3A46E8" stroke-width="2"/><path d="M8 2.5v4M16 2.5v4" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/><circle cx="8" cy="14" r="1.4" fill="#3A46E8"/><circle cx="12" cy="14" r="1.4" fill="#3A46E8"/><circle cx="16" cy="14" r="1.4" fill="#3A46E8"/><circle cx="8" cy="17.6" r="1.4" fill="#3A46E8"/></svg></div>
+      <div class="head" data-slot="headline">7 days later</div>
+      <div class="days" data-slot="days">7</div>
+      <div class="row"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-week-strip";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre"), COBALT = tok("--cobalt");
+
+        const N = Math.max(3, Math.min(10, parseInt($(".days").textContent, 10) || 7));
+        const row = $(".row");
+        const chips = [];
+        for (let i = 1; i <= N; i++) {
+          const g = document.createElement("div"); g.className = "g";
+          g.innerHTML = '<div class="fill"></div><div class="wf"></div><div class="n"></div>';
+          g.querySelector(".n").textContent = i; row.appendChild(g); chips.push(g);
+        }
+
+        const head = $(".head");
+        const ws = head.textContent.trim().split(/\s+/);
+        head.textContent = "";
+        const line = document.createElement("span"); line.className = "line"; head.appendChild(line);
+        const words = ws.map((w, i) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : ""); line.appendChild(s); return s; });
+        /* re-center the visible run [0..k] (lazy, after fonts) */
+        const shiftFor = (k) => () => (line.offsetWidth - (words[k].offsetLeft + words[k].offsetWidth)) / 2;
+
+        const tl = gsap.timeline({ paused: true });
+        const F0 = 0.95, TICK = 0.12;
+        const H0 = F0 + N * TICK + 0.25;
+        const END = H0 + words.length * 0.24 + 1.7;
+
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) { tl.set(r, { opacity: 0 }, 0); return; }
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        tl.set([$(".cal"), ...chips, ...words], { autoAlpha: 0 }, 0);
+
+        /* 1. calendar badge + chip row pop */
+        TXT.block(tl, $(".cal"), 0.15);
+        /* chips rise as blocks; 0.55s so each lands before its fill tick lifts it */
+        TXT.block(tl, chips, 0.35, { dur: 0.55, stagger: 0.045 });
+
+        /* 2. fill one by one on a tick */
+        chips.forEach((c, i) => {
+          const t = F0 + i * TICK;
+          tl.to(c.querySelector(".wf"), { opacity: 1, duration: 0.16, ease: "power2.out" }, t)
+            .to(c.querySelector(".n"), { color: COBALT, duration: 0.16, ease: "power2.out" }, t)
+            .to(c, { keyframes: [{ y: -8, scale: 1.08, duration: 0.1, ease: "power2.out" }, { y: 0, scale: 1, duration: 0.22, ease: "power2.inOut" }] }, t);
+        });
+
+        /* 3. make room: badge up, row down; headline resolves word by word */
+        tl.to($(".cal"), { y: -70, duration: 0.55, ease: "power3.inOut" }, H0 - 0.1)
+          .to(row, { y: 100, duration: 0.55, ease: "power3.inOut" }, H0 - 0.1);
+        tl.set(line, { x: shiftFor(0) }, 0);
+        words.forEach((w, i) => { if (i > 0) tl.to(line, { x: shiftFor(i), duration: 0.34, ease: "power3.out" }, H0 + 0.12 + i * 0.24); });
+        /* words keep the re-center beat, on the text preset curve (blur 6, 0.3em rise, 0.7s) */
+        const TD = TXT.DEFAULTS, emH = parseFloat(getComputedStyle(head).fontSize);
+        words.forEach((w, i) => tl.fromTo(w, { autoAlpha: 0, filter: `blur(${TD.blur}px)`, color: PRE, y: emH * TD.y }, { autoAlpha: 1, filter: "blur(0px)", color: WHITE, y: 0, duration: TD.dur, ease: TXT.EASE }, H0 + 0.12 + i * 0.24));
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<!--
+  Humanly Possible · sting · sting · MARK-INTRO
+  The HP logo sting, rebuilt from the brand motion spec (references/brand/brand-DESIGN.md "Motion")
+  and the brand site's own geometry (references/brand/brand-site-artifact.html: rpath + shapeAt,
+  Mark B). The mark is drawn live as a function of the nub drop d (0 = closed box, 60 = finished P):
+    0.05 s  the H pops in (scale 0 to 1)
+    0.50 s  the closed box pops around it (scale .6 to 1)
+    1.20 to 2.16 s  the box's bottom corner falls open into the nub and the H's left leg grows
+                    down with it, so the two letters share one stem (d 0 to 60)
+    2.55 s and 3.50 s  heartbeat lub-dub (scale 1.07, back, 1.045, back; ease-in-out)
+  Every scale uses a fixed origin in the svg's own space so nothing drifts as the shape changes.
+  The drop accelerates and lands soft (no overshoot, per DESIGN.md). Cream mark on oxblood with grain.
+  Exit: none; it ends on the held mark and is cut away (or handed to a lockup card).
+  Slots: none.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-st-mark-intro{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-st-mark-intro .bg{position:absolute;inset:-4%;transform-origin:50% 50%;
+        background:radial-gradient(70% 75% at 50% 50%, rgba(44,11,22,0) 50%, rgba(44,11,22,.6) 100%);}
+      #hp-st-mark-intro .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+      /* viewBox 221 191 446 506 (the brand stage box); 1 unit = 1.16 px, mark centered on 444,444 */
+      #hp-st-mark-intro .stage{position:absolute;left:701px;top:246px;width:518px;height:588px;overflow:visible;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-st-mark-intro" data-composition-id="hp-st-mark-intro" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+      <svg class="stage" viewBox="221 191 446 506" aria-hidden="true">
+        <g class="mk"><path class="rr" fill-rule="evenodd" fill="#FFF0E6" d=""/><path class="hh" fill="#FFF0E6" d=""/></g>
+      </svg>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-st-mark-intro-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-st-mark-intro-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-st-mark-intro";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out", BEAT = "sine.inOut";
+      if (window.CustomEase) {
+        gsap.registerPlugin(CustomEase);
+        CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop";
+        CustomEase.create("hpBeat", ".45,0,.55,1"); BEAT = "hpBeat";   // --ease-beat
+      }
+
+      // ---------- geometry: mirrored from the brand site (Mark B) ----------
+      // orthogonal polygon -> path with every corner rounded; radius shrinks on short edges
+      function rpath(pts, rmax = 14) {
+        const q = pts.filter((p, i) => { const o = pts[(i + pts.length - 1) % pts.length]; return Math.abs(p[0] - o[0]) + Math.abs(p[1] - o[1]) > .5; });
+        const sg = v => (v > 0) - (v < 0), m = q.length; let d = "";
+        for (let i = 0; i < m; i++) {
+          const p0 = q[(i + m - 1) % m], p = q[i], p1 = q[(i + 1) % m];
+          const li = Math.abs(p[0] - p0[0]) + Math.abs(p[1] - p0[1]), lo = Math.abs(p1[0] - p[0]) + Math.abs(p1[1] - p[1]);
+          const di = [sg(p[0] - p0[0]), sg(p[1] - p0[1])], dd = [sg(p1[0] - p[0]), sg(p1[1] - p[1])];
+          const cr = di[0] * dd[1] - di[1] * dd[0];
+          if (!cr) { d += `${i ? "L" : "M"}${p[0]},${p[1]} `; continue; }
+          const r = Math.min(rmax, li / 2, lo / 2);
+          d += `${i ? "L" : "M"}${p[0] - di[0] * r},${p[1] - di[1] * r} A${r},${r} 0 0 ${cr > 0 ? 1 : 0} ${p[0] + dd[0] * r},${p[1] + dd[1] * r} `;
+        }
+        return d + "Z";
+      }
+      const NUB_OUTER = 467, NUB_INNER = 423;
+      // the mark as a function of the nub drop d (0 = closed box, 60 = finished P); the H's left leg drops with the nub
+      function shapeAt(d) {
+        d = d < .6 ? 0 : d;
+        const outer = [[231,201],[657,201],[657,627],[NUB_OUTER,627],[NUB_OUTER,627 + d],[231,627 + d]];
+        const inner = [[275,245],[613,245],[613,583],[NUB_INNER,583],[NUB_INNER,583 + d],[275,583 + d]];
+        const legBottom = 555 + d;
+        const h = [[303,273],[395,273],[395,373],[493,373],[493,273],[585,273],[585,555],[493,555],[493,452],[395,452],[395,legBottom],[303,legBottom]];
+        return { ring: rpath(outer) + " " + rpath(inner), h: rpath(h) };
+      }
+
+      const MK = $1(".mk"), R = $1(".rr"), H = $1(".hh");
+      const st = { d: 0 };
+      const apply = () => { const s = shapeAt(st.d); R.setAttribute("d", s.ring); H.setAttribute("d", s.h); };
+      apply();
+
+      const BOX = "444 414", WHOLE = "444 444";   // closed-box center, finished-mark center (svg units)
+      const DUR = 4.5;
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.04, duration: DUR, ease: "none" }, 0);
+
+      // geometry state as a tween so seeking is exact in both directions
+      tl.fromTo(st, { d: 0 }, { d: 0, duration: .01, onUpdate: apply }, 0);
+      // 1. the H pops in
+      tl.fromTo(H, { autoAlpha: 0, scale: 0, svgOrigin: BOX }, { autoAlpha: 1, scale: 1, duration: .42, ease: POP }, .05);
+      // 2. the closed box pops around it
+      tl.fromTo(R, { autoAlpha: 0, scale: .6, svgOrigin: BOX }, { autoAlpha: 1, scale: 1, duration: .44, ease: POP }, .5);
+      // 3. the corner falls open: accelerates as it drops, lands soft on the finished P (1.20 to 2.16)
+      tl.to(st, { d: 56, duration: .62, ease: "power2.in", onUpdate: apply }, 1.2);
+      tl.to(st, { d: 60, duration: .34, ease: "power2.out", onUpdate: apply }, 1.82);
+      // 4. heartbeat, twice: lub 1.07, back, dub 1.045, back
+      tl.set(MK, { scale: 1, svgOrigin: WHOLE }, 0);
+      [2.55, 3.5].forEach(b => {
+        tl.to(MK, { scale: 1.07, duration: .1, ease: BEAT, svgOrigin: WHOLE }, b)
+          .to(MK, { scale: 1, duration: .16, ease: BEAT, svgOrigin: WHOLE }, b + .1)
+          .to(MK, { scale: 1.045, duration: .09, ease: BEAT, svgOrigin: WHOLE }, b + .26)
+          .to(MK, { scale: 1, duration: .42, ease: BEAT, svgOrigin: WHOLE }, b + .35);
+      });
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); apply(); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

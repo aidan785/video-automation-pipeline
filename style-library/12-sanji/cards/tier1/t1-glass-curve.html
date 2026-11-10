@@ -1,0 +1,368 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · GLASS CURVE
+  The easing explainer. A numbered glass pill header (03 / MOTION RULES) pops,
+  a connector drops into a big glass card: icon badge + headline (words
+  resolve). The chart builds: baseline + axis ticks resolve, faint IN and OUT
+  window panels fade in with labels, the dashed 100% line and the dashed
+  LINEAR guide draw first, then the eased curve draws on with a glowing dot
+  riding its head; when the head passes the peak an "overshoot" dot + label
+  bloom. Three glass chips pop along the bottom, each taking focus in turn.
+  Slots: num (<=2), title (richtext caps, <=14, <br> ok), headline (<=28),
+  inLabel (<=12), outLabel (<=12), chip1-3 (<=20).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-glass-curve {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-glass-curve .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-glass-curve .g { position: absolute; box-sizing: border-box; border-radius: var(--r-card); }
+      #sanji-t1-glass-curve .g.flow { position: relative; }
+      #sanji-t1-glass-curve .g > .fill, #sanji-t1-glass-curve .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-glass-curve .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-glass-curve .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-glass-curve .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-glass-curve .g.flow > .in { position: relative; }
+      #sanji-t1-glass-curve .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box; flex: none;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-glass-curve .g.flow .badge { position: relative; }
+
+      /* header pill */
+      #sanji-t1-glass-curve .hdr { position: absolute; left: 0; right: 0; top: 68px; display: flex; justify-content: center; }
+      #sanji-t1-glass-curve .pill { height: 224px; border-radius: var(--r-pill); }
+      #sanji-t1-glass-curve .pill > .in { height: 100%; display: flex; align-items: center; gap: 32px; padding: 0 64px 0 28px; box-sizing: border-box; }
+      #sanji-t1-glass-curve .pill .badge { width: 168px; height: 168px; font-weight: var(--wt-heavy); font-size: 64px; letter-spacing: -0.01em; }
+      #sanji-t1-glass-curve .pill .ttl { font-weight: var(--wt-heavy); font-size: 92px; line-height: 0.86; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap; padding-top: 6px; }
+
+      /* big card */
+      #sanji-t1-glass-curve .card { left: 260px; top: 350px; width: 1400px; height: 540px; }
+      #sanji-t1-glass-curve .card .badge { left: 50px; top: 50px; width: 112px; height: 112px; }
+      #sanji-t1-glass-curve .card .head {
+        position: absolute; left: 192px; top: 50px; height: 112px; display: flex; align-items: center; white-space: nowrap;
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 58px; letter-spacing: var(--track-ui);
+      }
+      #sanji-t1-glass-curve .card .head .w { display: inline-block; white-space: pre; }
+      #sanji-t1-glass-curve .win { position: absolute; top: 210px; height: 270px; border-radius: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03)); }
+      #sanji-t1-glass-curve .win.a { left: 70px; width: 450px; }
+      #sanji-t1-glass-curve .win.b { left: 970px; width: 270px; }
+      #sanji-t1-glass-curve .wl { position: absolute; top: 218px; font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 24px; letter-spacing: 0; color: rgba(255,255,255,0.86); white-space: nowrap; }
+      #sanji-t1-glass-curve .ax { position: absolute; top: 494px; width: 120px; margin-left: -60px; text-align: center; font-family: var(--font-body); font-weight: 500; font-size: 24px; color: var(--white-soft); }
+      #sanji-t1-glass-curve .ax.first { margin-left: -50px; }
+      #sanji-t1-glass-curve .pct { position: absolute; left: 1210px; top: 224px; width: 120px; text-align: right; font-family: var(--font-body); font-weight: 500; font-size: 22px; color: var(--white-soft); opacity: 0.85; }
+      #sanji-t1-glass-curve .os { position: absolute; left: 376px; top: 188px; width: 120px; margin-left: -60px; text-align: center; font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 24px; color: var(--white); }
+
+      /* chips */
+      #sanji-t1-glass-curve .chip { top: 922px; width: 450px; height: 84px; border-radius: var(--r-pill); }
+      #sanji-t1-glass-curve .chip .badge { left: 12px; top: 12px; width: 60px; height: 60px; }
+      #sanji-t1-glass-curve .chip .lab { position: absolute; left: 92px; top: 0; height: 84px; display: flex; align-items: center; font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 36px; letter-spacing: var(--track-ui); white-space: nowrap; }
+
+      #sanji-t1-glass-curve svg.wires, #sanji-t1-glass-curve svg.chart { position: absolute; inset: 0; overflow: visible; }
+      #sanji-t1-glass-curve svg.chart .cv { filter: drop-shadow(0 0 6px rgba(255,255,255,0.55)); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-glass-curve" data-composition-id="sanji-t1-glass-curve" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <svg class="wires" viewBox="0 0 1920 1080" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+        <path class="cn" d="M960 292 L 960 350" />
+        <g class="nd" fill="#FFFFFF" stroke="none"><circle cx="960" cy="350" r="18" opacity="0.22"/><circle cx="960" cy="350" r="8"/></g>
+      </svg>
+
+      <div class="hdr">
+        <div class="g flow pill"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge" data-slot="num">03</div>
+          <div class="ttl" data-slot="title">Motion<br>rules</div>
+        </div></div>
+      </div>
+
+      <!-- card-local coordinates: card at (260,350); chart x 0 s = 70, 0.5 s = 520, 1.0 s = 970, 1.3 s = 1240; baseline y 480, 100% y 258 -->
+      <div class="g card"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"><path d="M4 19c4 0 4-14 9-14 3 0 4 2 7 2"/><circle cx="4" cy="19" r="1.6" fill="#FFFFFF"/><circle cx="20" cy="7" r="1.6" fill="#FFFFFF"/></svg></div>
+        <div class="head" data-slot="headline">Nothing moves linearly</div>
+        <div class="win a"></div><div class="win b"></div>
+        <div class="wl a" style="left:88px" data-slot="inLabel">IN · 0.5 s</div>
+        <div class="wl b" style="left:988px" data-slot="outLabel">OUT · 0.3 s</div>
+        <div class="pct">100%</div>
+        <div class="ax first" style="left:77px">0</div><div class="ax" style="left:520px">0.5 s</div><div class="ax" style="left:970px">1.0 s</div><div class="ax" style="left:1240px">1.3 s</div>
+        <svg class="chart" viewBox="0 0 1400 540" fill="none" stroke-linecap="round">
+          <defs>
+            <clipPath id="sanji-t1-glass-curve-c100"><rect class="r100" x="60" y="240" width="0" height="40"/></clipPath>
+            <clipPath id="sanji-t1-glass-curve-cgd"><rect class="rgd" x="60" y="240" width="0" height="260"/></clipPath>
+          </defs>
+          <path class="base" d="M70 480 L 1330 480" stroke="rgba(255,255,255,0.42)" stroke-width="2"/>
+          <path d="M70 258 L 1320 258" stroke="rgba(255,255,255,0.32)" stroke-width="2" stroke-dasharray="7 9" clip-path="url(#sanji-t1-glass-curve-c100)"/>
+          <g clip-path="url(#sanji-t1-glass-curve-cgd)" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-dasharray="9 9">
+            <path d="M70 480 L 510 258"/><path d="M980 258 L 1240 480"/>
+          </g>
+          <path class="cvw" d="M70 480 C 140 330, 220 242, 376 242 C 440 242, 470 258, 510 258 L 980 258 C 1070 258, 1180 330, 1240 480" stroke="rgba(255,255,255,0.14)" stroke-width="20"/>
+          <path class="cv" d="M70 480 C 140 330, 220 242, 376 242 C 440 242, 470 258, 510 258 L 980 258 C 1070 258, 1180 330, 1240 480" stroke="#FFFFFF" stroke-width="6"/>
+          <path class="cvSeg" d="M70 480 C 140 330, 220 242, 376 242" stroke="none"/>
+          <g class="osdot" fill="#FFFFFF"><circle cx="376" cy="242" r="30" opacity="0.35" style="filter:blur(10px)"/><circle cx="376" cy="242" r="16" opacity="0.3"/><circle cx="376" cy="242" r="8"/></g>
+          <g class="head-dot" fill="#FFFFFF"><circle class="hd1" cx="70" cy="480" r="22" opacity="0.22"/><circle class="hd2" cx="70" cy="480" r="10"/></g>
+          <circle class="startdot" cx="70" cy="480" r="6" fill="#FFFFFF"/>
+        </svg>
+        <div class="os">overshoot</div>
+      </div></div>
+
+      <div class="g chip" style="left:260px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFFFFF"/><path d="M12 6.5V12h4" fill="none" stroke="#3A46E8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="lab" data-slot="chip1">In ≈ 0.5 s</div></div></div>
+      <div class="g chip" style="left:735px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"><path d="M4 19c4 0 4-14 9-14 3 0 4 2 7 2"/><circle cx="4" cy="19" r="1.6" fill="#FFFFFF"/><circle cx="20" cy="7" r="1.6" fill="#FFFFFF"/></svg></div>
+        <div class="lab" data-slot="chip2">Slight overshoot</div></div></div>
+      <div class="g chip" style="left:1210px"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="32" height="32" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M13.5 2 5 13.5h6L10 22l9-12h-6.2z"/></svg></div>
+        <div class="lab" data-slot="chip3">Out faster than in</div></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-glass-curve";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), DORM = tok("--dormant"), PRE = tok("--white-pre");
+
+        /* flex containers: wrap their text in one inline box so the preset's word boxes keep their spaces */
+        const inl = (el) => { const s = document.createElement("span"); while (el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return s; };
+        const head = inl($(".head"));
+
+        const cn = $("path.cn"); const Lc = cn.getTotalLength(); cn.style.strokeDasharray = Lc; cn.style.strokeDashoffset = Lc;
+        const base = $("path.base"); const Lb = base.getTotalLength(); base.style.strokeDasharray = Lb; base.style.strokeDashoffset = Lb;
+        const cv = $("path.cv"), cvw = $("path.cvw");
+        const LC = cv.getTotalLength();
+        [cv, cvw].forEach((p) => { p.style.strokeDasharray = LC; p.style.strokeDashoffset = LC; });
+        const peakFrac = $("path.cvSeg").getTotalLength() / LC;
+        const hd = [$(".hd1"), $(".hd2")];
+
+        const chips = $$(".chip");
+        const tl = gsap.timeline({ paused: true });
+        const C0 = 4.05, CSTEP = 0.6;
+        const END = C0 + 2 * CSTEP + 1.7;
+
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) { tl.set(r, { opacity: 0 }, 0); return; }
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        const pop = (el, t) => tl.fromTo(el, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, t);
+        const blurIn = (els, t, st = 0.06) => tl.fromTo(els, { autoAlpha: 0, y: 8, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", stagger: st }, t);
+
+        const pill = $(".pill"), card = $(".card");
+        tl.set([pill, card, ...chips, $(".nd"), $(".osdot"), $(".os"), $(".head-dot"), $(".startdot")], { autoAlpha: 0 }, 0);
+
+        /* 1. header pill */
+        pop(pill, 0.15);
+        tl.to(pill.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.25);
+        TXT.block(tl, pill.querySelector(".badge"), 0.3);
+        TXT.reveal(tl, pill.querySelector(".ttl"), 0.39);
+
+        /* 2. connector + card */
+        tl.to(cn, { strokeDashoffset: 0, duration: 0.24, ease: "power2.inOut" }, 0.62)
+          .fromTo($(".nd"), { autoAlpha: 0, scale: 0, svgOrigin: "960 350" }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 0.8);
+        pop(card, 0.82);
+        tl.to(card.querySelector(".lit"), { opacity: 0.55, duration: 0.45, ease: "power2.out" }, 0.9)
+          .to(pill.querySelector(".lit"), { opacity: 0.35, duration: 0.4, ease: "power2.inOut" }, 0.95);
+        TXT.block(tl, card.querySelector(".badge"), 0.94);
+        TXT.reveal(tl, head, 1.0, { stagger: 0.06 });
+
+        /* 3. chart scaffold: baseline, ticks, windows, 100% line, linear guide */
+        tl.to(base, { strokeDashoffset: 0, duration: 0.6, ease: "power3.inOut" }, 1.35);
+        TXT.block(tl, $$(".ax"), 1.5, { stagger: 0.07 });
+        tl.fromTo($$(".win"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: "power2.out", stagger: 0.1 }, 1.6);
+        TXT.reveal(tl, [$(".wl.a"), $(".wl.b")], 1.7);
+        TXT.block(tl, $(".pct"), 1.86);
+        tl.to($(".r100"), { attr: { width: 1280 }, duration: 0.6, ease: "power2.inOut" }, 1.75)
+          .to($(".rgd"), { attr: { width: 1200 }, duration: 0.7, ease: "power2.inOut" }, 1.9);
+
+        /* 4. the eased curve draws with a glowing head dot */
+        const D0 = 2.5, DD = 1.3;
+        tl.set($(".startdot"), { autoAlpha: 1 }, D0);
+        tl.fromTo($(".head-dot"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.12 }, D0);
+        const prog = { p: 0 };
+        tl.fromTo(prog, { p: 0 }, {
+          p: 1, duration: DD, ease: "sine.inOut",
+          onUpdate: () => {
+            const off = LC * (1 - prog.p);
+            cv.style.strokeDashoffset = off; cvw.style.strokeDashoffset = off;
+            const pt = cv.getPointAtLength(LC * prog.p);
+            hd.forEach((c) => { c.setAttribute("cx", pt.x); c.setAttribute("cy", pt.y); });
+          }
+        }, D0);
+        /* time the head passes the peak (inverse of sine.inOut) */
+        const tPeak = D0 + DD * (Math.acos(1 - 2 * peakFrac) / Math.PI);
+        tl.fromTo($(".osdot"), { autoAlpha: 0, scale: 0.3, svgOrigin: "376 242" }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(1.3)" }, tPeak - 0.04);
+        tl.set($(".os"), { autoAlpha: 1 }, tPeak);
+        TXT.reveal(tl, $(".os"), tPeak + 0.04);
+        tl.to($(".hd1"), { opacity: 0.32, duration: 0.4, ease: "power2.out" }, D0 + DD - 0.05);
+
+        /* 5. chips with focus shift */
+        chips.forEach((c, i) => {
+          const t = C0 + i * CSTEP;
+          if (i > 0) {
+            const p = chips[i - 1];
+            tl.to(p.querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, t + 0.1)
+              .to(p, { scale: 1, duration: 0.35, ease: "power2.inOut" }, t + 0.1)
+              .to(p.querySelector(".lab"), { color: DORM, duration: 0.35, ease: "power2.inOut" }, t + 0.1)
+              .to(p.querySelector(".badge"), { opacity: 0.6, duration: 0.35 }, t + 0.1);
+          }
+          pop(c, t);
+          tl.to(c.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, t + 0.06)
+            .to(c, { scale: 1.04, duration: 0.5, ease: "expo.out" }, t + 0.1);
+          TXT.block(tl, c.querySelector(".badge"), t + 0.08);
+          TXT.reveal(tl, inl(c.querySelector(".lab")), t + 0.15);
+        });
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

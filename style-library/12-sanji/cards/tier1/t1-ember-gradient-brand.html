@@ -1,0 +1,277 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · section (brand) · EMBER GRADIENT BRAND
+  The orange brand moment. A rich ember gradient canvas (deep ember bottom-left
+  to hot ember top-right) with soft moving light and grain. A generic 4-dot
+  cluster glyph pops and a huge white wordmark resolves in letter by letter out
+  of blur. The lockup then scales down and lifts away while a white rounded
+  app-icon tile (calendar-check glyph) pops center over a big soft white
+  bloom, and a small caption resolves in below it.
+  Slots: brand (text, <= 11 chars), caption (text, <= 24 chars).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-ember-gradient-brand {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: linear-gradient(32deg, var(--ember-deep) 0%, var(--ember-glow) 40%, var(--ember) 66%, var(--ember-hot) 100%);
+        font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-ember-gradient-brand .hot {
+        position: absolute; left: 1080px; top: -520px; width: 1400px; height: 1200px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,236,200,0.75) 0%, rgba(255,179,71,0.45) 30%, rgba(255,179,71,0) 66%);
+        filter: blur(30px);
+      }
+      #sanji-t1-ember-gradient-brand .deep {
+        position: absolute; left: -620px; top: 420px; width: 1500px; height: 1200px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(62,25,13,0.75) 0%, rgba(62,25,13,0.35) 40%, rgba(62,25,13,0) 70%);
+        filter: blur(30px);
+      }
+      #sanji-t1-ember-gradient-brand .sweep {
+        position: absolute; left: -400px; top: -200px; width: 900px; height: 1500px;
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,215,0.16) 50%, rgba(255,255,255,0) 100%);
+        transform: rotate(24deg); filter: blur(40px);
+      }
+      #sanji-t1-ember-gradient-brand .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; }
+
+      #sanji-t1-ember-gradient-brand .stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+      #sanji-t1-ember-gradient-brand .lock { display: flex; align-items: center; gap: 46px; transform-origin: 50% 50%; }
+      #sanji-t1-ember-gradient-brand .glyph { width: 200px; height: 200px; display: block; filter: drop-shadow(0 10px 30px rgba(103,39,13,0.25)); }
+      #sanji-t1-ember-gradient-brand .brand {
+        white-space: nowrap; font-weight: var(--wt-heavy); font-size: 220px; line-height: 1;
+        letter-spacing: var(--track-caps); filter: drop-shadow(0 14px 40px rgba(103,39,13,0.28));
+        padding-bottom: 14px;
+      }
+      #sanji-t1-ember-gradient-brand .brand .ch { display: inline-block; white-space: pre; }
+
+      #sanji-t1-ember-gradient-brand .bloom {
+        position: absolute; left: 50%; top: 50%; width: 1300px; height: 1300px; margin: -690px 0 0 -650px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,246,232,0.62) 18%, rgba(255,220,170,0.25) 38%, rgba(255,200,140,0) 62%);
+        opacity: 0;
+      }
+      #sanji-t1-ember-gradient-brand .tilewrap { position: absolute; left: 50%; top: 50%; width: 260px; height: 260px; margin: -170px 0 0 -130px; }
+      #sanji-t1-ember-gradient-brand .tile {
+        position: absolute; inset: 0; border-radius: 60px; background: var(--paper);
+        display: flex; align-items: center; justify-content: center; color: var(--ink);
+        box-shadow: 0 30px 80px rgba(103,39,13,0.30), 0 0 0 1px rgba(255,255,255,0.6) inset, 0 -10px 24px rgba(0,0,0,0.05) inset;
+      }
+      #sanji-t1-ember-gradient-brand .cap {
+        position: absolute; left: 0; right: 0; top: 50%; margin-top: 140px; text-align: center;
+        font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 50px; letter-spacing: var(--track-ui);
+        color: var(--white); text-shadow: 0 4px 24px rgba(103,39,13,0.35);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-ember-gradient-brand" data-composition-id="sanji-t1-ember-gradient-brand" data-start="0" data-width="1920" data-height="1080">
+      <div class="deep"></div>
+      <div class="hot"></div>
+      <div class="sweep"></div>
+      <div class="stage">
+        <div class="lock">
+          <svg class="glyph" viewBox="0 0 100 100">
+            <circle class="dot" cx="50" cy="22" r="15" fill="#FFFFFF"/>
+            <circle class="dot" cx="78" cy="50" r="15" fill="#FFFFFF"/>
+            <circle class="dot" cx="50" cy="78" r="15" fill="#FFFFFF"/>
+            <circle class="dot" cx="22" cy="50" r="15" fill="#FFFFFF"/>
+          </svg>
+          <div class="brand" data-slot="brand">Northwind</div>
+        </div>
+      </div>
+      <div class="bloom"></div>
+      <div class="tilewrap">
+        <div class="tile">
+          <svg width="132" height="132" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3.5" y="5" width="17" height="15.5" rx="3.6"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path class="ckp" d="M9 15.2l2.1 2.1 4-4.2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="cap" data-slot="caption">Launch day</div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-ember-gradient-brand";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => ROOT.querySelectorAll(s);
+
+        const brand = $(".brand");
+        const str = brand.textContent.trim(); brand.textContent = "";
+        const chars = [...str].map((ch) => { const c = document.createElement("span"); c.className = "ch"; c.textContent = ch; brand.appendChild(c); return c; });
+
+        const ck = $(".ckp"); const ckLen = 9;
+        ck.setAttribute("stroke-dasharray", ckLen);
+
+        const tl = gsap.timeline({ paused: true });
+        const G0 = 0.2;                                   /* glyph pops */
+        const L0 = 0.42, LS = 0.05;                       /* letters */
+        const LEND = L0 + chars.length * LS + 0.3;
+        const SWAP = Math.max(LEND + 0.75, 1.9);          /* lockup leaves, tile pops */
+        const TILE = SWAP + 0.3;
+        const END = TILE + 2.0;
+
+        /* ambient: soft moving light */
+        tl.fromTo($(".hot"), { x: 0, y: 0, opacity: 0.8 }, { x: -140, y: 60, opacity: 1, duration: END, ease: "sine.inOut" }, 0)
+          .fromTo($(".deep"), { opacity: 1 }, { opacity: 0.7, duration: END, ease: "sine.inOut" }, 0)
+          .fromTo($(".sweep"), { x: 0 }, { x: 2400, duration: END, ease: "sine.inOut" }, 0);
+
+        /* glyph: glass-pop the cluster, dots settle in */
+        tl.fromTo($(".glyph"), { autoAlpha: 0, scale: 0.86, filter: "blur(12px)" },
+            { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "back.out(1.25)" }, G0)
+          .fromTo($$(".glyph .dot"), { scale: 0.3, transformOrigin: "50% 50%" },
+            { scale: 1, duration: 0.42, ease: "back.out(1.25)", stagger: 0.06 }, G0 + 0.04);
+
+        /* wordmark: letter by letter out of blur */
+        tl.fromTo(chars, { autoAlpha: 0, y: 26, filter: "blur(14px)" },
+            { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "expo.out", stagger: LS }, L0);
+
+        /* lockup scales down and lifts away */
+        tl.to($(".lock"), { scale: 0.5, y: -300, autoAlpha: 0, filter: "blur(12px)", duration: 0.45, ease: "power2.in" }, SWAP);
+
+        /* tile pops center over a big white bloom */
+        tl.fromTo($(".bloom"), { opacity: 0, scale: 0.35 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, TILE)
+          .to($(".bloom"), { opacity: 0.75, scale: 0.94, duration: 1.1, ease: "sine.inOut" }, TILE + 0.9)
+          .fromTo($(".tile"), { autoAlpha: 0, scale: 0.6, y: 40, filter: "blur(12px)" },
+            { autoAlpha: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.3)" }, TILE + 0.08)
+          .fromTo(ck, { attr: { "stroke-dashoffset": ckLen } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.36, ease: "power2.out" }, TILE + 0.4)
+          .to($(".tile"), { y: -8, duration: 1.4, ease: "sine.inOut" }, TILE + 0.6)
+          .set({}, {}, END);
+        TXT.reveal(tl, $(".cap"), TILE + 0.42);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

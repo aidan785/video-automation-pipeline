@@ -1,0 +1,156 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · COLLAGE · number (tier 1, 24 fps, 84 f = 3.5 s)
+  Research: raw-media/hp-sampler-refs/handmade-collage/ANALYSIS.md, translation spec "Moment 2, number".
+  Matches: ig-reel_f00001 / f00002 (one-frame flicker open: scribble on paper, then a flat color world, then the
+  hit), vox-ok_f01170 (lemon highlighter low on the letters, stopping short), ig-reel_f00035 (tiny lowercase
+  sans typed word by word, each word soaking in from gray).
+  Ground: flat oxblood with the real paper scan multiplied in (fiber, foxing) and filmed dust on ones (screen).
+  "back." MUST be a per-frame tablet-drawn PNG sequence drawn by a person (research, Moment 2). Until that exists
+  this card shows a PLACEHOLDER: the word set in Caveat and wiped on per frame. To drop the real drawing in,
+  export it as assets/collage/back-seq/back_0001.png ... back_00NN.png (transparent, 1920x1080, drawn at x960,
+  y640, on ones) and set BACK_SEQ.frames = NN below; the placeholder is then hidden automatically.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter+Tight:wght@400;500;600&family=Caveat:wght@600&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-collage-number{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --oxblood:#4B1526;--cream:#FFF0E6;--brick:#7A1E1E;--orange:#FF8A4C;--gold:#FFC145;--deep:#2C0B16;
+        font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:"opsz" 96;}
+      #hp2-collage-number .layer{position:absolute;inset:0;opacity:0;}
+      #hp2-collage-number .field{position:absolute;inset:0;}
+      #hp2-collage-number .paper{position:absolute;left:-96px;top:-54px;width:2112px;height:1188px;}
+      #hp2-collage-number .paper.mult{mix-blend-mode:multiply;opacity:.6;}
+      #hp2-collage-number .cam{position:absolute;inset:0;transform-origin:700px 700px;}
+      #hp2-collage-number svg{position:absolute;left:0;top:0;overflow:visible;}
+      #hp2-collage-number .ink{fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+      #hp2-collage-number .six{position:absolute;left:150px;top:205px;font-size:1100px;font-weight:800;line-height:1;
+        letter-spacing:-.04em;color:var(--cream);white-space:nowrap;}
+      #hp2-collage-number .hrs{position:absolute;left:960px;top:520px;font-family:"Inter Tight",sans-serif;font-weight:500;
+        font-size:44px;line-height:1;letter-spacing:-.005em;color:var(--cream);white-space:nowrap;}
+      #hp2-collage-number .hrs .wd{display:none;position:relative;}
+      #hp2-collage-number .hrs .wd i{position:relative;z-index:1;font-style:normal;}
+      #hp2-collage-number .hl{position:absolute;left:-7px;top:57%;height:48%;width:calc(100% - 6px);background:var(--gold);z-index:0;
+        transform-origin:0 50%;clip-path:polygon(0 9%,100% 0,99% 88%,1.5% 100%);}
+      #hp2-collage-number .caret{display:inline-block;width:3px;height:40px;margin-left:4px;vertical-align:-6px;background:var(--cream);}
+      #hp2-collage-number .back{position:absolute;left:960px;top:592px;font-family:"Caveat",cursive;font-weight:600;font-size:96px;
+        line-height:1;color:var(--orange);white-space:nowrap;}
+      #hp2-collage-number .backseq{position:absolute;inset:0;}
+      #hp2-collage-number .backseq img{position:absolute;inset:0;width:1920px;height:1080px;opacity:0;}
+      #hp2-collage-number .dust{position:absolute;inset:0;width:1920px;height:1080px;mix-blend-mode:screen;opacity:.55;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-collage-number" data-composition-id="hp2-collage-number" data-start="0" data-width="1920" data-height="1080">
+      <!-- F1 scribbled 6 on bare paper -->
+      <div class="layer L-scrib">
+        <img class="paper" src="../../assets/collage/paper-cream.jpg" alt="" />
+        <svg width="1920" height="1080"><path class="ink scrib" stroke="#2C0B16" stroke-width="6" /></svg>
+      </div>
+      <!-- F2 one-frame gold world -->
+      <div class="layer L-gold"><div class="field" style="background:#FFC145"></div></div>
+
+      <!-- F3 on: the number -->
+      <div class="layer L-main">
+        <div class="cam">
+          <div class="field" style="background:#4B1526;inset:-60px"></div>
+          <img class="paper mult" src="../../assets/collage/paper-cream.jpg" alt="" />
+          <div class="six" data-slot="number">6</div>
+          <div class="hrs" data-slot="unit"><span class="wd"><i>hours</i></span> <span class="wd hlw"><b class="hl"></b><i>a week</i></span><span class="caret" data-tell-ok="caret"></span></div>
+          <!-- PLACEHOLDER for the tablet-drawn "back." sequence (see header) -->
+          <div class="back" data-slot="tag" data-placeholder="tablet-drawn-sequence">back.</div>
+          <div class="backseq" data-slot="media-back"></div>
+        </div>
+      </div>
+
+      <video class="dust" src="../../assets/collage/dust-dark.mp4" muted playsinline preload="auto" data-start="0" data-duration="3.5" data-track-index="9"></video>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-collage-number", FPS = 24, N = 84;
+      const BACK_SEQ = { src: "../../assets/collage/back-seq/back_", frames: 0, F0: 26 };   // set frames when the drawing exists
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const show = (F, s) => at(F, $1(s), { opacity: 1 });
+      const hide = (F, s) => at(F, $1(s), { opacity: 0 });
+      function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      function crPath(p) {
+        let d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+        for (let i = 0; i < p.length - 1; i++) {
+          const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+          d += " C" + (b[0] + (c[0] - a[0]) / 6).toFixed(1) + " " + (b[1] + (c[1] - a[1]) / 6).toFixed(1) + " " + (c[0] - (e[0] - b[0]) / 6).toFixed(1) + " " + (c[1] - (e[1] - b[1]) / 6).toFixed(1) + " " + c[0].toFixed(1) + " " + c[1].toFixed(1);
+        }
+        return d;
+      }
+
+      tl.set($(".layer"), { opacity: 0 }, 0);
+      tl.set($(".hrs .wd"), { display: "none" }, 0);
+      tl.set($1(".hl"), { scaleX: 0 }, 0);
+      tl.set($1(".caret"), { visibility: "hidden" }, 0);
+
+      // ---- F1 scribbled 6 (two loose passes), F2 gold world, F3 the hit
+      const SCRIB = [[1052,236],[990,248],[930,290],[884,360],[858,452],[852,560],[866,668],[906,760],[972,812],[1050,824],[1118,790],[1158,722],[1162,640],[1128,570],[1060,536],[982,540],[918,580],[880,648],[874,716],[930,604],[1004,552],[1088,556],[1146,612],[1170,700]];
+      $1(".scrib").setAttribute("d", crPath(SCRIB));
+      show(1, ".L-scrib");
+      hide(2, ".L-scrib"); show(2, ".L-gold");
+      hide(3, ".L-gold"); show(3, ".L-main");
+
+      // ---- camera: the only thing that tweens. F3-F8 settle 1.04 -> 1.0 ease-out, then a dead hold
+      const cam = $1(".cam"), ease = gsap.parseEase("power3.out");
+      for (let i = 0; i <= 5; i++) at(3 + i, cam, { scale: 1.04 - 0.04 * ease(i / 5) });
+
+      // ---- F8-F16 words type one per 4 f, each soaking in from 45% over 3 f; caret follows, blinking on 12 f cycles
+      const wds = $(".hrs .wd");
+      wds.forEach((w, i) => {
+        const F = 8 + i * 4, txt = w.querySelector("i");
+        at(F, w, { display: "inline" });
+        at(F, txt, { color: "rgba(255,240,230,.45)" });
+        at(F + 1, txt, { color: "rgba(255,240,230,.74)" });
+        at(F + 2, txt, { color: "#FFF0E6" });
+      });
+      const caret = $1(".caret");
+      for (let F = 8; F <= 60; F++) at(F, caret, { visibility: Math.floor((F - 8) / 6) % 2 ? "hidden" : "visible" });
+      at(61, caret, { visibility: "hidden" });
+
+      // ---- F22-F25 gold highlighter behind "a week": 4 f linear, low on the letters, stops short of the k
+      [0.25, 0.5, 0.75, 1].forEach((k, i) => at(22 + i, $1(".hl"), { scaleX: k }));
+
+      // ---- F26-F42 "back."
+      const back = $1(".back");
+      if (BACK_SEQ.frames > 0) {
+        tl.set(back, { opacity: 0 }, 0);
+        const box = $1(".backseq");
+        for (let i = 1; i <= BACK_SEQ.frames; i++) {
+          const im = document.createElement("img"); im.src = BACK_SEQ.src + String(i).padStart(4, "0") + ".png"; box.appendChild(im);
+          at(BACK_SEQ.F0 + i - 1, im, { opacity: 1 });
+          if (i < BACK_SEQ.frames) at(BACK_SEQ.F0 + i, im, { opacity: 0 });
+        }
+      } else {
+        // placeholder: per-frame wipe, uneven pace like a pen (fast stems, slow loops), tiny per-frame wander
+        const r = rng(11), pace = [0, .07, .16, .22, .27, .35, .44, .49, .55, .63, .72, .78, .84, .9, .95, 1];
+        tl.set(back, { clipPath: "inset(-20% 100% -20% 0)" }, 0);
+        pace.forEach((k, i) => at(26 + i, back, { clipPath: "inset(-20% " + (100 - k * 100).toFixed(1) + "% -20% 0)", x: (r() - .5) * 1.6, y: (r() - .5) * 1.6, rotation: -2 + (r() - .5) * .4 }));
+        at(26 + pace.length, back, { clipPath: "none", x: 0, y: 0, rotation: -2 });
+      }
+      // F43-F84 dead hold
+      tl.set({}, {}, N / FPS);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

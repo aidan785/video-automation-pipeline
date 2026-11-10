@@ -1,0 +1,254 @@
+<!doctype html>
+<!--
+  SANJI · transition · CARD STACK
+  Scene A is a full-frame NATURE plate (landscape + liquid-glass pill). It
+  pulls back into a rounded card sitting on top of a stack (two more cards
+  peek out below on a dark ground: scene B COBALT, then a PAPER card). After a
+  tiny wind-up, card A flicks away (rotate + translate off frame-left with a
+  growing motion blur, power3.in). Card B, the next one underneath, rises to
+  the top slot and scales up from the stack (0.94 of the top card) until it
+  fills the frame, its radius relaxing to 0, while its glass tile content
+  resolves. ~1.8s. Slots: line (<= 26), photo (green-hills | hills-sunset |
+  countryside-mist | wheat-field), title (caps, <= 14), lineC (<= 20).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-card-stack {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: radial-gradient(70% 70% at 50% 45%, var(--void-2), var(--void) 80%); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-tr-card-stack .slot-photo { display: none; }
+      #sanji-tr-card-stack .card {
+        position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 50% 50%;
+        box-shadow: 0 40px 120px rgba(0,0,0,0.55), 0 0 0 1.5px rgba(255,255,255,0.10);
+      }
+      /* A: nature */
+      #sanji-tr-card-stack .cA img { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; display: block; }
+      #sanji-tr-card-stack .cA .shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.28) 100%); }
+      #sanji-tr-card-stack .pillwrap { position: absolute; left: 0; right: 0; top: 50%; height: 124px; margin-top: -62px; display: flex; justify-content: center; }
+      #sanji-tr-card-stack .pill {
+        position: relative; box-sizing: border-box; min-width: 780px; height: 124px; padding: 0 76px;
+        border-radius: var(--r-pill); overflow: hidden; display: flex; align-items: center; justify-content: center;
+        -webkit-backdrop-filter: blur(22px) saturate(1.4) brightness(1.1); backdrop-filter: blur(22px) saturate(1.4) brightness(1.1);
+        background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 46%, rgba(0,0,0,0.07) 100%);
+        border: var(--rim) solid rgba(255,255,255,0.35);
+        box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -18px 34px rgba(0,0,0,0.10), 0 22px 60px rgba(0,0,0,0.20);
+      }
+      #sanji-tr-card-stack .pill .hl { position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(34% 120% at 9% -10%, rgba(255,255,255,0.42), rgba(255,255,255,0) 70%); }
+      #sanji-tr-card-stack .pill .line { position: relative; white-space: nowrap; font-weight: var(--wt-bold); font-size: 64px; letter-spacing: var(--track-ui); line-height: 1; text-shadow: 0 2px 14px rgba(0,0,0,0.16); }
+      /* B: cobalt glass */
+      #sanji-tr-card-stack .cB { background: radial-gradient(55% 60% at 50% 50%, rgba(255,255,255,0.10), rgba(255,255,255,0) 70%), var(--cobalt); font-family: var(--font-display); }
+      #sanji-tr-card-stack .cB .ring { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 2px solid rgba(255,255,255,0.07); }
+      #sanji-tr-card-stack .cB .g { position: absolute; left: 560px; top: 380px; width: 800px; height: 320px; box-sizing: border-box; border-radius: var(--r-card); background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); }
+      #sanji-tr-card-stack .cB .badge { position: absolute; left: 52px; top: 52px; width: 216px; height: 216px; border-radius: 50%; box-sizing: border-box; background: var(--badge-fill); border: var(--rim) solid var(--badge-rim); display: flex; align-items: center; justify-content: center; }
+      #sanji-tr-card-stack .cB .ttl { position: absolute; left: 310px; right: 30px; top: 0; height: 320px; display: flex; align-items: center; font-weight: var(--wt-heavy); font-size: 88px; line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; }
+      /* C: paper */
+      #sanji-tr-card-stack .cC { background: var(--paper); display: flex; align-items: center; justify-content: center; }
+      #sanji-tr-card-stack .cC .lineC { font-family: var(--font-display); font-weight: var(--wt-bold); font-size: 96px; letter-spacing: var(--track-tight); color: var(--ink); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-card-stack" data-composition-id="sanji-tr-card-stack" data-start="0" data-width="1920" data-height="1080">
+      <span class="slot-photo" data-slot="photo">hills-sunset</span>
+      <div class="card cC"><div class="lineC" data-slot="lineC">Next chapter</div></div>
+      <div class="card cB">
+        <div class="ring" style="width:1400px;height:1400px;margin:-700px 0 0 -700px"></div>
+        <div class="ring" style="width:2100px;height:2100px;margin:-1050px 0 0 -1050px"></div>
+        <div class="g">
+          <div class="badge b-in"><svg width="96" height="96" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M2 4.5c2.8-.9 6-.6 9 1.2V20c-3-1.6-6.2-1.9-9-1z"/><path d="M22 4.5c-2.8-.9-6-.6-9 1.2V20c3-1.6 6.2-1.9 9-1z"/></svg></div>
+          <div class="ttl b-in" data-slot="title">The story</div>
+        </div>
+      </div>
+      <div class="card cA">
+        <img class="photo" alt="" />
+        <div class="shade"></div>
+        <div class="pillwrap"><div class="pill"><div class="hl"></div><div class="line" data-slot="line">Every frame tells it</div></div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-card-stack";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+
+        const OK = ["green-hills", "hills-sunset", "countryside-mist", "wheat-field"];
+        const stem = ($(".slot-photo").textContent || "").trim();
+        $(".photo").src = "../../assets/nature/" + (OK.includes(stem) ? stem : "hills-sunset") + ".jpg";
+
+        const A = $(".cA"), B = $(".cB"), C = $(".cC");
+        const S1 = 0.78, R = 72;                         /* top-card scale + radius (pre-scale px) */
+        const tl = gsap.timeline({ paused: true });
+        const PULL = 0.08, FLICK = 0.62, RISE = FLICK + 0.14, END = RISE + 0.7 + 0.32;
+
+        /* stack layout: B = 0.94 of the top card, peeking below; C further down */
+        tl.set(B, { scale: S1 * 0.94, y: 19, borderRadius: R }, 0)
+          .set(C, { scale: S1 * 0.88, y: 84, borderRadius: R }, 0)
+          .set([B, C], { autoAlpha: 0 }, 0);
+
+        /* A pulls back from full frame into the top card */
+        tl.fromTo(A, { scale: 1, borderRadius: 0 }, { scale: S1, y: -50, borderRadius: R, duration: 0.42, ease: "power3.inOut" }, PULL)
+          .to([B, C], { autoAlpha: 1, duration: 0.3, ease: "power2.out" }, PULL + 0.12)
+          .fromTo(B, { y: -40 }, { y: 19, duration: 0.42, ease: "power3.out" }, PULL + 0.1)
+          .fromTo(C, { y: -20 }, { y: 84, duration: 0.42, ease: "power3.out" }, PULL + 0.14);
+
+        /* wind-up, then the flick: rotate + translate off frame with motion blur */
+        tl.to(A, { x: 34, rotation: 1.4, duration: 0.12, ease: "sine.inOut" }, FLICK - 0.12)
+          .to(A, { x: -2350, y: -330, rotation: -16, duration: 0.42, ease: "power3.in" }, FLICK)
+          .fromTo(A, { filter: "blur(0px)" }, { filter: "blur(18px)", duration: 0.42, ease: "power3.in" }, FLICK);
+
+        /* B rises to the top and scales up to fill the frame */
+        tl.to(B, { keyframes: [
+            { scale: S1, y: -50, duration: 0.3, ease: "power2.out" },
+            { scale: 1, y: 0, borderRadius: 0, duration: 0.5, ease: "power3.inOut" },
+          ] }, RISE - 0.06)
+          .to(C, { scale: S1 * 0.94, y: 19, duration: 0.36, ease: "power2.out" }, RISE)
+          .to(C, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, RISE + 0.36)
+          .to(B, { boxShadow: "0 0 0 0 rgba(0,0,0,0), 0 0 0 0 rgba(255,255,255,0)", duration: 0.4, ease: "power2.out" }, RISE + 0.4);
+
+        /* B content: glass card brightens + content resolves as it becomes the frame */
+        tl.fromTo($(".cB .g"), { scale: 0.96 }, { scale: 1.03, duration: 0.8, ease: "expo.out" }, RISE + 0.2)
+;
+        /* scene B text: badge rises as a block, title pours in (house preset) */
+        TXT.block(tl, $(".cB .badge"), RISE + 0.24);
+        const ttl = $(".cB .ttl");   /* .ttl is a flex box: wrap its copy so word spaces survive the split */
+        ttl.innerHTML = "<span>" + ttl.innerHTML + "</span>";
+        const tT = TXT.reveal(tl, ttl.firstChild, RISE + 0.3);
+        tl.set({}, {}, Math.max(END, tT));
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

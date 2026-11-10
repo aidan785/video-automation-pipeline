@@ -1,0 +1,326 @@
+<!doctype html>
+<!--
+  HP V3 · transition · DAYLIGHT TO DUSK  (Field Glass, DAYLIGHT into DUSK)
+  The day closes inside one word. Scene A is DAYLIGHT: a bright grass field
+  lifted with a cream wash, one sentence in oxblood ink. The camera dollies
+  INTO the hero word, aimed at the stem of its first letter (exponential
+  dolly, blur rising with speed), the other words sweep off the frame and
+  the dark stem swallows the day, its ink deepening from oxblood to night as
+  it fills the frame. That night IS scene B: reeds against a low sun, the
+  light only burning in the bottom-left corner, and B's line pours in warm
+  (gold) and settles to cream (dusk: warm to settled, Bricolage 600 at opsz 12).
+  Pick a hero word whose first letter has a straight left stem
+  (b d h k l m n p r, B D E F H K L M N P R): the dolly aims at that stem.
+  Light is the concept here, so this card keeps the corner sun (light on).
+  Grounds (scene B): photo (default), deep, oxblood, none (lineB lands on the footage).
+  Both scenes are STAND-INS. Slots: ground/grain/light switches, photoA, photoB (nature stems),
+  before (<=14), word (<=9), after (<=8), lineB (<=24).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #hp3-tr-daylight-to-dusk { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--hp-deep); font-family: var(--font-body); color: var(--hp-cream); }
+      #hp3-tr-daylight-to-dusk .slot { display: none; }
+      #hp3-tr-daylight-to-dusk .scene { position: absolute; inset: 0; overflow: hidden; }
+      #hp3-tr-daylight-to-dusk .lift { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,240,230,0.62), rgba(255,240,230,0.44)); }
+      #hp3-tr-daylight-to-dusk .gA { position: absolute; inset: 0; overflow: hidden; }
+      #hp3-tr-daylight-to-dusk .phA { position: absolute; left: -96px; top: -54px; width: 2112px; height: 1188px; object-fit: cover; filter: brightness(1.08) saturate(0.9); }
+      #hp3-tr-daylight-to-dusk .line { position: absolute; left: 116px; top: 420px; font-size: 150px; color: var(--hp-oxblood); white-space: nowrap; will-change: transform; }
+      #hp3-tr-daylight-to-dusk .sceneB { visibility: hidden; }
+      #hp3-tr-daylight-to-dusk .lineB { position: absolute; left: 116px; top: 190px; font-size: 120px; font-weight: 600; font-variation-settings: "opsz" 12; letter-spacing: -0.02em; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="hp3-tr-daylight-to-dusk" data-composition-id="hp3-tr-daylight-to-dusk" data-start="0" data-width="1920" data-height="1080">
+      <span class="fg-slot" data-slot="ground">photo</span><span class="fg-slot" data-slot="grain">on</span><span class="fg-slot" data-slot="light">on</span>
+      <span class="slot" data-slot="photoA">grass-sunset</span>
+      <span class="slot" data-slot="photoB">sun-reeds</span>
+      <div class="scene sceneB">
+        <div class="fg-ground"><img class="fg-photo b" alt="" /><div class="fg-shade"></div><div class="fg-flare"></div><div class="fg-night"></div></div>
+        <div class="lineB fg-display" data-slot="lineB">And the evening back</div>
+      </div>
+      <div class="scene sceneA">
+        <div class="gA"><img class="phA" alt="" /><div class="lift"></div></div>
+        <div class="line fg-display"><span data-slot="before">Time to</span> <span class="word" data-slot="word">breathe</span> <span data-slot="after">again</span></div>
+      </div>
+      <div class="fg-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+        /* @text-preset:start v2 */
+/* HP V3 copy of the Sanji TEXT PRESET "uppit-reveal" (source of truth for 15-humanly-possible-v3).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        /* @field-glass:start v3 */
+/* HP V3 · FIELD GLASS motion helpers (single source of truth).
+   Cards carry an inlined copy between the @field-glass markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs`
+   (restamps both the @text-preset and @field-glass blocks).
+
+   Markup it expects (CSS lives in tokens.css, "FIELD GLASS utilities"):
+     .fg-photo > img          the graded nature photo (drifts, sways)
+     .fg-night                pre-sunrise veil, masked by --sr (radius %)
+     .fg-flare                sun bloom at the burn origin (bottom-left)
+     .fg-glass                glass pane; --fb blur px, --fm condense radius %,
+                              --fx/--fy condense origin; child .fg-tint, .fg-dapple
+   GROUND SWITCHES (v3, Aidan 11/3: not every card needs nature / the corner glow;
+   some flat, some with grain, some with no background at all). Every card carries
+   three hidden slots and calls FG.ground(ROOT, defaults) before building its timeline:
+     <span class="fg-slot" data-slot="ground">oxblood</span>  photo | oxblood | deep | brick | cream | burn | wash | none
+     <span class="fg-slot" data-slot="grain">off</span>       on | off
+     <span class="fg-slot" data-slot="light">off</span>       on | off  (the bottom-left sunrise + flare)
+   FG.ground sets data-ground / data-grain / data-light on the root; tokens.css does
+   the rest (hides the photo / flare / night / grain, paints flat grounds, switches
+   glass to the solid Sanji-style fill on flat grounds, makes "none" transparent).
+     FG.ground(ROOT, {ground, grain, light}) -> {ground, photo, flat, none, grain, light}
+   API (timeline-driven, deterministic):
+     FG.sunrise(tl, root, at, {dur})        light burns up from bottom-left, flare peaks then settles
+     FG.condense(tl, el, at, {dur, x, y})   glass fogs in from a point: clear -> frosted, tint rises
+     FG.clear(tl, el, at, {dur})            glass evaporates (exit), edges first
+     FG.beat(tl, el, at, {amp})             the logo's lub-dub: 1.07, back, 1.045, back
+     FG.sway(tl, root, at, dur)             wind on the photo: slow drift + a breath of rotation
+     FG.dapple(tl, el, at, dur)             leaf-shadow plate drifts across a pane
+     FG.POP / FG.SETTLE                     HP pop ease (no overshoot) / uppit settle */
+const FG = (function () {
+  function bz(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x; for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; } return sy(t); };
+  }
+  const POP = bz(0.2, 0.9, 0.25, 1), SETTLE = bz(0.23, 1, 0.32, 1), GLIDE = bz(0.65, 0, 0.35, 1);
+  const q = (root, s) => (root.matches && root.matches(s) ? root : root.querySelector(s));
+
+  const comp = (el) => (el && el.closest ? el.closest("[data-composition-id]") : null);
+  const FLAT = ["oxblood", "deep", "brick", "cream"];
+  function ground(ROOT, d = {}) {
+    const slot = (n) => { const e = ROOT.querySelector(`[data-slot="${n}"]`); return e ? e.textContent.trim().toLowerCase() : ""; };
+    const g = slot("ground") || d.ground || "photo", grain = slot("grain") || d.grain || "off", light = slot("light") || d.light || "off";
+    Object.assign(ROOT.dataset, { ground: g, grain, light: g === "none" ? "off" : light });
+    const base = ROOT.querySelector(".fg-ground");
+    if (base && g === "wash" && !base.querySelector(".fg-blob")) {
+      [["gold", -260, 520], ["orange", 1180, -320], ["brick", 520, 340], ["deep", 1400, 560]].forEach(([c, x, y]) => {
+        const b = document.createElement("div"); b.className = "fg-blob " + c; b.style.left = x + "px"; b.style.top = y + "px"; base.appendChild(b); });
+    }
+    return { ground: g, photo: g === "photo", flat: FLAT.includes(g), none: g === "none", grain: grain === "on", light: ROOT.dataset.light === "on" };
+  }
+  const lightOff = (root) => { const c = comp(root); return c && c.dataset.light === "off"; };
+  function sunrise(tl, root, at = 0, o = {}) {
+    if (lightOff(root)) return at;
+    const dur = o.dur ?? 1.4, night = q(root, ".fg-night"), flare = q(root, ".fg-flare");
+    if (night) tl.fromTo(night, { "--sr": 0 }, { "--sr": 150, duration: dur, ease: GLIDE }, at);
+    if (flare) tl.fromTo(flare, { opacity: 0, scale: 0.4 }, { keyframes: [{ opacity: 1, scale: 1.1, duration: dur * 0.45, ease: "power2.out" }, { opacity: o.flareRest ?? 0.38, scale: 1, duration: dur * 0.9, ease: "sine.inOut" }] }, at);
+    return at + dur;
+  }
+  function condense(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.9, tint = el.querySelector(":scope > .fg-tint");
+    tl.set(el, { "--fx": o.x ?? "0%", "--fy": o.y ?? "100%", autoAlpha: 1 }, at);
+    tl.fromTo(el, { "--fm": 0, "--fb": 0 }, { "--fm": 170, duration: dur, ease: SETTLE }, at)
+      .to(el, { "--fb": o.blur ?? 28, duration: dur * 1.1, ease: "power2.out" }, at);
+    if (tint) tl.fromTo(tint, { opacity: 0 }, { opacity: 1, duration: dur, ease: "power2.out" }, at + 0.05);
+    return at + dur;
+  }
+  function clear(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.55;
+    tl.to(el, { "--fb": 0, duration: dur, ease: "power2.in" }, at).to(el, { autoAlpha: 0, duration: dur * 0.7, ease: "power2.in" }, at + dur * 0.3);
+    return at + dur;
+  }
+  function beat(tl, el, at = 0, o = {}) {
+    const a = o.amp ?? 1;
+    tl.to(el, { keyframes: [
+      { scale: 1 + 0.07 * a, duration: 0.11, ease: "sine.inOut" }, { scale: 1, duration: 0.14, ease: "sine.inOut" },
+      { scale: 1 + 0.045 * a, duration: 0.1, ease: "sine.inOut" }, { scale: 1, duration: 0.27, ease: "sine.inOut" }] }, at);
+    return at + 0.62;
+  }
+  /* ambient motion for whatever the ground is: wind on a photo, drifting wash blobs, a slow sun on the burn */
+  function sway(tl, root, at, dur) {
+    const c = comp(root) || root, g = c.dataset.ground || "photo";
+    if (g === "photo") { const img = q(root, ".fg-photo"); if (img) tl.fromTo(img, { scale: 1.1, x: -18, rotation: -0.25 }, { scale: 1.03, x: 14, rotation: 0.2, duration: dur, ease: "sine.inOut" }, at); }
+    else if (g === "wash") root.querySelectorAll(".fg-blob").forEach((b, i) => tl.fromTo(b, { x: 0, y: 0 }, { x: (i % 2 ? -1 : 1) * 140, y: (i < 2 ? -1 : 1) * 70, duration: dur, ease: "sine.inOut" }, at));
+    else if (g === "burn") { const gr = q(root, ".fg-ground"); if (gr) tl.fromTo(gr, { "--bx": "4%", "--by": "104%" }, { "--bx": "14%", "--by": "96%", duration: dur, ease: "sine.inOut" }, at); }
+  }
+  function dapple(tl, el, at, dur) {
+    const d = el.matches(".fg-dapple") ? el : el.querySelector(".fg-dapple");
+    if (d) tl.fromTo(d, { x: -60, y: 10 }, { x: 60, y: -14, duration: dur, ease: "sine.inOut" }, at);
+  }
+  return { ground, sunrise, condense, clear, beat, sway, dapple, POP, SETTLE, GLIDE, bz };
+})();
+/* @field-glass:end */
+        const ID = "hp3-tr-daylight-to-dusk";
+        const ROOT = document.getElementById(ID);
+        const GR = FG.ground(ROOT, { ground: "photo", grain: "on", light: "on" });
+        const $ = (s) => ROOT.querySelector(s);
+        const slot = (n, d) => ($(`[data-slot="${n}"]`).textContent || d).trim();
+        $(".phA").src = "../../assets/nature/" + slot("photoA", "grass-sunset") + ".jpg";
+        $(".fg-photo.b").src = "../../assets/nature/" + slot("photoB", "sun-reeds") + ".jpg";
+
+        /* aim point: inside the left stem of the hero word's first letter, measured from the glyph */
+        const line = $(".line"), word = $(".word");
+        const place = () => {
+          const r = document.createRange(); r.setStart(word.firstChild, 0); r.setEnd(word.firstChild, 1);
+          const g = r.getBoundingClientRect(), L = line.getBoundingClientRect();
+          const cv = document.createElement("canvas").getContext("2d");
+          cv.font = getComputedStyle(word).fontWeight + " " + getComputedStyle(word).fontSize + " " + getComputedStyle(word).fontFamily;
+          const m = cv.measureText(word.textContent[0]);
+          const stemX = g.left - L.left + m.actualBoundingBoxLeft * -1 + Math.max(6, (m.actualBoundingBoxRight + m.actualBoundingBoxLeft) * 0.14);
+          const ay = g.top - L.top + g.height * 0.62;
+          line.style.transformOrigin = stemX + "px " + ay + "px";
+          AIM.x = 960 - (line.offsetLeft + stemX); AIM.y = 540 - (line.offsetTop + ay);
+        };
+        const AIM = { x: 0, y: 0 };
+        place(); if (document.fonts) document.fonts.ready.then(place);
+
+        const END = 2.5, D0 = 0.3, DD = 0.78, SWAP = D0 + DD, S = 160;
+        const tl = gsap.timeline({ paused: true });
+        tl.fromTo($(".phA"), { scale: 1.08, x: -14 }, { scale: 1.03, x: 10, duration: SWAP, ease: "sine.inOut" }, 0);
+        /* exponential dolly into the stem: scale = S^p, blur rises with speed, the ink deepens to night */
+        const P = { p: 0 };
+        tl.fromTo(P, { p: 0 }, { p: 1, duration: DD, ease: "power2.in", onUpdate: () => {
+          const s = Math.pow(S, P.p), steer = Math.min(1, P.p * 1.6);
+          /* blur is applied before the scale, so divide by it to keep a screen-space blur */
+          gsap.set(line, { scale: s, x: AIM.x * steer, y: AIM.y * steer, filter: `blur(${(Math.min(14, P.p * P.p * 22) / s).toFixed(3)}px)` });
+        } }, D0);
+        tl.fromTo(line, { color: "#4B1526" }, { color: "#2C0B16", duration: DD * 0.5, ease: "power1.in" }, D0 + DD * 0.5);
+        tl.set($(".sceneA"), { autoAlpha: 0 }, SWAP).set($(".sceneB"), { autoAlpha: 1 }, SWAP);
+        /* B: night, the light burns up only in the corner */
+        FG.sway(tl, $(".sceneB"), SWAP, END - SWAP);
+        tl.fromTo($(".sceneB .fg-night"), { "--sr": 0 }, { "--sr": 84, duration: 1.2, ease: FG.GLIDE }, SWAP);
+        tl.fromTo($(".sceneB .fg-flare"), { opacity: 0, scale: 0.4 }, { opacity: 0.7, scale: 1, duration: 1.1, ease: FG.GLIDE }, SWAP + 0.05);
+        TXT.reveal(tl, $(".lineB"), SWAP + 0.2);
+        tl.fromTo(TXT.split($(".lineB")), { color: "#FFC145" }, { color: "#FFF0E6", duration: 0.5, stagger: 0.04, ease: "sine.inOut" }, SWAP + 0.6);
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

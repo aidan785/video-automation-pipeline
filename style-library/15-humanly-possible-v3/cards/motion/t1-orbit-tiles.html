@@ -1,0 +1,371 @@
+<!doctype html>
+<!--
+  HP V3 · tier1 · motion · ORBIT TILES  (Field Glass, wash ground)
+  "Stop guessing, the answer is X." A warm wash comes up from the bottom-left
+  (SUNRISE over the wash). A glass pill holds the state ("Guessing", with a ?
+  well). Six small glass tiles fog in around it and drift slowly on a wide
+  ellipse (a faint dotted orbit drawn in cream), nearer tiles a touch larger,
+  like things circling your head. The guess is turned down: its well fills
+  orange with an x (the frame's one accent) and the pill clears away. One tile
+  (the pick) is drawn into the center, grows and lights, its word lands in gold
+  (the frame's one gold) and takes the lub-dub; the other five ease out into a
+  loose ring and go quiet while the orbit line fades. One glint on the pick.
+  Slots: eyebrow (<=30), center (<=12), pick (<=14), t1..t5 (<=12).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #hp3-t1-orbit-tiles { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--hp-deep); font-family: var(--font-body); color: var(--hp-cream); }
+      #hp3-t1-orbit-tiles .b1 { left: -300px; top: 560px; width: 1000px; height: 900px; }
+      #hp3-t1-orbit-tiles .b2 { left: 1260px; top: 520px; width: 900px; height: 800px; opacity: 0.55; }
+      #hp3-t1-orbit-tiles .b3 { left: 420px; top: -380px; width: 1200px; height: 800px; }
+      #hp3-t1-orbit-tiles .b4 { left: 700px; top: 300px; width: 700px; height: 600px; opacity: 0.6; }
+      #hp3-t1-orbit-tiles .eyebrow { position: absolute; left: 0; width: 1920px; top: 96px; text-align: center; white-space: nowrap; }
+      #hp3-t1-orbit-tiles svg.orbit { position: absolute; left: 0; top: 0; }
+      #hp3-t1-orbit-tiles .pill { z-index: 30; left: 750px; top: 490px; width: 420px; height: 140px; border-radius: var(--r-card); }
+      #hp3-t1-orbit-tiles .pill .q { position: absolute; left: 28px; top: 28px; width: 84px; height: 84px; border-radius: var(--r-chip); background: rgba(var(--cream-rgb), 0.10); }
+      #hp3-t1-orbit-tiles .pill .q .or { position: absolute; inset: 0; border-radius: inherit; background: var(--hp-orange); opacity: 0; }
+      #hp3-t1-orbit-tiles .pill .q svg { position: absolute; left: 22px; top: 22px; }
+      #hp3-t1-orbit-tiles .pill .q svg.x { opacity: 0; }
+      #hp3-t1-orbit-tiles .pill .pl { position: absolute; left: 138px; top: 0; height: 140px; line-height: 140px; font-size: 64px; white-space: nowrap; }
+      #hp3-t1-orbit-tiles .tile { left: 0; top: 0; width: 280px; height: 104px; border-radius: var(--r-card); transform-origin: 50% 50%; }
+      #hp3-t1-orbit-tiles .tile .hl { position: absolute; inset: 0; border-radius: inherit; background: var(--row-lit); opacity: 0; }
+      #hp3-t1-orbit-tiles .tile .tl { position: absolute; left: 0; right: 0; top: 0; height: 104px; line-height: 104px; text-align: center; white-space: nowrap;
+        font-family: var(--font-display); font-variation-settings: var(--display-opsz); font-weight: 700; font-size: 38px; letter-spacing: -0.02em; color: var(--hp-cream-muted); }
+    </style>
+  </head>
+  <body>
+    <div id="hp3-t1-orbit-tiles" data-composition-id="hp3-t1-orbit-tiles" data-start="0" data-width="1920" data-height="1080">
+      <span class="fg-slot" data-slot="ground">none</span><span class="fg-slot" data-slot="grain">off</span><span class="fg-slot" data-slot="light">off</span>
+      <div class="fg-ground"><div class="fg-flare"></div><div class="fg-night"></div></div>
+      <div class="eyebrow fg-label" data-slot="eyebrow">What does the client want?</div>
+      <svg class="orbit" width="1920" height="1080" viewBox="0 0 1920 1080"><ellipse cx="960" cy="560" rx="660" ry="290" fill="none" stroke="rgba(255,240,230,0.30)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 16"/></svg>
+      <div class="tiles">
+        <div class="fg-glass tile pick"><div class="fg-tint"></div><div class="hl"></div><div class="fg-sheen"></div><div class="tl" data-slot="pick">Just ask</div></div>
+        <div class="fg-glass tile"><div class="fg-tint"></div><div class="hl"></div><div class="tl" data-slot="t1">The budget</div></div>
+        <div class="fg-glass tile"><div class="fg-tint"></div><div class="hl"></div><div class="tl" data-slot="t2">The style</div></div>
+        <div class="fg-glass tile"><div class="fg-tint"></div><div class="hl"></div><div class="tl" data-slot="t3">The timeline</div></div>
+        <div class="fg-glass tile"><div class="fg-tint"></div><div class="hl"></div><div class="tl" data-slot="t4">The scope</div></div>
+        <div class="fg-glass tile"><div class="fg-tint"></div><div class="hl"></div><div class="tl" data-slot="t5">The deadline</div></div>
+      </div>
+      <div class="fg-glass pill">
+        <div class="fg-tint"></div>
+        <div class="q"><div class="or"></div>
+          <svg class="qm" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFF0E6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg>
+          <svg class="x" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4B1526" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></svg></div>
+        <div class="pl fg-display" data-slot="center">Guessing</div>
+      </div>
+      <div class="fg-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* HP V3 copy of the Sanji TEXT PRESET "uppit-reveal" (source of truth for 15-humanly-possible-v3).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+/* @field-glass:start v3 */
+/* HP V3 · FIELD GLASS motion helpers (single source of truth).
+   Cards carry an inlined copy between the @field-glass markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs`
+   (restamps both the @text-preset and @field-glass blocks).
+
+   Markup it expects (CSS lives in tokens.css, "FIELD GLASS utilities"):
+     .fg-photo > img          the graded nature photo (drifts, sways)
+     .fg-night                pre-sunrise veil, masked by --sr (radius %)
+     .fg-flare                sun bloom at the burn origin (bottom-left)
+     .fg-glass                glass pane; --fb blur px, --fm condense radius %,
+                              --fx/--fy condense origin; child .fg-tint, .fg-dapple
+   GROUND SWITCHES (v3, Aidan 11/3: not every card needs nature / the corner glow;
+   some flat, some with grain, some with no background at all). Every card carries
+   three hidden slots and calls FG.ground(ROOT, defaults) before building its timeline:
+     <span class="fg-slot" data-slot="ground">oxblood</span>  photo | oxblood | deep | brick | cream | burn | wash | none
+     <span class="fg-slot" data-slot="grain">off</span>       on | off
+     <span class="fg-slot" data-slot="light">off</span>       on | off  (the bottom-left sunrise + flare)
+   FG.ground sets data-ground / data-grain / data-light on the root; tokens.css does
+   the rest (hides the photo / flare / night / grain, paints flat grounds, switches
+   glass to the solid Sanji-style fill on flat grounds, makes "none" transparent).
+     FG.ground(ROOT, {ground, grain, light}) -> {ground, photo, flat, none, grain, light}
+   API (timeline-driven, deterministic):
+     FG.sunrise(tl, root, at, {dur})        light burns up from bottom-left, flare peaks then settles
+     FG.condense(tl, el, at, {dur, x, y})   glass fogs in from a point: clear -> frosted, tint rises
+     FG.clear(tl, el, at, {dur})            glass evaporates (exit), edges first
+     FG.beat(tl, el, at, {amp})             the logo's lub-dub: 1.07, back, 1.045, back
+     FG.sway(tl, root, at, dur)             wind on the photo: slow drift + a breath of rotation
+     FG.dapple(tl, el, at, dur)             leaf-shadow plate drifts across a pane
+     FG.POP / FG.SETTLE                     HP pop ease (no overshoot) / uppit settle */
+const FG = (function () {
+  function bz(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x; for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; } return sy(t); };
+  }
+  const POP = bz(0.2, 0.9, 0.25, 1), SETTLE = bz(0.23, 1, 0.32, 1), GLIDE = bz(0.65, 0, 0.35, 1);
+  const q = (root, s) => (root.matches && root.matches(s) ? root : root.querySelector(s));
+
+  const comp = (el) => (el && el.closest ? el.closest("[data-composition-id]") : null);
+  const FLAT = ["oxblood", "deep", "brick", "cream"];
+  function ground(ROOT, d = {}) {
+    const slot = (n) => { const e = ROOT.querySelector(`[data-slot="${n}"]`); return e ? e.textContent.trim().toLowerCase() : ""; };
+    const g = slot("ground") || d.ground || "photo", grain = slot("grain") || d.grain || "off", light = slot("light") || d.light || "off";
+    Object.assign(ROOT.dataset, { ground: g, grain, light: g === "none" ? "off" : light });
+    const base = ROOT.querySelector(".fg-ground");
+    if (base && g === "wash" && !base.querySelector(".fg-blob")) {
+      [["gold", -260, 520], ["orange", 1180, -320], ["brick", 520, 340], ["deep", 1400, 560]].forEach(([c, x, y]) => {
+        const b = document.createElement("div"); b.className = "fg-blob " + c; b.style.left = x + "px"; b.style.top = y + "px"; base.appendChild(b); });
+    }
+    return { ground: g, photo: g === "photo", flat: FLAT.includes(g), none: g === "none", grain: grain === "on", light: ROOT.dataset.light === "on" };
+  }
+  const lightOff = (root) => { const c = comp(root); return c && c.dataset.light === "off"; };
+  function sunrise(tl, root, at = 0, o = {}) {
+    if (lightOff(root)) return at;
+    const dur = o.dur ?? 1.4, night = q(root, ".fg-night"), flare = q(root, ".fg-flare");
+    if (night) tl.fromTo(night, { "--sr": 0 }, { "--sr": 150, duration: dur, ease: GLIDE }, at);
+    if (flare) tl.fromTo(flare, { opacity: 0, scale: 0.4 }, { keyframes: [{ opacity: 1, scale: 1.1, duration: dur * 0.45, ease: "power2.out" }, { opacity: o.flareRest ?? 0.38, scale: 1, duration: dur * 0.9, ease: "sine.inOut" }] }, at);
+    return at + dur;
+  }
+  function condense(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.9, tint = el.querySelector(":scope > .fg-tint");
+    tl.set(el, { "--fx": o.x ?? "0%", "--fy": o.y ?? "100%", autoAlpha: 1 }, at);
+    tl.fromTo(el, { "--fm": 0, "--fb": 0 }, { "--fm": 170, duration: dur, ease: SETTLE }, at)
+      .to(el, { "--fb": o.blur ?? 28, duration: dur * 1.1, ease: "power2.out" }, at);
+    if (tint) tl.fromTo(tint, { opacity: 0 }, { opacity: 1, duration: dur, ease: "power2.out" }, at + 0.05);
+    return at + dur;
+  }
+  function clear(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.55;
+    tl.to(el, { "--fb": 0, duration: dur, ease: "power2.in" }, at).to(el, { autoAlpha: 0, duration: dur * 0.7, ease: "power2.in" }, at + dur * 0.3);
+    return at + dur;
+  }
+  function beat(tl, el, at = 0, o = {}) {
+    const a = o.amp ?? 1;
+    tl.to(el, { keyframes: [
+      { scale: 1 + 0.07 * a, duration: 0.11, ease: "sine.inOut" }, { scale: 1, duration: 0.14, ease: "sine.inOut" },
+      { scale: 1 + 0.045 * a, duration: 0.1, ease: "sine.inOut" }, { scale: 1, duration: 0.27, ease: "sine.inOut" }] }, at);
+    return at + 0.62;
+  }
+  /* ambient motion for whatever the ground is: wind on a photo, drifting wash blobs, a slow sun on the burn */
+  function sway(tl, root, at, dur) {
+    const c = comp(root) || root, g = c.dataset.ground || "photo";
+    if (g === "photo") { const img = q(root, ".fg-photo"); if (img) tl.fromTo(img, { scale: 1.1, x: -18, rotation: -0.25 }, { scale: 1.03, x: 14, rotation: 0.2, duration: dur, ease: "sine.inOut" }, at); }
+    else if (g === "wash") root.querySelectorAll(".fg-blob").forEach((b, i) => tl.fromTo(b, { x: 0, y: 0 }, { x: (i % 2 ? -1 : 1) * 140, y: (i < 2 ? -1 : 1) * 70, duration: dur, ease: "sine.inOut" }, at));
+    else if (g === "burn") { const gr = q(root, ".fg-ground"); if (gr) tl.fromTo(gr, { "--bx": "4%", "--by": "104%" }, { "--bx": "14%", "--by": "96%", duration: dur, ease: "sine.inOut" }, at); }
+  }
+  function dapple(tl, el, at, dur) {
+    const d = el.matches(".fg-dapple") ? el : el.querySelector(".fg-dapple");
+    if (d) tl.fromTo(d, { x: -60, y: 10 }, { x: 60, y: -14, duration: dur, ease: "sine.inOut" }, at);
+  }
+  return { ground, sunrise, condense, clear, beat, sway, dapple, POP, SETTLE, GLIDE, bz };
+})();
+/* @field-glass:end */
+        const ID = "hp3-t1-orbit-tiles";
+        const ROOT = document.getElementById(ID);
+        const GR = FG.ground(ROOT, { ground: "none", grain: "off", light: "off" });
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const CREAM = css.getPropertyValue("--hp-cream").trim(), DIM = css.getPropertyValue("--hp-cream-dim").trim(), GOLD = css.getPropertyValue("--hp-gold").trim();
+
+        const tiles = $$(".tile"), N = tiles.length, TW = 280, TH = 104;
+        const CX = 960, CY = 560, RX = 660, RY = 290;
+        /* pill width follows its word */
+        const fit = () => { const p = $(".pill"), w = 138 + $(".pl").offsetWidth + 52; p.style.width = w + "px"; p.style.left = (CX - w / 2) + "px"; };
+        fit(); if (document.fonts) document.fonts.ready.then(fit);
+
+        /* one state drives the orbit: a = angle, k = pick pulled in (0..1), s = settle into a ring (0..1) */
+        const S = { a: 0, k: 0, s: 0 };
+        /* the pick starts at the back so its pull crosses the frame; others spaced evenly */
+        const base = (i) => -Math.PI / 2 + i * (2 * Math.PI / N);
+        function apply() {
+          tiles.forEach((el, i) => {
+            const th = base(i) + S.a;
+            const rx = RX * (1 + 0.08 * S.s), ry = RY * (1 + 0.14 * S.s);
+            let x = CX + rx * Math.cos(th), y = CY + ry * Math.sin(th);
+            let sc = 0.84 + 0.16 * (Math.sin(th) + 1) / 2;
+            let z = Math.round((Math.sin(th) + 1) * 10);
+            if (i === 0) { x += (CX - x) * S.k; y += (CY - y) * S.k; sc += (1.55 - sc) * S.k; z = S.k > 0.2 ? 40 : z; }
+            gsap.set(el, { x: x - TW / 2, y: y - TH / 2, scale: sc, zIndex: z });
+          });
+        }
+        apply();
+
+        const TX = 3.2, TP = 3.75, END = TP + 3.0;
+        const tl = gsap.timeline({ paused: true });
+
+        /* ground */
+        FG.sway(tl, ROOT, 0, END);
+        FG.sunrise(tl, ROOT, 0, { dur: 1.4 });
+        TXT.reveal(tl, $(".eyebrow"), 0.5);
+
+        /* the orbit drifts and slows; later the pick is pulled in and the rest settle out */
+        tl.fromTo(S, { a: 0 }, { a: 1.05, duration: END - 0.2, ease: "sine.out", onUpdate: apply, immediateRender: false }, 0);
+        tl.fromTo(S, { k: 0 }, { k: 1, duration: 0.95, ease: FG.GLIDE, onUpdate: apply, immediateRender: false }, TP);
+        tl.fromTo(S, { s: 0 }, { s: 1, duration: 1.1, ease: FG.SETTLE, onUpdate: apply, immediateRender: false }, TP + 0.1);
+
+        /* the orbit line, the pill, the tiles */
+        tl.fromTo($("svg.orbit"), { opacity: 0 }, { opacity: 1, duration: 1.0, ease: "power2.out" }, 0.4);
+        FG.condense(tl, $(".pill"), 0.55, { dur: 0.8, x: "0%", y: "100%" });
+        TXT.block(tl, $(".pill .q"), 0.75);
+        TXT.reveal(tl, $(".pl"), 0.8);
+        tiles.forEach((el, i) => {
+          FG.condense(tl, el, 0.85 + i * 0.1, { dur: 0.75, x: "50%", y: "100%" });
+          TXT.reveal(tl, el.querySelector(".tl"), 1.0 + i * 0.1);
+        });
+
+        /* the guess is turned down: orange well with an x, then the pill clears */
+        tl.to($(".pill .q .or"), { opacity: 1, duration: 0.35, ease: FG.POP }, TX)
+          .to($(".pill .q .qm"), { opacity: 0, duration: 0.2 }, TX)
+          .to($(".pill .q .x"), { opacity: 1, duration: 0.3, ease: FG.POP }, TX + 0.05)
+          .to($(".pl"), { color: DIM, duration: 0.35, ease: "power2.inOut" }, TX);
+        FG.beat(tl, $(".pill .q"), TX + 0.15, { amp: 0.7 });
+        TXT.exit(tl, $(".pl"), TP - 0.05);
+        tl.to($(".pill .q"), { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, TP);
+        FG.clear(tl, $(".pill"), TP, { dur: 0.5 });
+        tl.to($("svg.orbit"), { opacity: 0.25, duration: 0.8, ease: "power2.inOut" }, TP + 0.2);
+
+        /* the pick lights in gold; the others go quiet */
+        const pick = tiles[0], TL = TP + 0.8;
+        tl.to(pick.querySelector(".hl"), { opacity: 1, duration: 0.4, ease: FG.POP }, TL)
+          .to(pick.querySelector(".tl"), { color: GOLD, duration: 0.4, ease: FG.POP }, TL);
+        tiles.slice(1).forEach((el) => {
+          tl.to(el.querySelector(".tl"), { color: DIM, duration: 0.35, ease: "power2.inOut" }, TL)
+            .to(el, { opacity: 0.8, duration: 0.35 }, TL);
+        });
+        FG.beat(tl, pick.querySelector(".tl"), TL + 0.3, { amp: 0.6 });
+        tl.fromTo(pick.querySelector(".fg-sheen"), { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.3, ease: FG.GLIDE }, TL + 0.9);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

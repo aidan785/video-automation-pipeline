@@ -1,0 +1,135 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · COLLAGE · ai-screen (tier 1, 24 fps, 96 f = 4 s)
+  Research: raw-media/hp-sampler-refs/handmade-collage/ANALYSIS.md, translation spec "Moment 3, AI screen".
+  Matches: vox-ok_f01560_red-pen-bracket-newspaper (+ vox-ok_f01549: the bracket-arrow being drawn: runs left
+  under a line, accelerating, turns up the margin, arrowhead lands, then a long hold), vox-ok_f01170 (highlighter
+  that stops short), Vox OK f444-488 (clipping over a defocused copy of its own page, the push is a crop-cut).
+  Construction: a crisp printout of the chat on a real paper scan (assets/collage/paper-white.jpg) over a
+  defocused, low-contrast, enlarged copy of itself. NOTE: the research asks for a chat that was really printed and
+  scanned; until that scan exists the type is set in HTML on the scanned sheet (ink multiplied into the paper).
+  No tape: no tape scan with a verified license exists yet (research), and a drawn stand-in is banned.
+  Pen-mark points are placed by hand for this copy (MARK_BRACKET); redraw them if the reply text changes.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-collage-ai-screen{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --oxblood:#4B1526;--cream:#FFF0E6;--brick:#7A1E1E;--orange:#FF8A4C;--gold:#FFC145;--deep:#2C0B16;
+        font-family:"Inter Tight",sans-serif;}
+      #hp2-collage-ai-screen .cam{position:absolute;inset:0;transform-origin:700px 640px;}
+      #hp2-collage-ai-screen .paper{position:absolute;left:-96px;top:-54px;width:2112px;height:1188px;}
+      #hp2-collage-ai-screen .ghost{position:absolute;inset:0;transform-origin:960px 560px;transform:scale(1.95) rotate(-1.2deg);
+        filter:blur(6px) contrast(.42) brightness(1.3);}
+      #hp2-collage-ai-screen .sheet{position:absolute;left:370px;top:240px;width:1180px;height:640px;transform:rotate(-1.2deg);
+        transform-origin:590px 320px;overflow:visible;}
+      #hp2-collage-ai-screen .sheet > img{position:absolute;left:0;top:0;width:1180px;height:640px;object-fit:cover;object-position:30% 40%;}
+      #hp2-collage-ai-screen .print{position:absolute;left:84px;top:78px;right:70px;color:var(--deep);mix-blend-mode:multiply;}
+      #hp2-collage-ai-screen .lab{font-size:24px;font-weight:500;letter-spacing:.02em;color:rgba(44,11,22,.55);margin-bottom:12px;}
+      #hp2-collage-ai-screen .prompt{font-size:42px;font-weight:500;line-height:1.22;letter-spacing:-.012em;margin-bottom:56px;}
+      #hp2-collage-ai-screen .rl{font-size:37px;font-weight:400;line-height:1.3;letter-spacing:-.008em;margin-bottom:26px;color:rgba(44,11,22,.86);}
+      #hp2-collage-ai-screen .rl.key{font-size:43px;font-weight:500;color:var(--deep);}
+      #hp2-collage-ai-screen .hlw{position:relative;}
+      #hp2-collage-ai-screen .hlw i{position:relative;font-style:normal;z-index:1;}
+      #hp2-collage-ai-screen .hl{position:absolute;left:-8px;right:4px;top:44%;bottom:-2px;background:var(--gold);z-index:0;
+        transform-origin:0 50%;clip-path:polygon(0 6%,100% 0,99.4% 92%,.4% 100%);}
+      #hp2-collage-ai-screen svg{position:absolute;left:0;top:0;overflow:visible;}
+      #hp2-collage-ai-screen .ink{fill:none;stroke-linecap:round;stroke-linejoin:round;}
+      #hp2-collage-ai-screen .dust{position:absolute;inset:0;width:1920px;height:1080px;mix-blend-mode:multiply;opacity:.16;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-collage-ai-screen" data-composition-id="hp2-collage-ai-screen" data-start="0" data-width="1920" data-height="1080">
+      <div class="cam">
+        <img class="paper" src="../../assets/collage/paper-cream.jpg" alt="" />
+        <div class="ghost"></div>
+        <div class="sheet">
+          <img data-slot="media" src="../../assets/collage/paper-white.jpg" alt="" />
+          <div class="print">
+            <div class="lab">you</div>
+            <div class="prompt" data-slot="prompt">Write a friendly reminder text for tomorrow's grooms</div>
+            <div class="lab">reply</div>
+            <div class="rl" data-slot="reply-1">Hi! Just a reminder that Biscuit is booked for tomorrow at 10.</div>
+            <div class="rl key" data-slot="key-line"><span class="hlw"><b class="hl"></b><i>Reply C to confirm, or R and we'll find a new</i></span> time.</div>
+            <div class="rl sign" data-slot="reply-3">See you then, Dana</div>
+          </div>
+          <svg width="1180" height="640">
+            <path class="ink brk" stroke="#FF8A4C" stroke-width="10" pathLength="1000" />
+            <path class="ink head" stroke="#FF8A4C" stroke-width="10" pathLength="1000" />
+          </svg>
+        </div>
+      </div>
+      <video class="dust" src="../../assets/collage/dust-light.mp4" muted playsinline preload="auto" data-start="0" data-duration="4" data-track-index="9"></video>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-collage-ai-screen", FPS = 24, N = 96;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      function crPath(p) {
+        let d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+        for (let i = 0; i < p.length - 1; i++) {
+          const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+          d += " C" + (b[0] + (c[0] - a[0]) / 6).toFixed(1) + " " + (b[1] + (c[1] - a[1]) / 6).toFixed(1) + " " + (c[0] - (e[0] - b[0]) / 6).toFixed(1) + " " + (c[1] - (e[1] - b[1]) / 6).toFixed(1) + " " + c[0].toFixed(1) + " " + c[1].toFixed(1);
+        }
+        return d;
+      }
+      function penWrite(path, pts, F0, prog, width, seed) {
+        const r = rng(seed);
+        prog.forEach((k, i) => {
+          const jit = pts.map(([x, y]) => [x + (r() - .5) * 2.4, y + (r() - .5) * 2.4]);
+          at(F0 + i, path, { attr: { d: crPath(jit), "stroke-width": (width * (0.9 + r() * 0.22)).toFixed(2), "stroke-dasharray": "1000 1000", "stroke-dashoffset": (1000 * (1 - k)).toFixed(1) }, opacity: k > 0 ? 1 : 0 });
+        });
+        at(F0 + prog.length, path, { attr: { d: crPath(pts), "stroke-width": width, "stroke-dasharray": "none", "stroke-dashoffset": 0 }, opacity: 1 });
+      }
+
+      // the defocused ground is a copy of the same printout
+      const ghost = $1(".ghost"), sheet = $1(".sheet").cloneNode(true);
+      sheet.querySelectorAll("svg,[data-slot]").forEach((n) => n.removeAttribute("data-slot"));
+      sheet.querySelector("svg").remove(); ghost.appendChild(sheet);
+
+      const rls = $(".sheet .rl"), ghostRls = ghost.querySelectorAll(".rl");
+      tl.set([...rls, ...ghostRls], { opacity: 0 }, 0);
+      tl.set($(".sheet .hl"), { scaleX: 0 }, 0);
+      tl.set($(".ink"), { opacity: 0 }, 0);
+
+      // ---- F1-F26 camera push 1.0 -> 1.025, linear, on ones
+      const cam = $1(".cam");
+      for (let F = 1; F <= 26; F++) at(F, cam, { scale: 1 + 0.025 * (F - 1) / 25 });
+
+      // ---- F10 / F12 / F14 reply lines pop in whole, 2 f apart (in the ghost copy too)
+      [...rls].forEach((el, i) => { at(10 + i * 2, el, { opacity: 1 }); at(10 + i * 2, ghostRls[i], { opacity: 1 }); });
+
+      // ---- F22-F25 highlighter behind the key line, 4 f linear, stopping before "time."
+      [0.25, 0.5, 0.75, 1].forEach((k, i) => at(22 + i, $(".hl"), { scaleX: k }));
+
+      // ---- F28-F37 orange bracket-arrow (sheet coordinates): from under the sign-off it runs left 6 f, accelerating,
+      // turns up the margin 2 f, then the arrowhead lands on the key line in 2 f. Hand-placed points.
+      const MARK_BRACKET = [[412,486],[366,490],[292,487],[214,491],[138,488],[84,493],[56,486],[48,456],[50,420],[53,390],[58,376],[73,373]];
+      const MARK_HEAD = [[47,351],[76,372],[52,396]];
+      penWrite($1(".brk"), MARK_BRACKET, 28, [0.06, 0.15, 0.29, 0.47, 0.64, 0.78, 0.92, 1.0], 10, 3);
+      penWrite($1(".head"), MARK_HEAD, 36, [0.55, 1.0], 10, 5);
+
+      // ---- F39 hard crop-cut to 1.35x on the key line, then hold to the end
+      at(39, cam, { scale: 1.35, transformOrigin: "760px 620px" });
+      tl.set({}, {}, N / FPS);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,278 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · section · CHAPTER STRIP
+  The chapter card. Cobalt wash (cyan blobs) with a faint blueprint grid. It
+  opens on a "film strip": five columns split by white hairlines, a bold number
+  top-left of each. The strip whips (expo.inOut, horizontal smear: blur +
+  stretched hairlines) until column N fills the frame, framed by a hairline at
+  each edge with its number top-left; the neighbours smear off-frame. A dashed
+  baseline draws left to right, then the title resolves word by word (dim +
+  blurred, then white). Line 1 re-centers as it grows, like the reference.
+  Exit: the words dissolve with blur.
+  Slots: num (text, 1..5, picks the column), title (richtext <= 30 chars,
+  ALL CAPS display, <br> splits the two lines).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-chapter-strip {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-chapter-strip .wash { position: absolute; inset: -80px; background: var(--cobalt-wash); }
+      #sanji-t1-chapter-strip .grid { position: absolute; inset: 0; background: var(--cell-grid); opacity: 0.9; }
+      #sanji-t1-chapter-strip .vig { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(20,30,180,0) 55%, rgba(20,30,180,0.28) 100%); }
+      #sanji-t1-chapter-strip .strip { position: absolute; inset: 0; }
+      #sanji-t1-chapter-strip .hl {
+        position: absolute; top: 40px; bottom: 40px; left: 0; width: 3px; margin-left: -1.5px;
+        background: var(--white); border-radius: 2px; transform-origin: 50% 50%;
+        box-shadow: 0 0 12px rgba(255,255,255,0.25);
+      }
+      #sanji-t1-chapter-strip .num {
+        position: absolute; top: 18px; left: 0;
+        font-weight: var(--wt-heavy); font-size: 128px; line-height: 1; letter-spacing: var(--track-caps);
+        transform-origin: 0% 50%;
+        text-shadow: 0 6px 24px rgba(10, 20, 140, 0.25);
+      }
+      #sanji-t1-chapter-strip .dash {
+        position: absolute; left: 160px; width: 1610px; top: 1019px; height: 6px;
+        background: repeating-linear-gradient(90deg, var(--white) 0 32px, transparent 32px 76px);
+        border-radius: 2px; clip-path: inset(0 100% 0 0);
+      }
+      #sanji-t1-chapter-strip .title {
+        position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+        text-align: center; font-weight: var(--wt-heavy); font-size: 136px; line-height: 1.12;
+        letter-spacing: var(--track-tight); text-transform: uppercase;
+        text-shadow: 0 8px 40px rgba(10, 20, 140, 0.30);
+      }
+      #sanji-t1-chapter-strip .title .ln { display: block; white-space: nowrap; }
+      #sanji-t1-chapter-strip .title .lnin { display: inline-block; position: relative; }
+      #sanji-t1-chapter-strip .title .w { display: inline-block; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-chapter-strip" data-composition-id="sanji-t1-chapter-strip" data-start="0" data-width="1920" data-height="1080">
+      <div class="wash"></div>
+      <div class="grid"></div>
+      <div class="vig"></div>
+      <div class="strip">
+        <div class="hl"></div><div class="hl"></div><div class="hl"></div><div class="hl"></div><div class="hl"></div><div class="hl"></div>
+        <div class="num">1</div><div class="num">2</div><div class="num">3</div><div class="num">4</div><div class="num">5</div>
+      </div>
+      <div class="dash"></div>
+      <div class="title" data-slot="title">How to<br>find a client</div>
+      <span data-slot="num" hidden>1</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-chapter-strip";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const WHITE = css.getPropertyValue("--white").trim(), PRE = css.getPropertyValue("--white-pre").trim();
+
+        /* chosen column (1..5) */
+        const N = Math.min(5, Math.max(1, parseInt($("[data-slot=num]").textContent, 10) || 1));
+        const hls = $$(".hl"), nums = $$(".num");
+
+        /* strip geometry: hairline j sits at x0 in the strip, x1 once column N fills frame */
+        const X0 = (j) => 22 + j * 381;
+        const L = 90, R = 1830, SPAN = R - L;
+        const X1 = (j) => L + (j - (N - 1)) * SPAN;
+        const NUM_OFF = 90;
+        const st = { p: 0 };
+        const layout = () => {
+          const p = st.p;
+          hls.forEach((h, j) => gsap.set(h, { x: X0(j) + (X1(j) - X0(j)) * p }));
+          nums.forEach((n, k) => gsap.set(n, { x: X0(k) + (X1(k) - X0(k)) * p + NUM_OFF }));
+        };
+        layout();
+
+        /* title: split <br> lines into words */
+        const title = $(".title");
+        const lines = title.innerHTML.split(/<br\s*\/?>/i).map((s) => s.replace(/<[^>]+>/g, "").trim()).filter(Boolean);
+        title.textContent = "";
+        const lineEls = [], words = [];
+        lines.forEach((ln) => {
+          const d = document.createElement("span"); d.className = "ln";
+          const inn = document.createElement("span"); inn.className = "lnin"; d.appendChild(inn);
+          const ws = ln.split(/\s+/);
+          const arr = ws.map((w, i) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w + (i < ws.length - 1 ? " " : ""); inn.appendChild(s); words.push(s); return s; });
+          title.appendChild(d); lineEls.push({ inn, arr });
+        });
+        /* line 1 re-centers as it grows (lazy, after fonts) */
+        const first = lineEls[0];
+        const shiftFor = (k) => () => { const full = first.inn.offsetWidth; const w = first.arr[k]; return (full - (w.offsetLeft + w.offsetWidth)) / 2; };
+
+        const tl = gsap.timeline({ paused: true });
+        const WHIP = 0.36, WD = 0.48;
+        tl.set(first.inn, { x: shiftFor(0) }, 0);
+
+        /* ambient: the wash drifts very slowly */
+        tl.fromTo($(".wash"), { x: -30, y: 10 }, { x: 30, y: -10, duration: 4.6, ease: "sine.inOut" }, 0);
+
+        /* open: strip settles in (it is the cut-in frame) */
+        tl.fromTo($(".strip"), { autoAlpha: 0, filter: "blur(6px)" }, { autoAlpha: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out" }, 0);
+
+        /* the whip: proxy drives every hairline/number; smear peaks mid-move */
+        tl.fromTo(st, { p: 0 }, { p: 1, duration: WD, ease: "expo.inOut", onUpdate: layout }, WHIP)
+          .to(hls, { scaleX: 7, opacity: 0.6, duration: WD / 2, ease: "power2.in", yoyo: true, repeat: 1 }, WHIP)
+          .to(nums, { scaleX: 1.35, filter: "blur(8px)", duration: WD / 2, ease: "power2.in", yoyo: true, repeat: 1 }, WHIP)
+          .to(nums.filter((_, k) => k !== N - 1), { opacity: 0, duration: WD * 0.7, ease: "power2.in" }, WHIP + 0.05)
+          .to($(".strip"), { filter: "blur(3px)", duration: WD / 2, ease: "power2.in", yoyo: true, repeat: 1 }, WHIP);
+
+        /* dashed baseline draws L to R */
+        const DASH = WHIP + WD * 0.55;
+        tl.to($(".dash"), { clipPath: "inset(0 0% 0 0)", duration: 0.7, ease: "power2.out" }, DASH);
+
+        /* title: text preset per word, paced on the re-center beat (line 1 re-centers as it grows) */
+        let t = WHIP + WD + 0.02, last = t;
+        const GAP = 0.24;
+        words.forEach((w, i) => {
+          if (i < first.arr.length && i > 0) tl.to(first.inn, { x: shiftFor(i), duration: 0.34, ease: "power3.out" }, t);
+          last = TXT.reveal(tl, w, t);
+          t += GAP;
+        });
+
+        /* hold, then the words lift out with the exit preset */
+        const OUT = last + 1.0;
+        const END = TXT.exit(tl, words, OUT, { stagger: 0.03 }) + 0.05;
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

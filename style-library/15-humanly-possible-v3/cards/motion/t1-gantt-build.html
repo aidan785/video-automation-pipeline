@@ -1,0 +1,401 @@
+<!doctype html>
+<!--
+  HP V3 · tier1 · motion · GANTT BUILD  (DAYLIGHT: bright photo + cream frost)
+  "Where we are now." Misty hills under a bright sky, lifted with a cream wash
+  so the frame is airy, wind on the hills. A big cream-frost pane fogs in from
+  the bottom-left (oxblood ink on it). The eyebrow and title pour in, ten day
+  columns grow down as soft oxblood hairlines with their day letters, then four
+  task rows build: the label pours in and its rounded oxblood bar grows left to
+  right. The last row ends on a small gold diamond (handover, the frame's one
+  gold, a shape). A "Today" line drops in and sweeps across: rows it has passed
+  get a check and go quiet (oxblood 32%), the row it lands in lights up, its bar
+  filling orange (the frame's one accent, a shape) with the lub-dub, and the
+  row still ahead stays at 60%. No orange or gold text on cream.
+  Slots: eyebrow (<=24), title (<=20), task1..task4 (<=12),
+  spans (start-end per task in days, 0-10, e.g. "0-2,2-4.5,4-7.5,7-9.5"),
+  today (day position, 0-10), photo (bright nature stem, default misty-hills).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #hp3-t1-gantt-build { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--hp-cream); font-family: var(--font-body); color: var(--hp-oxblood); }
+      #hp3-t1-gantt-build .slot { display: none; }
+      #hp3-t1-gantt-build .fg-photo { filter: brightness(1.32) saturate(0.88); }
+      #hp3-t1-gantt-build .lift { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(var(--cream-rgb),0.50) 0%, rgba(var(--cream-rgb),0.30) 55%, rgba(var(--cream-rgb),0.40) 100%); }
+      #hp3-t1-gantt-build .pane { left: 180px; top: 140px; width: 1560px; height: 800px;
+        -webkit-backdrop-filter: blur(calc(var(--fb) * 1px)) saturate(1.1) brightness(1.05);
+                backdrop-filter: blur(calc(var(--fb) * 1px)) saturate(1.1) brightness(1.05); }
+      #hp3-t1-gantt-build[data-ground]:not([data-ground="photo"]) .lift { display: none; }
+      /* off-photo the pane is a paper card: faint oxblood sheet on cream, solid cream sheet on footage / blank */
+      #hp3-t1-gantt-build[data-ground="cream"] .pane > .fg-tint { background: linear-gradient(158deg, rgba(75,21,38,0.035), rgba(75,21,38,0.06)) !important; box-shadow: inset 1.5px 1.5px 0 rgba(255,255,255,0.7) !important; }
+      #hp3-t1-gantt-build[data-ground="none"] .pane > .fg-tint { background: linear-gradient(158deg, rgba(255,240,230,0.97), rgba(255,236,224,0.93)) !important; }
+      #hp3-t1-gantt-build .pane > .fg-tint { background: linear-gradient(158deg, rgba(255,240,230,0.62), rgba(255,240,230,0.42));
+        box-shadow: inset 1.5px 1.5px 0 rgba(255,255,255,0.55), inset -1px -1px 0 rgba(255,240,230,0.2); }
+      #hp3-t1-gantt-build .depth { left: 230px; top: 220px; width: 1460px; height: 680px; box-shadow: 0 60px 140px rgba(var(--deep-rgb), 0.22); }
+      #hp3-t1-gantt-build .eyebrow { position: absolute; left: 64px; top: 58px; white-space: nowrap; color: rgba(var(--oxblood-rgb), 0.7); }
+      #hp3-t1-gantt-build .ttl { position: absolute; left: 62px; top: 96px; font-size: 80px; white-space: nowrap; color: var(--hp-oxblood); }
+      #hp3-t1-gantt-build svg.grid { position: absolute; left: 0; top: 0; overflow: visible; }
+      #hp3-t1-gantt-build .dl { position: absolute; top: 222px; width: 40px; margin-left: -20px; text-align: center; color: rgba(var(--oxblood-rgb), 0.6); }
+      #hp3-t1-gantt-build .row { position: absolute; left: 0; right: 0; height: 96px; }
+      #hp3-t1-gantt-build .row .hl { position: absolute; left: 34px; right: 34px; top: 0; bottom: 0; border-radius: var(--r-card); background: rgba(var(--oxblood-rgb), 0.07); opacity: 0; }
+      #hp3-t1-gantt-build .row .lb { position: absolute; left: 64px; top: 0; line-height: 96px; white-space: nowrap; font-weight: 600; font-size: 38px; letter-spacing: var(--track-ui); color: var(--hp-oxblood); }
+      #hp3-t1-gantt-build .row .bar { position: absolute; top: 22px; height: 52px; border-radius: var(--r-chip); background: var(--hp-oxblood); transform-origin: 0 50%; opacity: 0.6; }
+      #hp3-t1-gantt-build .row .bar .or { position: absolute; inset: 0; border-radius: inherit; background: var(--hp-orange); opacity: 0; }
+      #hp3-t1-gantt-build .row .ms { position: absolute; top: 31px; width: 34px; height: 34px; margin-left: -17px; border-radius: 8px; background: var(--hp-gold); transform: rotate(45deg); }
+      #hp3-t1-gantt-build .row .ck { position: absolute; top: 28px; width: 40px; height: 40px; }
+      #hp3-t1-gantt-build .today { position: absolute; left: 0; top: 0; }
+      #hp3-t1-gantt-build .today .tc { position: absolute; left: -54px; top: 704px; width: 108px; height: 48px; line-height: 48px; border-radius: var(--r-chip); background: var(--hp-oxblood);
+        text-align: center; font-weight: 700; font-size: 22px; letter-spacing: var(--track-label); text-transform: uppercase; color: var(--hp-cream); }
+    </style>
+  </head>
+  <body>
+    <div id="hp3-t1-gantt-build" data-composition-id="hp3-t1-gantt-build" data-start="0" data-width="1920" data-height="1080">
+      <span class="fg-slot" data-slot="ground">cream</span><span class="fg-slot" data-slot="grain">on</span><span class="fg-slot" data-slot="light">off</span>
+      <span class="slot" data-slot="photo">misty-hills</span>
+      <span class="slot" data-slot="spans">0-2,2-4.5,4-7.5,7-9.5</span>
+      <span class="slot" data-slot="today">5.6</span>
+      <div class="fg-ground">
+        <img class="fg-photo" alt="" />
+        <div class="lift"></div>
+        <div class="fg-night"></div>
+      </div>
+      <div class="fg-depth depth"></div>
+      <div class="fg-glass pane"><div class="fg-tint"></div><div class="fg-sheen"></div>
+        <div class="eyebrow fg-label" data-slot="eyebrow">Luis's kitchen job</div>
+        <div class="ttl fg-display" data-slot="title">Where we are now</div>
+        <svg class="grid" width="1560" height="800"></svg>
+        <div class="rows">
+          <div class="row"><div class="hl"></div><div class="lb" data-slot="task1">Demo</div></div>
+          <div class="row"><div class="hl"></div><div class="lb" data-slot="task2">Plumbing</div></div>
+          <div class="row"><div class="hl"></div><div class="lb" data-slot="task3">Cabinets</div></div>
+          <div class="row"><div class="hl"></div><div class="lb" data-slot="task4">Countertops</div></div>
+        </div>
+        <div class="today"><svg width="4" height="800" style="position:absolute;left:-2px;top:0;overflow:visible"><line x1="2" y1="252" x2="2" y2="700" stroke="#4B1526" stroke-width="2.5" stroke-linecap="round"/></svg><div class="tc">Today</div></div>
+      </div>
+      <div class="fg-grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* HP V3 copy of the Sanji TEXT PRESET "uppit-reveal" (source of truth for 15-humanly-possible-v3).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+/* @field-glass:start v3 */
+/* HP V3 · FIELD GLASS motion helpers (single source of truth).
+   Cards carry an inlined copy between the @field-glass markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-hp3-libs.mjs`
+   (restamps both the @text-preset and @field-glass blocks).
+
+   Markup it expects (CSS lives in tokens.css, "FIELD GLASS utilities"):
+     .fg-photo > img          the graded nature photo (drifts, sways)
+     .fg-night                pre-sunrise veil, masked by --sr (radius %)
+     .fg-flare                sun bloom at the burn origin (bottom-left)
+     .fg-glass                glass pane; --fb blur px, --fm condense radius %,
+                              --fx/--fy condense origin; child .fg-tint, .fg-dapple
+   GROUND SWITCHES (v3, Aidan 11/3: not every card needs nature / the corner glow;
+   some flat, some with grain, some with no background at all). Every card carries
+   three hidden slots and calls FG.ground(ROOT, defaults) before building its timeline:
+     <span class="fg-slot" data-slot="ground">oxblood</span>  photo | oxblood | deep | brick | cream | burn | wash | none
+     <span class="fg-slot" data-slot="grain">off</span>       on | off
+     <span class="fg-slot" data-slot="light">off</span>       on | off  (the bottom-left sunrise + flare)
+   FG.ground sets data-ground / data-grain / data-light on the root; tokens.css does
+   the rest (hides the photo / flare / night / grain, paints flat grounds, switches
+   glass to the solid Sanji-style fill on flat grounds, makes "none" transparent).
+     FG.ground(ROOT, {ground, grain, light}) -> {ground, photo, flat, none, grain, light}
+   API (timeline-driven, deterministic):
+     FG.sunrise(tl, root, at, {dur})        light burns up from bottom-left, flare peaks then settles
+     FG.condense(tl, el, at, {dur, x, y})   glass fogs in from a point: clear -> frosted, tint rises
+     FG.clear(tl, el, at, {dur})            glass evaporates (exit), edges first
+     FG.beat(tl, el, at, {amp})             the logo's lub-dub: 1.07, back, 1.045, back
+     FG.sway(tl, root, at, dur)             wind on the photo: slow drift + a breath of rotation
+     FG.dapple(tl, el, at, dur)             leaf-shadow plate drifts across a pane
+     FG.POP / FG.SETTLE                     HP pop ease (no overshoot) / uppit settle */
+const FG = (function () {
+  function bz(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t, dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x; for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; } return sy(t); };
+  }
+  const POP = bz(0.2, 0.9, 0.25, 1), SETTLE = bz(0.23, 1, 0.32, 1), GLIDE = bz(0.65, 0, 0.35, 1);
+  const q = (root, s) => (root.matches && root.matches(s) ? root : root.querySelector(s));
+
+  const comp = (el) => (el && el.closest ? el.closest("[data-composition-id]") : null);
+  const FLAT = ["oxblood", "deep", "brick", "cream"];
+  function ground(ROOT, d = {}) {
+    const slot = (n) => { const e = ROOT.querySelector(`[data-slot="${n}"]`); return e ? e.textContent.trim().toLowerCase() : ""; };
+    const g = slot("ground") || d.ground || "photo", grain = slot("grain") || d.grain || "off", light = slot("light") || d.light || "off";
+    Object.assign(ROOT.dataset, { ground: g, grain, light: g === "none" ? "off" : light });
+    const base = ROOT.querySelector(".fg-ground");
+    if (base && g === "wash" && !base.querySelector(".fg-blob")) {
+      [["gold", -260, 520], ["orange", 1180, -320], ["brick", 520, 340], ["deep", 1400, 560]].forEach(([c, x, y]) => {
+        const b = document.createElement("div"); b.className = "fg-blob " + c; b.style.left = x + "px"; b.style.top = y + "px"; base.appendChild(b); });
+    }
+    return { ground: g, photo: g === "photo", flat: FLAT.includes(g), none: g === "none", grain: grain === "on", light: ROOT.dataset.light === "on" };
+  }
+  const lightOff = (root) => { const c = comp(root); return c && c.dataset.light === "off"; };
+  function sunrise(tl, root, at = 0, o = {}) {
+    if (lightOff(root)) return at;
+    const dur = o.dur ?? 1.4, night = q(root, ".fg-night"), flare = q(root, ".fg-flare");
+    if (night) tl.fromTo(night, { "--sr": 0 }, { "--sr": 150, duration: dur, ease: GLIDE }, at);
+    if (flare) tl.fromTo(flare, { opacity: 0, scale: 0.4 }, { keyframes: [{ opacity: 1, scale: 1.1, duration: dur * 0.45, ease: "power2.out" }, { opacity: o.flareRest ?? 0.38, scale: 1, duration: dur * 0.9, ease: "sine.inOut" }] }, at);
+    return at + dur;
+  }
+  function condense(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.9, tint = el.querySelector(":scope > .fg-tint");
+    tl.set(el, { "--fx": o.x ?? "0%", "--fy": o.y ?? "100%", autoAlpha: 1 }, at);
+    tl.fromTo(el, { "--fm": 0, "--fb": 0 }, { "--fm": 170, duration: dur, ease: SETTLE }, at)
+      .to(el, { "--fb": o.blur ?? 28, duration: dur * 1.1, ease: "power2.out" }, at);
+    if (tint) tl.fromTo(tint, { opacity: 0 }, { opacity: 1, duration: dur, ease: "power2.out" }, at + 0.05);
+    return at + dur;
+  }
+  function clear(tl, el, at = 0, o = {}) {
+    const dur = o.dur ?? 0.55;
+    tl.to(el, { "--fb": 0, duration: dur, ease: "power2.in" }, at).to(el, { autoAlpha: 0, duration: dur * 0.7, ease: "power2.in" }, at + dur * 0.3);
+    return at + dur;
+  }
+  function beat(tl, el, at = 0, o = {}) {
+    const a = o.amp ?? 1;
+    tl.to(el, { keyframes: [
+      { scale: 1 + 0.07 * a, duration: 0.11, ease: "sine.inOut" }, { scale: 1, duration: 0.14, ease: "sine.inOut" },
+      { scale: 1 + 0.045 * a, duration: 0.1, ease: "sine.inOut" }, { scale: 1, duration: 0.27, ease: "sine.inOut" }] }, at);
+    return at + 0.62;
+  }
+  /* ambient motion for whatever the ground is: wind on a photo, drifting wash blobs, a slow sun on the burn */
+  function sway(tl, root, at, dur) {
+    const c = comp(root) || root, g = c.dataset.ground || "photo";
+    if (g === "photo") { const img = q(root, ".fg-photo"); if (img) tl.fromTo(img, { scale: 1.1, x: -18, rotation: -0.25 }, { scale: 1.03, x: 14, rotation: 0.2, duration: dur, ease: "sine.inOut" }, at); }
+    else if (g === "wash") root.querySelectorAll(".fg-blob").forEach((b, i) => tl.fromTo(b, { x: 0, y: 0 }, { x: (i % 2 ? -1 : 1) * 140, y: (i < 2 ? -1 : 1) * 70, duration: dur, ease: "sine.inOut" }, at));
+    else if (g === "burn") { const gr = q(root, ".fg-ground"); if (gr) tl.fromTo(gr, { "--bx": "4%", "--by": "104%" }, { "--bx": "14%", "--by": "96%", duration: dur, ease: "sine.inOut" }, at); }
+  }
+  function dapple(tl, el, at, dur) {
+    const d = el.matches(".fg-dapple") ? el : el.querySelector(".fg-dapple");
+    if (d) tl.fromTo(d, { x: -60, y: 10 }, { x: 60, y: -14, duration: dur, ease: "sine.inOut" }, at);
+  }
+  return { ground, sunrise, condense, clear, beat, sway, dapple, POP, SETTLE, GLIDE, bz };
+})();
+/* @field-glass:end */
+        const ID = "hp3-t1-gantt-build";
+        const ROOT = document.getElementById(ID);
+        const GR = FG.ground(ROOT, { ground: "cream", grain: "on", light: "off" });
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const slot = (n, d) => ($(`[data-slot="${n}"]`).textContent || d).trim();
+        $(".fg-photo").src = "../../assets/nature/" + slot("photo", "misty-hills") + ".jpg";
+
+        /* geometry: 10 day columns between X0 and X1 (pane coords) */
+        const X0 = 400, X1 = 1490, DAYW = (X1 - X0) / 10, GY0 = 262, GY1 = 700, RY0 = 280, RH = 106;
+        const dx = (d) => X0 + d * DAYW;
+        const LETTERS = ["M", "T", "W", "T", "F", "M", "T", "W", "T", "F"];
+        const NS = "http://www.w3.org/2000/svg", grid = $("svg.grid");
+        const cols = [];
+        for (let i = 0; i <= 10; i++) {
+          const l = document.createElementNS(NS, "line");
+          l.setAttribute("x1", dx(i)); l.setAttribute("x2", dx(i)); l.setAttribute("y1", GY0); l.setAttribute("y2", GY1);
+          l.setAttribute("stroke", "rgba(75,21,38,0.14)"); l.setAttribute("stroke-width", "2"); l.setAttribute("stroke-linecap", "round");
+          grid.appendChild(l); cols.push(l);
+          if (i < 10) { const t = document.createElement("div"); t.className = "dl fg-label"; t.textContent = LETTERS[i]; t.style.left = (dx(i) + DAYW / 2) + "px"; $(".pane").appendChild(t); }
+        }
+        const spans = slot("spans", "0-2,2-4.5,4-7.5,7-9.5").split(",").map((s) => s.split("-").map(Number));
+        const TODAY = Math.max(0, Math.min(10, parseFloat(slot("today", "5.6")) || 5.6));
+        const rows = $$(".row");
+        rows.forEach((r, i) => {
+          r.style.top = (RY0 + i * RH) + "px";
+          const [a, b] = spans[i] || [0, 1];
+          const bar = document.createElement("div"); bar.className = "bar"; bar.innerHTML = '<div class="or"></div>';
+          bar.style.left = dx(a) + "px"; bar.style.width = (dx(b) - dx(a)) + "px"; r.appendChild(bar);
+          const ck = document.createElementNS(NS, "svg"); ck.setAttribute("class", "ck"); ck.setAttribute("viewBox", "0 0 24 24");
+          ck.innerHTML = '<path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="#4B1526" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
+          ck.style.left = (dx(b) + 14) + "px"; r.appendChild(ck);
+          r._a = a; r._b = b;
+        });
+        /* the handover diamond at the end of the last row */
+        const last = rows[rows.length - 1], ms = document.createElement("div"); ms.className = "ms";
+        ms.style.left = dx(last._b) + "px"; last.appendChild(ms);
+        last.querySelector(".ck").style.display = "none";
+
+        const T0 = 1.25, RW = 2.0, TD = RW + 4 * 0.32 + 0.6, SWEEP = 1.5;
+        const END = TD + SWEEP + 2.2;
+        const tl = gsap.timeline({ paused: true });
+
+        /* ground: daylight comes up, wind on the hills */
+        FG.sway(tl, ROOT, 0, END);
+        FG.sunrise(tl, ROOT, 0, { dur: 1.2 });
+        /* daylight: the night veil clears all the way, not just the burn corner */
+        tl.to($(".fg-night"), { "--sr": 320, duration: 1.2, ease: FG.GLIDE }, 1.2);
+        tl.fromTo($(".depth"), { opacity: 0 }, { opacity: 1, duration: 1.0, ease: "power2.out" }, 0.5);
+        FG.condense(tl, $(".pane"), 0.45, { dur: 1.0, x: "0%", y: "100%", blur: 30 });
+        tl.to($(".pane"), { "--fm": 280, duration: 0.8, ease: FG.SETTLE }, 1.45);   /* frost reaches the far corner too */
+        TXT.reveal(tl, $(".eyebrow"), 0.8);
+        TXT.reveal(tl, $(".ttl"), 0.86);
+
+        /* day columns grow down, letters pour in */
+        cols.forEach((l, i) => tl.fromTo(l, { attr: { y2: GY0 } }, { attr: { y2: GY1 }, duration: 0.6, ease: FG.GLIDE }, T0 + i * 0.04));
+        TXT.block(tl, $$(".dl"), T0 + 0.1, { stagger: 0.03 });
+
+        /* rows build: label, then the bar grows */
+        rows.forEach((r, i) => {
+          const at = RW + i * 0.32;
+          TXT.reveal(tl, r.querySelector(".lb"), at);
+          tl.fromTo(r.querySelector(".bar"), { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: FG.GLIDE }, at + 0.08);
+        });
+        tl.fromTo(ms, { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1, rotation: 45, duration: 0.42, ease: FG.POP }, RW + 3 * 0.32 + 0.7);
+
+        /* today drops in and sweeps; rows behind it tick and go quiet, the current row lights */
+        tl.set($$(".ck"), { autoAlpha: 0 }, 0);
+        const td = $(".today");
+        tl.fromTo(td, { autoAlpha: 0, x: dx(0), y: -30 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: FG.POP }, TD);
+        tl.to(td, { x: dx(TODAY), duration: SWEEP, ease: FG.GLIDE }, TD + 0.35);
+        const along = (d) => TD + 0.35 + SWEEP * Math.min(1, Math.max(0, d / TODAY)) * 0.85;
+        rows.forEach((r, i) => {
+          const ck = r.querySelector(".ck"), bar = r.querySelector(".bar");
+          if (r._b <= TODAY) {
+            const at = along(r._b);
+            tl.fromTo(ck, { autoAlpha: 0, scale: 0.5, transformOrigin: "50% 50%" }, { autoAlpha: 1, scale: 1, duration: 0.35, ease: FG.POP }, at)
+              .to(bar, { opacity: 0.32, duration: 0.35, ease: "power2.inOut" }, at)
+              .to(r.querySelector(".lb"), { opacity: 0.46, duration: 0.35, ease: "power2.inOut" }, at);
+          } else if (r._a <= TODAY) {
+            const at = TD + 0.35 + SWEEP - 0.1;
+            tl.to(r.querySelector(".hl"), { opacity: 1, duration: 0.35, ease: FG.POP }, at)
+              .to(bar, { opacity: 1, duration: 0.3, ease: FG.POP }, at)
+              .to(bar.querySelector(".or"), { opacity: 1, duration: 0.35, ease: FG.POP }, at + 0.05);
+            FG.beat(tl, bar, at + 0.3, { amp: 0.5 });
+          }
+        });
+        tl.fromTo($(".pane .fg-sheen"), { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.5, ease: FG.GLIDE }, END - 1.7);
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

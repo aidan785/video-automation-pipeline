@@ -1,0 +1,307 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · STEP PROCESS
+  Four-step horizontal process on COBALT with slow sonar rings. Four numbered
+  glass circles pop in dormant along a faint track. A bright progress line
+  fills node to node with a glowing head dot; as it reaches each node the node
+  lights ACTIVE (brighter sheen, scale up, one sonar pulse) and its caps title +
+  one-line description resolve out of blur underneath. When the line moves on,
+  the finished node swaps its number for a drawn check and FOCUS-SHIFTS to
+  dormant (text to grey-lavender). The last step stays active on the hold.
+  Slots: s1-s4 (caps titles, <= 12), d1-d4 (descriptions, <= 34, wraps to 2 lines).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-step-process {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-step-process .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-step-process .track, #sanji-t1-step-process .prog {
+        position: absolute; left: 330px; top: 453px; width: 1260px; height: 4px; border-radius: 4px;
+      }
+      #sanji-t1-step-process .track, #sanji-t1-step-process .prog {
+        -webkit-mask-image: linear-gradient(90deg, transparent 0 83px, #000 83px 337px, transparent 337px 503px, #000 503px 757px, transparent 757px 923px, #000 923px 1177px, transparent 1177px);
+        mask-image: linear-gradient(90deg, transparent 0 83px, #000 83px 337px, transparent 337px 503px, #000 503px 757px, transparent 757px 923px, #000 923px 1177px, transparent 1177px);
+      }
+      #sanji-t1-step-process .track { background: rgba(255,255,255,0.16); transform-origin: 0 50%; }
+      #sanji-t1-step-process .prog {
+        background: var(--white); transform-origin: 0 50%;
+        box-shadow: 0 0 14px rgba(255,255,255,0.65), 0 0 36px rgba(150,170,255,0.45);
+      }
+      #sanji-t1-step-process .head {
+        position: absolute; left: 330px; top: 455px; width: 0; height: 0;
+      }
+      #sanji-t1-step-process .head i {
+        position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--white);
+        box-shadow: 0 0 0 8px rgba(255,255,255,0.18), 0 0 30px rgba(255,255,255,0.8);
+      }
+      #sanji-t1-step-process .g { position: absolute; box-sizing: border-box; border-radius: 50%; }
+      #sanji-t1-step-process .g > .fill, #sanji-t1-step-process .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-step-process .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-step-process .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-step-process .node { top: 380px; width: 150px; height: 150px; margin-left: -75px; }
+      #sanji-t1-step-process .node .num {
+        position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+        font-weight: var(--wt-heavy); font-size: 54px; letter-spacing: var(--track-caps);
+      }
+      #sanji-t1-step-process .node svg.chk { position: absolute; left: 41px; top: 41px; width: 68px; height: 68px; overflow: visible; }
+      #sanji-t1-step-process .pulse {
+        position: absolute; top: 455px; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.55); opacity: 0;
+      }
+      #sanji-t1-step-process .txt { position: absolute; top: 586px; width: 400px; margin-left: -200px; text-align: center; text-wrap: balance; }
+      #sanji-t1-step-process .ttl {
+        font-weight: var(--wt-heavy); font-size: 46px; line-height: 0.92; letter-spacing: var(--track-caps); text-transform: uppercase;
+      }
+      #sanji-t1-step-process .dsc {
+        margin-top: 20px; font-family: var(--font-body); font-weight: 500; font-size: 29px; line-height: 1.32;
+        letter-spacing: var(--track-ui); color: var(--white-soft);
+      }
+      #sanji-t1-step-process .ix {
+        position: absolute; top: 312px; width: 200px; margin-left: -100px; text-align: center;
+        font-family: var(--font-mono); font-size: 20px; letter-spacing: 0.08em; color: var(--white-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-step-process" data-composition-id="sanji-t1-step-process" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <div class="track"></div>
+      <div class="prog"></div>
+
+      <div class="head"><i></i></div>
+
+      <div class="pulse" style="left:330px"></div><div class="pulse" style="left:750px"></div>
+      <div class="pulse" style="left:1170px"></div><div class="pulse" style="left:1590px"></div>
+
+      <div class="ix" style="left:330px">STEP 01</div><div class="ix" style="left:750px">STEP 02</div>
+      <div class="ix" style="left:1170px">STEP 03</div><div class="ix" style="left:1590px">STEP 04</div>
+
+      <div class="g node" style="left:330px"><div class="fill"></div><div class="lit"></div><div class="num">1</div>
+        <svg class="chk" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M4.5 12.5l4.8 4.8L19.5 7"/></svg></div>
+      <div class="g node" style="left:750px"><div class="fill"></div><div class="lit"></div><div class="num">2</div>
+        <svg class="chk" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M4.5 12.5l4.8 4.8L19.5 7"/></svg></div>
+      <div class="g node" style="left:1170px"><div class="fill"></div><div class="lit"></div><div class="num">3</div>
+        <svg class="chk" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M4.5 12.5l4.8 4.8L19.5 7"/></svg></div>
+      <div class="g node" style="left:1590px"><div class="fill"></div><div class="lit"></div><div class="num">4</div>
+        <svg class="chk" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M4.5 12.5l4.8 4.8L19.5 7"/></svg></div>
+
+      <div class="txt" style="left:330px"><div class="ttl" data-slot="s1">Record</div><div class="dsc" data-slot="d1">Talk to camera in one take</div></div>
+      <div class="txt" style="left:750px"><div class="ttl" data-slot="s2">Transcribe</div><div class="dsc" data-slot="d2">Get word level timestamps</div></div>
+      <div class="txt" style="left:1170px"><div class="ttl" data-slot="s3">Cut</div><div class="dsc" data-slot="d3">Drop pauses and retakes</div></div>
+      <div class="txt" style="left:1590px"><div class="ttl" data-slot="s4">Publish</div><div class="dsc" data-slot="d4">Render and ship it</div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-step-process";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const DORM = css.getPropertyValue("--dormant").trim();
+
+        const nodes = $$(".node"), txts = $$(".txt"), pulses = $$(".pulse"), ixs = $$(".ix");
+        const X = [330, 750, 1170, 1590], SPAN = 1260;
+
+        const tl = gsap.timeline({ paused: true });
+        const T1 = 1.15, STEP = 1.3, END = T1 + 3 * STEP + 1.75;
+
+        /* sonar rings, finite */
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        const pop = (el, t) => tl.fromTo(el, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, t);
+        const blurIn = (els, t, st = 0.07) => tl.fromTo(els, { autoAlpha: 0, y: 10, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.34, ease: "expo.out", stagger: st }, t);
+
+        tl.set([...nodes, ...txts.flatMap((t) => [...t.children]), ...ixs], { autoAlpha: 0 }, 0)
+          .set($$(".chk"), { autoAlpha: 0 }, 0)
+          .set($$(".chk path"), { strokeDasharray: 1, strokeDashoffset: 1 }, 0)
+          .set($(".prog"), { clipPath: "inset(-20px 1260px -20px 0px)" }, 0)
+          .set($(".head"), { autoAlpha: 0 }, 0);
+
+        /* track draws, nodes pop in dormant, left to right */
+        tl.fromTo($(".track"), { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.inOut" }, 0.15);
+        nodes.forEach((n, i) => pop(n, 0.2 + i * 0.1));
+        tl.set($$(".num"), { opacity: 0.55 }, 0);
+        tl.set(ixs, { autoAlpha: 1 }, 0.5);
+        TXT.reveal(tl, ixs, 0.5);                          /* step labels pour in left to right */
+        tl.to(ixs, { opacity: 0.6, duration: 0.25, ease: "power2.inOut" }, 0.85);
+
+        for (let i = 0; i < 4; i++) {
+          const t = T1 + i * STEP;
+          const n = nodes[i];
+          /* progress line + head travel to node i */
+          if (i > 0) {
+            tl.to($(".head"), { autoAlpha: 1, duration: 0.12, ease: "power1.out" }, t - 0.5)
+              .to($(".head"), { autoAlpha: 0, duration: 0.18, ease: "power1.in" }, t - 0.02);
+            tl.to($(".prog"), { clipPath: `inset(-20px ${SPAN - (X[i] - X[0])}px -20px 0px)`, duration: 0.62, ease: "power3.inOut" }, t - 0.5)
+              .to($(".head"), { x: X[i] - X[0], duration: 0.62, ease: "power3.inOut" }, t - 0.5);
+            /* previous node completes: number out, check draws, dormant */
+            const p = nodes[i - 1];
+            tl.to(p.querySelector(".num"), { autoAlpha: 0, filter: "blur(6px)", scale: 0.8, duration: 0.25, ease: "power2.in" }, t - 0.5)
+              .set(p.querySelector(".chk"), { autoAlpha: 1 }, t - 0.3)
+              .to(p.querySelector(".chk path"), { strokeDashoffset: 0, duration: 0.34, ease: "power2.out" }, t - 0.3)
+              .to(p.querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, t - 0.2)
+              .to(p, { scale: 1, duration: 0.35, ease: "power2.inOut" }, t - 0.2)
+              .to(p.querySelector(".chk"), { opacity: 0.75, duration: 0.35 }, t + 0.1)
+              .to([...txts[i - 1].children, ixs[i - 1]], { color: DORM, duration: 0.35, ease: "power2.inOut" }, t - 0.2);
+          }
+          /* node i lights */
+          tl.to(n.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, t)
+            .to(n, { scale: 1.1, duration: 0.5, ease: "expo.out" }, t)
+            .to(n.querySelector(".num"), { opacity: 1, duration: 0.3 }, t)
+            .to(ixs[i], { opacity: 1, duration: 0.3 }, t)
+            .fromTo(pulses[i], { scale: 0.9, opacity: 0.7 }, { scale: 1.9, opacity: 0, duration: 1.1, ease: "power2.out" }, t + 0.02);
+          tl.set([...txts[i].children], { autoAlpha: 1 }, t + 0.12);
+          TXT.reveal(tl, [...txts[i].children], t + 0.12);
+        }
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

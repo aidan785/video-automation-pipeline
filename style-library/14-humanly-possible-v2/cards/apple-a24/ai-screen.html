@@ -1,0 +1,109 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · APPLE / A24 · ai-screen (tier1, 168 frames = 7.0 s at 24 fps)
+  Research: raw-media/hp-sampler-refs/apple-a24/ANALYSIS.md (graphic types A + B, signature moves 1-2).
+  No real screen capture of the prompt exists yet, so nothing fakes a chat UI. The AI moment is told in the
+  family's own text-field grammar: the person TYPES the prompt over real hands-on-phone footage (irregular
+  1-3 f gaps = a human typing), the AI's reply PASTES in chunks on the cream text field, and the key line is
+  selected. When a real 1:1 screen recording exists, drop it into a full-frame shot and keep the timing.
+    F1-5     picture clean
+    F6-79    prompt typed over picture, caret after it, human gaps         (mac-dorm f1212-1230, f2021-2044)
+    F48      picture cut; the half-typed prompt carries across it          (mac-dorm f966/967)
+    F79-96   caret blinks 14/10
+    F97      ONE oxblood frame (punctuation)                               (translation spec, aftersun f315)
+    F98-100  empty text field                                              (mac-dorm f1152-1156)
+    F101-118 reply pastes by chunks every 3-4 f, lines re-centre as they grow (mac-dorm f1193-1200, f1479-1520)
+    F131-137 gold selection drags left to right across the key line (7 f)  (mac-dorm_f0807_select-sweep)
+    F137-168 held selected. Hard cut out.
+  F numbers are 1-based; time = (F-1)/24. Every change is a tl.set on an exact frame.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,500;1,500&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-apple-a24-ai-screen{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --oxblood:#4B1526;--cream:#FFF0E6;--brick:#7A1E1E;--orange:#FF8A4C;--gold:#FFC145;--deep:#2C0B16;
+        font-family:"Inter Tight",sans-serif;font-weight:500;}
+      #hp2-apple-a24-ai-screen .layer{position:absolute;inset:0;opacity:0;}
+      #hp2-apple-a24-ai-screen .shot video,#hp2-apple-a24-ai-screen .shot img{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+      #hp2-apple-a24-ai-screen .punct{background:var(--oxblood);}
+      #hp2-apple-a24-ai-screen .field{position:absolute;inset:0;background:
+        radial-gradient(ellipse 520px 420px at 1920px 0px,rgba(255,255,255,1) 0%,rgba(255,255,255,.75) 38%,rgba(255,255,255,0) 100%),
+        radial-gradient(circle,rgba(44,11,22,.055) 0.9px,rgba(44,11,22,0) 1.3px) 0 0/5px 5px,
+        #FFF0E6;}
+      #hp2-apple-a24-ai-screen .prompt{position:absolute;left:44px;top:518px;font-size:44px;line-height:1;color:var(--cream);letter-spacing:-.005em;white-space:pre;}
+      #hp2-apple-a24-ai-screen .reply{position:absolute;left:0;right:0;top:432px;text-align:center;font-size:76px;line-height:112px;color:var(--deep);letter-spacing:-.015em;}
+      #hp2-apple-a24-ai-screen .reply .ln{display:block;white-space:pre;}
+      #hp2-apple-a24-ai-screen .caret{display:inline-block;width:4px;height:1.12em;margin-left:3px;vertical-align:-.2em;border-radius:2px;background:var(--orange);opacity:0;}
+      #hp2-apple-a24-ai-screen .reply .caret{width:6px;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-apple-a24-ai-screen" data-composition-id="hp2-apple-a24-ai-screen" data-start="0" data-width="1920" data-height="1080">
+      <div class="layer shot s1"><video id="ai-v1" data-slot="media" src="../../assets/footage/phone_856405.mp4" muted playsinline preload="auto" data-start="0" data-duration="1.9583" data-track-index="1" data-media-start="0.5"></video></div>
+      <div class="layer shot s2"><video id="ai-v2" data-slot="media-2" src="../../assets/footage/phone_6963836.mp4" muted playsinline preload="auto" data-start="1.9583" data-duration="2.0" data-track-index="2" data-media-start="1"></video></div>
+      <div class="layer cap"><div class="prompt"><span class="txt" data-slot="prompt">Write a friendly reminder text for tomorrow's grooms</span><span class="caret" data-tell-ok="caret"></span></div></div>
+      <div class="layer punct"></div>
+      <div class="layer card">
+        <div class="field"></div>
+        <div class="reply" data-slot="reply">
+          <span class="ln l1"><span class="c">Reply C</span><span class="c"> to confirm,</span><span class="c"> or R</span></span>
+          <span class="ln l2"><span class="c">and we'll</span><span class="c"> find a</span><span class="c"><i> new time.</i></span><span class="caret" data-tell-ok="caret"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-apple-a24-ai-screen", FPS = 24, N = 168;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const show = (F, s) => at(F, typeof s === "string" ? $1(s) : s, { opacity: 1 });
+      const hide = (F, s) => at(F, typeof s === "string" ? $1(s) : s, { opacity: 0 });
+      function chars(el) { const out = []; (function walk(n) { [...n.childNodes].forEach((c) => {
+        if (c.nodeType === 3) { const f = document.createDocumentFragment(); [...c.textContent].forEach((ch) => { const s = document.createElement("span"); s.textContent = ch; f.appendChild(s); out.push(s); }); n.replaceChild(f, c); }
+        else if (c.nodeType === 1 && !c.classList.contains("caret")) walk(c); }); })(el); return out; }
+      function blink(F0, F1, el, on = 14, off = 10) { for (let F = F0; F < F1; F += on + off) { at(F, el, { opacity: 1 }); if (F + on < F1) at(F + on, el, { opacity: 0 }); } }
+
+      tl.set($(".layer"), { opacity: 0 }, 0);
+      // ---- prompt typed over picture ----
+      show(1, ".s1"); show(1, ".cap");
+      const pc = chars($1(".prompt .txt")), pcar = $1(".prompt .caret");
+      tl.set(pc, { display: "none" }, 0);
+      const GAPS = [1, 1, 2, 1, 1, 3, 1, 1, 1, 2];                  // human: irregular, avg 1.4 f per key
+      let F = 6; at(6, pcar, { opacity: 1 });
+      pc.forEach((s, i) => { at(F, s, { display: "inline" }); F += GAPS[i % GAPS.length]; });
+      const typedEnd = F;                                           // = F79 for the default prompt
+      blink(typedEnd + 1, 97, pcar);
+      hide(48, ".s1"); show(48, ".s2");                             // cut under the typing; caption carries
+      // ---- punctuation frame, then the text field ----
+      hide(97, ".s2"); hide(97, ".cap"); show(97, ".punct");
+      hide(98, ".punct"); show(98, ".card");
+      const chunks = [...$(".reply .c")], rcar = $1(".reply .caret");
+      tl.set(chunks, { display: "none" }, 0); tl.set(rcar, { opacity: 0 }, 0);
+      [101, 104, 108, 112, 115, 118].forEach((Fc, i) => at(Fc, chunks[i], { display: "inline" }));
+      blink(118, 131, rcar);
+      // ---- selection drags left to right over both lines ----
+      const rc = chars($1(".reply")); tl.set(rc, { backgroundColor: "rgba(255,193,69,0)" }, 0);
+      const SEL = "rgba(255,193,69,.45)", L = rc.length, n = 7; let done = 0;
+      for (let i = 1; i <= n; i++) { const k = Math.ceil(L * i / n); for (let j = done; j < k; j++) at(130 + i, rc[j], { backgroundColor: SEL }); done = k; }
+      at(131, rcar, { opacity: 0 });
+      tl.set({}, {}, N / FPS);
+
+      window.__timelines[ID] = tl;
+      if (/poster/.test(location.hash)) $("video").forEach((v) => { const i = document.createElement("img"); i.src = v.getAttribute("src").replace(".mp4", ".jpg"); v.replaceWith(i); });
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

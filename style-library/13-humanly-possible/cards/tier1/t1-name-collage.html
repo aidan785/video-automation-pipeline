@@ -1,0 +1,126 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · name · COLLAGE
+  Flat collage name card. Three flat-cut photos (10 px radius, tilted -4 to 6 deg) pop onto the
+  oxblood ground 0.06 s apart, the brick name card pops over them, then one orange ring writes on
+  (stroke-dashoffset, 12 frames) around the one detail that matters. The photo plate drifts
+  1 to 1.06 through the hold; the name card and its type sit on a still layer above it.
+  Exit: mirrored 0.3 s (ring unwrites, card and photos pop out in reverse), or cut away.
+  Source: DOAC "photographed paper world" name card, rebuilt flat (references/analysis/doac.md
+  move 5 + Fit 5); ring from Patriot Act move 4.
+  Slots: label (text), name (text), role (richtext, one <em> = gold), media-1 / media-2 / media-3
+  (media: portrait, place, detail; the ring sits on media-3, move it with the .ring left/top/size).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-name-collage{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+      #hp-t1-name-collage .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      /* the plate: ground + photos, the only layer that drifts */
+      #hp-t1-name-collage .plate{position:absolute;inset:0;transform-origin:58% 50%;}
+      #hp-t1-name-collage .ph{position:absolute;}
+      #hp-t1-name-collage .ph .pi{position:relative;width:100%;height:100%;}
+      #hp-t1-name-collage .ph img{display:block;width:100%;height:100%;object-fit:cover;border-radius:var(--radius);box-shadow:0 8px 0 var(--hp-deep);}
+      #hp-t1-name-collage .ph.a{left:150px;top:96px;width:640px;height:360px;transform:rotate(-4deg);}
+      #hp-t1-name-collage .ph.b{left:1268px;top:104px;width:450px;height:600px;transform:rotate(4deg);}
+      #hp-t1-name-collage .ph.c{left:1050px;top:640px;width:560px;height:315px;transform:rotate(-2.5deg);}
+      #hp-t1-name-collage .ph.b img{object-position:50% 30%;}
+
+      /* the one orange: a hand-written ring around the phone on media-3 */
+      #hp-t1-name-collage .ring{position:absolute;left:208px;top:-6px;width:250px;height:200px;overflow:visible;pointer-events:none;}
+      #hp-t1-name-collage .ring path{fill:none;stroke:var(--hp-orange);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;}
+
+      /* the name card: still layer */
+      #hp-t1-name-collage .card{position:absolute;left:204px;top:452px;width:900px;padding:54px 64px 60px;background:var(--hp-brick);
+        border-radius:var(--radius-sm);box-shadow:0 8px 0 var(--hp-deep);transform:rotate(-1.5deg);}
+      #hp-t1-name-collage .card .ci{display:block;}
+      #hp-t1-name-collage .label{display:block;font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--hp-cream-muted);}
+      #hp-t1-name-collage .name{display:block;margin-top:20px;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:132px;line-height:.94;letter-spacing:var(--track-display);color:var(--hp-cream);}
+      #hp-t1-name-collage .role{display:block;margin-top:26px;font-weight:600;font-size:36px;line-height:1.3;letter-spacing:-.005em;color:var(--hp-cream-muted);}
+      #hp-t1-name-collage .role em{font-style:normal;color:var(--hp-gold);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-name-collage" data-composition-id="hp-t1-name-collage" data-start="0" data-width="1920" data-height="1080">
+      <div class="plate">
+        <div class="ph a"><div class="pi"><img data-slot="media-1" src="../../assets/demo/place-dana.jpg" alt="" /></div></div>
+        <div class="ph b"><div class="pi"><img data-slot="media-2" src="../../assets/demo/dana.jpg" alt="" /></div></div>
+        <div class="ph c"><div class="pi"><img data-slot="media-3" src="../../assets/demo/hands.jpg" alt="" />
+          <svg class="ring" viewBox="0 0 250 200" aria-hidden="true"><path d="M150,22 C92,10 30,40 26,96 C22,150 84,184 146,176 C204,168 236,128 228,82 C220,38 172,14 118,20 C100,22 86,28 76,34"/></svg>
+        </div></div>
+      </div>
+
+      <div class="card"><div class="ci">
+        <span class="label" data-slot="label">Meet the guest</span>
+        <span class="name" data-slot="name">Dana Ruiz</span>
+        <span class="role" data-slot="role">Dog groomer in Tulsa, <em>40 dogs</em> a week</span>
+      </div></div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-name-collage-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-name-collage-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-name-collage";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 5;
+      const OUT = DUR - 0.42;
+      const tl = gsap.timeline({ paused: true });
+
+      // plate drift (photos only; the name card never scales)
+      tl.fromTo($1(".plate"), { scale: 1 }, { scale: 1.06, duration: DUR, ease: "none" }, 0);
+
+      // photos pop, 0.06 s apart
+      const photos = Array.from($(".ph .pi"));
+      tl.fromTo(photos, { autoAlpha: 0, scale: .92, y: 12 }, { autoAlpha: 1, scale: 1, y: 0, duration: .34, ease: POP, stagger: .06 }, .12);
+
+      // name card pops, then its lines per line
+      tl.fromTo($1(".card .ci"), { autoAlpha: 0 }, { autoAlpha: 1, duration: .01 }, .38);
+      tl.fromTo($1(".card"), { autoAlpha: 0, scale: .94, y: 12 }, { autoAlpha: 1, scale: 1, y: 0, duration: .36, ease: POP }, .38);
+      const lines = [$1(".label"), $1(".name"), $1(".role")];
+      lines.forEach((el, i) => {
+        const at = parseFloat(el.dataset.at); const t = isNaN(at) ? .5 + i * .14 : at;
+        tl.fromTo(el, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .28, ease: POP }, t);
+      });
+
+      // the ring writes on in 12 frames (0.5 s at 24 fps)
+      const ring = $1(".ring path"); const L = ring.getTotalLength();
+      gsap.set(ring, { strokeDasharray: L, strokeDashoffset: L });
+      tl.fromTo(ring, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: .5, ease: "power2.inOut" }, 1.15);
+
+      // exit: mirror, 0.3 s
+      tl.to(ring, { strokeDashoffset: L, duration: .16, ease: "power2.in" }, OUT);
+      tl.to(lines.slice().reverse(), { autoAlpha: 0, y: 10, duration: .14, ease: "power2.in", stagger: .03 }, OUT + .04);
+      tl.to($1(".card"), { autoAlpha: 0, scale: .94, y: 12, duration: .16, ease: "power2.in" }, OUT + .14);
+      tl.to(photos.slice().reverse(), { autoAlpha: 0, scale: .92, y: 12, duration: .16, ease: "power2.in", stagger: .04 }, OUT + .14);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

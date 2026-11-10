@@ -1,0 +1,91 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · photo · ARCHIVE
+  The guest's personal photo, untouched: centered on oxblood with grain at ~90% frame height,
+  6 px radius, no tilt, no shadow, no frame. A slow 1 to 1.04 push lives on the photo only
+  (inside its fixed crop, so the frame edge never moves). A tracked caption sits lower-left on
+  a deep band at 70%, led by an orange 24 px dash (the frame's one orange); the year can be
+  the one gold word (<em>). Cut on, cut off: the photo lands on the first frame with a short
+  pop-and-settle, the caption band follows.
+  From Great Big Story's archive photo on paper (references/analysis/gbs-marathons.md, move 5 + Fit 5).
+  Slots: photo (media, portrait or square works best; swap the <img> src),
+         caption (richtext, Inter Tight caps, under ~40 chars, optional one <em> = gold).
+  Exit: designed to be cut away (hard cut back). No animated exit.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-photo-archive{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t1-photo-archive .bg{position:absolute;inset:-4%;will-change:transform;
+        background:radial-gradient(70% 80% at 50% 50%, var(--hp-oxblood) 0%, var(--hp-oxblood) 55%, var(--hp-deep) 125%);}
+      #hp-t1-photo-archive .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      /* photo: fixed crop, 90% frame height (972 px), portrait 3:4 */
+      #hp-t1-photo-archive .ph{position:absolute;left:50%;top:54px;width:729px;height:972px;margin-left:-364.5px;border-radius:var(--radius-sm);overflow:hidden;
+        background:var(--hp-deep);transform-origin:50% 50%;}
+      #hp-t1-photo-archive .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform-origin:50% 45%;will-change:transform;}
+
+      /* caption on a deep band, lower-left */
+      #hp-t1-photo-archive .cap{position:absolute;left:var(--margin);bottom:96px;display:flex;align-items:center;gap:18px;padding:18px 26px 19px 22px;
+        background:rgba(44,11,22,.7);border-radius:var(--radius-sm);transform-origin:0 50%;}
+      #hp-t1-photo-archive .cap i{display:block;width:24px;height:5px;border-radius:2px;background:var(--hp-orange);flex:none;}
+      #hp-t1-photo-archive .cap span{font-family:var(--font-body);font-weight:600;font-size:26px;line-height:1;letter-spacing:.2em;text-transform:uppercase;
+        color:var(--hp-cream);white-space:nowrap;}
+      #hp-t1-photo-archive .cap em{font-style:normal;color:var(--hp-gold);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-photo-archive" data-composition-id="hp-t1-photo-archive" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="ph"><img data-slot="photo" src="../../assets/demo/teacher.jpg" alt="" /></div>
+
+      <div class="cap"><i></i><span data-slot="caption">Dana, <em>2019</em>, the first shop</span></div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-photo-archive-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-photo-archive-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-photo-archive";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 5;
+      const tl = gsap.timeline({ paused: true });
+
+      // the push lives on the photo only, inside its fixed crop
+      tl.fromTo($1(".ph img"), { scale: 1 }, { scale: 1.04, duration: DUR, ease: "none" }, 0);
+      // cut on: the frame lands with a short pop-and-settle, no fade
+      tl.fromTo($1(".ph"), { scale: .97 }, { scale: 1, duration: .3, ease: POP }, 0);
+      // caption band grows from the left, then the line
+      tl.fromTo($1(".cap"), { scaleX: 0 }, { scaleX: 1, duration: .3, ease: POP }, .45);
+      tl.fromTo($1(".cap i"), { scaleX: 0 }, { scaleX: 1, duration: .22, ease: POP }, .62);
+      tl.fromTo($1(".cap span"), { autoAlpha: 0, x: -8 }, { autoAlpha: 1, x: 0, duration: .26, ease: POP }, .66);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

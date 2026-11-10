@@ -1,0 +1,158 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · stat · HIGHLIGHTER
+  The number on a highlighter block. A round tool tile pops at left, a gold block wipes
+  left to right (scaleX, 0.2 s) and the number, set in oxblood on the gold, counts up
+  with an expo-out. The unit label lands to its right in cream, led by the frame's one
+  orange dot. Oxblood ground with a slow drift and grain under still type.
+  From Colin and Samir's logo + number on a highlighter block
+  (references/analysis/colin-samir.md, signature move 2 + Fit).
+  Count-up is seek-safe: the shown value is derived from a tweened proxy on every render.
+  Exit: mirrors the entrance in 0.3 s (the block wipes back to the left); can also be cut away.
+  Slots: value (number, e.g. "12", "340m", "$1,200", "4.5"; prefix/suffix kept, decimals and
+         commas follow the slot text), unit (text, line 1 of the label), sub (text, line 2,
+         optional), media (optional tool icon/logo inside the round tile; remove the tile
+         element to drop it).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+      #hp-t1-stat-highlighter{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+
+      /* ground: oxblood with a deep falloff so the drift reads */
+      #hp-t1-stat-highlighter .bg{position:absolute;inset:-4%;will-change:transform;transform-origin:30% 50%;
+        background:radial-gradient(85% 95% at 32% 48%, var(--hp-oxblood) 0%, var(--hp-oxblood) 46%, var(--hp-deep) 100%);}
+      #hp-t1-stat-highlighter .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      #hp-t1-stat-highlighter .row{position:absolute;left:var(--margin);top:540px;transform:translateY(-50%);display:flex;align-items:center;gap:56px;}
+
+      /* round tool tile on brick */
+      #hp-t1-stat-highlighter .tile{flex:none;width:232px;height:232px;border-radius:50%;background:var(--hp-brick);
+        display:flex;align-items:center;justify-content:center;overflow:hidden;}
+      #hp-t1-stat-highlighter .tile svg{width:112px;height:112px;display:block;}
+      #hp-t1-stat-highlighter .tile img{width:100%;height:100%;object-fit:cover;display:block;}
+
+      /* the highlighter block: the frame's one gold */
+      #hp-t1-stat-highlighter .block{position:relative;flex:none;padding:22px 52px 30px 46px;}
+      #hp-t1-stat-highlighter .hl{position:absolute;inset:0;background:var(--hp-gold);border-radius:var(--radius-sm);transform-origin:0 50%;}
+      #hp-t1-stat-highlighter .num{position:relative;display:block;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;
+        font-size:184px;line-height:1;letter-spacing:var(--track-tight);color:var(--hp-oxblood);white-space:nowrap;font-variant-numeric:tabular-nums;}
+      #hp-t1-stat-highlighter .num .ghost{visibility:hidden;}
+      #hp-t1-stat-highlighter .num .val{position:absolute;left:0;top:0;}
+
+      #hp-t1-stat-highlighter .label{flex:none;padding-top:6px;}
+      #hp-t1-stat-highlighter .unit{display:flex;align-items:center;gap:18px;font-family:var(--font-body);font-weight:600;font-size:52px;line-height:1.05;
+        letter-spacing:-.01em;color:var(--hp-cream);white-space:nowrap;}
+      #hp-t1-stat-highlighter .dot{flex:none;width:18px;height:18px;border-radius:50%;background:var(--hp-orange);}
+      #hp-t1-stat-highlighter .sub{display:block;margin-top:12px;padding-left:36px;font-family:var(--font-body);font-weight:500;font-size:30px;line-height:1.2;
+        color:var(--hp-cream-muted);white-space:nowrap;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-stat-highlighter" data-composition-id="hp-t1-stat-highlighter" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="row">
+        <div class="tile" data-slot="media">
+          <!-- stand-in tool icon: a booking calendar, cream line art -->
+          <svg viewBox="0 0 112 112" fill="none" stroke="#FFF0E6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="14" y="22" width="84" height="76" rx="10"/><path d="M14 46h84M36 12v20M76 12v20M40 72l12 12 22-24"/>
+          </svg>
+        </div>
+        <div class="block">
+          <i class="hl"></i>
+          <span class="num"><span class="val" data-slot="value">12</span></span>
+        </div>
+        <div class="label">
+          <span class="unit"><i class="dot"></i><span data-slot="unit">hours back</span></span>
+          <span class="sub" data-slot="sub">every week, at Dana's grooming shop</span>
+        </div>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-stat-highlighter-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-stat-highlighter-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-stat-highlighter";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 5;
+      const OUT = DUR - .55;
+      const tl = gsap.timeline({ paused: true });
+
+      // number: parse the slot ("$1,200", "340m", "4.5"), size the block to the final value with a ghost
+      function parseNum(str) {
+        const m = String(str).trim().match(/^(\D*?)(\d[\d,]*(?:\.\d+)?)(.*)$/);
+        if (!m) return null;
+        return { pre: m[1], val: parseFloat(m[2].replace(/,/g, "")), dec: (m[2].split(".")[1] || "").length, comma: m[2].indexOf(",") >= 0, suf: m[3] };
+      }
+      function fmt(p, v) {
+        let s = v.toFixed(p.dec);
+        if (p.comma) { const parts = s.split("."); s = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : ""); }
+        return p.pre + s + p.suf;
+      }
+      const val = $1(".val");
+      const finalText = val.textContent.trim();
+      const P = parseNum(finalText);
+      const ghost = document.createElement("span"); ghost.className = "ghost"; ghost.textContent = finalText;
+      $1(".num").insertBefore(ghost, val);
+      const proxy = { v: 0 };
+      const paint = () => { if (P) val.textContent = fmt(P, proxy.v); };
+
+      const tile = $1(".tile");
+      const sub = $1(".sub");
+      if (sub && !sub.textContent.trim()) sub.remove();
+
+      // ground drift (background layer only; type never scales)
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.05, duration: DUR, ease: "none" }, 0);
+
+      // 1. tool tile pops
+      if (tile) tl.fromTo(tile, { scale: .92, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .3, ease: POP }, .1);
+      // 2. the gold block wipes left to right
+      tl.fromTo($1(".hl"), { scaleX: 0 }, { scaleX: 1, duration: .2, ease: POP }, .16);
+      // 3. the number counts up on it (expo-out), visible as the wipe passes
+      tl.fromTo($1(".num"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: .2, ease: POP }, .2);
+      if (P) tl.fromTo(proxy, { v: 0 }, { v: P.val, duration: 1.35, ease: "expo.out", onUpdate: paint }, .2);
+      // 4. unit label lands to the right
+      tl.fromTo($1(".unit"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, .6);
+      if (sub && sub.isConnected) tl.fromTo(sub, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, .68);
+
+      // exit: mirror. label drops out, number + block wipe back to the left, tile pops out
+      tl.to([sub && sub.isConnected ? sub : null, $1(".unit")].filter(Boolean), { autoAlpha: 0, y: 8, duration: .18, ease: "power2.in", stagger: .03 }, OUT);
+      tl.to($1(".num"), { clipPath: "inset(0 100% 0 0)", duration: .2, ease: "power2.in" }, OUT + .1);
+      tl.to($1(".hl"), { scaleX: 0, duration: .2, ease: "power2.in" }, OUT + .14);
+      if (tile) tl.to(tile, { scale: .92, autoAlpha: 0, duration: .18, ease: "power2.in" }, OUT + .3);
+      tl.set({}, {}, DUR);
+
+      // grain: deterministic seed stepped at 12 fps
+      const turb = $1(".turb");
+      const grain = () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97);
+      tl.eventCallback("onUpdate", grain);
+      // seek safety: every render (seek, totalTime, parent-driven) repaints the number from the proxy
+      const _render = tl.render;
+      tl.render = function () { const r = _render.apply(this, arguments); paint(); grain(); return r; };
+      paint();
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); paint(); grain(); }
+    </script>
+  </body>
+</html>

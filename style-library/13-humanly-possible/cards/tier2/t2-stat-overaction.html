@@ -1,0 +1,114 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · stat · OVERACTION
+  Rolling counter over a locked-off shot. A huge cream numeral on the empty side of frame
+  (default right, anchored to the right safe margin; data-side="left" flips it) counts 0 to N
+  in about 2.3 s with a hard ease-out, and on the landing frame the settled value flips to gold
+  with a 104 to 100% settle over 6 frames. Optional tiny unit under it, led by a short orange
+  dash (the frame's one orange). A soft deep scrim on that side keeps it legible on bright
+  footage. Transparent: only the card paints; never over the face.
+  From Great Big Story's rolling counter over action (references/analysis/gbs-marathons.md,
+  signature move 3 + Fit). Use only over a locked shot; otherwise prefer a tier-1 stat.
+  Seek-safe: the count is derived from a tweened proxy on every render.
+  Exit: designed to be cut away (as in the source); a 0.25 s exit is included at the end of DUR.
+  Slots: value (number, e.g. "10,000", "40", "$900"; prefix/suffix kept), unit (text, optional).
+  Root attribute data-side="right|left".
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-stat-overaction{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t2-stat-overaction .scrim{position:absolute;top:0;bottom:0;right:0;width:1100px;pointer-events:none;
+        background:radial-gradient(62% 58% at 78% 54%, rgba(44,11,22,.6) 0%, rgba(44,11,22,.3) 48%, rgba(44,11,22,0) 100%);}
+      #hp-t2-stat-overaction[data-side="left"] .scrim{right:auto;left:0;
+        background:radial-gradient(62% 58% at 22% 54%, rgba(44,11,22,.6) 0%, rgba(44,11,22,.3) 48%, rgba(44,11,22,0) 100%);}
+
+      #hp-t2-stat-overaction .unit-wrap{position:absolute;right:var(--margin);top:410px;text-align:right;}
+      #hp-t2-stat-overaction[data-side="left"] .unit-wrap{right:auto;left:var(--margin);text-align:left;}
+      #hp-t2-stat-overaction .num{display:block;font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:224px;line-height:.9;
+        letter-spacing:var(--track-tight);color:var(--hp-cream);white-space:nowrap;font-variant-numeric:tabular-nums;transform-origin:100% 60%;}
+      #hp-t2-stat-overaction[data-side="left"] .num{transform-origin:0% 60%;}
+      #hp-t2-stat-overaction .unit{display:inline-flex;align-items:center;gap:14px;margin-top:22px;font-family:var(--font-body);font-weight:600;font-size:24px;line-height:1;
+        letter-spacing:.18em;text-transform:uppercase;color:var(--hp-cream);white-space:nowrap;}
+      #hp-t2-stat-overaction[data-side="left"] .unit{padding-left:8px;}
+      #hp-t2-stat-overaction .dash{flex:none;width:40px;height:6px;border-radius:3px;background:var(--hp-orange);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-stat-overaction" data-composition-id="hp-t2-stat-overaction" data-start="0" data-width="1920" data-height="1080" data-side="right">
+      <div class="scrim"></div>
+      <div class="unit-wrap">
+        <span class="num" data-slot="value">1,200</span>
+        <span class="unit"><i class="dash"></i><span data-slot="unit">Order texts answered</span></span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-stat-overaction";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const F = 1 / 24;
+      const DUR = 4.6;
+      const OUT = DUR - .3;
+      const tl = gsap.timeline({ paused: true });
+
+      function parseNum(str) {
+        const m = String(str).trim().match(/^(\D*?)(\d[\d,]*(?:\.\d+)?)(.*)$/);
+        if (!m) return null;
+        return { pre: m[1], val: parseFloat(m[2].replace(/,/g, "")), dec: (m[2].split(".")[1] || "").length, comma: m[2].indexOf(",") >= 0, suf: m[3] };
+      }
+      function fmt(p, v) {
+        let s = v.toFixed(p.dec);
+        if (p.comma) { const parts = s.split("."); s = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : ""); }
+        return p.pre + s + p.suf;
+      }
+      const num = $1(".num");
+      const P = parseNum(num.textContent);
+      const proxy = { v: 0 };
+      const paint = () => { if (P) num.textContent = fmt(P, proxy.v); };
+      const unitTxt = $1(".unit [data-slot]");
+      const unit = $1(".unit");
+      if (!unitTxt.textContent.trim()) unit.remove();
+
+      // hard ease-out: the last few percent of the value take the last ~30% of the time
+      const T_COUNT = .15, D_COUNT = 2.3, EASE = "power3.out";
+      let tLand = T_COUNT + D_COUNT;
+      if (P) {
+        const E = gsap.parseEase(EASE), target = fmt(P, P.val);
+        for (let i = 0; i <= 480; i++) { if (fmt(P, P.val * E(i / 480)) === target) { tLand = T_COUNT + D_COUNT * i / 480; break; } }
+      }
+
+      tl.fromTo($1(".scrim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: .3, ease: "power1.out" }, 0);
+      tl.fromTo(num, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: .25, ease: POP }, T_COUNT - .05);
+      if (P) tl.fromTo(proxy, { v: 0 }, { v: P.val, duration: D_COUNT, ease: EASE, onUpdate: paint }, T_COUNT);
+      if (unit.isConnected) tl.fromTo(unit, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .3, ease: POP }, .4);
+      // landing frame: the value turns gold and settles 104 to 100% over 6 frames
+      tl.set(num, { color: "#FFC145", scale: 1.04 }, tLand);
+      tl.to(num, { scale: 1, duration: 6 * F, ease: POP }, tLand);
+
+      // exit (usually a cut)
+      tl.to([unit.isConnected ? unit : null, num].filter(Boolean), { autoAlpha: 0, y: 8, duration: .18, ease: "power2.in", stagger: .03 }, OUT);
+      tl.to($1(".scrim"), { autoAlpha: 0, duration: .22, ease: "power1.in" }, OUT + .04);
+      tl.set({}, {}, DUR);
+
+      const _render = tl.render;
+      tl.render = function () { const r = _render.apply(this, arguments); paint(); return r; };
+      paint();
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); paint(); }
+    </script>
+  </body>
+</html>

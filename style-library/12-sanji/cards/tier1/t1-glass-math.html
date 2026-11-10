@@ -1,0 +1,321 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · stat · GLASS MATH
+  The receipt. A glass card with icon badge + title pops, then GROWS row by
+  row: each time a line item is added the glass extends downward (and the
+  stack re-centers vertically), a hairline divider draws between rows, the
+  icon + label blur in and the right-aligned value resolves from dim and
+  blurred to sharp white. A brighter rule draws above the total, the label
+  resolves and the hero number counts up with a soft white bloom behind it.
+  Finally a second glass bar pops underneath (stack shifts up to make room):
+  hourglass badge + duration, and a two-segment progress bar whose fill sweeps.
+  Slots: title (<=18), row1Label..row3Label (<=22), row1Value..row3Value
+  (<=8, use hyphen-minus or the minus sign), totalLabel (<=10), total
+  (numeric, <=6, $ is added), time (<=8), seg1 (<=12), seg2 (<=12).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-glass-math {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-glass-math .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-glass-math .g { position: absolute; box-sizing: border-box; border-radius: var(--r-card); }
+      #sanji-t1-glass-math .g > .fill, #sanji-t1-glass-math .g > .lit { position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box; }
+      #sanji-t1-glass-math .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-glass-math .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-glass-math .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-glass-math .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-glass-math .card { left: 260px; top: 435px; width: 1400px; height: 210px; }
+      #sanji-t1-glass-math .card .tb { left: 50px; top: 50px; width: 112px; height: 112px; }
+      #sanji-t1-glass-math .card .ttl { position: absolute; left: 192px; top: 50px; height: 112px; display: flex; align-items: center; font-weight: var(--wt-bold); font-size: 58px; letter-spacing: var(--track-ui); white-space: nowrap; }
+      #sanji-t1-glass-math .row { position: absolute; left: 0; right: 0; height: 100px; }
+      #sanji-t1-glass-math .row .badge { left: 75px; top: 19px; width: 62px; height: 62px; }
+      #sanji-t1-glass-math .row .lab { position: absolute; left: 192px; top: 0; height: 100px; display: flex; align-items: center; font-weight: var(--wt-bold); font-size: 44px; letter-spacing: var(--track-ui); white-space: nowrap; }
+      #sanji-t1-glass-math .row .v { position: absolute; right: 78px; top: 0; height: 100px; display: flex; align-items: center; font-weight: var(--wt-heavy); font-size: 66px; letter-spacing: -0.02em; white-space: nowrap; }
+      #sanji-t1-glass-math .div { position: absolute; left: 50px; right: 50px; height: 1.5px; background: rgba(255,255,255,0.22); transform-origin: 0 50%; }
+      #sanji-t1-glass-math .div.sum { height: 2.5px; background: rgba(255,255,255,0.55); box-shadow: 0 0 10px rgba(255,255,255,0.25); }
+      #sanji-t1-glass-math .tl { position: absolute; left: 192px; top: 530px; height: 80px; display: flex; align-items: center; font-weight: var(--wt-bold); font-size: 52px; letter-spacing: var(--track-ui); }
+      #sanji-t1-glass-math .bloom { position: absolute; right: -40px; top: 470px; width: 720px; height: 240px; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,0.26), rgba(255,255,255,0.09) 55%, rgba(255,255,255,0)); opacity: 0; }
+      #sanji-t1-glass-math .tot { position: absolute; right: 70px; top: 500px; height: 170px; display: flex; align-items: center; font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: var(--size-hero); letter-spacing: -0.03em; line-height: 1; white-space: nowrap; text-shadow: 0 0 40px rgba(255,255,255,0.25); }
+
+      #sanji-t1-glass-math .bar { left: 260px; top: 835px; width: 1400px; height: 150px; border-radius: 68px; }
+      #sanji-t1-glass-math .bar .badge { left: 62px; top: 30px; width: 90px; height: 90px; }
+      #sanji-t1-glass-math .bar .time { position: absolute; left: 192px; top: 0; height: 150px; display: flex; align-items: center; font-weight: var(--wt-bold); font-size: 68px; letter-spacing: var(--track-ui); white-space: nowrap; opacity: 0.92; }
+      #sanji-t1-glass-math .sl { position: absolute; top: 22px; font-weight: var(--wt-bold); font-size: 31px; letter-spacing: var(--track-ui); white-space: nowrap; }
+      #sanji-t1-glass-math .sl.a { left: 625px; }
+      #sanji-t1-glass-math .sl.b { right: 76px; color: var(--dormant); }
+      #sanji-t1-glass-math .seg { position: absolute; top: 72px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.12); overflow: hidden; }
+      #sanji-t1-glass-math .seg.a { left: 620px; width: 558px; }
+      #sanji-t1-glass-math .seg.b { left: 1188px; width: 136px; }
+      #sanji-t1-glass-math .seg i { position: absolute; inset: 0; border-radius: 20px; transform-origin: 0 50%; transform: scaleX(0); }
+      #sanji-t1-glass-math .seg.a i { background: linear-gradient(180deg, rgba(222,225,255,0.92), rgba(196,200,250,0.86)); box-shadow: 0 0 18px rgba(255,255,255,0.35); }
+      #sanji-t1-glass-math .seg.b i { background: rgba(255,255,255,0.22); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-glass-math" data-composition-id="sanji-t1-glass-math" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <div class="g card"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge tb"><svg width="52" height="52" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M5 2h14v20l-2.33-1.5L14.33 22 12 20.5 9.67 22l-2.34-1.5L5 22z"/><path d="M8.5 7.5h7M8.5 11h7M8.5 14.5h4" stroke="#3A46E8" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+        <div class="ttl" data-slot="title">The math</div>
+
+        <div class="row" style="top:182px">
+          <div class="badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></div>
+          <div class="lab" data-slot="row1Label">Client paid</div><div class="v" data-slot="row1Value">+$1,000</div></div>
+        <div class="div" style="top:282px"></div>
+        <div class="row" style="top:282px">
+          <div class="badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h14l-3.5-3.5M20 15H6l3.5 3.5"/></svg></div>
+          <div class="lab" data-slot="row2Label">Software</div><div class="v" data-slot="row2Value">−$20</div></div>
+        <div class="div" style="top:382px"></div>
+        <div class="row" style="top:382px">
+          <div class="badge"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18"/><circle cx="7.5" cy="7.5" r="2.3" fill="#FFFFFF" stroke="none"/><circle cx="16.5" cy="16.5" r="2.3" fill="#FFFFFF" stroke="none"/></svg></div>
+          <div class="lab" data-slot="row3Label">Platform fee</div><div class="v" data-slot="row3Value">−$100</div></div>
+        <div class="div sum" style="top:482px"></div>
+        <div class="tl" data-slot="totalLabel">I kept</div>
+        <div class="bloom"></div>
+        <div class="tot">$<span class="tn" data-slot="total">880</span></div>
+      </div></div>
+
+      <div class="g bar"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="38" height="38" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M6 2h12v2h-1v3.2c0 1.6-.9 3-2.3 3.8L13 12l1.7 1c1.4.8 2.3 2.2 2.3 3.8V20h1v2H6v-2h1v-3.2c0-1.6.9-3 2.3-3.8L11 12l-1.7-1C7.9 10.2 7 8.8 7 7.2V4H6z"/></svg></div>
+        <div class="time" data-slot="time">&lt; 1 day</div>
+        <div class="sl a" data-slot="seg1">Storyboard</div>
+        <div class="sl b" data-slot="seg2">Generating</div>
+        <div class="seg a"><i></i></div><div class="seg b"><i></i></div>
+      </div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-glass-math";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre");
+
+        /* total count-up value */
+        const tn = $(".tn");
+        const rawT = tn.textContent.trim();
+        const commas = rawT.includes(",");
+        const TOTAL = parseFloat(rawT.replace(/[^0-9.]/g, "")) || 0;
+        const fmt = (v) => { const r = Math.round(v); return commas ? r.toLocaleString("en-US") : String(r); };
+        tn.textContent = fmt(0);
+
+        /* flex containers: wrap their text in one inline box so the preset's word boxes keep their spaces */
+        const inl = (el) => { const s = document.createElement("span"); while (el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return s; };
+        const tl = gsap.timeline({ paused: true });
+        const R0 = 0.75, RSTEP = 0.72;
+        const TT = R0 + 3 * RSTEP;          /* total row */
+        const TB = TT + 1.35;                /* bottom bar */
+        const END = TB + 1.6 + 1.3;
+
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) { tl.set(r, { opacity: 0 }, 0); return; }
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        const pop = (el, t) => tl.fromTo(el, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, t);
+        const blurIn = (els, t, st = 0.06) => tl.fromTo(els, { autoAlpha: 0, y: 8, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", stagger: st }, t);
+        const resolve = (el, t) => tl.fromTo(el, { autoAlpha: 0.0, filter: "blur(12px)", color: PRE }, { autoAlpha: 1, filter: "blur(0px)", color: WHITE, duration: 0.5, ease: "expo.out" }, t);
+
+        const card = $(".card"), bar = $(".bar");
+        const rows = $$(".row"), divs = $$(".div");
+        const H = [210, 314, 414, 514, 700];
+        const top = (h, extra = 0) => (1080 - h - extra) / 2;
+        const grow = (k, t) => tl.to(card, { height: H[k], top: top(H[k]), duration: 0.48, ease: "power3.inOut" }, t);
+
+        tl.set([card, bar, ...rows, ...divs, $(".tot")], { autoAlpha: 0 }, 0)
+          .set(card, { height: H[0], top: top(H[0]) }, 0);
+
+        /* 1. card + title */
+        pop(card, 0.15);
+        tl.to(card.querySelector(".lit"), { opacity: 0.6, duration: 0.45, ease: "power2.out" }, 0.25);
+        TXT.block(tl, $(".tb"), 0.28);
+        TXT.reveal(tl, inl($(".ttl")), 0.36);
+
+        /* 2. rows: glass grows, divider draws, icon + label blur in, value resolves */
+        rows.forEach((r, i) => {
+          const t = R0 + i * RSTEP;
+          grow(i + 1, t);
+          if (i > 0) tl.fromTo(divs[i - 1], { autoAlpha: 1, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 0.06);
+          tl.set(r, { autoAlpha: 1 }, t + 0.12);
+          TXT.block(tl, r.querySelector(".badge"), t + 0.14);
+          TXT.reveal(tl, inl(r.querySelector(".lab")), t + 0.2);
+          TXT.reveal(tl, inl(r.querySelector(".v")), t + 0.3);
+        });
+
+        /* 3. total: brighter rule, label, count-up with bloom */
+        grow(4, TT);
+        tl.fromTo(divs[2], { autoAlpha: 1, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.55, ease: "power2.inOut" }, TT + 0.06);
+        TXT.reveal(tl, inl($(".tl")), TT + 0.24);
+        tl.fromTo($(".tot"), { autoAlpha: 0, filter: "blur(14px)", y: 14 }, { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: 0.5, ease: "expo.out" }, TT + 0.3);
+        const px = { v: 0 };
+        tl.fromTo(px, { v: 0 }, { v: TOTAL, duration: 0.95, ease: "power2.out", onUpdate: () => { tn.textContent = fmt(px.v); } }, TT + 0.3);
+        tl.fromTo($(".bloom"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }, TT + 1.0);
+
+        /* 4. bottom bar: stack shifts up, bar pops, segments sweep */
+        tl.to(card, { top: top(H[4], 190), duration: 0.55, ease: "power3.inOut" }, TB);
+        tl.set(bar, { top: top(H[4], 190) + H[4] + 40 }, 0);
+        tl.to(card.querySelector(".lit"), { opacity: 0.4, duration: 0.4, ease: "power2.inOut" }, TB + 0.3);
+        pop(bar, TB + 0.22);
+        tl.to(bar.querySelector(".lit"), { opacity: 0.8, duration: 0.45, ease: "power2.out" }, TB + 0.3);
+        TXT.block(tl, bar.querySelector(".badge"), TB + 0.34);
+        TXT.reveal(tl, inl($(".time")), TB + 0.4);
+        TXT.reveal(tl, [$(".sl.a"), $(".sl.b")], TB + 0.5);
+        TXT.block(tl, [$(".seg.a"), $(".seg.b")], TB + 0.58, { stagger: 0.06 });
+        tl.to($(".seg.a i"), { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, TB + 0.7)
+          .to($(".seg.b i"), { scaleX: 1, duration: 0.4, ease: "power2.out" }, TB + 1.45);
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

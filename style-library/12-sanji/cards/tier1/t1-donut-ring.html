@@ -1,0 +1,275 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · stat · DONUT RING  (EMBER canvas)
+  True black lit by breathing orange corner light + grain. A thin translucent
+  track ring draws on, then the progress arc fills clockwise to the percent
+  with a white-hot glowing head; a slow dashed tick ring turns outside it. The
+  centre number counts up HOT (ember glow) and cools to warm white when it
+  lands, with a bloom on the ring. A caps label resolves under the number and
+  three glow chips pop below, cooling from hot rim to plain.
+  Slots: value (number with optional suffix, e.g. 72%, <=4), label (<=18),
+  chip1..chip3 (<=16).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-donut-ring {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t1-donut-ring .warm { position: absolute; inset: 0; background: var(--ember-corners); }
+      #sanji-t1-donut-ring .vig { position: absolute; inset: 0; background: var(--vignette-dark); opacity: 0.55; }
+      #sanji-t1-donut-ring .under { position: absolute; left: 960px; top: 440px; width: 900px; height: 900px; margin: -450px 0 0 -450px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--ember-rgb),0.22) 0%, rgba(103,39,13,0.12) 40%, rgba(3,1,0,0) 66%); opacity: 0; }
+      #sanji-t1-donut-ring svg.ring { position: absolute; left: 0; top: 0; overflow: visible; }
+      #sanji-t1-donut-ring .head { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+      #sanji-t1-donut-ring .head .glow { position: absolute; left: -70px; top: -70px; width: 140px; height: 140px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,230,170,0.95) 0%, rgba(255,179,71,0.7) 22%, rgba(var(--ember-rgb),0.3) 50%, rgba(255,122,26,0) 72%); filter: blur(4px); }
+      #sanji-t1-donut-ring .head .core { position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; border-radius: 50%; background: var(--white); box-shadow: 0 0 18px rgba(255,220,160,0.9); }
+      #sanji-t1-donut-ring .num { position: absolute; left: 560px; width: 800px; top: 312px; text-align: center; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 200px; line-height: 1; letter-spacing: var(--track-tight); }
+      #sanji-t1-donut-ring .num .u { font-size: 96px; margin-left: 6px; vertical-align: 0.52em; letter-spacing: 0; }
+      #sanji-t1-donut-ring .lab { position: absolute; left: 560px; width: 800px; top: 530px; text-align: center; white-space: nowrap;
+        font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 34px; letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--white-soft); }
+      #sanji-t1-donut-ring .chips { position: absolute; left: 0; right: 0; top: 836px; display: flex; justify-content: center; gap: 28px; }
+      #sanji-t1-donut-ring .chip { height: 84px; padding: 0 36px 0 18px; border-radius: var(--r-pill); box-sizing: border-box; display: flex; align-items: center; gap: 16px;
+        background: var(--chip-fill); border: var(--rim) solid var(--chip-rim); font-weight: var(--wt-ui); font-size: 32px; letter-spacing: var(--track-ui); color: #EFE7E1; white-space: nowrap; }
+      #sanji-t1-donut-ring .chip .dt { width: 48px; height: 48px; border-radius: 50%; background: rgba(var(--ember-rgb),0.16); border: var(--rim) solid rgba(var(--ember-rgb),0.5);
+        display: flex; align-items: center; justify-content: center; }
+      #sanji-t1-donut-ring .grain { position: absolute; inset: 0; background: var(--grain); opacity: 0.6; mix-blend-mode: overlay; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-donut-ring" data-composition-id="sanji-t1-donut-ring" data-start="0" data-width="1920" data-height="1080">
+      <div class="warm"></div>
+      <div class="vig"></div>
+      <div class="under"></div>
+      <svg class="ring" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+        <defs>
+          <linearGradient id="donut-arc" x1="700" y1="200" x2="1220" y2="700" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFB347"/><stop offset="0.55" stop-color="#FF7A1A"/><stop offset="1" stop-color="#C44A12"/>
+          </linearGradient>
+        </defs>
+        <circle class="ticks" cx="960" cy="440" r="322" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2" stroke-dasharray="2 14" />
+        <circle class="track" cx="960" cy="440" r="270" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="30" />
+        <circle class="hair" cx="960" cy="440" r="238" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="1.5" />
+        <circle class="arcglow" cx="960" cy="440" r="270" stroke="url(#donut-arc)" stroke-width="44" stroke-linecap="round" transform="rotate(-90 960 440)" opacity="0.35" style="filter: blur(14px)" />
+        <circle class="arc" cx="960" cy="440" r="270" stroke="url(#donut-arc)" stroke-width="30" stroke-linecap="round" transform="rotate(-90 960 440)" />
+      </svg>
+      <div class="head"><div class="glow"></div><div class="core"></div></div>
+      <div class="num"><span class="n" data-slot="value">72%</span></div>
+      <div class="lab" data-slot="label">Clients who rebook</div>
+      <div class="chips">
+        <div class="chip"><span class="dt"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FF7A1A"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><span data-slot="chip1">Faster edits</span></div>
+        <div class="chip"><span class="dt"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FF7A1A"><path d="M2 4.5c2.8-.9 6-.6 9 1.2V20c-3-1.6-6.2-1.9-9-1z"/><path d="M22 4.5c-2.8-.9-6-.6-9 1.2V20c3-1.6 6.2-1.9 9-1z"/></svg></span><span data-slot="chip2">Clear story</span></div>
+        <div class="chip"><span class="dt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span data-slot="chip3">Fewer revisions</span></div>
+      </div>
+      <div class="grain"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-donut-ring";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), HOT = tok("--ember-hot"), CHIPGLOW = tok("--chip-glow");
+
+        /* value: number + unit split, unit rendered smaller */
+        const nEl = $(".num .n");
+        const raw = nEl.textContent.trim();
+        const m = raw.match(/^([^0-9]*)([0-9]+(?:\.[0-9]+)?)(.*)$/) || ["", "", "0", ""];
+        const dec = (m[2].split(".")[1] || "").length, TARGET = parseFloat(m[2]);
+        const unit = m[3].trim();
+        const PCT = Math.max(0, Math.min(1, (unit === "%" || unit === "") ? TARGET / 100 : 1));
+        nEl.innerHTML = m[1] + '<span class="d">0</span>' + (unit ? '<span class="u">' + unit + "</span>" : "");
+        const dEl = nEl.querySelector(".d");
+        const setN = (v) => { dEl.textContent = v.toFixed(dec); };
+
+        const CX = 960, CY = 440, R = 270, C = 2 * Math.PI * R;
+        const arc = $(".arc"), glow = $(".arcglow"), head = $(".head");
+        const track = $(".track");
+        track.style.strokeDasharray = C; track.style.strokeDashoffset = C;
+        const P = { p: 0 };
+        const draw = () => {
+          const off = C * (1 - P.p * PCT);
+          arc.style.strokeDasharray = C; arc.style.strokeDashoffset = off;
+          glow.style.strokeDasharray = C; glow.style.strokeDashoffset = off;
+          const a = -Math.PI / 2 + 2 * Math.PI * P.p * PCT;
+          gsap.set(head, { x: CX + R * Math.cos(a), y: CY + R * Math.sin(a) });
+          setN(TARGET * P.p);
+        };
+        draw();
+
+        const tl = gsap.timeline({ paused: true });
+        const T_FILL = 0.85, FILL = 1.7, T_LAND = T_FILL + FILL, T_CHIPS = T_LAND + 0.35, END = 6.6;
+
+        /* canvas */
+        tl.fromTo($(".warm"), { opacity: 0 }, { opacity: 0.6, duration: 0.8, ease: "power2.out" }, 0);
+        tl.to($(".warm"), { keyframes: [{ opacity: 1, duration: (END - 0.8) / 2, ease: "sine.inOut" }, { opacity: 0.7, duration: (END - 0.8) / 2, ease: "sine.inOut" }] }, 0.8);
+        tl.fromTo($(".ticks"), { autoAlpha: 0, rotation: -30, svgOrigin: "960 440" }, { autoAlpha: 1, rotation: 0, duration: 1.0, ease: "expo.out" }, 0.1);
+        tl.to($(".ticks"), { rotation: 24, svgOrigin: "960 440", duration: END - 1.1, ease: "sine.inOut" }, 1.1);
+        tl.fromTo(track, { strokeDashoffset: C }, { strokeDashoffset: 0, duration: 0.9, ease: "power3.inOut" }, 0.15);
+        tl.fromTo($(".hair"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, 0.4);
+
+        /* centre number resolves hot */
+        tl.fromTo($(".num"), { autoAlpha: 0, scale: 0.92, filter: "blur(14px)", color: HOT, textShadow: "0 0 40px rgba(255,122,26,0.9), 0 0 90px rgba(255,122,26,0.5)" },
+          { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 0.6);
+        TXT.reveal(tl, $(".lab"), 0.9);
+
+        /* the fill + count share one proxy */
+        tl.fromTo(head, { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1, duration: 0.25, ease: "power2.out" }, T_FILL);
+        tl.fromTo(P, { p: 0 }, { p: 1, duration: FILL, ease: "power2.inOut", onUpdate: draw, immediateRender: false }, T_FILL);
+
+        /* land: number cools, ring blooms, head settles */
+        tl.to($(".num"), { color: WHITE, textShadow: "0 0 30px rgba(255,200,150,0.25), 0 0 0px rgba(255,122,26,0)", duration: 0.55, ease: "power2.out" }, T_LAND);
+        tl.fromTo(glow, { opacity: 0.35 }, { keyframes: [{ opacity: 0.9, duration: 0.2, ease: "power2.out" }, { opacity: 0.4, duration: 0.8, ease: "power2.inOut" }] }, T_LAND - 0.05);
+        tl.fromTo($(".under"), { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, T_LAND - 0.05);
+        tl.to(head.querySelector(".glow"), { keyframes: [{ scale: 1.5, duration: 0.2, ease: "power2.out" }, { scale: 0.75, opacity: 0.75, duration: 0.7, ease: "power2.inOut" }] }, T_LAND - 0.05);
+
+        /* chips pop hot, then cool */
+        $$(".chip").forEach((c, i) => {
+          const t = T_CHIPS + i * 0.16;
+          tl.set(c, { boxShadow: CHIPGLOW }, 0);
+          TXT.block(tl, c, t);
+          tl.to(c, { boxShadow: "0 0 0 0px rgba(255,140,50,0), 0 0 0px rgba(255,122,26,0), 0 0 0px rgba(255,122,26,0)", duration: 0.6, ease: "power2.inOut" }, t + 0.6);
+        });
+        tl.set({}, {}, END);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

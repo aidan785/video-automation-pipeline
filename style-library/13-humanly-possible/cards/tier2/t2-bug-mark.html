@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · bug · MARK
+  The corner bug: the HP mark (inline SVG, cream at 85%) about 64 px tall, top-right inside the safe
+  margin. It pops in, holds for the whole segment, and yields to tier-1 cards: at the hide time it
+  pops out in 0.2 s, at the show time it pops back. No orange, no gold. A faint deep corner scrim
+  travels with it so it holds over bright sky.
+  From Great Big Story, "the bug yields to titles" (references/analysis/gbs-memory.md, gbs-marathons.md).
+  Timing: data-hide-at / data-show-at on .bug (seconds from beat start, default 12 / 18). Several
+  windows: space-separated lists, e.g. data-hide-at="12 40" data-show-at="18 46".
+  Exit: 0.2 s pop-out at the end of DUR, or cut away.
+  Slots: none.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-bug-mark{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);}
+
+      /* soft deep shadow plate (not a glow) so the cream mark holds over bright sky */
+      #hp-t2-bug-mark .scrim{position:absolute;top:0;right:0;width:720px;height:420px;pointer-events:none;
+        background:radial-gradient(70% 78% at 100% 0%, rgba(44,11,22,.5) 0%, rgba(44,11,22,.26) 48%, rgba(44,11,22,0) 100%);}
+      #hp-t2-bug-mark .bug{position:absolute;top:var(--margin-y);right:var(--margin);height:64px;opacity:.85;}
+      #hp-t2-bug-mark .m{display:block;height:64px;transform-origin:50% 50%;}
+      #hp-t2-bug-mark .m svg{display:block;height:64px;width:auto;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-bug-mark" data-composition-id="hp-t2-bug-mark" data-start="0" data-width="1920" data-height="1080">
+      <div class="scrim"></div>
+      <div class="bug" data-hide-at="12" data-show-at="18">
+        <span class="m">
+          <svg viewBox="231 201 426 486" aria-hidden="true"><g fill="#FFF0E6"><path fill-rule="evenodd" d="M231,215 A14,14 0 0 1 245,201 L643,201 A14,14 0 0 1 657,215 L657,613 A14,14 0 0 1 643,627 L481,627 A14,14 0 0 0 467,641 L467,673 A14,14 0 0 1 453,687 L245,687 A14,14 0 0 1 231,673 Z M275,259 A14,14 0 0 1 289,245 L599,245 A14,14 0 0 1 613,259 L613,569 A14,14 0 0 1 599,583 L437,583 A14,14 0 0 0 423,597 L423,629 A14,14 0 0 1 409,643 L289,643 A14,14 0 0 1 275,629 Z"/><path d="M303,287 A14,14 0 0 1 317,273 L381,273 A14,14 0 0 1 395,287 L395,359 A14,14 0 0 0 409,373 L479,373 A14,14 0 0 0 493,359 L493,287 A14,14 0 0 1 507,273 L571,273 A14,14 0 0 1 585,287 L585,541 A14,14 0 0 1 571,555 L507,555 A14,14 0 0 1 493,541 L493,466 A14,14 0 0 0 479,452 L409,452 A14,14 0 0 0 395,466 L395,601 A14,14 0 0 1 381,615 L317,615 A14,14 0 0 1 303,601 Z"/></g></svg>
+        </span>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-bug-mark";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 30;
+      const OUT = DUR - .25;
+      const bug = $1(".bug"), m = $1(".m"), sc = $1(".scrim");
+      const list = (k) => (bug.getAttribute(k) || "").trim().split(/[\s,]+/).filter(Boolean).map(Number).filter(isFinite);
+      const hides = list("data-hide-at"), shows = list("data-show-at");
+      const tl = gsap.timeline({ paused: true });
+
+      const popIn = (t) => {
+        tl.fromTo(sc, { autoAlpha: 0 }, { autoAlpha: 1, duration: .25, ease: "power1.out", immediateRender: t === .1 }, t);
+        tl.fromTo(m, { autoAlpha: 0, scale: .9 }, { autoAlpha: 1, scale: 1, duration: .3, ease: POP, immediateRender: t === .1 }, t);
+      };
+      const popOut = (t) => {
+        tl.to(m, { autoAlpha: 0, scale: .9, duration: .2, ease: "power2.in" }, t);
+        tl.to(sc, { autoAlpha: 0, duration: .2, ease: "power1.in" }, t);
+      };
+
+      popIn(.1);
+      // yield to tier-1 cards: hide, then return
+      hides.forEach((h, i) => {
+        if (h <= .5 || h >= OUT) return;
+        popOut(h);
+        const s = shows[i];
+        if (isFinite(s) && s > h + .2 && s < OUT - .3) popIn(s);
+      });
+      popOut(OUT);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier2 · screen · MAGNIFIER
+  One AI line lifted and enlarged. A small rebuilt chat screen (cream, 10px radius) pops on the
+  right side, then dims under a deep veil as a cream lens (14px rounded rect, ~880x220, no
+  ellipse, no glow) pops near the lower right, overlapping the screen's bottom-left edge. The lens
+  holds ONE line of the AI output at 44px Inter Tight 600; the key word is gold on a deep sliver
+  (the frame's one gold). A 6px orange bar on the lens's left edge is the frame's one orange.
+  The second line replaces the first with a hard swap on its data-at (no animation, like a cut).
+  From Ali Abdaal's magnifier on a single AI line (references/analysis/ali-abdaal.md, move 3 + Fit).
+  Slots: screen-title (text), screen-lines (list of 4 to 6 short lines, the chat reply),
+         lens-label (text), line-1 / line-2 (richtext, one <em> each = the gold word; line-2 optional).
+  Exit: mirrors the entrance in .26s at DUR-.4 (lens first, then screen), or let the edit cut it away.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp-t2-screen-magnifier{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:none;color:var(--fg);font-family:var(--font-body);
+        /* local: ink on cream surfaces */
+        --e-ink-muted:rgba(75,21,38,.56);--e-ink-line:rgba(75,21,38,.12);--e-ink-tint:rgba(75,21,38,.07);}
+
+      /* the small screen */
+      #hp-t2-screen-magnifier .screen{position:absolute;left:1264px;top:262px;width:540px;height:500px;border-radius:var(--radius);overflow:hidden;
+        background:var(--hp-cream);color:var(--hp-oxblood);box-shadow:0 8px 0 var(--hp-deep);transform-origin:100% 0%;}
+      #hp-t2-screen-magnifier .bar{height:58px;padding:0 24px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--e-ink-line);
+        font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--e-ink-muted);}
+      #hp-t2-screen-magnifier .bar .av{width:22px;height:22px;border-radius:var(--radius-sm);background:var(--hp-oxblood);display:flex;align-items:center;justify-content:center;}
+      #hp-t2-screen-magnifier .bar .av b{width:7px;height:7px;border-radius:2px;background:var(--hp-cream);display:block;}
+      #hp-t2-screen-magnifier .bar span:last-child{margin-left:auto;letter-spacing:.02em;text-transform:none;font-weight:600;}
+      #hp-t2-screen-magnifier .ask{margin:22px 24px 0 auto;width:max-content;max-width:380px;padding:11px 15px;border-radius:var(--radius) var(--radius) var(--radius-sm) var(--radius);
+        background:var(--e-ink-tint);font-weight:500;font-size:18px;line-height:1.3;}
+      #hp-t2-screen-magnifier .lines{list-style:none;margin:20px 24px 0;font-weight:500;font-size:19px;line-height:1.5;}
+      #hp-t2-screen-magnifier .lines li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+      #hp-t2-screen-magnifier .input{position:absolute;left:20px;right:20px;bottom:20px;height:46px;border-radius:23px;border:1.5px solid var(--e-ink-line);
+        padding:0 18px;display:flex;align-items:center;font-weight:500;font-size:16px;color:var(--e-ink-muted);}
+      #hp-t2-screen-magnifier .veil{position:absolute;inset:0;background:var(--hp-deep);opacity:0;}
+
+      /* the lens */
+      #hp-t2-screen-magnifier .lens{position:absolute;left:924px;top:714px;width:880px;height:220px;border-radius:var(--radius-lg);overflow:hidden;
+        background:var(--hp-cream);color:var(--hp-oxblood);box-shadow:0 8px 0 var(--hp-deep);transform-origin:85% 0%;}
+      #hp-t2-screen-magnifier .lens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--hp-orange);}
+      #hp-t2-screen-magnifier .lab{position:absolute;left:54px;top:58px;font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--e-ink-muted);}
+      #hp-t2-screen-magnifier .ln{position:absolute;left:54px;right:48px;top:96px;font-family:var(--font-body);font-weight:600;font-size:44px;line-height:1.3;
+        letter-spacing:-.015em;white-space:nowrap;color:var(--hp-oxblood);}
+      #hp-t2-screen-magnifier .ln em{font-style:normal;color:var(--hp-gold);background:var(--hp-deep);padding:0 .16em .02em;margin:0 .02em;border-radius:var(--radius-sm);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t2-screen-magnifier" data-composition-id="hp-t2-screen-magnifier" data-start="0" data-width="1920" data-height="1080">
+      <div class="screen">
+        <div class="bar"><span class="av"><b></b></span><span>Assistant</span><span data-slot="screen-title">Booking help</span></div>
+        <div class="ask">Who's due for a trim this month?</div>
+        <ul class="lines" data-slot="screen-lines">
+          <li>Here's what I found in your bookings.</li>
+          <li>Biscuit's next trim is the 14th.</li>
+          <li>Maria usually books mornings.</li>
+          <li>Offer Saturday at 10 first.</li>
+          <li>If that's taken, Tuesday at 2 is open.</li>
+        </ul>
+        <div class="input">Ask anything</div>
+        <div class="veil"></div>
+      </div>
+
+      <div class="lens">
+        <div class="lab" data-slot="lens-label">What the assistant said</div>
+        <div class="ln l1" data-slot="line-1">Biscuit's next trim is the <em>14th</em>.</div>
+        <div class="ln l2" data-slot="line-2" data-at="3.2">Offer <em>Saturday at 10</em> first.</div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t2-screen-magnifier";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const DUR = 6;
+      const OUT = DUR - .4;
+      const F = 1 / 24;
+      const at = (el, fb) => { const v = parseFloat(el && el.dataset.at); return isNaN(v) ? fb : v; };
+      const tl = gsap.timeline({ paused: true });
+
+      const screen = $1(".screen"), lens = $1(".lens"), l1 = $1(".l1"), l2 = $1(".l2");
+      const T_LENS = at(lens, .7);
+
+      // 1. the screen pops and settles
+      tl.fromTo(screen, { autoAlpha: 0 }, { autoAlpha: 1, duration: 2 * F, ease: "none" }, .08);
+      tl.fromTo(screen, { scale: .96, y: 10 }, { scale: 1, y: 0, duration: .3, ease: POP }, .08);
+      // 2. it dims as the lens pops over its edge (pop-and-settle, .2s)
+      tl.fromTo($1(".veil"), { opacity: 0 }, { opacity: .38, duration: .2, ease: "power1.out" }, T_LENS - .04);
+      tl.fromTo(lens, { autoAlpha: 0 }, { autoAlpha: 1, duration: 2 * F, ease: "none" }, T_LENS);
+      tl.fromTo(lens, { scale: .92 }, { scale: 1, duration: .22, ease: POP }, T_LENS);
+      // 3. the second line is a hard swap, like a cut
+      const hasL2 = l2 && l2.textContent.trim();
+      tl.set(l2, { autoAlpha: 0 }, 0);
+      if (hasL2) { const t2 = at(l2, 3.2); tl.set(l1, { autoAlpha: 0 }, t2); tl.set(l2, { autoAlpha: 1 }, t2); }
+
+      // exit: mirror (lens, then screen), or cut away
+      tl.to(lens, { scale: .94, duration: .2, ease: "power2.in" }, OUT);
+      tl.to(lens, { autoAlpha: 0, duration: 2 * F, ease: "none" }, OUT + .2 - 2 * F);
+      tl.to($1(".veil"), { opacity: 0, duration: .15, ease: "power1.in" }, OUT + .05);
+      tl.to(screen, { scale: .96, y: 8, duration: .22, ease: "power2.in" }, OUT + .08);
+      tl.to(screen, { autoAlpha: 0, duration: 2 * F, ease: "none" }, OUT + .3 - 2 * F);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+    </script>
+  </body>
+</html>

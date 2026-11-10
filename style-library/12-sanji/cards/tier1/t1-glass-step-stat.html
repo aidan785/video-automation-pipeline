@@ -1,0 +1,381 @@
+<!doctype html>
+<!--
+  SANJI · tier1 · diagram · GLASS STEP STAT
+  One step of a numbered system, zoomed in. A numbered glass pill header pops
+  at top center, a node + short connector draws down into a wide glass panel.
+  Inside: icon badge + a sentence-case line whose words resolve out of blur,
+  a big white value on the right that ticks up (unit set smaller), and a
+  slider track along the bottom whose ticks resolve in and whose glowing knob
+  glides to the value. Then up to three glass chips pop under the panel left
+  to right, each one taking focus as it lights (previous goes dormant).
+  Slots: num (<=2), title (caps, <=12), line (<=38), value (numeric, <=5),
+  unit (<=3), chip1-3 (<=22, empty chip is skipped).
+  The slider scale is data-max on .track (default 0.5); the knob sits at value/max.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t1-glass-step-stat {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--cobalt); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-t1-glass-step-stat .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-t1-glass-step-stat .g { position: absolute; box-sizing: border-box; border-radius: var(--r-card); }
+      #sanji-t1-glass-step-stat .g.flow { position: relative; }
+      #sanji-t1-glass-step-stat .g > .fill, #sanji-t1-glass-step-stat .g > .lit {
+        position: absolute; inset: 0; border-radius: inherit; box-sizing: border-box;
+      }
+      #sanji-t1-glass-step-stat .g > .fill { background: var(--glass-fill); border: var(--rim) solid var(--glass-rim); box-shadow: var(--glass-shadow); }
+      #sanji-t1-glass-step-stat .g > .lit  { background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); opacity: 0; }
+      #sanji-t1-glass-step-stat .g > .in { position: absolute; inset: 0; }
+      #sanji-t1-glass-step-stat .g.flow > .in { position: relative; }
+      #sanji-t1-glass-step-stat .badge {
+        position: absolute; border-radius: 50%; box-sizing: border-box; flex: none;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t1-glass-step-stat .g.flow .badge { position: relative; }
+
+      /* header pill */
+      #sanji-t1-glass-step-stat .hdr { position: absolute; left: 0; right: 0; top: 78px; display: flex; justify-content: center; }
+      #sanji-t1-glass-step-stat .pill { height: 184px; border-radius: var(--r-pill); }
+      #sanji-t1-glass-step-stat .pill > .in { height: 100%; display: flex; align-items: center; gap: 34px; padding: 0 72px 0 24px; box-sizing: border-box; }
+      #sanji-t1-glass-step-stat .pill .badge { width: 136px; height: 136px; font-weight: var(--wt-heavy); font-size: 58px; letter-spacing: -0.02em; }
+      #sanji-t1-glass-step-stat .pill .ttl { font-weight: var(--wt-heavy); font-size: 100px; line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap; }
+
+      /* panel */
+      #sanji-t1-glass-step-stat .panel { left: 260px; top: 380px; width: 1400px; height: 420px; }
+      #sanji-t1-glass-step-stat .panel .badge { left: 52px; top: 52px; width: 112px; height: 112px; }
+      #sanji-t1-glass-step-stat .panel .line {
+        position: absolute; left: 196px; top: 52px; height: 112px; display: flex; align-items: center; white-space: nowrap;
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 50px; letter-spacing: var(--track-ui);
+      }
+      #sanji-t1-glass-step-stat .panel .line .w { display: inline-block; white-space: pre; }
+      #sanji-t1-glass-step-stat .panel .val {
+        position: absolute; right: 72px; bottom: 34px; white-space: nowrap; line-height: 1;
+        font-weight: var(--wt-heavy); letter-spacing: -0.04em;
+      }
+      #sanji-t1-glass-step-stat .panel .val .num { font-size: 176px; }
+      #sanji-t1-glass-step-stat .panel .val .unit { font-size: 92px; margin-left: 10px; letter-spacing: -0.02em; }
+      #sanji-t1-glass-step-stat .panel .bloom {
+        position: absolute; right: -20px; bottom: -40px; width: 560px; height: 300px; border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(255,255,255,0.20), rgba(255,255,255,0.07) 55%, rgba(255,255,255,0));
+        opacity: 0;
+      }
+      #sanji-t1-glass-step-stat .track {
+        position: absolute; left: 70px; width: 860px; top: 300px; height: 10px; border-radius: 5px;
+        background: rgba(255,255,255,0.16); transform-origin: 0 50%;
+      }
+      #sanji-t1-glass-step-stat .track .tf { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: 5px; background: rgba(255,255,255,0.92); transform-origin: 0 50%; transform: scaleX(0); box-shadow: 0 0 16px rgba(255,255,255,0.45); }
+      #sanji-t1-glass-step-stat .knob {
+        position: absolute; left: 52px; top: 287px; width: 36px; height: 36px; border-radius: 50%;
+        background: var(--white);
+        box-shadow: 0 0 0 8px rgba(255,255,255,0.16), 0 0 26px rgba(255,255,255,0.75), 0 0 60px rgba(160,180,255,0.6);
+      }
+      #sanji-t1-glass-step-stat .tick { position: absolute; top: 324px; width: 140px; margin-left: -70px; text-align: center; }
+      #sanji-t1-glass-step-stat .tick i { display: block; width: 2px; height: 12px; margin: 0 auto 10px; background: rgba(255,255,255,0.35); }
+      #sanji-t1-glass-step-stat .tick span { font-family: var(--font-mono); font-size: 22px; color: var(--white-soft); }
+
+      /* chips */
+      #sanji-t1-glass-step-stat .chips { position: absolute; left: 0; right: 0; top: 850px; display: flex; justify-content: center; gap: 30px; }
+      #sanji-t1-glass-step-stat .chip { height: 100px; border-radius: var(--r-pill); }
+      #sanji-t1-glass-step-stat .chip > .in { height: 100%; display: flex; align-items: center; gap: 22px; padding: 0 46px 0 16px; box-sizing: border-box; }
+      #sanji-t1-glass-step-stat .chip .badge { width: 68px; height: 68px; }
+      #sanji-t1-glass-step-stat .chip .lab { font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 38px; letter-spacing: var(--track-ui); white-space: nowrap; }
+
+      #sanji-t1-glass-step-stat svg.wires { position: absolute; inset: 0; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t1-glass-step-stat" data-composition-id="sanji-t1-glass-step-stat" data-start="0" data-width="1920" data-height="1080">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
+
+      <svg class="wires" viewBox="0 0 1920 1080" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+        <path class="cn" d="M960 262 L 960 380" />
+        <g class="nd" fill="#FFFFFF" stroke="none"><circle cx="960" cy="380" r="18" opacity="0.22"/><circle cx="960" cy="380" r="8"/></g>
+      </svg>
+
+      <div class="hdr">
+        <div class="g flow pill"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge" data-slot="num">02</div>
+          <div class="ttl" data-slot="title">Timing</div>
+        </div></div>
+      </div>
+
+      <div class="g panel"><div class="fill"></div><div class="lit"></div><div class="in">
+        <div class="badge"><svg width="56" height="56" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFFFFF"/><path d="M12 6.5V12h4" fill="none" stroke="#3A46E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="line" data-slot="line">Anything important stays on screen</div>
+        <div class="bloom"></div>
+        <div class="val"><span class="num" data-slot="value">0.1</span><span class="unit" data-slot="unit">s</span></div>
+        <div class="track" data-max="0.5"><div class="tf"></div></div>
+        <div class="ticks"></div>
+        <div class="knob"></div>
+      </div></div>
+
+      <div class="chips">
+        <div class="g flow chip"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3" fill="#FFFFFF"/></svg></div>
+          <div class="lab" data-slot="chip1">Long enough to read</div></div></div>
+        <div class="g flow chip"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"><path d="M4 19c4 0 4-14 9-14 3 0 4 2 7 2"/><circle cx="4" cy="19" r="1.6" fill="#FFFFFF"/><circle cx="20" cy="7" r="1.6" fill="#FFFFFF"/></svg></div>
+          <div class="lab" data-slot="chip2">Never rushed</div></div></div>
+        <div class="g flow chip"><div class="fill"></div><div class="lit"></div><div class="in">
+          <div class="badge"><svg width="34" height="34" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M13.5 2 5 13.5h6L10 22l9-12h-6.2z"/></svg></div>
+          <div class="lab" data-slot="chip3">Nobody gets bored</div></div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t1-glass-step-stat";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), DORM = tok("--dormant"), PRE = tok("--white-pre");
+
+        /* flex containers: wrap their text in one inline box so the preset's word boxes keep their spaces */
+        const inl = (el) => { const s = document.createElement("span"); while (el.firstChild) s.appendChild(el.firstChild); el.appendChild(s); return s; };
+        const line = inl($(".line"));
+
+        /* value parsing: keep prefix / decimals / commas */
+        const numEl = $(".val .num");
+        const raw = numEl.textContent.trim();
+        const m = raw.match(/^([^0-9]*?)(\d[\d,]*\.?\d*)(.*)$/);
+        const pre = m ? m[1] : "", body = m ? m[2] : "0", post = m ? m[3] : "";
+        const dec = body.includes(".") ? body.split(".")[1].length : 0;
+        const commas = body.includes(",");
+        const target = parseFloat(body.replace(/,/g, "")) || 0;
+        const fmt = (v) => pre + (commas ? v.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec }) : v.toFixed(dec)) + post;
+        numEl.textContent = fmt(0);
+
+        /* slider ticks: 0 .. max in 5 steps */
+        const track = $(".track");
+        const MAX = parseFloat(track.dataset.max) || 1;
+        const TW = 860, TX = 70;
+        const frac = Math.max(0, Math.min(1, target / MAX));
+        const ticksBox = $(".ticks");
+        const ticks = [];
+        for (let i = 0; i <= 5; i++) {
+          const v = (MAX * i) / 5;
+          const d = document.createElement("div"); d.className = "tick"; d.style.left = (TX + (TW * i) / 5) + "px";
+          const lab = i === 0 ? "0" : (+v.toFixed(2)) + " " + (($(".unit").textContent || "").trim());
+          d.innerHTML = "<i></i><span></span>"; d.querySelector("span").textContent = lab;
+          ticksBox.appendChild(d); ticks.push(d);
+        }
+
+        const chips = $$(".chip").filter((c) => c.querySelector(".lab").textContent.trim() !== "");
+        $$(".chip").forEach((c) => { if (!chips.includes(c)) c.style.display = "none"; });
+
+        const cn = $("path.cn"); const L = cn.getTotalLength(); cn.style.strokeDasharray = L; cn.style.strokeDashoffset = L;
+
+        const tl = gsap.timeline({ paused: true });
+        const C0 = 3.0, CSTEP = 0.62;
+        const END = C0 + Math.max(0, chips.length - 1) * CSTEP + 1.7;
+
+        /* sonar rings, finite */
+        const rings = $$(".ring"), PER = 4.2;
+        rings.forEach((r, i) => {
+          const st = i * (PER / rings.length);
+          if (st + PER > END) { tl.set(r, { opacity: 0 }, 0); return; }   /* a cycle that would outlive the card is skipped */
+          if (st + PER > END) return;   /* skip rings that can't finish before END */
+          const reps = Math.floor((END - st) / PER) - 1;
+          tl.fromTo(r, { scale: 0.25, opacity: 0 }, { keyframes: [{ scale: 0.62, opacity: 1, duration: PER * 0.45, ease: "sine.out" }, { scale: 1.05, opacity: 0, duration: PER * 0.55, ease: "sine.in" }], repeat: reps }, st);
+        });
+
+        const pop = (el, t) => tl.fromTo(el, { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, t);
+        const blurIn = (els, t, st = 0.06) => tl.fromTo(els, { autoAlpha: 0, y: 8, filter: "blur(8px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", stagger: st }, t);
+
+        const pill = $(".pill"), panel = $(".panel");
+        tl.set([pill, panel, ...chips, $(".nd")], { autoAlpha: 0 }, 0);
+
+        /* 1. header pill */
+        pop(pill, 0.15);
+        tl.to(pill.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.25);
+        TXT.block(tl, pill.querySelector(".badge"), 0.3);
+        TXT.reveal(tl, pill.querySelector(".ttl"), 0.39);
+
+        /* 2. connector draws down, node lands, panel pops */
+        tl.to(cn, { strokeDashoffset: 0, duration: 0.32, ease: "power2.inOut" }, 0.62)
+          .fromTo($(".nd"), { autoAlpha: 0, scale: 0, svgOrigin: "960 380" }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 0.88);
+        pop(panel, 0.9);
+        tl.to(panel.querySelector(".lit"), { opacity: 1, duration: 0.45, ease: "power2.out" }, 0.98)
+          .to(pill.querySelector(".lit"), { opacity: 0.35, duration: 0.4, ease: "power2.inOut" }, 1.0);
+        TXT.block(tl, panel.querySelector(".badge"), 1.02);
+
+        /* 3. line words resolve */
+        TXT.reveal(tl, line, 1.1);
+
+        /* 4. slider: track grows, ticks resolve, knob glides to value */
+        tl.fromTo(track, { scaleX: 0, autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 0.55, ease: "power3.inOut" }, 1.3);
+        TXT.block(tl, ticks, 1.5, { stagger: 0.05 });
+        tl.fromTo($(".knob"), { autoAlpha: 0, scale: 0.4, filter: "blur(6px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "back.out(1.4)" }, 1.7);
+        tl.to($(".knob"), { x: TW * frac, duration: 0.95, ease: "power3.inOut" }, 1.9)
+          .to(track.querySelector(".tf"), { scaleX: frac, duration: 0.95, ease: "power3.inOut" }, 1.9);
+
+        /* 5. value ticks up in sync with the knob, bloom lands */
+        const val = $(".val");
+        tl.fromTo(val, { autoAlpha: 0, filter: "blur(12px)", y: 12 }, { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: 0.4, ease: "expo.out" }, 1.75);
+        const pxy = { v: 0 };
+        tl.fromTo(pxy, { v: 0 }, { v: target, duration: 0.95, ease: "power3.inOut", onUpdate: () => { numEl.textContent = fmt(pxy.v); } }, 1.9);
+        tl.fromTo($(".bloom"), { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }, 2.6);
+
+        /* 6. chips pop one by one, each takes focus */
+        chips.forEach((c, i) => {
+          const t = C0 + i * CSTEP;
+          if (i === 0) tl.to(panel.querySelector(".lit"), { opacity: 0.45, duration: 0.4, ease: "power2.inOut" }, t + 0.1);
+          if (i > 0) {
+            const p = chips[i - 1];
+            tl.to(p.querySelector(".lit"), { opacity: 0, duration: 0.35, ease: "power2.inOut" }, t + 0.1)
+              .to(p, { scale: 1, duration: 0.35, ease: "power2.inOut" }, t + 0.1)
+              .to(p.querySelector(".lab"), { color: DORM, duration: 0.35, ease: "power2.inOut" }, t + 0.1)
+              .to(p.querySelector(".badge"), { opacity: 0.6, duration: 0.35 }, t + 0.1);
+          }
+          pop(c, t);
+          tl.to(c.querySelector(".lit"), { opacity: 1, duration: 0.4, ease: "power2.out" }, t + 0.06)
+            .to(c, { scale: 1.04, duration: 0.5, ease: "expo.out" }, t + 0.1);
+          TXT.block(tl, c.querySelector(".badge"), t + 0.08);
+          TXT.reveal(tl, c.querySelector(".lab"), t + 0.15);
+        });
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

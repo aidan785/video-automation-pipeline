@@ -1,0 +1,149 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · quote · INKFILL
+  The guest's best line as a full-frame quote. Every word is laid out from frame 0 at zero,
+  turns on to 25% the moment it is spoken (data-at) and fills to full over 0.3 s, so the
+  sentence fills in like ink while the layout never shifts. One short phrase in gold (<em>).
+  After the line is complete an orange dash draws and the attribution pops beside it.
+  Oxblood ground with a slow drift on the light layer, grain on top.
+  From Ali Abdaal's ink-fill quote card (references/analysis/ali-abdaal.md, move 5 + Fit 5).
+  Slots: quote (richtext; plain words, one <em> = the gold phrase. The script wraps each word
+         into a span. Per-word timing: pre-wrap words as <span data-at="s"> and they are kept;
+         otherwise the slot's own data-at is the first word and the rest follow every 0.28 s),
+         by (text, attribution).
+  Exit: animated mirror (attribution out, words drop back to 25% then 0) in the last 0.3 s;
+  also safe to cut away.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-quote-inkfill{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+
+      /* ground: oxblood with a low deep floor and a faint warm lift top-left, drifting on its own layer */
+      #hp-t1-quote-inkfill .bg{position:absolute;inset:-5%;will-change:transform;transform-origin:20% 30%;
+        background:
+          radial-gradient(60% 70% at 18% 22%, rgba(122,30,30,.55) 0%, rgba(122,30,30,0) 100%),
+          radial-gradient(90% 60% at 80% 110%, var(--hp-deep) 0%, rgba(44,11,22,0) 100%),
+          var(--hp-oxblood);}
+      #hp-t1-quote-inkfill .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      #hp-t1-quote-inkfill .col{position:absolute;left:var(--margin);top:var(--margin-y);bottom:var(--margin-y);width:1540px;
+        display:flex;flex-direction:column;justify-content:center;}
+      #hp-t1-quote-inkfill .quote{font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:92px;
+        line-height:1.02;letter-spacing:var(--track-display);color:var(--hp-cream);max-width:1500px;padding-bottom:.08em;}
+      #hp-t1-quote-inkfill .quote em{font-style:normal;color:var(--hp-gold);}
+      #hp-t1-quote-inkfill .quote .w{opacity:0;}
+      #hp-t1-quote-inkfill .quote .w.g{color:var(--hp-gold);}
+
+      #hp-t1-quote-inkfill .attr{display:flex;align-items:center;gap:24px;margin-top:56px;}
+      #hp-t1-quote-inkfill .dash{display:block;flex:none;width:72px;height:6px;border-radius:3px;background:var(--hp-orange);transform-origin:0 50%;}
+      #hp-t1-quote-inkfill .by{font-family:var(--font-body);font-weight:600;font-size:32px;line-height:1.2;letter-spacing:-.005em;color:var(--hp-cream-muted);white-space:nowrap;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-quote-inkfill" data-composition-id="hp-t1-quote-inkfill" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="col">
+        <div class="quote" data-slot="quote" data-at="0.45">I used to spend my Sunday nights answering texts. Now the assistant drafts them and I just <em>hit send.</em></div>
+        <div class="attr"><i class="dash"></i><span class="by" data-slot="by">Dana Ruiz, dog groomer</span></div>
+      </div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-quote-inkfill-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-quote-inkfill-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-quote-inkfill";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const STEP = 0.28;     // default gap between words when no per-word data-at is given
+
+      // ---- wrap the slot into word spans (keeps <em> as the gold phrase, keeps pre-wrapped [data-at] spans) ----
+      const quote = $1(".quote");
+      const words = [];
+      function wrap(node, gold, host) {
+        Array.from(node.childNodes).forEach((n) => {
+          if (n.nodeType === 3) {
+            const parts = n.textContent.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+            parts.forEach((p) => {
+              if (!p) return;
+              if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+              const s = document.createElement("span");
+              s.className = "w" + (gold ? " g" : "");
+              s.textContent = p;
+              frag.appendChild(s); words.push(s);
+            });
+            host.replaceChild(frag, n);
+          } else if (n.nodeType === 1) {
+            if (n.tagName === "EM") { wrap(n, true, n); }
+            else if (n.hasAttribute("data-at") && !n.querySelector("span")) {
+              n.classList.add("w"); if (gold) n.classList.add("g"); words.push(n);
+            } else { wrap(n, gold, n); }
+          }
+        });
+      }
+      wrap(quote, false, quote);
+      const t0 = parseFloat(quote.getAttribute("data-at"));
+      let cursor = isNaN(t0) ? 0.45 : t0;
+      words.forEach((w) => {
+        const a = parseFloat(w.getAttribute("data-at"));
+        if (!isNaN(a)) cursor = a; else w.setAttribute("data-at", cursor.toFixed(2));
+        w.__at = parseFloat(w.getAttribute("data-at"));
+        cursor += STEP;
+      });
+      const lastAt = words.length ? Math.max(...words.map((w) => w.__at)) : 0.45;
+
+      const ATTR = lastAt + 0.55;                    // attribution after the full line has landed
+      const DUR = Math.max(6, ATTR + 2.6);           // hold the finished quote ~2.6 s
+      const OUT = DUR - 0.3;
+      const tl = gsap.timeline({ paused: true });
+
+      // ground drift (background layer only; type never scales)
+      tl.fromTo($1(".bg"), { scale: 1, xPercent: 0 }, { scale: 1.05, xPercent: -1.2, duration: DUR, ease: "none" }, 0);
+
+      // ink fill: 0 -> 25% on the spoken word, then 25% -> 100% over 0.3 s
+      words.forEach((w) => {
+        tl.set(w, { opacity: 0.25 }, w.__at);
+        tl.to(w, { opacity: 1, duration: 0.3, ease: "power1.out" }, w.__at + 0.02);
+      });
+
+      // attribution: orange dash draws, then the name pops beside it
+      tl.fromTo($1(".dash"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: POP }, ATTR);
+      tl.fromTo($1(".by"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: POP }, ATTR + 0.12);
+
+      // exit (mirror): attribution retracts, words fall back to ghost then out
+      tl.to($1(".by"), { autoAlpha: 0, y: 10, duration: 0.16, ease: "power2.in" }, OUT);
+      tl.to($1(".dash"), { scaleX: 0, duration: 0.16, ease: "power2.in" }, OUT + 0.04);
+      tl.to(words, { opacity: 0.25, duration: 0.12, ease: "power2.in" }, OUT + 0.06);
+      tl.to(words, { opacity: 0, duration: 0.1, ease: "power2.in" }, OUT + 0.18);
+      tl.set({}, {}, DUR);
+
+      // grain: deterministic seed stepped at 12 fps
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

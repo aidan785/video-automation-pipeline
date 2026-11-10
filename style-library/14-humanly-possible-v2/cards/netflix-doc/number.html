@@ -1,0 +1,81 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · NETFLIX DOC · number (tier2, 84 f @ 24 fps)
+  Great Big Story counter (raw-media/hp-sampler-refs/netflix-doc/ANALYSIS.md, signature move 4;
+  picks gbs-marathons-slice_counter_mid, _counter_landed, _name_super for the label + dash).
+  "0" is on in the cut frame; the value rolls in tenths on ones over 20 f on a symmetric S curve
+  (sine in-out, the measured GBS shape: slow start, fast middle, slow landing); the decimal drops on the
+  landing frame; label hard on, its second word 2 f later, orange dash 1 f after that; dead hold, no pop.
+  Solid cream numerals, no plate, no shadow. The footage plate is a preview stand-in (data-slot="media").
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Inter+Tight:wght@300;700&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:transparent;}
+      #hp2-netflix-doc-number{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --cream:#FFF0E6;--orange:#FF8A4C;font-family:"Inter Tight",sans-serif;}
+      #hp2-netflix-doc-number .plate{position:absolute;inset:0;}
+      #hp2-netflix-doc-number .plate video{position:absolute;inset:0;width:1920px;height:1080px;object-fit:cover;}
+      #hp2-netflix-doc-number .num{position:absolute;left:0;width:1920px;top:250px;height:380px;
+        font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:"opsz" 96;font-weight:800;font-size:370px;letter-spacing:-.02em;color:var(--cream);}
+      #hp2-netflix-doc-number .num i{position:absolute;left:0;top:0;width:1920px;height:380px;line-height:380px;text-align:center;font-style:normal;white-space:nowrap;opacity:0;}
+      #hp2-netflix-doc-number .lab{position:absolute;left:0;width:1920px;top:640px;height:44px;line-height:44px;text-align:center;
+        font-size:40px;letter-spacing:.25em;text-indent:.25em;color:var(--cream);white-space:nowrap;}
+      #hp2-netflix-doc-number .lab b{font-weight:700;opacity:0;}
+      #hp2-netflix-doc-number .lab span{font-weight:300;opacity:0;}
+      #hp2-netflix-doc-number .dash{position:absolute;left:928px;top:704px;width:64px;height:6px;background:var(--orange);opacity:0;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-netflix-doc-number" data-composition-id="hp2-netflix-doc-number" data-start="0" data-width="1920" data-height="1080">
+      <div class="plate" data-slot="media">
+        <video src="../../assets/footage/groom_6131725.mp4" poster="../../assets/footage/groom_6131725.jpg" muted playsinline preload="auto" data-start="0" data-duration="3.5" data-track-index="0"></video>
+      </div>
+      <div class="num" data-slot="value" data-value="6" data-decimals="1">0</div>
+      <div class="lab"><b data-slot="unit">HOURS A WEEK</b> <span data-slot="tail">BACK</span></div>
+      <div class="dash"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-netflix-doc-number", FPS = 24, N = 84;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+
+      const num = $1(".num"), VALUE = parseFloat(num.dataset.value) || 0, DEC = parseInt(num.dataset.decimals || "0", 10);
+      const ROLL = 20;                                         // F1 shows 0, F20 lands
+      const sineInOut = (k) => (1 - Math.cos(Math.PI * k)) / 2;
+      // one pre-drawn layer per frame value (opacity-switched, so GSAP never reformats the string)
+      num.textContent = "";
+      const layers = [];
+      for (let F = 1; F <= ROLL; F++) {
+        const k = (F - 1) / (ROLL - 1), v = VALUE * sineInOut(k);
+        const i = document.createElement("i");
+        i.textContent = F === 1 ? "0" : F === ROLL ? String(VALUE) : (Math.floor(v * Math.pow(10, DEC) + 1e-9) / Math.pow(10, DEC)).toFixed(DEC);
+        num.appendChild(i); layers.push(i);
+      }
+      layers.forEach((el, n) => { at(1, el, { opacity: 0 }); at(n + 1, el, { opacity: 1 }); if (n + 1 < ROLL) at(n + 2, el, { opacity: 0 }); });
+      // label hard on in the landing frame, its light word 2 f later, dash 1 f after that
+      at(1, $1(".lab b"), { opacity: 0 }); at(1, $1(".lab span"), { opacity: 0 }); at(1, $1(".dash"), { opacity: 0 });
+      at(ROLL, $1(".lab b"), { opacity: 1 });
+      at(ROLL + 2, $1(".lab span"), { opacity: 1 });
+      at(ROLL + 3, $1(".dash"), { opacity: 1 });
+      // F24-84 dead hold; the edit cuts out
+
+      tl.set({}, {}, N / FPS);
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

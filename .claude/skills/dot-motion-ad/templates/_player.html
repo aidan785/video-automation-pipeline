@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- Lightweight review player (Studio alternative): plays the composition in real time with the reference music.
+     Space = play/pause, ←/→ = one frame (30fps numbering, same as Studio), shift+←/→ = 1s. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HP teaser · player</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #111; color: #ddd; font: 14px/1.2 -apple-system, sans-serif; }
+      #wrap { position: absolute; inset: 0 0 64px 0; overflow: hidden; }
+      #stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; border: 0; transform-origin: 0 0; background: #000; }
+      #bar { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 18px; background: #1b1b1b; }
+      button { background: #333; color: #eee; border: 0; border-radius: 6px; padding: 8px 14px; font-size: 14px; cursor: pointer; }
+      #scrub { flex: 1; }
+      #tc { font-variant-numeric: tabular-nums; min-width: 190px; text-align: right; }
+    </style>
+  </head>
+  <body>
+    <div id="wrap"><iframe id="stage" src="index.html"></iframe></div>
+    <div id="bar">
+      <button id="play">Play</button>
+      <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" />
+      <label><input id="mute" type="checkbox" /> mute</label>
+      <span id="tc">0.00s · f0</span>
+    </div>
+    <audio id="music" src="assets/chatgpt-ref-music.m4a" preload="auto"></audio>
+    <script>
+      const stage = document.getElementById("stage"), music = document.getElementById("music");
+      const scrub = document.getElementById("scrub"), tc = document.getElementById("tc"), playBtn = document.getElementById("play");
+      let tl = null, dur = 1, playing = false, t = 0, t0 = 0, wall0 = 0;
+      function fit() { const w = innerWidth, h = innerHeight - 64, s = Math.min(w / 1920, h / 1080); stage.style.transform = `scale(${s})`; }
+      addEventListener("resize", fit); fit();
+      stage.addEventListener("load", () => {
+        const wait = () => { const tls = stage.contentWindow.__timelines; tl = tls && tls["hp-cg-proof"]; if (!tl) return setTimeout(wait, 100); dur = tl.duration(); scrub.max = dur; seek(0); };
+        wait();
+      });
+      function seek(x) { t = Math.max(0, Math.min(dur, x)); if (tl) tl.seek(t, false); scrub.value = t; tc.textContent = `${t.toFixed(2)}s · f${Math.round(t * 30)}`; }
+      function play() { if (t >= dur - 0.01) seek(0); playing = true; playBtn.textContent = "Pause"; t0 = t; wall0 = performance.now(); music.currentTime = t; music.play().catch(() => {}); requestAnimationFrame(loop); }
+      function pause() { playing = false; playBtn.textContent = "Play"; music.pause(); }
+      function loop() {
+        if (!playing) return;
+        const x = !music.paused && !music.muted && music.readyState >= 2 ? music.currentTime : t0 + (performance.now() - wall0) / 1000;
+        seek(x); if (t >= dur) return pause();
+        requestAnimationFrame(loop);
+      }
+      playBtn.onclick = () => (playing ? pause() : play());
+      scrub.oninput = () => { const was = playing; if (was) pause(); seek(+scrub.value); music.currentTime = t; };
+      document.getElementById("mute").onchange = (e) => { music.muted = e.target.checked; };
+      addEventListener("keydown", (e) => {
+        if (e.code === "Space") { e.preventDefault(); playing ? pause() : play(); }
+        if (e.code === "ArrowRight" || e.code === "ArrowLeft") { pause(); const d = (e.shiftKey ? 1 : 1 / 30) * (e.code === "ArrowRight" ? 1 : -1); seek(t + d); music.currentTime = t; }
+      });
+    </script>
+  </body>
+</html>

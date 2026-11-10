@@ -22,7 +22,8 @@ for (const dir of styleDirs) {
   try { m = JSON.parse(readFileSync(manifestPath, "utf8")); }
   catch (e) { warnings.push(`${dir}: invalid style.json (${e.message})`); continue; }
 
-  const cards = (m.cards ?? []).map((c) => {
+  // deprecated styles stay listed for history but expose no cards, so Agent 3 can never select them
+  const cards = (m.status === "deprecated" ? [] : (m.cards ?? [])).map((c) => {
     const file = join(LIB, dir, c.file ?? "");
     if (c.file && !existsSync(file)) warnings.push(`${dir}: card file missing — ${c.file}`);
     return {
@@ -39,6 +40,7 @@ for (const dir of styleDirs) {
     folder: dir, inspiration: m.inspiration ?? null,
     palette: m.palette ?? null, fonts: m.fonts ?? null,
     cardCount: cards.length,
+    ...(m.status === "deprecated" ? { deprecatedNote: m.summary ?? null } : {}),
     cards,
   });
 }

@@ -1,0 +1,138 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · define · ACRONYM
+  The acronym that edits itself down: the long name of the guest's tool sits on one line in
+  Bricolage 800 cream on oxblood. After a hold, the words lose their tails one at a time; each
+  kept initial flashes gold at 112% for 2 frames (the frame's one gold, never two at once) and
+  settles cream, a period appears after it, and the rest of the line slides in to close the
+  gap. The spaces close on the last step and the line re-centers as "A.R.T.A.". Then a short
+  orange dash (the frame's one orange) and a one-line plain-English definition in Inter Tight.
+  Single-line title card, so centered. No runtime text measuring: each tail's max-width
+  animates from a fixed per-character estimate (in em) to 0, so the browser does the widths.
+  Ground drifts under still type; grain on top.
+  From Great Big Story's subtractive acronym edit (references/analysis/gbs-memory.md, move 2 + Fit 2).
+  Slots: phrase (text, 2 to 5 words, one line, under ~34 chars at this size),
+         def (text, one line, under ~64 chars).
+  Timing: data-at on the phrase = when the edit starts (default 2.0 s).
+  Exit: animated mirror (definition and dash out, line drops to .96 and out) in the last 0.3 s.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);}
+      #hp-t1-define-acronym{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-oxblood);color:var(--fg);font-family:var(--font-body);}
+
+      #hp-t1-define-acronym .bg{position:absolute;inset:-4%;will-change:transform;transform-origin:50% 45%;
+        background:radial-gradient(70% 70% at 50% 44%, var(--hp-oxblood) 0%, var(--hp-oxblood) 48%, var(--hp-deep) 125%);}
+      #hp-t1-define-acronym .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.5;}
+
+      #hp-t1-define-acronym .line{position:absolute;left:var(--margin);right:var(--margin);top:410px;display:flex;justify-content:center;align-items:baseline;
+        font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:100px;line-height:1.12;
+        letter-spacing:var(--track-display);color:var(--hp-cream);white-space:nowrap;transform-origin:50% 50%;}
+      #hp-t1-define-acronym .w{display:inline-flex;align-items:baseline;}
+      #hp-t1-define-acronym .w + .w{margin-left:22px;}
+      #hp-t1-define-acronym .i{display:inline-block;transform-origin:50% 80%;}
+      /* tails collapse and dots open by animated max-width (fixed-width estimate per character, set in em),
+         so nothing is measured at runtime; overflow clips sideways only, descenders stay whole */
+      #hp-t1-define-acronym .tl,#hp-t1-define-acronym .dt{display:inline-block;overflow-x:clip;overflow-y:visible;white-space:nowrap;vertical-align:baseline;}
+      #hp-t1-define-acronym .dt{max-width:0;}
+
+      #hp-t1-define-acronym .dash{position:absolute;left:50%;top:590px;width:56px;height:6px;margin-left:-28px;border-radius:3px;background:var(--hp-orange);transform-origin:50% 50%;}
+      #hp-t1-define-acronym .def{position:absolute;left:var(--margin);right:var(--margin);top:628px;text-align:center;font-family:var(--font-body);font-weight:500;
+        font-size:38px;line-height:1.25;letter-spacing:-.005em;color:var(--hp-cream-muted);white-space:nowrap;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-define-acronym" data-composition-id="hp-t1-define-acronym" data-start="0" data-width="1920" data-height="1080">
+      <div class="bg"></div>
+
+      <div class="line" data-slot="phrase" data-at="2">Automatic Reminder Text Assistant</div>
+      <i class="dash"></i>
+      <div class="def" data-slot="def">The helper that texts Dana's clients the night before</div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-define-acronym-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-define-acronym-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-define-acronym";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const FR = 1 / 30;
+      const DUR = 6.5;
+      const OUT = DUR - .3;
+      const tl = gsap.timeline({ paused: true });
+
+      // split the phrase into words: initial + tail (collapsible) + period (expandable)
+      const line = $1(".line");
+      const words = line.textContent.trim().split(/\s+/);
+      line.textContent = "";
+      const parts = words.map((wd) => {
+        const w = document.createElement("span"); w.className = "w";
+        const chars = Array.from(wd);
+        w.innerHTML = `<span class="i"></span><span class="tl"></span><span class="dt">.</span>`;
+        w.querySelector(".i").textContent = chars[0];
+        w.querySelector(".tl").textContent = chars.slice(1).join("");
+        line.appendChild(w);
+        // fixed-width estimate: Bricolage 800 at -0.03em tracking averages under .6em a glyph
+        const est = (chars.length - 1) * .6 + "em";
+        return { w, est, i: w.querySelector(".i"), tl: w.querySelector(".tl"), dt: w.querySelector(".dt") };
+      });
+
+      // ground drift
+      tl.fromTo($1(".bg"), { scale: 1 }, { scale: 1.05, duration: DUR, ease: "none" }, 0);
+
+      // the full phrase pops on and holds
+      tl.fromTo(line, { autoAlpha: 0, y: 12, scale: .96 }, { autoAlpha: 1, y: 0, scale: 1, duration: .38, ease: POP }, .12);
+
+      // the edit: one word per step, 4 frames to close, 6 frames apart
+      const T0 = Math.max(1.4, parseFloat(line.dataset.at) || 2);
+      const STEP = 6 * FR, CLOSE = 4 * FR;
+      parts.forEach((p, k) => {
+        const ts = T0 + k * STEP;
+        tl.fromTo(p.tl, { maxWidth: p.est }, { maxWidth: "0em", duration: CLOSE, ease: POP }, ts);
+        tl.fromTo(p.dt, { maxWidth: "0em" }, { maxWidth: "0.32em", duration: CLOSE, ease: POP }, ts + CLOSE * .5);
+        // the kept initial flashes gold, wider, for 2 frames, then settles cream
+        tl.set(p.i, { scale: 1.12, color: "#FFC145" }, ts);
+        tl.set(p.i, { scale: 1, color: "#FFF0E6" }, ts + 2 * FR);
+      });
+      // the spaces close on the last step; the centered line re-centers itself
+      const T_GAP = T0 + parts.length * STEP;
+      tl.fromTo(parts.slice(1).map((p) => p.w), { marginLeft: 22 }, { marginLeft: 0, duration: CLOSE, ease: POP }, T_GAP);
+
+      // dash + definition
+      const T_DEF = T_GAP + .3;
+      tl.fromTo($1(".dash"), { scaleX: 0 }, { scaleX: 1, duration: .28, ease: POP }, T_DEF);
+      tl.fromTo($1(".def"), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: .32, ease: POP }, T_DEF + .08);
+
+      // exit: mirror
+      tl.to($1(".def"), { autoAlpha: 0, y: 8, duration: .16, ease: "power2.in" }, OUT);
+      tl.to($1(".dash"), { scaleX: 0, duration: .16, ease: "power2.in" }, OUT);
+      tl.to(line, { autoAlpha: 0, scale: .96, duration: .22, ease: "power2.in" }, OUT + .06);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

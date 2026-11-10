@@ -1,0 +1,241 @@
+<!doctype html>
+<!--
+  SANJI · tier2 · callout · PRO TIP CALLOUT (transparent overlay)
+  A compact cobalt liquid-glass card parked in the upper-right third (clear
+  of the speaker's face). It pops in out of blur with a whisper of overshoot,
+  a glass lightbulb badge glows on (filament flash, cools), the caps kicker
+  resolves, then the tip resolves word by word. A thin white hairline along
+  the bottom edge shrinks right to left over the hold as a reading timer;
+  when it runs out the card dissolves (fade + blur, drifts up a touch).
+  Backdrop blur is used because this sits over footage.
+  Slots: kicker (<=14), tip (<=90, wraps to 3 lines).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-t2-tip-callout {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; font-family: var(--font-body); color: var(--white);
+      }
+      #sanji-t2-tip-callout .card {
+        position: absolute; right: 120px; top: 120px; width: 600px; box-sizing: border-box; border-radius: 40px;
+        padding: 34px 40px 44px 34px; overflow: hidden;
+        background:
+          linear-gradient(150deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 40%, rgba(30,28,210,0.30) 100%),
+          rgba(var(--cobalt-rgb), 0.74);
+        border: var(--rim) solid rgba(255,255,255,0.62);
+        box-shadow: 0 26px 70px rgba(10,14,90,0.38), 0 2px 10px rgba(0,0,0,0.14), inset 0 1.5px 0 rgba(255,255,255,0.4), inset 0 -24px 50px rgba(28,22,200,0.30);
+        -webkit-backdrop-filter: blur(18px) saturate(1.25); backdrop-filter: blur(18px) saturate(1.25);
+        transform-origin: 100% 0%;
+      }
+      #sanji-t2-tip-callout .top { display: flex; align-items: center; gap: 20px; }
+      #sanji-t2-tip-callout .badge {
+        position: relative; flex: none; width: 76px; height: 76px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-t2-tip-callout .badge .halo { position: absolute; inset: -10px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.55), rgba(255,255,255,0) 68%); opacity: 0; }
+      #sanji-t2-tip-callout .badge svg { position: relative; }
+      #sanji-t2-tip-callout .kick { font-family: var(--font-display); font-weight: var(--wt-heavy); font-size: 32px; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap; }
+      #sanji-t2-tip-callout .tip {
+        margin-top: 22px; font-weight: var(--wt-ui); font-size: 36px; line-height: 1.22; letter-spacing: var(--track-ui);
+        text-shadow: 0 2px 16px rgba(0,0,0,0.14);
+      }
+      #sanji-t2-tip-callout .tip .w { display: inline-block; white-space: pre; }
+      #sanji-t2-tip-callout .track { position: absolute; left: 34px; right: 34px; bottom: 20px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.18); }
+      #sanji-t2-tip-callout .bar { position: absolute; inset: 0; border-radius: 2px; background: var(--white); box-shadow: 0 0 10px rgba(255,255,255,0.6); transform-origin: 0% 50%; }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-t2-tip-callout" data-composition-id="sanji-t2-tip-callout" data-start="0" data-width="1920" data-height="1080">
+      <div class="card">
+        <div class="top">
+          <div class="badge"><div class="halo"></div>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 1.8a7.2 7.2 0 0 0-4.3 13c.7.55 1.2 1.3 1.2 2.2v.6h6.2V17c0-.9.5-1.65 1.2-2.2A7.2 7.2 0 0 0 12 1.8z"/><rect x="9" y="19" width="6.2" height="2.7" rx="1.25"/></svg></div>
+          <div class="kick" data-slot="kicker">Pro tip</div>
+        </div>
+        <div class="tip" data-slot="tip">Hold your final frame for a beat longer than feels natural. Viewers need it to read.</div>
+        <div class="track"><div class="bar"></div></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-t2-tip-callout";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s);
+        const css = getComputedStyle(document.documentElement);
+        const tok = (n) => css.getPropertyValue(n).trim();
+        const WHITE = tok("--white"), PRE = tok("--white-pre");
+
+        const tip = $(".tip");
+        const words = TXT.split(tip);   /* house preset word wrappers */
+
+        const tl = gsap.timeline({ paused: true });
+        const card = $(".card");
+        tl.set(card, { autoAlpha: 0 }, 0).set($(".badge"), { autoAlpha: 0 }, 0).set($(".bar"), { scaleX: 1 }, 0);
+
+        /* 1. card pops out of blur */
+        const T0 = 0.15;
+        tl.fromTo(card, { autoAlpha: 0, scale: 0.92, y: -10, filter: "blur(12px)" }, { autoAlpha: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "back.out(1.25)" }, T0);
+
+        /* 2. bulb badge switches on: glow flash then cools */
+        tl.fromTo($(".badge"), { autoAlpha: 0, scale: 0.8, filter: "blur(8px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.36, ease: "back.out(1.3)" }, T0 + 0.12)
+          .fromTo($(".badge .halo"), { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1.15, duration: 0.22, ease: "power2.out", immediateRender: false }, T0 + 0.3)
+          .to($(".badge .halo"), { opacity: 0.18, scale: 1, duration: 0.7, ease: "power2.out" }, T0 + 0.52)
+          .fromTo($(".badge"), { boxShadow: "0 0 0 rgba(255,255,255,0)" }, { boxShadow: "0 0 34px rgba(255,255,255,0.45)", duration: 0.22, ease: "power2.out", immediateRender: false }, T0 + 0.3)
+          .to($(".badge"), { boxShadow: "0 0 10px rgba(255,255,255,0.12)", duration: 0.7, ease: "power2.out" }, T0 + 0.52)
+;
+        TXT.reveal(tl, $(".kick"), T0 + 0.24);
+
+        /* 3. tip resolves word by word */
+        const TW = T0 + 0.5;
+        TXT.reveal(tl, tip, TW);
+        tl.fromTo(words, { color: PRE }, { color: WHITE, duration: 0.7, ease: TXT.EASE, stagger: TXT.DEFAULTS.stagger, immediateRender: false }, TW);
+        const TE = TW + words.length * 0.1;   /* beat grid kept from the original word cadence */
+        tl.set(card, { filter: "none" }, TE + 0.1);   /* keep backdrop crisp during the hold */
+
+        /* 4. reading timer: hairline shrinks over the hold, then dissolve */
+        const HOLD = Math.max(2.6, words.length * 0.16);
+        tl.fromTo($(".bar"), { scaleX: 1 }, { scaleX: 0, duration: HOLD, ease: "sine.inOut", immediateRender: false }, TE + 0.2);
+        const OUT = TE + 0.2 + HOLD;
+        TXT.exit(tl, [$(".kick"), tip], OUT - 0.2, { stagger: 0.01 });
+        tl.fromTo(card, { filter: "blur(0px)" }, { autoAlpha: 0, y: -12, filter: "blur(9px)", duration: 0.34, ease: "power2.in", immediateRender: false }, OUT)
+          .set({}, {}, OUT + 0.4);
+
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

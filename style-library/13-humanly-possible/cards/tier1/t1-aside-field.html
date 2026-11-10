@@ -1,0 +1,154 @@
+<!doctype html>
+<!--
+  Humanly Possible · tier1 · aside · FIELD
+  The aside field: every aside is a page turn. Hard cut to a flat brick field with grain and
+  3 to 4 flat cream torn-paper scraps bleeding in from the edges at low opacity (SVG paths,
+  generated from a seeded LCG so each card can tear differently via data-seed). The media
+  (default: a rebuilt text thread from a customer, cream card, 10 px radius, ~70% width)
+  slides in from the left over 6 frames and stops dead. Once it has landed, a gold
+  highlighter block wipes behind the key phrase (the frame's one gold), and a small source
+  caption pops under it in Inter Tight 600 caps behind an orange dash (the frame's one orange).
+  The scraps drift slowly; the card holds still.
+  From Hot Ones' highlighter-yellow aside field (references/analysis/hot-ones.md, move 2 + Fit 2).
+  Slots: media (the card; swap the thread for an <img> of a photo or screenshot, e.g.
+         ../../assets/demo/place-baker.jpg, keep the 10 px radius),
+         who (text), meta (text), thread (list of bubbles: class "in" = customer, "out" = guest;
+         one <em> in one bubble = the gold highlighter phrase, kept to one line), source (text, caption, under ~40 chars).
+  Exit: designed to be cut away (hard cut back to the interview). No animated exit.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-brick);}
+      #hp-t1-aside-field{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-brick);color:var(--fg);font-family:var(--font-body);
+        --ink:var(--hp-deep);--ink-muted:rgba(44,11,22,.55);--ink-line:rgba(75,21,38,.12);--ink-tint:rgba(75,21,38,.08);}
+
+      #hp-t1-aside-field .scraps{position:absolute;inset:-3%;width:106%;height:106%;transform-origin:70% 70%;will-change:transform;}
+      #hp-t1-aside-field .scraps path{fill:var(--hp-cream);opacity:.12;}
+      #hp-t1-aside-field .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.55;}
+
+      /* the media card: a rebuilt customer text thread */
+      #hp-t1-aside-field .media{position:absolute;left:var(--margin);top:214px;width:1344px;height:580px;border-radius:var(--radius);overflow:hidden;
+        background:var(--hp-cream);color:var(--ink);}
+      #hp-t1-aside-field .media > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+      #hp-t1-aside-field .head{display:flex;align-items:center;gap:20px;height:116px;padding:0 48px;border-bottom:1px solid var(--ink-line);}
+      #hp-t1-aside-field .av{width:60px;height:60px;border-radius:var(--radius);background:var(--hp-oxblood);color:var(--hp-cream);display:flex;align-items:center;justify-content:center;
+        font-weight:700;font-size:28px;flex:none;}
+      #hp-t1-aside-field .who{display:block;font-weight:700;font-size:30px;letter-spacing:-.01em;line-height:1.15;}
+      #hp-t1-aside-field .meta{display:block;font-weight:500;font-size:21px;color:var(--ink-muted);margin-top:3px;}
+      #hp-t1-aside-field .thread{display:flex;flex-direction:column;gap:20px;padding:38px 48px;}
+      #hp-t1-aside-field .b{max-width:900px;font-weight:500;font-size:34px;line-height:1.36;padding:18px 28px 20px;border-radius:var(--radius-lg);}
+      #hp-t1-aside-field .b.in{align-self:flex-start;background:var(--ink-tint);}
+      #hp-t1-aside-field .b.out{align-self:flex-end;background:var(--hp-oxblood);color:var(--hp-cream);}
+      #hp-t1-aside-field .b em{font-style:normal;position:relative;z-index:0;white-space:nowrap;}
+      #hp-t1-aside-field .b em .hl{position:absolute;left:-6px;right:-6px;top:4px;bottom:0;background:var(--hp-gold);border-radius:var(--radius-sm);z-index:-1;transform-origin:0 50%;}
+
+      /* source caption */
+      #hp-t1-aside-field .src{position:absolute;left:var(--margin);top:830px;display:flex;align-items:center;gap:16px;font-weight:600;font-size:24px;
+        letter-spacing:.18em;text-transform:uppercase;color:var(--hp-cream);}
+      #hp-t1-aside-field .src i{display:block;width:24px;height:5px;border-radius:2px;background:var(--hp-orange);transform-origin:0 50%;}
+    </style>
+  </head>
+  <body>
+    <div id="hp-t1-aside-field" data-composition-id="hp-t1-aside-field" data-start="0" data-width="1920" data-height="1080" data-seed="11">
+      <svg class="scraps" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+      <div class="media" data-slot="media">
+        <div class="head">
+          <span class="av">M</span>
+          <span><span class="who" data-slot="who">Maria, Biscuit's owner</span><span class="meta" data-slot="meta">Text message, Monday 7:42 pm</span></span>
+        </div>
+        <div class="thread" data-slot="thread">
+          <div class="b in">Got the reminder, thank you! Can we push Biscuit to Thursday?</div>
+          <div class="b out">Of course. Thursday at 10:30 works.</div>
+          <div class="b in">You're a lifesaver. <em>Best thing you've added.</em></div>
+        </div>
+      </div>
+
+      <div class="src"><i></i><span data-slot="source">Text from a client, shared by Dana</span></div>
+
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-t1-aside-field-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="1" stitchTiles="stitch" result="n"/>
+          <feColorMatrix in="n" type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-t1-aside-field-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-t1-aside-field";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      let POP = "power3.out";
+      if (window.CustomEase) { gsap.registerPlugin(CustomEase); CustomEase.create("hpPop", ".2,.9,.25,1"); POP = "hpPop"; }
+      const FR = 1 / 30;
+      const DUR = 5;
+      const tl = gsap.timeline({ paused: true });
+
+      // ---- torn-paper scraps: seeded, deterministic ----
+      let s = parseInt(ROOT.dataset.seed, 10) || 7;
+      const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+      // a rough rectangle: straight-ish cut edges, one or two torn edges with fibrous jitter
+      function scrap(cx, cy, w, h, rot, torn) {
+        const pts = [];
+        const corners = [[-w / 2, -h / 2], [w / 2, -h / 2], [w / 2, h / 2], [-w / 2, h / 2]];
+        for (let e = 0; e < 4; e++) {
+          const [x0, y0] = corners[e], [x1, y1] = corners[(e + 1) % 4];
+          const len = Math.hypot(x1 - x0, y1 - y0), nx = (y1 - y0) / len, ny = -(x1 - x0) / len;
+          const isTorn = torn.indexOf(e) >= 0;
+          const n = isTorn ? Math.round(len / 9) : Math.round(len / 120) + 1;
+          let drift = 0;
+          for (let k = 0; k < n; k++) {
+            const t = k / n;
+            drift = isTorn ? drift * .7 + (rnd() - .5) * 16 : (rnd() - .5) * 4;
+            const fib = isTorn ? (rnd() - .5) * 7 : 0;
+            pts.push([x0 + (x1 - x0) * t + nx * (drift + fib), y0 + (y1 - y0) * t + ny * (drift + fib)]);
+          }
+        }
+        const c = Math.cos(rot * Math.PI / 180), sn = Math.sin(rot * Math.PI / 180);
+        return "M" + pts.map(([x, y]) => `${(cx + x * c - y * sn).toFixed(1)},${(cy + x * sn + y * c).toFixed(1)}`).join("L") + "Z";
+      }
+      const j = (v) => v + (rnd() - .5) * 60;   // per-seed variation in placement
+      const S = [
+        scrap(j(1760), j(990), 720, 430, -11 + rnd() * 6, [0, 3]),     // big, bottom right
+        scrap(j(30), j(560), 330, 560, 7 + rnd() * 5, [1]),            // left edge
+        scrap(j(900), j(-10), 560, 170, 2 + rnd() * 4, [2]),           // top edge
+        scrap(j(1800), j(150), 260, 190, 18 + rnd() * 8, [2, 3]),      // small, top right
+      ];
+      $1(".scraps").innerHTML = S.map((d) => `<path d="${d}"/>`).join("");
+
+      // ---- gold highlighter on the key phrase ----
+      const em = $1(".thread em");
+      let hl = null;
+      if (em) { hl = document.createElement("i"); hl.className = "hl"; em.appendChild(hl); }
+
+      // scraps drift; the field and scraps are hard-on (a page turn)
+      tl.fromTo($1(".scraps"), { scale: 1, x: 0 }, { scale: 1.04, x: -14, duration: DUR, ease: "none" }, 0);
+
+      // media slides in from the left over 6 frames and stops dead
+      tl.fromTo($1(".media"), { x: -1500 }, { x: 0, duration: 6 * FR, ease: POP }, 2 * FR);
+      // the light, not the layout: gold wipes behind the phrase once the card has landed
+      if (hl) tl.fromTo(hl, { scaleX: 0 }, { scaleX: 1, duration: .24, ease: POP }, .75);
+      // source caption
+      tl.fromTo($1(".src i"), { scaleX: 0 }, { scaleX: 1, duration: .24, ease: POP }, .4);
+      tl.fromTo($1(".src span"), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .28, ease: POP }, .46);
+      tl.set({}, {}, DUR);
+
+      const turb = $1(".turb");
+      tl.eventCallback("onUpdate", () => turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97));
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) { tl.seek(parseFloat(location.hash.slice(3)) || 0); turb.setAttribute("seed", 1 + Math.floor(tl.time() * 12) % 97); }
+    </script>
+  </body>
+</html>

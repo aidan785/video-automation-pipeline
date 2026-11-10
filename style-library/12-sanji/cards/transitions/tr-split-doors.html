@@ -1,0 +1,274 @@
+<!doctype html>
+<!--
+  SANJI · transition · SPLIT DOORS
+  Scene A (NATURE photo + liquid-glass pill) to scene B (COBALT glass card).
+  Two tall liquid-glass panels slide in from the left and right edges with a
+  horizontal smear, meet in the middle where their inner rims flare white-hot
+  (a vertical light seam blooms and a sheen runs down it), hold for a beat,
+  then part again, revealing scene B, which settles out of a slight push and
+  blur while its glass card resolves in.
+  Both scenes are STAND-INS: replace .sceneA / .sceneB with real plates.
+  Slots: pillA (text <= 30), title (caps <= 14), sub (text <= 34).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+      #sanji-tr-split-doors {
+        position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+        background: var(--void); font-family: var(--font-display); color: var(--white);
+      }
+      #sanji-tr-split-doors .scene { position: absolute; inset: 0; overflow: hidden; }
+      /* scene A: nature photo + glass pill */
+      #sanji-tr-split-doors .sceneA { transform-origin: 50% 55%; }
+      #sanji-tr-split-doors .sceneA img { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; display: block; }
+      #sanji-tr-split-doors .sceneA .pill {
+        position: absolute; left: 50%; top: 50%; height: 124px; padding: 0 76px; transform: translate(-50%, -50%);
+        box-sizing: border-box; border-radius: var(--r-pill); overflow: hidden; white-space: nowrap;
+        display: flex; align-items: center;
+        -webkit-backdrop-filter: blur(22px) saturate(1.4) brightness(1.1); backdrop-filter: blur(22px) saturate(1.4) brightness(1.1);
+        background: linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 46%, rgba(0,0,0,0.07) 100%);
+        border: var(--rim) solid rgba(255,255,255,0.35);
+        box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -18px 34px rgba(0,0,0,0.10), 0 22px 60px rgba(0,0,0,0.20);
+        font-family: var(--font-body); font-weight: var(--wt-bold); font-size: 64px; letter-spacing: var(--track-ui);
+        text-shadow: 0 2px 14px rgba(0,0,0,0.16);
+      }
+      /* scene B: cobalt + rings + glass card */
+      #sanji-tr-split-doors .sceneB { background: var(--cobalt); transform-origin: 50% 50%; }
+      #sanji-tr-split-doors .ring {
+        position: absolute; left: 50%; top: 50%; width: 1800px; height: 1800px; margin: -900px 0 0 -900px;
+        border-radius: 50%; border: 2px solid rgba(255,255,255,0.07);
+        background: radial-gradient(circle, rgba(255,255,255,0) 55%, rgba(255,255,255,0.035) 100%);
+      }
+      #sanji-tr-split-doors .card {
+        position: absolute; left: 50%; top: 50%; width: 1000px; height: 300px; margin: -150px 0 0 -500px;
+        border-radius: var(--r-card); box-sizing: border-box;
+      }
+      #sanji-tr-split-doors .card > .fill { position: absolute; inset: 0; border-radius: inherit; background: var(--glass-fill-active); border: var(--rim) solid var(--glass-rim-active); box-shadow: var(--glass-shadow-active); }
+      #sanji-tr-split-doors .badge {
+        position: absolute; left: 56px; top: 76px; width: 148px; height: 148px; border-radius: 50%; box-sizing: border-box;
+        background: var(--badge-fill); border: var(--rim) solid var(--badge-rim); display: flex; align-items: center; justify-content: center;
+      }
+      #sanji-tr-split-doors .ttl { position: absolute; left: 248px; top: 72px; font-weight: var(--wt-heavy); font-size: 96px; line-height: 0.9; letter-spacing: var(--track-caps); text-transform: uppercase; white-space: nowrap; }
+      #sanji-tr-split-doors .sub { position: absolute; left: 252px; top: 178px; font-family: var(--font-body); font-weight: var(--wt-ui); font-size: 40px; letter-spacing: var(--track-ui); color: var(--white-soft); white-space: nowrap; }
+
+      /* the doors: tall liquid-glass panels */
+      #sanji-tr-split-doors .door { position: absolute; top: -60px; width: 980px; height: 1200px; box-sizing: border-box; overflow: hidden; }
+      #sanji-tr-split-doors .door.l { left: 0; border-radius: 0 64px 64px 0; }
+      #sanji-tr-split-doors .door.r { right: 0; border-radius: 64px 0 0 64px; }
+      #sanji-tr-split-doors .door .body {
+        position: absolute; inset: 0; border-radius: inherit;
+        -webkit-backdrop-filter: blur(26px) saturate(1.3); backdrop-filter: blur(26px) saturate(1.3);
+        background: linear-gradient(150deg, rgba(64,94,240,0.86) 0%, rgba(32,66,238,0.92) 45%, rgba(38,48,228,0.96) 75%, rgba(26,34,184,0.98) 100%);
+      }
+      #sanji-tr-split-doors .door .sheen { position: absolute; inset: 0; border-radius: inherit; background: var(--glass-fill); box-shadow: var(--glass-shadow); border: var(--rim) solid var(--glass-rim); }
+      /* bright inner rim */
+      #sanji-tr-split-doors .door .rimline { position: absolute; top: 0; bottom: 0; width: 26px; }
+      #sanji-tr-split-doors .door.l .rimline { right: 0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.10) 60%, rgba(255,255,255,0.55)); border-radius: 0 64px 64px 0; }
+      #sanji-tr-split-doors .door.r .rimline { left: 0; background: linear-gradient(270deg, rgba(255,255,255,0), rgba(255,255,255,0.10) 60%, rgba(255,255,255,0.55)); border-radius: 64px 0 0 64px; }
+      /* seam flare where the rims touch */
+      #sanji-tr-split-doors .seam { position: absolute; left: 960px; top: 0; width: 0; height: 1080px; opacity: 0; }
+      #sanji-tr-split-doors .seam .core { position: absolute; left: -2px; top: -40px; width: 4px; height: 1160px; background: var(--white); border-radius: 2px; filter: blur(1px); }
+      #sanji-tr-split-doors .seam .halo { position: absolute; left: -120px; top: -100px; width: 240px; height: 1280px;
+        background: radial-gradient(50% 50% at 50% 50%, rgba(180,200,255,0.75), rgba(120,140,255,0.25) 45%, rgba(64,94,240,0) 100%); filter: blur(14px); }
+      #sanji-tr-split-doors .seam .run { position: absolute; left: -60px; top: 0; width: 120px; height: 360px;
+        background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%); filter: blur(10px); }
+    </style>
+  </head>
+  <body>
+    <div id="sanji-tr-split-doors" data-composition-id="sanji-tr-split-doors" data-start="0" data-width="1920" data-height="1080">
+      <div class="scene sceneB">
+        <div class="ring" style="transform:scale(0.45)"></div><div class="ring" style="transform:scale(0.7)"></div><div class="ring" style="transform:scale(0.95)"></div>
+        <div class="card"><div class="fill"></div>
+          <div class="badge"><svg width="70" height="70" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFFFFF"/><path d="M12 6.5V12h4" fill="none" stroke="#3A46E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="ttl" data-slot="title">Timing</div>
+          <div class="sub" data-slot="sub">Every move lands on the word</div>
+        </div>
+      </div>
+      <div class="scene sceneA">
+        <img src="../../assets/nature/green-hills.jpg" alt="" />
+        <div class="pill" data-slot="pillA">and clients have no idea?</div>
+      </div>
+      <div class="door l"><div class="body"></div><div class="sheen"></div><div class="rimline"></div></div>
+      <div class="door r"><div class="body"></div><div class="sheen"></div><div class="rimline"></div></div>
+      <div class="seam"><div class="halo"></div><div class="core"></div><div class="run"></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function () {
+/* @text-preset:start v2 */
+/* SANJI · TEXT PRESET "uppit-reveal" (single source of truth).
+   The house text animation for every DOM text element in the Sanji library.
+   Lifted 1:1 from uppitai.com's RevealText component (11/3):
+     .rt-word { opacity:0; filter:blur(6px); transform:translateY(.3em);
+                transition: all .7s cubic-bezier(.23,1,.32,1) }   stagger 40ms / word
+     .reveal  { opacity:0; transform:translateY(18px); .7s same curve }  (blocks)
+   Why it feels smooth: every word takes 0.7s on a long quint-out tail but
+   words start only 40ms apart, so 10-17 words are in flight at once and the
+   line "pours" in as one wave instead of popping word by word.
+   Cards carry an inlined copy between the @text-preset markers (inline
+   assembly only copies a card's own <script>). Edit this file, then run
+   `node scripts/style-library/sync-text-preset.mjs` to restamp every card.
+
+   API (all timeline-driven, deterministic):
+     TXT.reveal(tl, el, at, opts)   words: blur 6px + 0.3em rise + fade, 0.7s, 40ms stagger
+     TXT.exit(tl, el, at, opts)     words leave: blur 6px + 0.18em lift + fade, 0.42s, 20ms stagger
+     TXT.block(tl, el, at, opts)    whole element: fade + 18px rise, 0.7s (chips, pills, labels, icons)
+     TXT.blockExit(tl, el, at)      whole element: fade + 10px lift, 0.42s
+     TXT.split(el)                  wraps words in .tp-m > .tp-w (keeps <em>/<strong>/<br>/<span>)
+     TXT.EASE                       the cubic-bezier(.23,1,.32,1) curve as a GSAP ease function
+   opts: { stagger, dur, blur, y (em), ease, from:"start"|"end"|"center", delayPerLine }
+   Each call returns the time its last word lands, so cards can chain beats. */
+const TXT = (function () {
+  /* cubic-bezier solver (same math as CSS), so no CustomEase plugin is needed */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const sx = (t) => ((ax * t + bx) * t + cx) * t, sy = (t) => ((ay * t + by) * t + cy) * t;
+    const dx = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      let t = x;
+      for (let i = 0; i < 8; i++) { const e = sx(t) - x, d = dx(t); if (Math.abs(e) < 1e-6) return sy(t); if (Math.abs(d) < 1e-6) break; t -= e / d; }
+      let lo = 0, hi = 1; t = x;
+      for (let i = 0; i < 30; i++) { const v = sx(t); if (Math.abs(v - x) < 1e-6) break; if (x > v) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return sy(t);
+    };
+  }
+  const EASE = bezier(0.23, 1, 0.32, 1);
+  const D = { dur: 0.7, stagger: 0.04, blur: 6, y: 0.3, exitDur: 0.42, exitStagger: 0.02, exitY: 0.18, blockY: 18 };
+
+  /* one shared stylesheet for the word wrappers */
+  if (!document.getElementById("tp-style")) {
+    const st = document.createElement("style"); st.id = "tp-style";
+    st.textContent = ".tp-m{display:inline-block}.tp-w{display:inline-block}";
+    document.head.appendChild(st);
+  }
+
+  function split(el) {
+    if (!el) return [];
+    if (el._tpWords) return el._tpWords;
+    const words = [];
+    /* flex/grid parents turn every word box into an item and drop the spaces:
+       give such text one inline wrapper first so it flows like a normal line */
+    const isBox = (node) => { const d = getComputedStyle(node).display; return /flex|grid/.test(d); };
+    const walk = (node) => {
+      if (isBox(node)) [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3 && n.textContent.trim()) { const l = document.createElement("span"); l.className = "tp-l"; n.replaceWith(l); l.appendChild(n); }
+      });
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const parts = n.textContent.split(/(\s+)/);
+          if (parts.length === 1 && !parts[0]) return;
+          const frag = document.createDocumentFragment();
+          parts.forEach((p) => {
+            if (!p) return;
+            if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(" ")); return; }
+            const m = document.createElement("span"); m.className = "tp-m";
+            const w = document.createElement("span"); w.className = "tp-w"; w.textContent = p;
+            m.appendChild(w); frag.appendChild(m); words.push(w);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName !== "BR" && !n.classList.contains("tp-m")) {
+          walk(n);
+        }
+      });
+    };
+    walk(el);
+    el._tpWords = words;
+    return words;
+  }
+  const list = (el) => (el == null ? [] : el.length !== undefined && !el.nodeType ? [...el] : [el]);
+  const em = (w) => parseFloat(getComputedStyle(w).fontSize) || 40;
+
+  function order(ws, from) {
+    if (from === "end") return ws.slice().reverse();
+    if (from === "center") { const c = (ws.length - 1) / 2; return ws.slice().sort((a, b) => Math.abs(ws.indexOf(a) - c) - Math.abs(ws.indexOf(b) - c)); }
+    return ws;
+  }
+
+  function reveal(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger, blur = o.blur ?? D.blur, y = o.y ?? D.y;
+    ws.forEach((w, i) => {
+      tl.fromTo(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: em(w) * y },
+        { autoAlpha: 1, filter: "blur(0px)", y: 0, duration: dur, ease: o.ease || EASE, immediateRender: true }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function exit(tl, el, at = 0, o = {}) {
+    const ws = order(list(el).flatMap(split), o.from);
+    if (!ws.length) return at;
+    const dur = o.dur ?? D.exitDur, stg = o.stagger ?? D.exitStagger, blur = o.blur ?? D.blur, y = o.y ?? D.exitY;
+    ws.forEach((w, i) => {
+      tl.to(w, { autoAlpha: 0, filter: `blur(${blur}px)`, y: -em(w) * y, duration: dur, ease: "power2.in" }, at + i * stg);
+    });
+    return at + (ws.length - 1) * stg + dur;
+  }
+  function block(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.dur, stg = o.stagger ?? D.stagger * 2;
+    tl.fromTo(els, { autoAlpha: 0, y: o.y ?? D.blockY, filter: o.blur ? `blur(${o.blur}px)` : "blur(0px)" },
+      { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: dur, ease: o.ease || EASE, stagger: stg, immediateRender: true }, at);
+    return at + (els.length - 1) * stg + dur;
+  }
+  function blockExit(tl, el, at = 0, o = {}) {
+    const els = list(el); if (!els.length) return at;
+    const dur = o.dur ?? D.exitDur;
+    tl.to(els, { autoAlpha: 0, y: -(o.y ?? 10), duration: dur, ease: "power2.in", stagger: o.stagger ?? 0.02 }, at);
+    return at + dur;
+  }
+  return { reveal, exit, block, blockExit, split, bezier, EASE, DEFAULTS: D };
+})();
+/* @text-preset:end */
+        const ID = "sanji-tr-split-doors";
+        const ROOT = document.getElementById(ID);
+        const $ = (s) => ROOT.querySelector(s), $$ = (s) => [...ROOT.querySelectorAll(s)];
+        const L = $(".door.l"), R = $(".door.r");
+
+        const CLOSE = 0.12, IN = 0.42, MEET = CLOSE + IN, OPEN = MEET + 0.26, OUT = 0.52, END = 2.0;   /* sub words land at ~1.98 */
+        const tl = gsap.timeline({ paused: true });
+
+        /* scene A: slow push, darkens slightly as the doors close */
+        tl.fromTo($(".sceneA"), { scale: 1 }, { scale: 1.05, duration: MEET + 0.1, ease: "power2.in" }, 0);
+
+        /* doors slide in with smear (blur + scaleX while moving) */
+        tl.fromTo(L, { xPercent: -101 }, { xPercent: -2.04, duration: IN, ease: "power3.inOut" }, CLOSE)
+          .fromTo(R, { xPercent: 101 }, { xPercent: 2.04, duration: IN, ease: "power3.inOut" }, CLOSE)
+          .fromTo([L, R], { filter: "blur(0px)" }, { keyframes: [{ filter: "blur(8px)", duration: IN * 0.5, ease: "power2.in" }, { filter: "blur(0px)", duration: IN * 0.5, ease: "power2.out" }] }, CLOSE);
+
+        /* seam flare where the rims touch, sheen runs down the seam */
+        tl.fromTo($(".seam"), { opacity: 0, scaleX: 0.4 }, { opacity: 1, scaleX: 1, duration: 0.12, ease: "power2.out" }, MEET - 0.04)
+          .to($(".seam"), { opacity: 0.35, scaleX: 0.7, duration: 0.3, ease: "power2.inOut" }, MEET + 0.1)
+          .fromTo($(".seam .run"), { y: -380 }, { y: 1100, duration: 0.5, ease: "power2.inOut" }, MEET - 0.04)
+          .fromTo($$(".door .rimline"), { opacity: 0.6 }, { opacity: 1, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1 }, MEET - 0.04);
+
+        /* swap scenes under the closed doors */
+        tl.set($(".sceneA"), { autoAlpha: 0 }, MEET + 0.05);
+
+        /* doors part */
+        tl.to(L, { xPercent: -101, duration: OUT, ease: "power3.inOut" }, OPEN)
+          .to(R, { xPercent: 101, duration: OUT, ease: "power3.inOut" }, OPEN)
+          .to([L, R], { keyframes: [{ filter: "blur(8px)", duration: OUT * 0.5, ease: "power2.in" }, { filter: "blur(0px)", duration: OUT * 0.5, ease: "power2.out" }] }, OPEN)
+          .to($(".seam"), { opacity: 0, duration: 0.14, ease: "power2.out" }, OPEN);
+
+        /* scene B settles out of a push + blur; card resolves */
+        tl.fromTo($(".sceneB"), { scale: 1.06, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, OPEN + 0.08)
+          .fromTo($(".card"), { autoAlpha: 0, scale: 0.9, filter: "blur(10px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.25)" }, OPEN + 0.14)
+          ;
+        /* house text preset: badge rises as a block, title + sub pour in word by word */
+        TXT.block(tl, $(".badge"), OPEN + 0.2);
+        TXT.reveal(tl, $(".ttl"), OPEN + 0.24);
+        TXT.reveal(tl, $(".sub"), OPEN + 0.3, { stagger: 0.03 });   /* overlaps the title tail */
+
+        tl.set({}, {}, END);
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </body>
+</html>

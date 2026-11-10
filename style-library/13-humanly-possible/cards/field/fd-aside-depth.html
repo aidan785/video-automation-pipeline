@@ -1,0 +1,294 @@
+<!doctype html>
+<!--
+  Humanly Possible · FIELD family · tier1 · aside · DEPTH (prototype, 11/3)
+  The aside field rebuilt to feel hand-made: a torn brick paper sheet with real tooth,
+  torn open on the right onto the guest's world (nature photo graded into the palette,
+  racked out of focus). Oxblood scraps sit between. The guest's text thread is a cream
+  printout taped down, slightly off-level. One gold marker swipe, one orange pen circle.
+  Everything pasted or drawn moves ON TWOS (12 fps stepped sets); only the camera glides.
+  No stripes, no outlines, no offset shadows. Seek-safe: all frame-stepped changes are
+  tl.set() calls, so any seek renders the right frame.
+  Sources: real Vox (paper grounds, pen circles, highlighter, layered depth), Sanji (nature
+  ground), HP brand (palette, Bricolage/Inter Tight, gold = one word, orange = one mark).
+  Slots: media (nature photo), who, meta, thread (bubbles, one <em> = gold swipe), circle-target (.ring-target), source.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="../../tokens.css" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);}
+      #hp-fd-aside-depth{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--hp-deep);font-family:var(--font-body);color:var(--hp-oxblood);}
+      #hp-fd-aside-depth .plane{position:absolute;inset:0;will-change:transform;}
+      #hp-fd-aside-depth svg.full{position:absolute;inset:0;width:1920px;height:1080px;overflow:visible;}
+
+      /* far plane: the guest's world, graded into the palette and racked soft */
+      #hp-fd-aside-depth .far{transform-origin:78% 45%;}
+      #hp-fd-aside-depth .far img{position:absolute;left:880px;top:-40px;width:1180px;height:1160px;object-fit:cover;object-position:40% 50%;}
+      #hp-fd-aside-depth .far .raw{filter:blur(5px) saturate(.9);}
+      #hp-fd-aside-depth .far .graded{filter:url(#hp-fd-aside-depth-map) blur(5px);opacity:.78;}
+
+      /* near plane: the printout */
+      #hp-fd-aside-depth .print{position:absolute;left:150px;top:200px;width:1180px;height:604px;transform-origin:30% 50%;}
+      #hp-fd-aside-depth .print > svg:first-child{position:absolute;inset:-30px;width:1240px;height:664px;overflow:visible;}
+      #hp-fd-aside-depth .print .ink{position:absolute;inset:0;padding:46px 56px 40px 60px;mix-blend-mode:multiply;}
+      #hp-fd-aside-depth .who{display:flex;align-items:baseline;gap:16px;padding-bottom:22px;margin-bottom:30px;border-bottom:1.5px dashed rgba(75,21,38,.22);}
+      #hp-fd-aside-depth .who b{font-family:var(--font-display);font-weight:800;font-variation-settings:"opsz" 96;font-size:40px;letter-spacing:-.025em;}
+      #hp-fd-aside-depth .who span{font-weight:500;font-size:22px;color:rgba(75,21,38,.6);}
+      #hp-fd-aside-depth .msg{position:relative;max-width:820px;margin-bottom:22px;font-weight:500;font-size:38px;line-height:1.28;letter-spacing:-.012em;}
+      #hp-fd-aside-depth .msg.out{margin-left:auto;text-align:right;color:var(--hp-brick);}
+      #hp-fd-aside-depth .msg small{display:block;font-weight:700;font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:rgba(75,21,38,.45);margin-bottom:6px;}
+      #hp-fd-aside-depth .msg em{font-style:normal;position:relative;white-space:nowrap;}
+      #hp-fd-aside-depth .msg em .swipe{position:absolute;left:-10px;right:-12px;top:6px;bottom:0;z-index:-1;overflow:visible;}
+      #hp-fd-aside-depth .msg em .swipe svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+      #hp-fd-aside-depth .msg .txt{position:relative;z-index:1;}
+      #hp-fd-aside-depth .ring-target{position:relative;display:inline-block;}
+      #hp-fd-aside-depth .ringsvg{position:absolute;left:-30px;right:-34px;top:-14px;bottom:-12px;width:calc(100% + 64px);height:calc(100% + 26px);overflow:visible;mix-blend-mode:normal;}
+      #hp-fd-aside-depth .tex{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.55;}
+
+      /* caption, printed straight on the brick */
+      #hp-fd-aside-depth .source{position:absolute;left:170px;top:858px;font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--hp-cream);opacity:.86;}
+
+      #hp-fd-aside-depth .grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.45;}
+      #hp-fd-aside-depth .vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 95% at 40% 50%, rgba(44,11,22,0) 55%, rgba(44,11,22,.55) 100%);}
+    </style>
+  </head>
+  <body>
+    <div id="hp-fd-aside-depth" data-composition-id="hp-fd-aside-depth" data-start="0" data-width="1920" data-height="1080">
+
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+          <!-- gradient map: luminance -> deep, oxblood, brick, orange, gold, cream -->
+          <filter id="hp-fd-aside-depth-map" color-interpolation-filters="sRGB">
+            <feColorMatrix type="matrix" values=".30 .59 .11 0 0  .30 .59 .11 0 0  .30 .59 .11 0 0  0 0 0 1 0"/>
+            <feComponentTransfer>
+              <feFuncR type="table" tableValues=".17 .29 .48 1 1 1"/>
+              <feFuncG type="table" tableValues=".04 .08 .12 .54 .76 .94"/>
+              <feFuncB type="table" tableValues=".09 .15 .12 .30 .27 .90"/>
+            </feComponentTransfer>
+          </filter>
+          <!-- paper: torn-edge fuzz + fibrous tooth + slow mottling, multiplied into the fill -->
+          <filter id="hp-fd-aside-depth-paper" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency=".055" numOctaves="2" seed="4" result="edgeN"/>
+            <feDisplacementMap in="SourceGraphic" in2="edgeN" scale="7" xChannelSelector="R" yChannelSelector="G" result="torn"/>
+            <feTurbulence type="fractalNoise" baseFrequency=".85 .55" numOctaves="3" seed="11" result="fib"/>
+            <feDiffuseLighting in="fib" surfaceScale="1.4" diffuseConstant="1" lighting-color="#ffffff" result="lit0"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
+            <feComponentTransfer in="lit0" result="lit"><feFuncR type="linear" slope=".16" intercept=".86"/><feFuncG type="linear" slope=".16" intercept=".86"/><feFuncB type="linear" slope=".16" intercept=".86"/></feComponentTransfer>
+            <feTurbulence type="fractalNoise" baseFrequency=".006" numOctaves="2" seed="2" result="mot"/>
+            <feColorMatrix in="mot" type="matrix" values="0 0 0 0 .94  0 0 0 0 .94  0 0 0 0 .94  .22 .22 .22 0 .62" result="motA"/>
+            <feBlend in="lit" in2="motA" mode="multiply" result="tex"/>
+            <feComposite in="torn" in2="tex" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="mul"/>
+            <feComposite in="mul" in2="torn" operator="in"/>
+          </filter>
+          <!-- soft contact lift for loose paper only (no offset slabs) -->
+          <filter id="hp-fd-aside-depth-lift" x="-10%" y="-10%" width="120%" height="125%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="7"/>
+            <feOffset dy="5" result="b"/>
+            <feFlood flood-color="#2C0B16" flood-opacity=".42"/>
+            <feComposite in2="b" operator="in" result="sh"/>
+            <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
+
+      <!-- FAR: nature, seen through the tear -->
+      <div class="plane far">
+        <img class="raw" data-slot="media" src="../../assets/demo/place-dana.jpg" alt="" />
+        <img class="graded" src="../../assets/demo/place-dana.jpg" alt="" />
+      </div>
+
+      <!-- MID: torn brick sheet with a hole onto the far plane, plus oxblood scraps -->
+      <div class="plane mid"><svg class="full" viewBox="0 0 1920 1080" aria-hidden="true">
+        <g filter="url(#hp-fd-aside-depth-paper)">
+          <path class="sheet-rim" fill="#FFF0E6" fill-opacity=".34" fill-rule="evenodd"/>
+          <path class="sheet" fill="#7A1E1E" fill-rule="evenodd"/>
+        </g>
+        <g class="scraps"></g>
+      </svg></div>
+
+      <!-- NEAR: the printout, taped -->
+      <div class="plane near">
+        <div class="print">
+          <svg viewBox="-30 -30 1240 664" aria-hidden="true">
+            <g filter="url(#hp-fd-aside-depth-lift)"><g filter="url(#hp-fd-aside-depth-paper)"><path class="paper" fill="#FFF0E6"/></g></g>
+          </svg>
+          <div class="ink">
+            <div class="who"><b data-slot="who">Maria, Biscuit's owner</b><span data-slot="meta">Text message, Monday 7:42 pm</span></div>
+            <div data-slot="thread">
+              <p class="msg in"><small>Maria</small><span class="txt">Got the reminder, thank you! Can we push Biscuit to Thursday?</span></p>
+              <p class="msg out"><small>Dana</small><span class="txt">Of course. <span class="ring-target">Thursday at 10:30<svg class="ringsvg" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path class="ring" fill="none" stroke="#FF8A4C" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span> works.</span></p>
+              <p class="msg in"><small>Maria</small><span class="txt">You're a lifesaver. <em><span class="swipe"></span><span class="txt">Best thing you've added.</span></em></span></p>
+            </div>
+          </div>
+          <svg class="marks" viewBox="0 0 1180 604" style="position:absolute;inset:0;width:1180px;height:604px;overflow:visible" aria-hidden="true">
+            <g class="tapes"></g>
+          </svg>
+        </div>
+        <div class="source" data-slot="source">Text from a client, shared by Dana</div>
+      </div>
+
+      <div class="vig"></div>
+      <svg class="grain" width="1920" height="1080" aria-hidden="true">
+        <filter id="hp-fd-aside-depth-gr" x="0" y="0" width="100%" height="100%">
+          <feTurbulence class="turb" type="fractalNoise" baseFrequency=".78" numOctaves="3" seed="1" stitchTiles="stitch"/>
+          <feColorMatrix type="saturate" values="0"/>
+          <feComponentTransfer><feFuncR type="linear" slope="1.4" intercept="-.2"/><feFuncG type="linear" slope="1.4" intercept="-.2"/><feFuncB type="linear" slope="1.4" intercept="-.2"/></feComponentTransfer>
+        </filter>
+        <rect width="1920" height="1080" filter="url(#hp-fd-aside-depth-gr)"/>
+      </svg>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp-fd-aside-depth";
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s);
+      const $ = (s) => ROOT.querySelectorAll(s);
+      const SEED = parseInt(ROOT.getAttribute("data-seed") || "7", 10);
+      const DUR = 6.5, FPS2 = 12, STEP = 1 / FPS2;
+      const tl = gsap.timeline({ paused: true });
+
+      // ---------- seeded helpers ----------
+      function rng(seed) { let s = seed % 2147483647; if (s <= 0) s += 2147483646; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+      // a torn edge between two points: fine jitter + an occasional bite
+      function edge(r, x0, y0, x1, y1, amp, bite) {
+        const pts = [], len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(2, Math.round(len / 9));
+        const nx = -(y1 - y0) / len, ny = (x1 - x0) / len;
+        let wave = 0;
+        for (let i = 0; i < n; i++) {
+          const t = i / n; wave += (r() - .5) * amp * .55; wave *= .94;
+          let d = wave + (r() - .5) * amp * .28;
+          if (bite && r() < .018) d += (r() < .5 ? -1 : 1) * amp * 1.4;
+          pts.push([x0 + (x1 - x0) * t + nx * d, y0 + (y1 - y0) * t + ny * d]);
+        }
+        return pts;
+      }
+      function poly(r, x, y, w, h, amp, bite, skew) {
+        const k = skew || 0, j = () => (r() - .5) * 2 * k;
+        const c = [[x + j(), y + j()], [x + w + j(), y + j()], [x + w + j(), y + h + j()], [x + j(), y + h + j()]];
+        const p = [].concat(edge(r, c[0][0], c[0][1], c[1][0], c[1][1], amp, bite), edge(r, c[1][0], c[1][1], c[2][0], c[2][1], amp, bite),
+                            edge(r, c[2][0], c[2][1], c[3][0], c[3][1], amp, bite), edge(r, c[3][0], c[3][1], c[0][0], c[0][1], amp, bite));
+        return "M" + p.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join("L") + "Z";
+      }
+      // a hand-drawn loop around a box: overshoots its start, wobbles, three variants for line boil
+      function loop(r, cx, cy, rx, ry, turn) {
+        const n = 54, pts = [], ph = r() * 6;
+        for (let i = 0; i <= n; i++) {
+          const t = i / n, a = -2.6 + t * Math.PI * 2 * turn;
+          const k = 1 + (r() - .5) * .035 + Math.sin(t * 7 + ph) * .03, lift = t * 3.2;
+          pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k - lift]);
+        }
+        let d = "M" + pts[0][0].toFixed(1) + "," + pts[0][1].toFixed(1);
+        for (let i = 1; i < pts.length - 1; i++) {
+          const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+          d += "Q" + pts[i][0].toFixed(1) + "," + pts[i][1].toFixed(1) + " " + mx.toFixed(1) + "," + my.toFixed(1);
+        }
+        return d;
+      }
+      // move an element ON TWOS: eased values, but only sampled every 1/12 s (tl.set = seek-safe)
+      function onTwos(el, from, to, t0, dur, ease) {
+        const e = gsap.parseEase(ease || "power3.out"), steps = Math.max(1, Math.round(dur * FPS2));
+        tl.set(el, from, t0);
+        for (let i = 1; i <= steps; i++) {
+          const k = e(i / steps), v = {};
+          for (const p in to) v[p] = from[p] + (to[p] - from[p]) * k;
+          tl.set(el, v, t0 + i * STEP);
+        }
+      }
+
+      // ---------- build the paper ----------
+      const r = rng(SEED);
+      const hole = poly(r, 1330, 130, 640, 700, 12, true, 40);
+      const outer = "M-40,-40H1960V1120H-40Z";
+      $1(".sheet").setAttribute("d", outer + hole);
+      $1(".sheet-rim").setAttribute("d", outer + poly(rng(SEED), 1322, 122, 656, 716, 12, true, 40));
+
+      // oxblood scraps between the brick and the printout, each a different torn shape
+      const scr = $1(".scraps");
+      [[-60, 690, 520, 430, 4], [1210, -70, 380, 230, -6], [1520, 820, 520, 330, 3]].forEach((s, i) => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("filter", "url(#hp-fd-aside-depth-lift)");
+        g.innerHTML = '<g filter="url(#hp-fd-aside-depth-paper)"><path fill="' + (i === 1 ? "#2C0B16" : "#4B1526") + '" d="' + poly(rng(SEED + 31 * (i + 1)), s[0], s[1], s[2], s[3], 8, true, 70) + '"/></g>';
+        g.style.transformOrigin = (s[0] + s[2] / 2) + "px " + (s[1] + s[3] / 2) + "px";
+        g.style.transform = "rotate(" + s[4] + "deg)";
+        g.classList.add("scrap");
+        scr.appendChild(g);
+      });
+
+      // the printout: a clean-cut sheet with a slight deckle, not a UI card
+      $1(".paper").setAttribute("d", poly(rng(SEED + 5), 0, 0, 1180, 604, 1.6, false));
+
+      // tape: two translucent strips with torn ends
+      const tapes = $1(".tapes");
+      [[-34, -26, 210, 60, -8], [1000, 548, 220, 60, 6]].forEach((t, i) => {
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        p.setAttribute("d", poly(rng(SEED + 70 + i), t[0], t[1], t[2], t[3], 3.2, false));
+        p.setAttribute("fill", "#FFF0E6"); p.setAttribute("fill-opacity", ".62");
+        p.setAttribute("filter", "url(#hp-fd-aside-depth-paper)");
+        p.style.transformOrigin = (t[0] + t[2] / 2) + "px " + (t[1] + t[3] / 2) + "px";
+        p.style.transform = "rotate(" + t[4] + "deg)";
+        p.classList.add("tape");
+        tapes.appendChild(p);
+      });
+
+      // gold marker swipe: rough-edged band behind the <em>, multiply so ink stays dark
+      const sw = $1(".msg em .swipe");
+      if (sw) sw.innerHTML = '<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path fill="#FFC145" style="mix-blend-mode:multiply" d="' +
+        poly(rng(SEED + 90), 0, 4, 100, 34, 2.2, false) + '"/></svg>';
+
+      // pen ring: drawn in the target's own box (0..100 x 0..40), so it fits any word without measuring
+      const ring = $1(".ring");
+      const boil = [0, 1, 2].map(i => loop(rng(SEED + 200 + i), 50, 20, 47, 17, 1.1));
+      let RL = 400;
+      if (ring) {
+        RL = Math.max(...boil.map(d => { ring.setAttribute("d", d); return ring.getTotalLength(); })) * 1.02;
+        ring.setAttribute("d", boil[0]); ring.setAttribute("stroke-dasharray", RL + " " + RL);
+      }
+
+      // ---------- timeline ----------
+      // camera: the only smooth motion. planes push at different rates = parallax depth
+      tl.fromTo($1(".far"), { scale: 1.0, x: 0 }, { scale: 1.07, x: -18, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo($1(".mid"), { scale: 1.0 }, { scale: 1.03, duration: DUR, ease: "sine.inOut", transformOrigin: "45% 50%" }, 0);
+      tl.fromTo($1(".near"), { y: 6 }, { y: -10, duration: DUR, ease: "sine.inOut" }, 0);
+      // rack focus: far plane starts softer and comes in a touch as the camera settles
+      tl.fromTo($(".far img"), { filter: (i) => i ? "url(#hp-fd-aside-depth-map) blur(9px)" : "blur(9px) saturate(.9)" },
+        { filter: (i) => i ? "url(#hp-fd-aside-depth-map) blur(4px)" : "blur(4px) saturate(.9)", duration: 1.2, ease: "power2.out" }, 0);
+
+      // scraps slap in on twos from just off their resting spots
+      $(".scrap").forEach((g, i) => {
+        const dir = [[-60, 40], [40, -60], [70, 50]][i];
+        onTwos(g, { x: dir[0], y: dir[1], opacity: 0 }, { x: 0, y: 0, opacity: 1 }, .08 + i * .08, .34, "power3.out");
+      });
+      // the printout slides in from the left on twos, overshoots its angle a hair, lands off-level
+      onTwos(print, { x: -1280, rotation: 3.2 }, { x: 0, rotation: -1.4 }, .3, .5, "power3.out");
+      onTwos(print, { x: 0, rotation: -1.4 }, { x: 0, rotation: -1.1 }, .8, .17, "sine.out");
+      // tape goes down after the sheet lands: two quick frames each
+      $(".tape").forEach((t, i) => onTwos(t, { scale: 1.18, opacity: 0 }, { scale: 1, opacity: 1 }, .98 + i * .17, .17, "power2.out"));
+      // the gold swipe, laid down left to right like a marker (stepped clip)
+      const swipe = $1(".swipe svg");
+      if (swipe) { const n = 6; tl.set(swipe, { clipPath: "inset(0 100% 0 0)" }, 0);
+        for (let i = 1; i <= n; i++) tl.set(swipe, { clipPath: "inset(0 " + (100 - 100 * gsap.parseEase("power2.out")(i / n)) + "% 0 0)" }, 1.42 + i * STEP); }
+      // the pen ring draws on twos, then boils for the hold
+      const rn = 8;
+      tl.set(ring, { attr: { "stroke-dashoffset": RL } }, 0);
+      for (let i = 1; i <= rn; i++) tl.set(ring, { attr: { "stroke-dashoffset": RL * (1 - gsap.parseEase("power1.inOut")(i / rn)), d: boil[i % 3] } }, 2.05 + i * STEP);
+      for (let t = 2.05 + (rn + 1) * STEP, k = 0; t < DUR - .1; t += STEP * 2, k++) tl.set(ring, { attr: { d: boil[k % 3] } }, t);
+      // the source caption is printed on the brick: two frames on
+      onTwos($1(".source"), { opacity: 0, y: 8 }, { opacity: .86, y: 0 }, 1.2, .17, "power2.out");
+
+      // grain: seed stepped at 12 fps with tl.set (seek-safe)
+      const turb = $1(".turb");
+      for (let t = 0, k = 1; t < DUR; t += STEP, k++) tl.set(turb, { attr: { seed: 1 + (k * 7) % 97 } }, t);
+      tl.set({}, {}, DUR);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      })();
+    </script>
+  </body>
+</html>

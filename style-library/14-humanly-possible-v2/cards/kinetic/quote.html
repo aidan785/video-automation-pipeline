@@ -1,0 +1,124 @@
+<!doctype html>
+<!--
+  Humanly Possible v2 · KINETIC · quote (tier1, ~161 frames = 6.7 s at 24 fps for the default copy)
+  Built from raw-media/hp-sampler-refs/kinetic-blocks/ANALYSIS.md: BK rebrand intro f6-218 + f309-339.
+  The quote is cut one word per shot (move A). Connecting words float small and cream on oxblood, each held
+  7-10 f with no in/out animation. Payoff words (<em> in the slot) swap the field to cream and go full bleed in
+  brick, cropped by the frame: the field swap is the stress mark.
+    payoff 1  placed on the cut, 24 f, one-frame inverts at +18 and +21/22   (bk_rebrand_f60_era-fullbleed, f83_era-invert-flicker)
+    "."       a sentence-ending payoff is followed by 1 empty frame (breath)  (BK f685)
+    payoff 2  small then slam: 3 f small, 10 f expo.out to full bleed, 9 f hold (bk_rebrand_f116_real-small-hold, f126_real-settled)
+    last word letters tint in left to right one per frame, pale tint -> cream in 2 f, held  (bk_rebrand_f198_thanever-letter-tint)
+    lockup    hard cut to the whole quote on cream, hand-set ragged lines, dead hold 48 f (BK f309-339 "MAKES US GREAT")
+  Clean ending: hard cut after the lockup hold.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter+Tight:wght@400;500;600;700&display=swap" />
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:#2C0B16;}
+      #hp2-kinetic-quote{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+        --oxblood:#4B1526;--cream:#FFF0E6;--brick:#7A1E1E;--orange:#FF8A4C;--gold:#FFC145;--deep:#2C0B16;
+        font-family:"Bricolage Grotesque",sans-serif;font-variation-settings:"opsz" 96;}
+      #hp2-kinetic-quote .src{display:none;}
+      #hp2-kinetic-quote .field{position:absolute;inset:0;background:var(--oxblood);}
+      #hp2-kinetic-quote .layer{position:absolute;inset:0;opacity:0;}
+      #hp2-kinetic-quote .disp{font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap;}
+      #hp2-kinetic-quote .w{position:absolute;left:50%;top:50%;transform-origin:50% 50%;}
+      #hp2-kinetic-quote .w.small{font-size:150px;color:var(--cream);}
+      #hp2-kinetic-quote .w.big{font-size:600px;letter-spacing:-.045em;color:var(--brick);}
+      #hp2-kinetic-quote .w i{font-style:normal;}
+      #hp2-kinetic-quote .lock{position:absolute;left:140px;top:270px;font-size:150px;color:var(--brick);line-height:1.02;letter-spacing:-.035em;}
+      #hp2-kinetic-quote .lock div{white-space:nowrap;}
+      #hp2-kinetic-quote .lock div:nth-child(2){margin-left:96px;}
+      #hp2-kinetic-quote .by{position:absolute;left:140px;top:660px;font-family:"Inter Tight",sans-serif;font-weight:500;font-size:40px;color:var(--deep);letter-spacing:-.005em;}
+    </style>
+  </head>
+  <body>
+    <div id="hp2-kinetic-quote" data-composition-id="hp2-kinetic-quote" data-start="0" data-width="1920" data-height="1080">
+      <div class="src" data-slot="quote">I didn't hire <em>help.</em> I got my <em>evenings</em> back.</div>
+      <div class="field"></div>
+      <div class="words"></div>
+      <div class="layer lockup"><div class="lock disp"></div><div class="by" data-slot="attribution">Dana Ruiz, dog groomer in Tulsa</div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+      window.__timelines = window.__timelines || {};
+      const ID = "hp2-kinetic-quote", FPS = 24;
+      const ROOT = document.getElementById(ID);
+      const $1 = (s) => ROOT.querySelector(s), $ = (s) => ROOT.querySelectorAll(s);
+      const C = { oxblood:"#4B1526", cream:"#FFF0E6", brick:"#7A1E1E", orange:"#FF8A4C", gold:"#FFC145", deep:"#2C0B16", tint:"#B27A84" };
+      const tl = gsap.timeline({ paused: true });
+      const T = (F) => (F - 1) / FPS;
+      const at = (F, el, v) => tl.set(el, v, T(F));
+      const field = (F, c) => at(F, $1(".field"), { backgroundColor: c });
+      function sample(F0, n, ease, fn) { const e = gsap.parseEase(ease); for (let i = 0; i <= n; i++) fn(F0 + i, e(i / n)); }
+
+      // ---- parse the slot: <em>payoff</em> tokens, everything else one word per cut ----
+      const src = $1(".src").innerHTML.trim(), toks = [];
+      src.replace(/<em>([\s\S]*?)<\/em>|([^\s<]+)/g, (m, em, w) => { toks.push(em ? { t: em.trim(), pay: true } : { t: w, pay: false }); return m; });
+      const WORDS = $1(".words"), els = toks.map((k) => {
+        const lay = document.createElement("div"); lay.className = "layer";
+        const w = document.createElement("div"); w.className = "w disp " + (k.pay ? "big" : "small");
+        w.textContent = k.t; lay.appendChild(w); WORDS.appendChild(lay); return { lay, w };
+      });
+      // payoff words fit to ~2000 px wide (bleed past both frame edges); re-run once the face has loaded
+      function fit() { els.forEach(({ w }, i) => { if (!toks[i].pay) return; w.style.fontSize = "100px"; const ww = w.getBoundingClientRect().width / (gsap.getProperty(w, "scale") || 1); w.style.fontSize = Math.min(1500, 100 * 2000 / Math.max(1, ww)) + "px"; }); }
+      fit(); if (document.fonts) document.fonts.ready.then(fit);
+
+      // lockup: one line per sentence, hand-set indent on the second line
+      const lines = [[]]; toks.forEach((k, i) => { lines[lines.length - 1].push(k.t); if (/[.!?]$/.test(k.t) && i < toks.length - 1) lines.push([]); });
+      $1(".lock").innerHTML = lines.map((l) => `<div>${l.join(" ")}</div>`).join("");
+
+      tl.set($(".layer"), { opacity: 0 }, 0);
+      els.forEach(({ w }) => tl.set(w, { xPercent: -50, yPercent: -54 }, 0));
+
+      // ---- schedule: durations follow the read, never a preset ----
+      const SMALL = [8, 7, 8, 10, 7, 8, 9, 7];                               // BK f6-44 counts: 8, 7, 8, 8, 8 ... varied
+      let F = 1, si = 0, pi = 0;
+      toks.forEach((k, i) => {
+        const { lay, w } = els[i], last = i === toks.length - 1;
+        at(F, lay, { opacity: 1 });
+        let d;
+        if (k.pay) {
+          field(F, C.cream); at(F, w, { color: C.brick });
+          if (pi % 2 === 0) {                                                // placed on the cut, two invert flickers
+            d = 24;
+            [[18, 1], [19, 0], [21, 1], [23, 0]].forEach(([o, inv]) => { field(F + o, inv ? C.oxblood : C.cream); at(F + o, w, { color: inv ? C.cream : C.brick }); });
+          } else {                                                           // small then slam
+            d = 22; const S0 = .3;
+            at(F, w, { scale: S0 });
+            sample(F + 2, 10, "expo.out", (G, e) => at(G, w, { scale: S0 + (1 - S0) * e }));
+          }
+          pi++;
+        } else {
+          field(F, C.oxblood);
+          if (last) {                                                        // last word: letters tint in, then hold
+            const s = w.textContent; w.innerHTML = [...s].map((c) => `<i>${c}</i>`).join("");
+            const ls = w.querySelectorAll("i");
+            ls.forEach((ch, j) => { at(F, ch, { visibility: j === 0 ? "visible" : "hidden", color: C.tint }); if (j) at(F + j, ch, { visibility: "visible" }); at(F + j + 2, ch, { color: C.cream }); });
+            d = ls.length + 2 + 18;
+          } else { d = SMALL[si++ % SMALL.length]; }
+        }
+        at(F + d, lay, { opacity: 0 });
+        F += d;
+        if (k.pay && /[.!?]$/.test(k.t) && !last) { field(F, C.oxblood); F += 1; }   // one empty breath frame
+      });
+
+      // ---- lockup, hard cut, dead hold ----
+      field(F, C.cream); at(F, $1(".lockup"), { opacity: 1 });
+      const N = F + 48 - 1;
+      tl.set({}, {}, N / FPS);
+
+      window.__timelines[ID] = tl;
+      if (location.hash.indexOf("#t=") === 0) tl.seek(parseFloat(location.hash.slice(3)) || 0);
+      if (location.hash.indexOf("#f=") === 0) tl.seek(T(parseInt(location.hash.slice(3), 10) || 1) + 0.001);
+      })();
+    </script>
+  </body>
+</html>

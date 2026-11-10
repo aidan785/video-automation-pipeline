@@ -1,0 +1,113 @@
+[
+  {
+    "id": "humanly-possible.layout.split.edge",
+    "tier": "layout",
+    "purpose": "layout",
+    "treatment": "split-edge",
+    "file": "cards/layouts/lay-split-edge.html",
+    "slots": [
+      { "name": "guest-cam", "type": "media", "notes": "left half 960x1080, cover crop via --s/--x/--y on the element so the eyes sit at y 340" },
+      { "name": "host-cam", "type": "media", "notes": "right half 960x1080, same eye line y 340" },
+      { "name": "guest-name", "type": "text", "maxChars": 20 },
+      { "name": "guest-role", "type": "text", "maxChars": 22 },
+      { "name": "host-name", "type": "text", "maxChars": 20 },
+      { "name": "host-role", "type": "text", "maxChars": 22 }
+    ],
+    "duration": { "min": 3, "max": 600 },
+    "summary": "Edge-to-edge 50/50 remote split at matched eye height, cream seam born from the center, corner mark bug, name chips; orange dot follows the active speaker (root data-active, data-swap-at)."
+  },
+  {
+    "id": "humanly-possible.layout.framed.field",
+    "tier": "layout",
+    "purpose": "layout",
+    "treatment": "framed-field",
+    "file": "cards/layouts/lay-framed-field.html",
+    "slots": [
+      { "name": "guest-cam", "type": "media", "notes": "inner 792x512, crop via --s/--x/--y, eye line y 170" },
+      { "name": "host-cam", "type": "media", "notes": "inner 792x512, same eye line" },
+      { "name": "guest-name", "type": "text", "maxChars": 22 },
+      { "name": "guest-role", "type": "text", "maxChars": 44 },
+      { "name": "host-name", "type": "text", "maxChars": 22 },
+      { "name": "host-role", "type": "text", "maxChars": 44 }
+    ],
+    "duration": { "min": 3, "max": 600 },
+    "summary": "Two keylined 14px frames on flat grained oxblood, names (Bricolage 800) and roles under; frames pop staggered; orange underline bar marks the active speaker and moves on data-swap-at."
+  },
+  {
+    "id": "humanly-possible.layout.proof.split",
+    "tier": "layout",
+    "purpose": "layout",
+    "treatment": "proof-split",
+    "file": "cards/layouts/lay-proof-split.html",
+    "slots": [
+      { "name": "guest-cam", "type": "media", "notes": "left third, 528x968, 10px radius, crop via --s/--x/--y" },
+      { "name": "label", "type": "text", "maxChars": 32, "notes": "running label, tracked caps" },
+      { "name": "value", "type": "number", "notes": "data-steps=\"58,130,212\" + data-at per step; each tick rolls the old value up and out; max 4 digits" },
+      { "name": "caption", "type": "text", "maxChars": 40 },
+      { "name": "sheet", "type": "list", "maxItems": 4, "notes": "header row + 4 data rows of 4 cells; the row with class \"hot\" lifts to deep with the orange bar when the last tick lands" }
+    ],
+    "duration": { "min": 6, "max": 120 },
+    "summary": "One third / two thirds: guest cam left, brick result panel with a gold number that ticks on each data-at, plus the guest's spreadsheet strip with the row that matters lifted."
+  },
+  {
+    "id": "humanly-possible.layout.screen.inset",
+    "tier": "layout",
+    "purpose": "layout",
+    "treatment": "screen-inset",
+    "file": "cards/layouts/lay-screen-inset.html",
+    "slots": [
+      { "name": "screen", "type": "media", "notes": "1304x968 cream card, 14px radius; rebuilt AI chat by default, swap for a framed screen recording" },
+      { "name": "prompt", "type": "text", "maxChars": 110 },
+      { "name": "reply-lead", "type": "text", "maxChars": 50 },
+      { "name": "reply", "type": "list", "maxItems": 4, "notes": "one line each (~60 chars), data-at per line; the li with class \"key\" gets the gold highlighter 0.3s after its data-at" },
+      { "name": "guest-cam", "type": "media", "notes": "460x456, crop via --s/--x/--y" },
+      { "name": "host-cam", "type": "media", "notes": "460x456" },
+      { "name": "guest-name", "type": "text", "maxChars": 18 },
+      { "name": "guest-role", "type": "text", "maxChars": 16 },
+      { "name": "host-name", "type": "text", "maxChars": 18 },
+      { "name": "host-role", "type": "text", "maxChars": 16 }
+    ],
+    "duration": { "min": 4, "max": 300 },
+    "summary": "Big cream screen card (rebuilt Assistant chat) on oxblood with both cams stacked right; thread builds per line, key line gets the gold block, orange stripe marks the active cam."
+  },
+  {
+    "id": "humanly-possible.transition.line.collapse",
+    "tier": "transition",
+    "purpose": "transition",
+    "treatment": "line-collapse",
+    "file": "cards/transitions/tr-line-collapse.html",
+    "slots": [
+      { "name": "plate-a", "type": "media", "notes": "outgoing shot, full frame" },
+      { "name": "plate-b", "type": "media", "notes": "incoming shot, full frame" }
+    ],
+    "duration": { "min": 1.2, "max": 1.2 },
+    "summary": "Plate A squashes into a 3px cream line, the line retracts to a point, pops, draws back out and plate B opens from it. Mirrored, 1.2s."
+  },
+  {
+    "id": "humanly-possible.transition.plate.mosaic",
+    "tier": "transition",
+    "purpose": "transition",
+    "treatment": "mosaic",
+    "file": "cards/transitions/tr-mosaic.html",
+    "slots": [
+      { "name": "plate-a", "type": "media", "notes": "outgoing shot, full frame" },
+      { "name": "plate-b", "type": "media", "notes": "incoming shot, full frame; blocks read its src, so use a still or poster frame" }
+    ],
+    "duration": { "min": 0.6, "max": 0.6 },
+    "summary": "Patriot Act block shuffle: 5 rows of seeded blocks show plate B offset 40 to 120px (a few flat brick/oxblood), frame-stepped pops over 8 frames, one-frame snap to clean B. Root data-seed varies the pattern."
+  },
+  {
+    "id": "humanly-possible.transition.pill.morph",
+    "tier": "transition",
+    "purpose": "transition",
+    "treatment": "pill-morph",
+    "file": "cards/transitions/tr-pill-morph.html",
+    "slots": [
+      { "name": "host-cam", "type": "media", "notes": "full frame under the pill" },
+      { "name": "label", "type": "text", "maxChars": 22, "notes": "data-at = when the morph starts (default 1.5)" },
+      { "name": "broll", "type": "media", "notes": "full frame, shown through the 1808x968 window with a 56px brick margin" }
+    ],
+    "duration": { "min": 2.5, "max": 8 },
+    "summary": "Brick topic pill with orange tab reveals by width over the host, then the same element grows into a full brick margin around a 10px-radius B-roll window; footage fades in at 40% of the morph."
+  }
+]
