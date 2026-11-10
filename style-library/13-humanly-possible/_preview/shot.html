@@ -1,8 +1,0 @@
-<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#3a3631}img,iframe{position:absolute;inset:0;width:1920px;height:1080px;border:0}</style></head>
-<body><img id="bg" alt=""><iframe id="f" allowtransparency="true"></iframe>
-<script>
-const q=new URLSearchParams(location.search);const bg=q.get('bg');const im=document.getElementById('bg');if(bg)im.src=bg;else im.remove();
-const f=document.getElementById('f');const p=q.get('p');
-f.src='../'+q.get('card')+(p?'':'#t='+(q.get('t')||'2'));
-if(p){f.addEventListener('load',()=>{let n=0;(function go(){const T=f.contentWindow.__timelines;const k=T&&Object.keys(T);if(!k||!k.length){if(n++<100)setTimeout(go,50);return;}k.forEach(x=>{T[x].progress(parseFloat(p),false);T[x].pause();});})();});}
-</script></body></html>

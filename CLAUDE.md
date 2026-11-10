@@ -20,6 +20,10 @@ Quality bar: smooth transitions, well-timed motion graphics, open-loop retention
 - Pipeline is **transcript-driven** via ElevenLabs Scribe (word-level timestamps).
 - Each step ships as its own skill under `.claude/skills/` so it stays modular and testable in isolation.
 
+## Humanly Possible lives in its own repo
+
+All Humanly Possible work (hp-* projects, HP style libraries 13-15, the dot-motion-ad skill, HP raw media, thumbnails) moved on 2026-11-10 to `~/Projects/humanly-possible-post` (private repo `aidan785/humanly-possible-post`). Open sessions for HP there. `style-library/12-sanji` stays here too (shared); this repo is upstream for the pipeline skills the HP repo copies.
+
 ## MOTION_PHILOSOPHY.md — read before brainstorming
 
 `MOTION_PHILOSOPHY.md` at the workspace root is the canonical motion-graphics aesthetic — the deconstructed Infinite Global Payments 30s spot, the gold standard. **Read the full file at the start of any creative session** (composition, scene, storyboard, palette, transitions, kinetic typography, logo reveal). Re-read sections 0 (11 Laws) and 4 (pre-flight checklist) every iteration; run the pre-flight checklist before claiming any motion piece is done.
