@@ -22,7 +22,7 @@ Quality bar: smooth transitions, well-timed motion graphics, open-loop retention
 
 ## Humanly Possible lives in its own repo
 
-All Humanly Possible work (hp-* projects, HP style libraries 13-15, the dot-motion-ad skill, HP raw media, thumbnails) moved on 2026-11-10 to `~/Projects/humanly-possible-post` (private repo `aidan785/humanly-possible-post`). Open sessions for HP there. `style-library/12-sanji` stays here too (shared); this repo is upstream for the pipeline skills the HP repo copies.
+All Humanly Possible work moved on 2026-11-10 to `~/Projects/humanly-possible` (private repo `aidan785/humanly-possible`): design system at the root, editing in `post/` (hp-* projects, HP style libraries 13-15, dot-motion-ad, raw media), thumbnails and titles in `packaging/`. Open sessions for HP there. `style-library/12-sanji` stays here too (shared); this repo is upstream for the pipeline skills HP copies.
 
 ## MOTION_PHILOSOPHY.md — read before brainstorming
 
